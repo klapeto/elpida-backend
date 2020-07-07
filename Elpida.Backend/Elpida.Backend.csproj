@@ -4,5 +4,15 @@
         <TargetFramework>netcoreapp3.1</TargetFramework>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="4.1.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Elpida.Backend.Data\Elpida.Backend.Data.csproj" />
+      <ProjectReference Include="..\Elpida.Backend.Services.Abstractions\Elpida.Backend.Services.Abstractions.csproj" />
+      <ProjectReference Include="..\Elpida.Backend.Services\Elpida.Backend.Services.csproj" />
+    </ItemGroup>
+
 
 </Project>

@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Elpida.Backend.Data.Abstractions\Elpida.Backend.Data.Abstractions.csproj" />
+      <ProjectReference Include="..\Elpida.Backend.Services.Abstractions\Elpida.Backend.Services.Abstractions.csproj" />
+    </ItemGroup>
+
+</Project>
