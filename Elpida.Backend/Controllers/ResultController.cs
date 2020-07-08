@@ -15,7 +15,7 @@ namespace Elpida.Backend.Controllers
 	[Route("api/v{version:apiVersion}/[controller]")]
 	public class ResultController : ControllerBase
 	{
-		private IResultsService _resultsService;
+		private readonly IResultsService _resultsService;
 
 		public ResultController(IResultsService resultsService)
 		{
