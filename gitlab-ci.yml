@@ -12,6 +12,10 @@ build:
       paths:
         - bin/
 
+build_image:
+    script:
+        - "docker build -t elpida-backend ."
+
 test:
     stage: test
     script: 
