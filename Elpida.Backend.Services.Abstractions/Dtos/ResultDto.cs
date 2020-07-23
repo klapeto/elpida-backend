@@ -6,7 +6,7 @@ namespace Elpida.Backend.Services.Abstractions.Dtos
 	public class ResultDto
 	{
 		public string Id { get; set; }
-		public DateTimeOffset TimeStamp { get; set; }
+		public DateTime TimeStamp { get; set; }
 		public IList<ulong> Affinity { get; set; }
 		public ElpidaDto Elpida { get; set; }
 		public SystemDto System { get; set; }

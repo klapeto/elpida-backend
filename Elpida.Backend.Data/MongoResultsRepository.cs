@@ -54,6 +54,7 @@ namespace Elpida.Backend.Data
 				.Take(count)
 				.Select(m => new ResultPreviewModel
 				{
+					Name = m.Result.Name,
 					Id = m.Id,
 					OsName = m.System.Os.Name,
 					OsVersion = m.System.Os.Version,

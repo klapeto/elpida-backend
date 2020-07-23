@@ -6,7 +6,8 @@ namespace Elpida.Backend.Services.Abstractions.Dtos
 	{
 		public string Id { get; set; }
 
-		public DateTimeOffset TimeStamp { get; set; }
+		public string Name { get; set; }
+		public DateTime TimeStamp { get; set; }
 
 		public int ElpidaVersionMajor { get; set; }
 		public int ElpidaVersionMinor { get; set; }

@@ -7,7 +7,7 @@ namespace Elpida.Backend.Data.Abstractions.Models
 	{
 		public string Id { get; set; }
 
-		public DateTimeOffset TimeStamp { get; set; }
+		public DateTime TimeStamp { get; set; }
 		
 		public IList<ulong> Affinity { get; set; }
 		public ElpidaModel Elpida { get; set; }

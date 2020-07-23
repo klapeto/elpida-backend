@@ -9,6 +9,7 @@ namespace Elpida.Backend.Services
 		{
 			return new ResultPreviewDto
 			{
+				Name = model.Name,
 				Id = model.Id,
 				OsName = model.OsName,
 				OsVersion = model.OsVersion,

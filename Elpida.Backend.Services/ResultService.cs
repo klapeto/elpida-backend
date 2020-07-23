@@ -21,7 +21,7 @@ namespace Elpida.Backend.Services
 
 		public Task<string> CreateAsync(ResultDto resultDto, CancellationToken cancellationToken)
 		{
-			resultDto.TimeStamp = DateTimeOffset.UtcNow;
+			resultDto.TimeStamp = DateTime.UtcNow;
 			return _resultsRepository.CreateAsync(resultDto.ToResultModel(), cancellationToken);
 		}
 
@@ -34,8 +34,10 @@ namespace Elpida.Backend.Services
 			CancellationToken cancellationToken)
 		{
 			if (pageRequest.TotalCount == 0)
+			{
 				pageRequest.TotalCount = await _resultsRepository.GetTotalCountAsync(cancellationToken);
-
+			}
+			
 			var list = (await _resultsRepository.GetAsync(pageRequest.Next, pageRequest.Count, true, cancellationToken))
 				.Select(m => m.ToPreviewDto())
 				.ToList();
