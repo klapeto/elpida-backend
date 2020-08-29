@@ -1,13 +1,15 @@
+using System;
 using Elpida.Backend.Data;
 using Elpida.Backend.Data.Abstractions;
+using Elpida.Backend.Data.Abstractions.Models.Result;
 using Elpida.Backend.Services;
 using Elpida.Backend.Services.Abstractions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 
 namespace Elpida.Backend
 {
@@ -27,24 +29,48 @@ namespace Elpida.Backend
 
 			services.Configure<DocumentRepositorySettings>(
 				Configuration.GetSection(nameof(DocumentRepositorySettings)));
-			
+
 			services.Configure<AzureBlobAssetsRepositorySettings>(
 				Configuration.GetSection(nameof(AzureBlobAssetsRepositorySettings)));
 
 			services.AddSingleton<IDocumentRepositorySettings>(sp =>
 				sp.GetRequiredService<IOptions<DocumentRepositorySettings>>().Value);
-			
+
 			services.AddSingleton<IAssetsRepositorySettings>(sp =>
 				sp.GetRequiredService<IOptions<AzureBlobAssetsRepositorySettings>>().Value);
-			
+
 			services.AddScoped<IResultsService, ResultService>();
 			services.AddTransient<IAssetsService, AssetsService>();
-			services.AddSingleton<IResultsRepository, MongoResultsRepository>();
-			services.AddTransient<IAssetsRepository, AzureBlobsAssetsRepository>();
+
+			services.AddTransient(MongoResultsCollection_ImplementationFactory);
 			
+			services.AddTransient<IBlobClientFactory, AzureAssetsBlobClientFactory>();
+
+			services.AddTransient<IResultsRepository, MongoResultsRepository>();
+			services.AddTransient<IAssetsRepository, AzureBlobsAssetsRepository>();
+
 			services.AddApiVersioning();
 
 			services.AddCors();
+		}
+
+		private static IMongoCollection<ResultModel> MongoResultsCollection_ImplementationFactory(
+			IServiceProvider serviceProvider)
+		{
+			var settings = serviceProvider.GetRequiredService<IDocumentRepositorySettings>();
+
+			if (string.IsNullOrWhiteSpace(settings.ConnectionString))
+				throw new ArgumentException("Documents Connection string is empty", nameof(settings.ConnectionString));
+			if (string.IsNullOrWhiteSpace(settings.DatabaseName))
+				throw new ArgumentException("Database name for documents is empty", nameof(settings.DatabaseName));
+			if (string.IsNullOrWhiteSpace(settings.ResultsCollectionName))
+				throw new ArgumentException("Collection name for Results documents is empty",
+					nameof(settings.ResultsCollectionName));
+			
+			var client = new MongoClient(settings.ConnectionString);
+			var database = client.GetDatabase(settings.DatabaseName);
+
+			return database.GetCollection<ResultModel>(settings.ResultsCollectionName);
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

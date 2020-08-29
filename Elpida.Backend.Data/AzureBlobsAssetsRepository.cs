@@ -4,8 +4,6 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Azure.Storage;
-using Azure.Storage.Blobs;
 using Elpida.Backend.Data.Abstractions;
 using Elpida.Backend.Data.Abstractions.Models;
 
@@ -13,11 +11,12 @@ namespace Elpida.Backend.Data
 {
 	public class AzureBlobsAssetsRepository : IAssetsRepository
 	{
-		private readonly IAssetsRepositorySettings _assetsRepositorySettings;
+		private readonly IBlobClientFactory _blobClientFactory;
 
-		public AzureBlobsAssetsRepository(IAssetsRepositorySettings assetsRepositorySettings)
+		public AzureBlobsAssetsRepository(IBlobClientFactory blobClientFactory)
 		{
-			_assetsRepositorySettings = assetsRepositorySettings;
+			_blobClientFactory = blobClientFactory ?? throw new ArgumentNullException(nameof(blobClientFactory));
+			;
 		}
 
 		#region IAssetsRepository Members
@@ -26,26 +25,25 @@ namespace Elpida.Backend.Data
 			CancellationToken cancellationToken = default)
 		{
 			if (inputData == null) throw new ArgumentNullException(nameof(inputData));
+			if (string.IsNullOrWhiteSpace(filename) || filename.Contains('/'))
+				throw new ArgumentException("Invalid filename", nameof(filename));
 
-			var blobUri = GetBlobUri(filename);
-			var client = new BlobClient(blobUri,
-				new StorageSharedKeyCredential(_assetsRepositorySettings.AccountName,
-					_assetsRepositorySettings.AccountKey));
+			var client = _blobClientFactory.CreateClient(filename);
 
 			await client.UploadAsync(inputData, true, cancellationToken);
-			return blobUri;
+			return client.Uri;
 		}
 
 		public async Task<IEnumerable<AssetInfoModel>> GetAssetsAsync(CancellationToken cancellationToken = default)
 		{
-			var client = GetContainerClient();
+			var client = _blobClientFactory.CreateContainerClient();
 			var returnList = new List<AssetInfoModel>();
 			await foreach (var blob in client.GetBlobsAsync())
 			{
 				returnList.Add(new AssetInfoModel
 				{
 					Filename = blob.Name,
-					Location = GetBlobUri(blob.Name),
+					Location = GetBlobUri(client.Uri, blob.Name),
 					Size = blob.Properties.ContentLength ?? -1,
 					Md5 = ByteArrayToString(blob.Properties.ContentHash)
 				});
@@ -56,24 +54,20 @@ namespace Elpida.Backend.Data
 
 		#endregion
 
-		private BlobContainerClient GetContainerClient()
-		{
-			return new BlobContainerClient(GetContainerUri(), new StorageSharedKeyCredential(
-				_assetsRepositorySettings.AccountName,
-				_assetsRepositorySettings.AccountKey));
-		}
-
-		private Uri GetBlobUri(string filename)
+		private Uri GetBlobUri(Uri containerUri, string filename)
 		{
 			if (string.IsNullOrWhiteSpace(filename))
 				throw new ArgumentException("Filename is empty!", nameof(filename));
-			return new Uri($"{GetContainerUri()}/{filename}");
-		}
 
-		private Uri GetContainerUri()
-		{
-			return new Uri(
-				$"{_assetsRepositorySettings.BlobStorageUri}/{_assetsRepositorySettings.BlobStorageContainer}");
+			var uriString = $"{containerUri}/{filename}";
+
+			if (filename.Contains('/'))
+				throw new ArgumentException("Filename contains invalid characters", nameof(filename));
+
+			if (!Uri.TryCreate(uriString, UriKind.Absolute, out var uri) || uri.Scheme != Uri.UriSchemeHttps)
+				throw new ArgumentException("Blob Uri is not valid!");
+
+			return uri;
 		}
 
 		private static string ByteArrayToString(IReadOnlyCollection<byte> bytes)

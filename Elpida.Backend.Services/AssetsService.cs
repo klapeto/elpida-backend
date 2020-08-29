@@ -16,7 +16,7 @@ namespace Elpida.Backend.Services
 
 		public AssetsService(IAssetsRepository assetsRepository)
 		{
-			_assetsRepository = assetsRepository;
+			_assetsRepository = assetsRepository ?? throw new ArgumentNullException(nameof(assetsRepository));
 		}
 
 		#region IAssetsService Members

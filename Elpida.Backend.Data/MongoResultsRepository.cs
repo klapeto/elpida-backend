@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Data.Abstractions;
-using Elpida.Backend.Data.Abstractions.Models;
 using Elpida.Backend.Data.Abstractions.Models.Result;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -14,25 +13,26 @@ namespace Elpida.Backend.Data
 	public class MongoResultsRepository : IResultsRepository
 	{
 		private readonly IMongoCollection<ResultModel> _resultCollection;
-
-		public MongoResultsRepository(IDocumentRepositorySettings settings)
+		
+		public MongoResultsRepository(IMongoCollection<ResultModel> resultCollection)
 		{
-			var client = new MongoClient(settings.ConnectionString);
-			var database = client.GetDatabase(settings.DatabaseName);
-
-			_resultCollection = database.GetCollection<ResultModel>(settings.ResultsCollectionName);
+			_resultCollection = resultCollection ?? throw new ArgumentNullException(nameof(resultCollection));
 		}
 
 		#region IResultsRepository Members
 
 		public async Task<ResultModel> GetSingleAsync(string id, CancellationToken cancellationToken)
 		{
+			if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException("'Id' cannot be empty", nameof(id));
+
 			return await (await _resultCollection.FindAsync(r => r.Id == id, cancellationToken: cancellationToken))
 				.FirstOrDefaultAsync(cancellationToken);
 		}
 
 		public async Task<string> CreateAsync(ResultModel resultModel, CancellationToken cancellationToken)
 		{
+			if (resultModel == null) throw new ArgumentNullException(nameof(resultModel));
+
 			resultModel.Id = ObjectId.GenerateNewId(DateTime.UtcNow).ToString();
 			await _resultCollection.InsertOneAsync(resultModel, cancellationToken: cancellationToken);
 			return resultModel.Id;
@@ -47,6 +47,9 @@ namespace Elpida.Backend.Data
 		public Task<List<ResultPreviewModel>> GetAsync(int from, int count, bool desc,
 			CancellationToken cancellationToken)
 		{
+			if (from < 0) throw new ArgumentException("'from' must be positive or 0", nameof(from));
+			if (count <= 0) throw new ArgumentException("'count' must be positive", nameof(count));
+
 			var result = _resultCollection.AsQueryable();
 
 			if (desc) result = result.OrderByDescending(m => m.TimeStamp);
