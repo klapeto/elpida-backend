@@ -14,12 +14,12 @@ namespace Elpida.Backend.Data
 	{
 		private readonly IMongoCollection<ResultModel> _resultCollection;
 
-		public MongoResultsRepository(IElpidaDatabaseSettings settings)
+		public MongoResultsRepository(IDocumentRepositorySettings settings)
 		{
 			var client = new MongoClient(settings.ConnectionString);
 			var database = client.GetDatabase(settings.DatabaseName);
 
-			_resultCollection = database.GetCollection<ResultModel>(settings.ElpidaCollectionName);
+			_resultCollection = database.GetCollection<ResultModel>(settings.ResultsCollectionName);
 		}
 
 		#region IResultsRepository Members

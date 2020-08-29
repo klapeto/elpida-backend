@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
 namespace Elpida.Backend
@@ -24,14 +25,23 @@ namespace Elpida.Backend
 		{
 			services.AddControllers();
 
-			services.Configure<ElpidaDatabaseSettings>(
-				Configuration.GetSection(nameof(ElpidaDatabaseSettings)));
+			services.Configure<DocumentRepositorySettings>(
+				Configuration.GetSection(nameof(DocumentRepositorySettings)));
+			
+			services.Configure<AzureBlobAssetsRepositorySettings>(
+				Configuration.GetSection(nameof(AzureBlobAssetsRepositorySettings)));
 
-			services.AddSingleton<IElpidaDatabaseSettings>(sp =>
-				sp.GetRequiredService<IOptions<ElpidaDatabaseSettings>>().Value);
-
+			services.AddSingleton<IDocumentRepositorySettings>(sp =>
+				sp.GetRequiredService<IOptions<DocumentRepositorySettings>>().Value);
+			
+			services.AddSingleton<IAssetsRepositorySettings>(sp =>
+				sp.GetRequiredService<IOptions<AzureBlobAssetsRepositorySettings>>().Value);
+			
 			services.AddScoped<IResultsService, ResultService>();
+			services.AddTransient<IAssetsService, AssetsService>();
 			services.AddSingleton<IResultsRepository, MongoResultsRepository>();
+			services.AddTransient<IAssetsRepository, AzureBlobsAssetsRepository>();
+			
 			services.AddApiVersioning();
 
 			services.AddCors();

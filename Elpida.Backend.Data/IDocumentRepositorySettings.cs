@@ -1,8 +1,8 @@
 namespace Elpida.Backend.Data
 {
-	public interface IElpidaDatabaseSettings
+	public interface IDocumentRepositorySettings
 	{
-		string ElpidaCollectionName { get; set; }
+		string ResultsCollectionName { get; set; }
 		
 		string StatisticsCollectionName { get; set; }
 		string ConnectionString { get; set; }
