@@ -1,10 +1,10 @@
-namespace Elpida.Backend.Services.Abstractions.Dtos
+namespace Elpida.Backend.Data.Abstractions.Models.Result
 {
-	public class TopologyDto
+	public class TopologyModel
 	{
 		public uint TotalLogicalCores { get; set; }
 		public uint TotalPhysicalCores { get; set; }
 		public uint TotalDepth { get; set; }
-		public CpuNodeDto Root { get; set; }
+		public CpuNodeModel Root { get; set; }
 	}
 }

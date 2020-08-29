@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Data.Abstractions;
 using Elpida.Backend.Data.Abstractions.Models;
+using Elpida.Backend.Data.Abstractions.Models.Result;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;

@@ -1,6 +1,6 @@
-namespace Elpida.Backend.Data.Abstractions.Models
+namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 {
-	public class TaskResultModel
+	public class TaskResultDto
 	{
 		public string Name { get; set; }
 		public string Description { get; set; }

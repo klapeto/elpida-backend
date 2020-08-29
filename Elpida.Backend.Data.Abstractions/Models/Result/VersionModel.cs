@@ -1,6 +1,6 @@
-namespace Elpida.Backend.Services.Abstractions.Dtos
+namespace Elpida.Backend.Data.Abstractions.Models.Result
 {
-	public class VersionDto
+	public class VersionModel
 	{
 		public int Major { get; set; }
 		public int Minor { get; set; }

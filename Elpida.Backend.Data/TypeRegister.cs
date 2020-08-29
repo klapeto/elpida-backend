@@ -1,4 +1,5 @@
 using Elpida.Backend.Data.Abstractions.Models;
+using Elpida.Backend.Data.Abstractions.Models.Result;
 using MongoDB.Bson.Serialization;
 
 namespace Elpida.Backend.Data

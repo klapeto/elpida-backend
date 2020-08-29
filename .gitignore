@@ -22,3 +22,5 @@ yarn-error.log*
 # Build Binaries
 */bin/**
 */obj/**
+
+Elpida.Backend/appsettings.Development.json

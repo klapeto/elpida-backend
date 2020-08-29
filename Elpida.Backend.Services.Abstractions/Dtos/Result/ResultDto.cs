@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Elpida.Backend.Services.Abstractions.Dtos
+namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 {
 	public class ResultDto
 	{

@@ -1,6 +1,6 @@
-namespace Elpida.Backend.Services.Abstractions.Dtos
+namespace Elpida.Backend.Data.Abstractions.Models.Result
 {
-	public class OsDto
+	public class OsModel
 	{
 		public string Category { get; set; }
 		public string Name { get; set; }

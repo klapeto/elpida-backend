@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 
-namespace Elpida.Backend.Services.Abstractions.Dtos
+namespace Elpida.Backend.Data.Abstractions.Models.Result
 {
-	public class CpuDto
+	public class CpuModel
 	{
 		public string Vendor { get; set; }
 		public string Brand { get; set; }
@@ -13,7 +13,7 @@ namespace Elpida.Backend.Services.Abstractions.Dtos
 		public bool TurboBoost { get; set; }
 		public bool TurboBoost3 { get; set; }
 		public bool Smt { get; set; }
-		public IList<CpuCacheDto> Caches { get; set; }
+		public IList<CpuCacheModel> Caches { get; set; }
 		public IList<string> Features { get; set; }
 	}
 }

@@ -1,8 +1,8 @@
 using System;
 
-namespace Elpida.Backend.Services.Abstractions.Dtos
+namespace Elpida.Backend.Data.Abstractions.Models.Result
 {
-	public class ResultPreviewDto
+	public class ResultPreviewModel
 	{
 		public string Id { get; set; }
 
@@ -13,6 +13,7 @@ namespace Elpida.Backend.Services.Abstractions.Dtos
 		public int ElpidaVersionMinor { get; set; }
 		public int ElpidaVersionRevision { get; set; }
 		public int ElpidaVersionBuild { get; set; }
+
 		public string OsName { get; set; }
 		public string OsVersion { get; set; }
 		public string CpuBrand { get; set; }

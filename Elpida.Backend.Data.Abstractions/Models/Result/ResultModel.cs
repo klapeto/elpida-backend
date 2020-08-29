@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Elpida.Backend.Data.Abstractions.Models
+namespace Elpida.Backend.Data.Abstractions.Models.Result
 {
 	public class ResultModel
 	{

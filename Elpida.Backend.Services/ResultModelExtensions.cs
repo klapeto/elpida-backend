@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Elpida.Backend.Data.Abstractions.Models;
+using Elpida.Backend.Data.Abstractions.Models.Result;
 using Elpida.Backend.Services.Abstractions.Dtos;
+using Elpida.Backend.Services.Abstractions.Dtos.Result;
 
 namespace Elpida.Backend.Services
 {
