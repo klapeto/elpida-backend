@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Elpida.Backend.Data.Abstractions.Models;
@@ -11,6 +12,7 @@ namespace Elpida.Backend.Services
 	{
 		public static ResultDto ToResultDto(this ResultModel resultModel)
 		{
+			if (resultModel == null) throw new ArgumentNullException(nameof(resultModel));
 			var resultDto = new ResultDto
 			{
 				TimeStamp = resultModel.TimeStamp,

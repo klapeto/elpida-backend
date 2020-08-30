@@ -25,45 +25,20 @@ namespace Elpida.Backend.Data.Tests
 
 			Assert.ThrowsAsync<ArgumentNullException>(async () => await repo.CreateAsync("PlaceHolder", null));
 		}
+		
 
 		[Test]
-		public void CreateAsync_NullFilename_ThrowsArgumentException()
+		[TestCase("")]
+		[TestCase("\n\t  \t \n")]
+		[TestCase("/haha/lol")]
+		[TestCase(null)]
+		public void CreateAsync_EmptyFilename_ThrowsArgumentException(string filename)
 		{
 			var containerClient = new Mock<BlobContainerClient>(MockBehavior.Strict);
 			var client = new Mock<BlobClient>(MockBehavior.Strict);
 			var repo = new AzureBlobsAssetsRepository(new MockWrapperFactory(client.Object, containerClient.Object));
 
-			Assert.ThrowsAsync<ArgumentException>(async () => await repo.CreateAsync(null, Stream.Null));
-		}
-
-		[Test]
-		public void CreateAsync_EmptyFilename_ThrowsArgumentException()
-		{
-			var containerClient = new Mock<BlobContainerClient>(MockBehavior.Strict);
-			var client = new Mock<BlobClient>(MockBehavior.Strict);
-			var repo = new AzureBlobsAssetsRepository(new MockWrapperFactory(client.Object, containerClient.Object));
-
-			Assert.ThrowsAsync<ArgumentException>(async () => await repo.CreateAsync(string.Empty, Stream.Null));
-		}
-
-		[Test]
-		public void CreateAsync_WhiteSpaceFilename_ThrowsArgumentException()
-		{
-			var containerClient = new Mock<BlobContainerClient>(MockBehavior.Strict);
-			var client = new Mock<BlobClient>(MockBehavior.Strict);
-			var repo = new AzureBlobsAssetsRepository(new MockWrapperFactory(client.Object, containerClient.Object));
-
-			Assert.ThrowsAsync<ArgumentException>(async () => await repo.CreateAsync("\n\t  \t \n", Stream.Null));
-		}
-
-		[Test]
-		public void CreateAsync_InvalidFilename_ThrowsArgumentException()
-		{
-			var containerClient = new Mock<BlobContainerClient>(MockBehavior.Strict);
-			var client = new Mock<BlobClient>(MockBehavior.Strict);
-			var repo = new AzureBlobsAssetsRepository(new MockWrapperFactory(client.Object, containerClient.Object));
-
-			Assert.ThrowsAsync<ArgumentException>(async () => await repo.CreateAsync("/haha/lol", Stream.Null));
+			Assert.ThrowsAsync<ArgumentException>(async () => await repo.CreateAsync(filename, Stream.Null));
 		}
 
 		[Test]
@@ -120,8 +95,7 @@ namespace Elpida.Backend.Data.Tests
 			blobType.GetProperty(nameof(BlobItem.Properties)).SetValue(blob, props);
 			return (BlobItem) blob;
 		}
-
-
+		
 		[Test]
 		public async Task GetAssetsAsync_Success()
 		{

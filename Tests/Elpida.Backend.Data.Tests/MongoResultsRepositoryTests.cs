@@ -26,25 +26,15 @@ namespace Elpida.Backend.Data.Tests
 		}
 
 		[Test]
-		public void GetSingleAsync_NullId_ThrowsArgumentException()
+		[TestCase(null)]
+		[TestCase("")]
+		public void GetSingleAsync_NullId_ThrowsArgumentException(string id)
 		{
 			var mock = new Mock<IMongoCollection<ResultModel>>(MockBehavior.Strict);
-			
-			var repo = new MongoResultsRepository(mock.Object);
-			Assert.ThrowsAsync<ArgumentException>(async () => await repo.GetSingleAsync(null, default));
-			
-			mock.VerifyAll();
-			mock.VerifyNoOtherCalls();
-		}
 
-		[Test]
-		public void GetSingleAsync_EmptyId_ThrowsArgumentException()
-		{
-			var mock = new Mock<IMongoCollection<ResultModel>>(MockBehavior.Strict);
-			
 			var repo = new MongoResultsRepository(mock.Object);
-			Assert.ThrowsAsync<ArgumentException>(async () => await repo.GetSingleAsync(string.Empty, default));
-			
+			Assert.ThrowsAsync<ArgumentException>(async () => await repo.GetSingleAsync(id, default));
+
 			mock.VerifyAll();
 			mock.VerifyNoOtherCalls();
 		}
@@ -55,13 +45,13 @@ namespace Elpida.Backend.Data.Tests
 			var mock = new Mock<IMongoCollection<ResultModel>>(MockBehavior.Strict);
 
 			mock.Setup(r => r.FindAsync(It.IsAny<FilterDefinition<ResultModel>>(),
-					It.IsAny<FindOptions<ResultModel,ResultModel>>(), It.IsAny<CancellationToken>()))
+					It.IsAny<FindOptions<ResultModel, ResultModel>>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync(new DummyAsyncCursor<ResultModel>(new List<ResultModel>()))
 				.Verifiable();
 			var repo = new MongoResultsRepository(mock.Object);
-			
+
 			await repo.GetSingleAsync("Haha", default);
-			
+
 			mock.VerifyAll();
 			mock.VerifyNoOtherCalls();
 		}
@@ -70,10 +60,10 @@ namespace Elpida.Backend.Data.Tests
 		public void GetSingleAsync_NullModel_ThrowsArgumentNullException()
 		{
 			var collection = new Mock<IMongoCollection<ResultModel>>(MockBehavior.Strict);
-			
+
 			var repo = new MongoResultsRepository(collection.Object);
 			Assert.ThrowsAsync<ArgumentNullException>(async () => await repo.CreateAsync(null, default));
-			
+
 			collection.VerifyAll();
 			collection.VerifyNoOtherCalls();
 		}
@@ -82,14 +72,16 @@ namespace Elpida.Backend.Data.Tests
 		public async Task CreateAsync_Success()
 		{
 			var collection = new Mock<IMongoCollection<ResultModel>>(MockBehavior.Strict);
-			
-			collection.Setup(r => r.InsertOneAsync(It.IsAny<ResultModel>(), It.IsAny<InsertOneOptions>(),It.IsAny<CancellationToken>()))
+
+			collection.Setup(r =>
+					r.InsertOneAsync(It.IsAny<ResultModel>(), It.IsAny<InsertOneOptions>(),
+						It.IsAny<CancellationToken>()))
 				.Returns(Task.CompletedTask)
 				.Verifiable();
-			
+
 			var repo = new MongoResultsRepository(collection.Object);
 			await repo.CreateAsync(new ResultModel(), default);
-			
+
 			collection.VerifyAll();
 			collection.VerifyNoOtherCalls();
 		}
@@ -98,50 +90,42 @@ namespace Elpida.Backend.Data.Tests
 		public async Task GetCountAsync_Success()
 		{
 			var collection = new Mock<IMongoCollection<ResultModel>>(MockBehavior.Strict);
-			
-			collection.Setup(r => r.CountDocumentsAsync(It.IsAny<FilterDefinition<ResultModel>>(), It.IsAny<CountOptions>(),It.IsAny<CancellationToken>()))
+
+			collection.Setup(r => r.CountDocumentsAsync(It.IsAny<FilterDefinition<ResultModel>>(),
+					It.IsAny<CountOptions>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync(5)
 				.Verifiable();
-			
+
 			var repo = new MongoResultsRepository(collection.Object);
 			await repo.GetTotalCountAsync(default);
-			
+
 			collection.VerifyAll();
 			collection.VerifyNoOtherCalls();
 		}
 
 
 		[Test]
-		public void GetAsync_InvalidFrom_ThrowsArgumentException()
+		[TestCase(-5, 10)]
+		[TestCase(0, -8)]
+		public void GetAsync_InvalidRange_ThrowsArgumentException(int from, int count)
 		{
 			var mock = new Mock<IMongoCollection<ResultModel>>(MockBehavior.Strict);
-			
-			var repo = new MongoResultsRepository(mock.Object);
-			Assert.ThrowsAsync<ArgumentException>(async () => await repo.GetAsync(-5, 10, false, default));
-			
-			mock.VerifyNoOtherCalls();
-		}
 
-		[Test]
-		public void GetAsync_InvalidCount_ThrowsArgumentException()
-		{
-			var mock = new Mock<IMongoCollection<ResultModel>>(MockBehavior.Strict);
-			
 			var repo = new MongoResultsRepository(mock.Object);
-			Assert.ThrowsAsync<ArgumentException>(async () => await repo.GetAsync(0, -5, false, default));
-			
+			Assert.ThrowsAsync<ArgumentException>(async () => await repo.GetAsync(from, count, false, default));
+
 			mock.VerifyNoOtherCalls();
 		}
 
 		[Test]
 		public async Task DeleteAllAsync_Success()
-		{			
+		{
 			var mock = new Mock<IMongoCollection<ResultModel>>(MockBehavior.Strict);
 
 			mock.Setup(r => r.DeleteManyAsync(It.IsAny<FilterDefinition<ResultModel>>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync(new DeleteResult.Acknowledged(5))
 				.Verifiable();
-			
+
 			var repo = new MongoResultsRepository(mock.Object);
 			await repo.DeleteAllAsync(default);
 
@@ -152,7 +136,7 @@ namespace Elpida.Backend.Data.Tests
 		private static Mock<IMongoCollection<ResultModel>> GetDefaultCollectionMock()
 		{
 			var mock = new Mock<IMongoCollection<ResultModel>>(MockBehavior.Strict);
-			
+
 			mock.SetupGet(r => r.CollectionNamespace)
 				.Returns(CollectionNamespace.FromFullName("x.x"));
 			mock.SetupGet(r => r.Settings)
@@ -162,7 +146,7 @@ namespace Elpida.Backend.Data.Tests
 
 			return mock;
 		}
-		
+
 		[Test]
 		public async Task GetAsync_Success()
 		{
@@ -175,11 +159,11 @@ namespace Elpida.Backend.Data.Tests
 
 			var repo = new MongoResultsRepository(mock.Object);
 			await repo.GetAsync(0, 10, false, default);
-			
+
 			mock.VerifyAll();
 			mock.VerifyNoOtherCalls();
 		}
-		
+
 		[Test]
 		public async Task GetAsync_Desc_Success()
 		{
@@ -189,10 +173,10 @@ namespace Elpida.Backend.Data.Tests
 					It.IsAny<AggregateOptions>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync(new DummyAsyncCursor<ResultPreviewModel>(new List<ResultPreviewModel>()))
 				.Verifiable();
-			
+
 			var repo = new MongoResultsRepository(mock.Object);
 			await repo.GetAsync(0, 10, true, default);
-			
+
 			mock.VerifyAll();
 			mock.VerifyNoOtherCalls();
 		}

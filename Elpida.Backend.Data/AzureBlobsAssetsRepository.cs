@@ -43,7 +43,7 @@ namespace Elpida.Backend.Data
 				returnList.Add(new AssetInfoModel
 				{
 					Filename = blob.Name,
-					Location = GetBlobUri(client.Uri, blob.Name),
+					Location = new Uri($"{client.Uri}/{blob.Name}"),
 					Size = blob.Properties.ContentLength ?? -1,
 					Md5 = ByteArrayToString(blob.Properties.ContentHash)
 				});
@@ -53,22 +53,6 @@ namespace Elpida.Backend.Data
 		}
 
 		#endregion
-
-		private Uri GetBlobUri(Uri containerUri, string filename)
-		{
-			if (string.IsNullOrWhiteSpace(filename))
-				throw new ArgumentException("Filename is empty!", nameof(filename));
-
-			var uriString = $"{containerUri}/{filename}";
-
-			if (filename.Contains('/'))
-				throw new ArgumentException("Filename contains invalid characters", nameof(filename));
-
-			if (!Uri.TryCreate(uriString, UriKind.Absolute, out var uri) || uri.Scheme != Uri.UriSchemeHttps)
-				throw new ArgumentException("Blob Uri is not valid!");
-
-			return uri;
-		}
 
 		private static string ByteArrayToString(IReadOnlyCollection<byte> bytes)
 		{
