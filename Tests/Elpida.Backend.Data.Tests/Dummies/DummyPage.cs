@@ -14,7 +14,7 @@ namespace Elpida.Backend.Data.Tests.Dummies
 		}
 
 		public override IReadOnlyList<T> Values => _internal.ToArray();
-		public override string? ContinuationToken { get; }
+		public override string? ContinuationToken { get; } = null;
 
 		public override Response GetRawResponse()
 		{

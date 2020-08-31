@@ -23,13 +23,13 @@ namespace Elpida.Backend.Services
 		{
 			if (resultDto == null) throw new ArgumentNullException(nameof(resultDto));
 			resultDto.TimeStamp = DateTime.UtcNow;
-			return _resultsRepository.CreateAsync(resultDto.ToResultModel(), cancellationToken);
+			return _resultsRepository.CreateAsync(resultDto.ToModel(), cancellationToken);
 		}
 
 		public async Task<ResultDto> GetSingleAsync(string id, CancellationToken cancellationToken)
 		{
 			if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException("Id is empty", nameof(id));
-			return (await _resultsRepository.GetSingleAsync(id, cancellationToken)).ToResultDto();
+			return (await _resultsRepository.GetSingleAsync(id, cancellationToken)).ToDto();
 		}
 
 		public async Task<PagedResult<ResultPreviewDto>> GetPagedAsync(PageRequest pageRequest,

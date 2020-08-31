@@ -15,12 +15,12 @@ namespace Elpida.Backend.Data
 					cm.MapIdProperty(model => model.Id);
 				});
 
-			if (!BsonClassMap.IsClassMapRegistered(typeof(StatisticModel)))
-				BsonClassMap.RegisterClassMap<StatisticModel>(cm =>
-				{
-					cm.AutoMap();
-					cm.MapIdProperty(model => model.Id);
-				});
+			// if (!BsonClassMap.IsClassMapRegistered(typeof(StatisticModel)))
+			// 	BsonClassMap.RegisterClassMap<StatisticModel>(cm =>
+			// 	{
+			// 		cm.AutoMap();
+			// 		cm.MapIdProperty(model => model.Id);
+			// 	});
 		}
 	}
 }

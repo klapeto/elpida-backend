@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Elpida.Backend.Data.Abstractions.Models;
 using Elpida.Backend.Data.Abstractions.Models.Result;
 using Elpida.Backend.Services.Abstractions.Dtos.Result;
 
@@ -7,6 +8,17 @@ namespace Elpida.Backend.Services.Tests
 {
 	public static class Generators
 	{
+		public static AssetInfoModel CreateAssetInfoModel()
+		{
+			return new AssetInfoModel
+			{
+				Filename = "Test.xtx",
+				Location = new Uri("https://beta.elpida.dev"),
+				Md5 = "68546464654314",
+				Size = 6546543132
+			};
+		}
+
 		public static ResultPreviewModel CreateResultPreviewModel(string id)
 		{
 			return new ResultPreviewModel
@@ -27,6 +39,7 @@ namespace Elpida.Backend.Services.Tests
 				ElpidaVersionRevision = 6
 			};
 		}
+
 		public static ResultModel CreateNewResultModel(string id)
 		{
 			return new ResultModel
@@ -110,9 +123,30 @@ namespace Elpida.Backend.Services.Tests
 									NodeType = 1,
 									OsIndex = 1
 								}
-							}, 
+							},
 							Name = "Machine",
-							Value = null, MemoryChildren = new List<CpuNodeModel>(),
+							Value = null,
+							MemoryChildren = new List<CpuNodeModel>
+							{
+								new CpuNodeModel
+								{
+									Children = new List<CpuNodeModel>(),
+									Name = "NUMA",
+									Value = 45654,
+									MemoryChildren = new List<CpuNodeModel>(),
+									NodeType = 7,
+									OsIndex = 1
+								},
+								new CpuNodeModel
+								{
+									Children = new List<CpuNodeModel>(),
+									Name = "NUMA2",
+									Value = 4565455,
+									MemoryChildren = new List<CpuNodeModel>(),
+									NodeType = 7,
+									OsIndex = 2
+								}
+							},
 							NodeType = 0,
 							OsIndex = 0
 						},
@@ -121,8 +155,8 @@ namespace Elpida.Backend.Services.Tests
 				}
 			};
 		}
-		
-		
+
+
 		public static ResultDto CreateNewResultDto()
 		{
 			return new ResultDto
@@ -204,9 +238,30 @@ namespace Elpida.Backend.Services.Tests
 									NodeType = 1,
 									OsIndex = 1
 								}
-							}, 
+							},
+							MemoryChildren = new List<CpuNodeDto>
+							{
+								new CpuNodeDto
+								{
+									Children = new List<CpuNodeDto>(),
+									Name = "NUMA",
+									Value = 45654,
+									MemoryChildren = new List<CpuNodeDto>(),
+									NodeType = 7,
+									OsIndex = 1
+								},
+								new CpuNodeDto
+								{
+									Children = new List<CpuNodeDto>(),
+									Name = "NUMA2",
+									Value = 4565455,
+									MemoryChildren = new List<CpuNodeDto>(),
+									NodeType = 7,
+									OsIndex = 2
+								}
+							},
 							Name = "Machine",
-							Value = null, MemoryChildren = new List<CpuNodeDto>(),
+							Value = null,
 							NodeType = 0,
 							OsIndex = 0
 						},
