@@ -7,7 +7,7 @@ namespace Elpida.Backend.Services
 {
 	public static class ResultPreviewModelExtensions
 	{
-		public static ResultPreviewDto ToPreviewDto(this ResultPreviewModel model)
+		public static ResultPreviewDto ToDto(this ResultPreviewModel model)
 		{
 			return new ResultPreviewDto
 			{

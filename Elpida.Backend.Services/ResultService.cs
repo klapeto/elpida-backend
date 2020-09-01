@@ -40,7 +40,7 @@ namespace Elpida.Backend.Services
 				pageRequest.TotalCount = await _resultsRepository.GetTotalCountAsync(cancellationToken);
 
 			var list = (await _resultsRepository.GetAsync(pageRequest.Next, pageRequest.Count, true, cancellationToken))
-				.Select(m => m.ToPreviewDto())
+				.Select(m => m.ToDto())
 				.ToList();
 			return new PagedResult<ResultPreviewDto>(list, pageRequest);
 		}
