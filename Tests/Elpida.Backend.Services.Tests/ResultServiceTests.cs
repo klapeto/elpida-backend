@@ -184,5 +184,25 @@ namespace Elpida.Backend.Services.Tests
 			repoMock.VerifyAll();
 			repoMock.VerifyNoOtherCalls();
 		}
+
+		[Test]
+		public void GetSingleAsync_NonExistent_ThrowsNotFoundException()
+		{
+			var repoMock = new Mock<IResultsRepository>(MockBehavior.Strict);
+
+			var id = Guid.NewGuid().ToString("N");
+
+			repoMock.Setup(r =>
+					r.GetSingleAsync(It.Is<string>(i => i == id), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(() => null)
+				.Verifiable();
+
+			var service = new ResultService(repoMock.Object);
+
+			Assert.ThrowsAsync<NotFoundException>(async () => await service.GetSingleAsync(id, default));
+
+			repoMock.VerifyAll();
+			repoMock.VerifyNoOtherCalls();
+		}
 	}
 }

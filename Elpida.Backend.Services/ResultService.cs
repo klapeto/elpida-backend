@@ -28,8 +28,12 @@ namespace Elpida.Backend.Services
 
 		public async Task<ResultDto> GetSingleAsync(string id, CancellationToken cancellationToken)
 		{
-			if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException("Id is empty", nameof(id));
-			return (await _resultsRepository.GetSingleAsync(id, cancellationToken)).ToDto();
+			if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException("Id cannot be empty", nameof(id));
+			
+			var model = await _resultsRepository.GetSingleAsync(id, cancellationToken);
+			if (model == null) throw new NotFoundException(id);
+			
+			return model.ToDto();
 		}
 
 		public async Task<PagedResult<ResultPreviewDto>> GetPagedAsync(PageRequest pageRequest,

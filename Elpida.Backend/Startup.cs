@@ -1,13 +1,18 @@
 using System;
+using System.Net;
+using System.Threading.Tasks;
 using Elpida.Backend.Data;
 using Elpida.Backend.Data.Abstractions;
 using Elpida.Backend.Data.Abstractions.Models.Result;
 using Elpida.Backend.Services;
 using Elpida.Backend.Services.Abstractions;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
@@ -43,7 +48,7 @@ namespace Elpida.Backend
 			services.AddTransient<IAssetsService, AssetsService>();
 
 			services.AddTransient(MongoResultsCollection_ImplementationFactory);
-			
+
 			services.AddTransient<IBlobClientFactory, AzureAssetsBlobClientFactory>();
 
 			services.AddTransient<IResultsRepository, MongoResultsRepository>();
@@ -66,7 +71,7 @@ namespace Elpida.Backend
 			if (string.IsNullOrWhiteSpace(settings.ResultsCollectionName))
 				throw new ArgumentException("Collection name for Results documents is empty",
 					nameof(settings.ResultsCollectionName));
-			
+
 			var client = new MongoClient(settings.ConnectionString);
 			var database = client.GetDatabase(settings.DatabaseName);
 
@@ -76,11 +81,15 @@ namespace Elpida.Backend
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 		{
-			//if (env.IsDevelopment())
+			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
 			}
-
+			else
+			{
+				app.UseExceptionHandler(builder => builder.Run(ErrorHandler));
+			}
+			
 			app.UseCors(builder =>
 				builder.WithOrigins("https://beta.elpida.dev", "https://elpida.dev").WithMethods("GET"));
 
@@ -91,6 +100,27 @@ namespace Elpida.Backend
 			app.UseAuthorization();
 
 			app.UseEndpoints(endpoints => endpoints.MapControllers());
+		}
+
+		private static async Task ErrorHandler(HttpContext context)
+		{
+			var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
+
+			context.Response.ContentType = "text/plain";
+
+			switch (exceptionHandlerPathFeature.Error)
+			{
+				case ArgumentException ae:
+					context.Response.StatusCode = (int) HttpStatusCode.BadRequest;
+					await context.Response.WriteAsync($"{ae.Message}: '{ae.ParamName}'");
+					break;
+				case NotFoundException _:
+					context.Response.StatusCode = (int) HttpStatusCode.NotFound;
+					break;
+				default:
+					context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
+					break;
+			}
 		}
 	}
 }
