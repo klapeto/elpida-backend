@@ -7,15 +7,17 @@ build:
     image: mcr.microsoft.com/dotnet/core/sdk:latest
     stage: build
     script:
-        - "dotnet build"
+        - cd src
+        - dotnet build
     artifacts:
       paths:
-        - bin/
+        - src/Elpida.Backend/bin/
 test:
     image: mcr.microsoft.com/dotnet/core/sdk:latest
     stage: test
     script: 
-        - "dotnet test"
+        - cd src
+        - dotnet test
 
 docker-build-master:
     # Official docker image.
