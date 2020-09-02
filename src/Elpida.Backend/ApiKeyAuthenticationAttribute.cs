@@ -26,7 +26,7 @@ namespace Elpida.Backend
 			var validKey = context.HttpContext.RequestServices.GetRequiredService<IConfiguration>()
 				.GetValue<string>(KeyName);
 			if (validKey == null)
-				throw new ArgumentException("Provided key name does not exist in the configuration!", nameof(KeyName));
+				throw new ArgumentException("Provided key name does not exist in the configuration!", KeyName);
 
 			if (!validKey.Equals(key))
 			{
