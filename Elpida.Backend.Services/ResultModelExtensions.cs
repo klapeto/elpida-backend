@@ -1,14 +1,16 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Elpida.Backend.Data.Abstractions.Models;
-using Elpida.Backend.Services.Abstractions.Dtos;
+using Elpida.Backend.Data.Abstractions.Models.Result;
+using Elpida.Backend.Services.Abstractions.Dtos.Result;
 
 namespace Elpida.Backend.Services
 {
 	public static class ResultModelExtensions
 	{
-		public static ResultDto ToResultDto(this ResultModel resultModel)
+		public static ResultDto ToDto(this ResultModel resultModel)
 		{
+			if (resultModel == null) throw new ArgumentNullException(nameof(resultModel));
 			var resultDto = new ResultDto
 			{
 				TimeStamp = resultModel.TimeStamp,
@@ -24,7 +26,7 @@ namespace Elpida.Backend.Services
 						Version = new VersionDto
 						{
 							Build = resultModel.Elpida.Version.Build,
-							Major = resultModel.Elpida.Version.Build,
+							Major = resultModel.Elpida.Version.Major,
 							Minor = resultModel.Elpida.Version.Minor,
 							Revision = resultModel.Elpida.Version.Revision
 						}

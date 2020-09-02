@@ -1,11 +1,13 @@
 using Elpida.Backend.Data.Abstractions.Models;
+using Elpida.Backend.Data.Abstractions.Models.Result;
 using Elpida.Backend.Services.Abstractions.Dtos;
+using Elpida.Backend.Services.Abstractions.Dtos.Result;
 
 namespace Elpida.Backend.Services
 {
 	public static class ResultPreviewModelExtensions
 	{
-		public static ResultPreviewDto ToPreviewDto(this ResultPreviewModel model)
+		public static ResultPreviewDto ToDto(this ResultPreviewModel model)
 		{
 			return new ResultPreviewDto
 			{

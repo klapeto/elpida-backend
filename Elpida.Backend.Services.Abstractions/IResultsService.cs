@@ -1,6 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
-using Elpida.Backend.Services.Abstractions.Dtos;
+using Elpida.Backend.Services.Abstractions.Dtos.Result;
 
 namespace Elpida.Backend.Services.Abstractions
 {

@@ -3,7 +3,7 @@ using System.Net.Mime;
 using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Services.Abstractions;
-using Elpida.Backend.Services.Abstractions.Dtos;
+using Elpida.Backend.Services.Abstractions.Dtos.Result;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -36,7 +36,8 @@ namespace Elpida.Backend.Controllers
 		[Consumes(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<IActionResult> PostNewResult([FromBody] ResultDto resultDto, CancellationToken cancellationToken)
+		public async Task<IActionResult> PostNewResult([FromBody] ResultDto resultDto,
+			CancellationToken cancellationToken)
 		{
 			var id = await _resultsService.CreateAsync(resultDto, cancellationToken);
 			return Created(new Uri($"{Request.GetEncodedUrl()}{id}", UriKind.Absolute), null);
@@ -55,7 +56,9 @@ namespace Elpida.Backend.Controllers
 		[HttpGet]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public async Task<IActionResult> GetPaged([FromQuery] PageRequest pageRequest, CancellationToken cancellationToken)
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		public async Task<IActionResult> GetPaged([FromQuery] PageRequest pageRequest,
+			CancellationToken cancellationToken)
 		{
 			return Ok(await _resultsService.GetPagedAsync(pageRequest, cancellationToken));
 		}

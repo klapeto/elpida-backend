@@ -1,4 +1,5 @@
 using Elpida.Backend.Data.Abstractions.Models;
+using Elpida.Backend.Data.Abstractions.Models.Result;
 using MongoDB.Bson.Serialization;
 
 namespace Elpida.Backend.Data
@@ -14,12 +15,12 @@ namespace Elpida.Backend.Data
 					cm.MapIdProperty(model => model.Id);
 				});
 
-			if (!BsonClassMap.IsClassMapRegistered(typeof(StatisticModel)))
-				BsonClassMap.RegisterClassMap<StatisticModel>(cm =>
-				{
-					cm.AutoMap();
-					cm.MapIdProperty(model => model.Id);
-				});
+			// if (!BsonClassMap.IsClassMapRegistered(typeof(StatisticModel)))
+			// 	BsonClassMap.RegisterClassMap<StatisticModel>(cm =>
+			// 	{
+			// 		cm.AutoMap();
+			// 		cm.MapIdProperty(model => model.Id);
+			// 	});
 		}
 	}
 }
