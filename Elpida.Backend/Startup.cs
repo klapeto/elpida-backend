@@ -6,6 +6,8 @@ using Elpida.Backend.Data.Abstractions;
 using Elpida.Backend.Data.Abstractions.Models.Result;
 using Elpida.Backend.Services;
 using Elpida.Backend.Services.Abstractions;
+using Elpida.Backend.Validators;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
@@ -30,7 +32,12 @@ namespace Elpida.Backend
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
-			services.AddControllers();
+			services.AddControllers()
+				.AddFluentValidation(configuration =>
+				{
+					configuration.ImplicitlyValidateChildProperties = true;
+					configuration.RegisterValidatorsFromAssemblyContaining<ResultValidator>();
+				});
 
 			services.Configure<DocumentRepositorySettings>(
 				Configuration.GetSection(nameof(DocumentRepositorySettings)));
@@ -82,14 +89,10 @@ namespace Elpida.Backend
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 		{
 			if (env.IsDevelopment())
-			{
 				app.UseDeveloperExceptionPage();
-			}
 			else
-			{
 				app.UseExceptionHandler(builder => builder.Run(ErrorHandler));
-			}
-			
+
 			app.UseCors(builder =>
 				builder.WithOrigins("https://beta.elpida.dev", "https://elpida.dev").WithMethods("GET"));
 
