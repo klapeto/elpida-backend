@@ -18,9 +18,9 @@ To perform unit tests navigate to 'src' and run:
 
 ## License
 
-    Elpida Backend
+    Elpida HTTP Rest API
     
-    Copyright (C) 2020  Ioannis Panagiotoulos
+    Copyright (C) 2020  Ioannis Panagiotopoulos
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as
