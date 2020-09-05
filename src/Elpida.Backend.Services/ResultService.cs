@@ -18,10 +18,13 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Data.Abstractions;
+using Elpida.Backend.Data.Abstractions.Models.Result;
 using Elpida.Backend.Services.Abstractions;
 using Elpida.Backend.Services.Abstractions.Dtos.Result;
 
@@ -48,24 +51,31 @@ namespace Elpida.Backend.Services
 		public async Task<ResultDto> GetSingleAsync(string id, CancellationToken cancellationToken)
 		{
 			if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException("Id cannot be empty", nameof(id));
-			
+
 			var model = await _resultsRepository.GetSingleAsync(id, cancellationToken);
 			if (model == null) throw new NotFoundException(id);
-			
+
 			return model.ToDto();
 		}
 
-		public async Task<PagedResult<ResultPreviewDto>> GetPagedAsync(PageRequest pageRequest,
+		public async Task<PagedResult<ResultPreviewDto>> GetPagedAsync(QueryRequest queryRequest,
 			CancellationToken cancellationToken)
 		{
-			if (pageRequest == null) throw new ArgumentNullException(nameof(pageRequest));
-			if (pageRequest.TotalCount == 0)
-				pageRequest.TotalCount = await _resultsRepository.GetTotalCountAsync(cancellationToken);
+			if (queryRequest == null) throw new ArgumentNullException(nameof(queryRequest));
 
-			var list = (await _resultsRepository.GetAsync(pageRequest.Next, pageRequest.Count, true, cancellationToken))
-				.Select(m => m.ToDto())
-				.ToList();
-			return new PagedResult<ResultPreviewDto>(list, pageRequest);
+			var result = await _resultsRepository.GetAsync(
+				queryRequest.PageRequest.Next,
+				queryRequest.PageRequest.Count,
+				queryRequest.Descending,
+				m => m.TimeStamp,
+				GetQueryFilters(queryRequest),
+				queryRequest.PageRequest.TotalCount == 0,
+				cancellationToken);
+
+			queryRequest.PageRequest.TotalCount = result.TotalCount;
+
+			return new PagedResult<ResultPreviewDto>(result.Items.Select(m => m.ToDto()).ToList(),
+				queryRequest.PageRequest);
 		}
 
 		public Task ClearResultsAsync(CancellationToken cancellationToken)
@@ -74,5 +84,43 @@ namespace Elpida.Backend.Services
 		}
 
 		#endregion
+
+		private static void AddFilter(List<Expression<Func<ResultModel, bool>>> accumulator,
+			QueryInstance<string> instance, Expression<Func<ResultModel, string>> fieldPart)
+		{
+			if (instance.Comp == "c" || instance.Comp == null)
+				accumulator.Add(Expression.Lambda<Func<ResultModel, bool>>(
+					Expression.Call(
+						fieldPart.Body,
+						typeof(string).GetMethod(nameof(string.Contains),new []{typeof(string)}),
+						Expression.Constant(instance.Value)
+					),
+					fieldPart.Parameters)
+				);
+			else if (instance.Comp == "eq")
+				accumulator.Add(Expression.Lambda<Func<ResultModel, bool>>(Expression.Equal(fieldPart.Body,
+						Expression.Constant(instance.Value)),
+					fieldPart.Parameters));
+			else
+				throw new ArgumentException(
+					"String filter needs either 'c'/null for checking if the field contains or 'eq' for equality");
+		}
+
+
+		private static IEnumerable<Expression<Func<ResultModel, bool>>> GetQueryFilters(QueryRequest queryRequest)
+		{
+			var returnList = new List<Expression<Func<ResultModel, bool>>>();
+			AddFilter(returnList, queryRequest.BenchmarkName, model => model.Result.Name);
+			// if (queryRequest.BenchmarkName != null)
+			// {
+			// 	if(queryRequest.BenchmarkName.Comp == "c") 
+			// 		returnList.Add(m => m.Result.Name.Contains(queryRequest.BenchmarkName.Value));
+			// 	else
+			// 		returnList.Add(m => m.Result.Name== queryRequest.BenchmarkName.Value);
+			// }
+
+
+			return returnList;
+		}
 	}
 }

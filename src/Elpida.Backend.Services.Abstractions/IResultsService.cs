@@ -29,7 +29,7 @@ namespace Elpida.Backend.Services.Abstractions
 
 		Task<ResultDto> GetSingleAsync(string id, CancellationToken cancellationToken = default);
 
-		Task<PagedResult<ResultPreviewDto>> GetPagedAsync(PageRequest pageRequest,
+		Task<PagedResult<ResultPreviewDto>> GetPagedAsync(QueryRequest queryRequest,
 			CancellationToken cancellationToken = default);
 
 		Task ClearResultsAsync(CancellationToken cancellationToken = default);
