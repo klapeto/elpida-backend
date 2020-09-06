@@ -19,6 +19,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Data.Abstractions;
@@ -42,7 +44,10 @@ namespace Elpida.Backend.Data
 
 		public async Task<ResultModel> GetSingleAsync(string id, CancellationToken cancellationToken)
 		{
-			if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException("'Id' cannot be empty", nameof(id));
+			if (string.IsNullOrWhiteSpace(id))
+			{
+				throw new ArgumentException("'Id' cannot be empty", nameof(id));
+			}
 
 			return await (await _resultCollection.FindAsync(r => r.Id == id, cancellationToken: cancellationToken))
 				.FirstOrDefaultAsync(cancellationToken);
@@ -50,7 +55,10 @@ namespace Elpida.Backend.Data
 
 		public async Task<string> CreateAsync(ResultModel resultModel, CancellationToken cancellationToken)
 		{
-			if (resultModel == null) throw new ArgumentNullException(nameof(resultModel));
+			if (resultModel == null)
+			{
+				throw new ArgumentNullException(nameof(resultModel));
+			}
 
 			resultModel.Id = ObjectId.GenerateNewId(DateTime.UtcNow).ToString();
 			await _resultCollection.InsertOneAsync(resultModel, cancellationToken: cancellationToken);
@@ -63,17 +71,37 @@ namespace Elpida.Backend.Data
 				cancellationToken: cancellationToken);
 		}
 
-		public Task<List<ResultPreviewModel>> GetAsync(int from, int count, bool desc,
-			CancellationToken cancellationToken)
+		public async Task<PagedQueryResult<ResultPreviewModel>> GetAsync<TOrderKey>(
+			int from,
+			int count,
+			bool descending,
+			Expression<Func<ResultModel, TOrderKey>> orderBy,
+			IEnumerable<Expression<Func<ResultModel, bool>>> filters,
+			bool calculateTotalCount,
+			CancellationToken cancellationToken = default)
 		{
-			if (from < 0) throw new ArgumentException("'from' must be positive or 0", nameof(from));
-			if (count <= 0) throw new ArgumentException("'count' must be positive", nameof(count));
+			if (from < 0)
+			{
+				throw new ArgumentException("'from' must be positive or 0", nameof(from));
+			}
+
+			if (count <= 0)
+			{
+				throw new ArgumentException("'count' must be positive", nameof(count));
+			}
 
 			var result = _resultCollection.AsQueryable();
 
-			if (desc) result = result.OrderByDescending(m => m.TimeStamp);
+			result = filters?.Aggregate(result, (current, filter) => current.Where(filter)) ?? result;
 
-			return result.Skip(from)
+			if (orderBy != null)
+			{
+				result = descending ? result.OrderByDescending(orderBy) : result.OrderBy(orderBy);
+			}
+
+			var totalCount = calculateTotalCount ? await result.CountAsync(cancellationToken) : 0;
+
+			var results = await result.Skip(from)
 				.Take(count)
 				.Select(m => new ResultPreviewModel
 				{
@@ -93,6 +121,8 @@ namespace Elpida.Backend.Data
 					TimeStamp = m.TimeStamp
 				})
 				.ToListAsync(cancellationToken);
+
+			return new PagedQueryResult<ResultPreviewModel>(totalCount, results);
 		}
 
 		public Task DeleteAllAsync(CancellationToken cancellationToken)

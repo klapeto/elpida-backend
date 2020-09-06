@@ -17,7 +17,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Data.Abstractions.Models.Result;
@@ -32,7 +34,14 @@ namespace Elpida.Backend.Data.Abstractions
 
 		Task<long> GetTotalCountAsync(CancellationToken cancellationToken = default);
 
-		Task<List<ResultPreviewModel>> GetAsync(int from, int count, bool desc = false, CancellationToken cancellationToken = default);
+		Task<PagedQueryResult<ResultPreviewModel>> GetAsync<TOrderKey>(
+			int from, 
+			int count, 
+			bool descending, 
+			Expression<Func<ResultModel, TOrderKey>> orderBy,
+			IEnumerable<Expression<Func<ResultModel, bool>>> filters,
+			bool calculateTotalCount,
+			CancellationToken cancellationToken = default);
 
 		Task DeleteAllAsync(CancellationToken cancellationToken = default);
 	}

@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Data.Abstractions.Models.Result;
@@ -131,7 +132,7 @@ namespace Elpida.Backend.Data.Tests
 			var mock = new Mock<IMongoCollection<ResultModel>>(MockBehavior.Strict);
 
 			var repo = new MongoResultsRepository(mock.Object);
-			Assert.ThrowsAsync<ArgumentException>(async () => await repo.GetAsync(from, count, false, default));
+			Assert.ThrowsAsync<ArgumentException>(async () => await repo.GetAsync<object>(from, count, false, null, null, false));
 
 			mock.VerifyNoOtherCalls();
 		}
@@ -177,7 +178,7 @@ namespace Elpida.Backend.Data.Tests
 				.Verifiable();
 
 			var repo = new MongoResultsRepository(mock.Object);
-			await repo.GetAsync(0, 10, false, default);
+			await repo.GetAsync<object>(0, 10, false, null, null, false);
 
 			mock.VerifyAll();
 			mock.VerifyNoOtherCalls();
@@ -194,7 +195,7 @@ namespace Elpida.Backend.Data.Tests
 				.Verifiable();
 
 			var repo = new MongoResultsRepository(mock.Object);
-			await repo.GetAsync(0, 10, true, default);
+			await repo.GetAsync(0, 10, true, model => model.TimeStamp, null, false);
 
 			mock.VerifyAll();
 			mock.VerifyNoOtherCalls();

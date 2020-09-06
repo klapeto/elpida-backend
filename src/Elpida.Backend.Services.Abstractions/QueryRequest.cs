@@ -17,21 +17,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System.Threading;
-using System.Threading.Tasks;
-using Elpida.Backend.Services.Abstractions.Dtos.Result;
+using System;
 
 namespace Elpida.Backend.Services.Abstractions
 {
-	public interface IResultsService
+	public class QueryRequest
 	{
-		Task<string> CreateAsync(ResultDto resultDto, CancellationToken cancellationToken = default);
+		public bool Descending { get; set; }
 
-		Task<ResultDto> GetSingleAsync(string id, CancellationToken cancellationToken = default);
+		public string OrderBy { get; set; }
 
-		Task<PagedResult<ResultPreviewDto>> GetPagedAsync(QueryRequest queryRequest,
-			CancellationToken cancellationToken = default);
-
-		Task ClearResultsAsync(CancellationToken cancellationToken = default);
+		public PageRequest PageRequest { get; set; }
+		
+		public FiltersCollection Filters { get; set; }
 	}
 }

@@ -45,6 +45,7 @@ namespace Elpida.Backend.Controllers
 		[Consumes(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ApiKeyAuthentication(KeyName = "Results")]
 		public async Task<IActionResult> ClearResults(CancellationToken cancellationToken)
 		{
 			await _resultsService.ClearResultsAsync(cancellationToken);
@@ -68,18 +69,38 @@ namespace Elpida.Backend.Controllers
 		public async Task<IActionResult> GetSingle([FromRoute] string id, CancellationToken cancellationToken)
 		{
 			var resultDto = await _resultsService.GetSingleAsync(id, cancellationToken);
-			if (resultDto != null) return Ok(resultDto);
+			if (resultDto != null)
+			{
+				return Ok(resultDto);
+			}
+
 			return NotFound(id);
 		}
 
 		[HttpGet]
+		[Produces("application/json")]
+		[Consumes("application/json")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> GetPaged([FromQuery] PageRequest pageRequest,
 			CancellationToken cancellationToken)
 		{
-			return Ok(await _resultsService.GetPagedAsync(pageRequest, cancellationToken));
+			return Ok(await _resultsService.GetPagedAsync(new QueryRequest {PageRequest = pageRequest},
+				cancellationToken));
+		}
+
+
+		[HttpPost("search")]
+		[Produces("application/json")]
+		[Consumes("application/json")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		public async Task<IActionResult> Search([FromBody] QueryRequest queryRequest,
+			CancellationToken cancellationToken)
+		{
+			return Ok(await _resultsService.GetPagedAsync(queryRequest, cancellationToken));
 		}
 	}
 }

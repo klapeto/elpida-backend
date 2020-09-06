@@ -19,6 +19,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Data.Abstractions;
@@ -119,16 +121,20 @@ namespace Elpida.Backend.Services.Tests
 			};
 
 			repoMock.Setup(r =>
-					r.GetAsync(It.Is<int>(i => i == page.Next), It.Is<int>(i => i == page.Count), true, default))
-				.ReturnsAsync(() => new List<ResultPreviewModel>
+					r.GetAsync<object>(It.Is<int>(i => i == page.Next), It.Is<int>(i => i == page.Count), false, null,
+						null, false, default))
+				.ReturnsAsync(() => new PagedQueryResult<ResultPreviewModel>(0, new List<ResultPreviewModel>
 				{
 					Generators.CreateResultPreviewModel(Guid.NewGuid().ToString("N"))
-				})
+				}))
 				.Verifiable();
 
 			var service = new ResultService(repoMock.Object);
 
-			var result = await service.GetPagedAsync(page, default);
+			var result = await service.GetPagedAsync(new QueryRequest
+			{
+				PageRequest = page
+			}, default);
 
 			Assert.AreEqual(1, result.Count);
 
@@ -149,21 +155,200 @@ namespace Elpida.Backend.Services.Tests
 			const int totalCount = 532;
 
 			repoMock.Setup(r =>
-					r.GetAsync(It.Is<int>(i => i == page.Next), It.Is<int>(i => i == page.Count), true, default))
-				.ReturnsAsync(() => new List<ResultPreviewModel>
+					r.GetAsync<object>(It.Is<int>(i => i == page.Next), It.Is<int>(i => i == page.Count), false, null,
+						null, true, default))
+				.ReturnsAsync(() => new PagedQueryResult<ResultPreviewModel>(totalCount, new List<ResultPreviewModel>
 				{
 					Generators.CreateResultPreviewModel(Guid.NewGuid().ToString("N"))
-				})
-				.Verifiable();
-
-			repoMock.Setup(r =>
-					r.GetTotalCountAsync(default))
-				.ReturnsAsync(() => totalCount)
+				}))
 				.Verifiable();
 
 			var service = new ResultService(repoMock.Object);
 
-			var result = await service.GetPagedAsync(page, default);
+			var result = await service.GetPagedAsync(new QueryRequest
+			{
+				PageRequest = page
+			}, default);
+
+			Assert.AreEqual(totalCount, result.TotalCount);
+
+			repoMock.VerifyAll();
+			repoMock.VerifyNoOtherCalls();
+		}
+
+		[Test]
+		public async Task GetPagedAsync_AppliesFilters()
+		{
+			var repoMock = new Mock<IResultsRepository>(MockBehavior.Strict);
+
+			var page = new PageRequest
+			{
+				Count = 10, Next = 10, TotalCount = 0
+			};
+
+			const int totalCount = 532;
+			const string filterValue = "Crap";
+			
+			repoMock.Setup(r =>
+					r.GetAsync<object>(It.Is<int>(i => i == page.Next), It.Is<int>(i => i == page.Count), false, null,
+						It.Is<IEnumerable<Expression<Func<ResultModel, bool>>>>(enumerable => enumerable.Any(x => x.Body.ToString().Contains(filterValue))), true,
+						default))
+				.ReturnsAsync(() => new PagedQueryResult<ResultPreviewModel>(totalCount, new List<ResultPreviewModel>
+				{
+					Generators.CreateResultPreviewModel(Guid.NewGuid().ToString("N"))
+				}))
+				.Verifiable();
+
+			var service = new ResultService(repoMock.Object);
+
+			var result = await service.GetPagedAsync(new QueryRequest
+			{
+				PageRequest = page,
+				Filters = new FiltersCollection
+				{
+					Name = new QueryInstance<string>
+					{
+						Comp = "eq",
+						Value = filterValue
+					}
+				}
+			}, default);
+
+			Assert.AreEqual(totalCount, result.TotalCount);
+
+			repoMock.VerifyAll();
+			repoMock.VerifyNoOtherCalls();
+		}
+		
+		[Test]
+		public async Task GetPagedAsync_AppliesContains()
+		{
+			var repoMock = new Mock<IResultsRepository>(MockBehavior.Strict);
+
+			var page = new PageRequest
+			{
+				Count = 10, Next = 10, TotalCount = 0
+			};
+
+			const int totalCount = 532;
+			const string filterValue = "Crap";
+			
+			repoMock.Setup(r =>
+					r.GetAsync<object>(It.Is<int>(i => i == page.Next), It.Is<int>(i => i == page.Count), false, null,
+						It.Is<IEnumerable<Expression<Func<ResultModel, bool>>>>(enumerable => enumerable.Any(x => x.Body.ToString().Contains($".Contains(\"{filterValue}\")"))), true,
+						default))
+				.ReturnsAsync(() => new PagedQueryResult<ResultPreviewModel>(totalCount, new List<ResultPreviewModel>
+				{
+					Generators.CreateResultPreviewModel(Guid.NewGuid().ToString("N"))
+				}))
+				.Verifiable();
+
+			var service = new ResultService(repoMock.Object);
+
+			var result = await service.GetPagedAsync(new QueryRequest
+			{
+				PageRequest = page,
+				Filters = new FiltersCollection
+				{
+					Name = new QueryInstance<string>
+					{
+						Comp = "c",
+						Value = filterValue
+					}
+				}
+			}, default);
+
+			Assert.AreEqual(totalCount, result.TotalCount);
+
+			repoMock.VerifyAll();
+			repoMock.VerifyNoOtherCalls();
+		}
+		
+		[Test]
+		[TestCase("eq", "==")]
+		[TestCase("ge", ">=")]
+		[TestCase("g", ">")]
+		[TestCase("le", "<=")]
+		[TestCase("l", "<")]
+		public async Task GetPagedAsync_Applies_Checks_Literals(string equalityType, string stringToCheck)
+		{
+			var repoMock = new Mock<IResultsRepository>(MockBehavior.Strict);
+
+			var page = new PageRequest
+			{
+				Count = 10, Next = 10, TotalCount = 0
+			};
+
+			const int totalCount = 532;
+
+			repoMock.Setup(r =>
+					r.GetAsync<object>(It.Is<int>(i => i == page.Next), It.Is<int>(i => i == page.Count), false, null,
+						It.Is<IEnumerable<Expression<Func<ResultModel, bool>>>>(enumerable => enumerable.Any(x => x.Body.ToString().Contains(stringToCheck))), true,
+						default))
+				.ReturnsAsync(() => new PagedQueryResult<ResultPreviewModel>(totalCount, new List<ResultPreviewModel>
+				{
+					Generators.CreateResultPreviewModel(Guid.NewGuid().ToString("N"))
+				}))
+				.Verifiable();
+
+			var service = new ResultService(repoMock.Object);
+
+			var result = await service.GetPagedAsync(new QueryRequest
+			{
+				PageRequest = page,
+				Filters = new FiltersCollection
+				{
+					MemorySize = new QueryInstance<ulong>
+					{
+						Comp = equalityType,
+						Value = 555
+					}
+				}
+			}, default);
+
+			Assert.AreEqual(totalCount, result.TotalCount);
+
+			repoMock.VerifyAll();
+			repoMock.VerifyNoOtherCalls();
+		}
+
+		[Test]
+		public async Task GetPagedAsync_AppliesEquality()
+		{
+			var repoMock = new Mock<IResultsRepository>(MockBehavior.Strict);
+
+			var page = new PageRequest
+			{
+				Count = 10, Next = 10, TotalCount = 0
+			};
+
+			const int totalCount = 532;
+			const string filterValue = "Crap";
+			
+			repoMock.Setup(r =>
+					r.GetAsync<object>(It.Is<int>(i => i == page.Next), It.Is<int>(i => i == page.Count), false, null,
+						It.Is<IEnumerable<Expression<Func<ResultModel, bool>>>>(enumerable => enumerable.Any(x => x.Body.ToString().Contains("=="))), true,
+						default))
+				.ReturnsAsync(() => new PagedQueryResult<ResultPreviewModel>(totalCount, new List<ResultPreviewModel>
+				{
+					Generators.CreateResultPreviewModel(Guid.NewGuid().ToString("N"))
+				}))
+				.Verifiable();
+
+			var service = new ResultService(repoMock.Object);
+
+			var result = await service.GetPagedAsync(new QueryRequest
+			{
+				PageRequest = page,
+				Filters = new FiltersCollection
+				{
+					Name = new QueryInstance<string>
+					{
+						Comp = "eq",
+						Value = filterValue
+					}
+				}
+			}, default);
 
 			Assert.AreEqual(totalCount, result.TotalCount);
 
