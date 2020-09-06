@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -43,7 +44,10 @@ namespace Elpida.Backend.Data
 
 		public async Task<ResultModel> GetSingleAsync(string id, CancellationToken cancellationToken)
 		{
-			if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException("'Id' cannot be empty", nameof(id));
+			if (string.IsNullOrWhiteSpace(id))
+			{
+				throw new ArgumentException("'Id' cannot be empty", nameof(id));
+			}
 
 			return await (await _resultCollection.FindAsync(r => r.Id == id, cancellationToken: cancellationToken))
 				.FirstOrDefaultAsync(cancellationToken);
@@ -51,7 +55,10 @@ namespace Elpida.Backend.Data
 
 		public async Task<string> CreateAsync(ResultModel resultModel, CancellationToken cancellationToken)
 		{
-			if (resultModel == null) throw new ArgumentNullException(nameof(resultModel));
+			if (resultModel == null)
+			{
+				throw new ArgumentNullException(nameof(resultModel));
+			}
 
 			resultModel.Id = ObjectId.GenerateNewId(DateTime.UtcNow).ToString();
 			await _resultCollection.InsertOneAsync(resultModel, cancellationToken: cancellationToken);
@@ -67,27 +74,31 @@ namespace Elpida.Backend.Data
 		public async Task<PagedQueryResult<ResultPreviewModel>> GetAsync<TOrderKey>(
 			int from,
 			int count,
-			bool desc,
+			bool descending,
 			Expression<Func<ResultModel, TOrderKey>> orderBy,
 			IEnumerable<Expression<Func<ResultModel, bool>>> filters,
 			bool calculateTotalCount,
 			CancellationToken cancellationToken = default)
 		{
-			if (from < 0) throw new ArgumentException("'from' must be positive or 0", nameof(from));
-			if (count <= 0) throw new ArgumentException("'count' must be positive", nameof(count));
+			if (from < 0)
+			{
+				throw new ArgumentException("'from' must be positive or 0", nameof(@from));
+			}
+
+			if (count <= 0)
+			{
+				throw new ArgumentException("'count' must be positive", nameof(count));
+			}
 
 			var result = _resultCollection.AsQueryable();
 
-			foreach (var filter in filters)
-			{
-				result = result.Where(filter);
-			}
+			result = filters?.Aggregate(result, (current, filter) => current.Where(filter)) ?? result;
 
 			if (orderBy != null)
 			{
-				result = desc ? result.OrderByDescending(orderBy) : result.OrderBy(orderBy);
+				result = descending ? result.OrderByDescending(orderBy) : result.OrderBy(orderBy);
 			}
-			
+
 			var totalCount = calculateTotalCount ? await result.CountAsync(cancellationToken) : 0;
 
 			var results = await result.Skip(from)

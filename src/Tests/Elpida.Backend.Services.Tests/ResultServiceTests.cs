@@ -119,16 +119,20 @@ namespace Elpida.Backend.Services.Tests
 			};
 
 			repoMock.Setup(r =>
-					r.GetAsync(It.Is<int>(i => i == page.Next), It.Is<int>(i => i == page.Count), true, default))
-				.ReturnsAsync(() => new List<ResultPreviewModel>
+					r.GetAsync<object>(It.Is<int>(i => i == page.Next), It.Is<int>(i => i == page.Count), false, null,
+						null, false, default))
+				.ReturnsAsync(() => new PagedQueryResult<ResultPreviewModel>(0, new List<ResultPreviewModel>
 				{
 					Generators.CreateResultPreviewModel(Guid.NewGuid().ToString("N"))
-				})
+				}))
 				.Verifiable();
 
 			var service = new ResultService(repoMock.Object);
 
-			var result = await service.GetPagedAsync(page, default);
+			var result = await service.GetPagedAsync(new QueryRequest
+			{
+				PageRequest = page
+			}, default);
 
 			Assert.AreEqual(1, result.Count);
 
@@ -149,21 +153,20 @@ namespace Elpida.Backend.Services.Tests
 			const int totalCount = 532;
 
 			repoMock.Setup(r =>
-					r.GetAsync(It.Is<int>(i => i == page.Next), It.Is<int>(i => i == page.Count), true, default))
-				.ReturnsAsync(() => new List<ResultPreviewModel>
+					r.GetAsync<object>(It.Is<int>(i => i == page.Next), It.Is<int>(i => i == page.Count), false, null,
+						null, true, default))
+				.ReturnsAsync(() => new PagedQueryResult<ResultPreviewModel>(totalCount, new List<ResultPreviewModel>
 				{
 					Generators.CreateResultPreviewModel(Guid.NewGuid().ToString("N"))
-				})
-				.Verifiable();
-
-			repoMock.Setup(r =>
-					r.GetTotalCountAsync(default))
-				.ReturnsAsync(() => totalCount)
+				}))
 				.Verifiable();
 
 			var service = new ResultService(repoMock.Object);
 
-			var result = await service.GetPagedAsync(page, default);
+			var result = await service.GetPagedAsync(new QueryRequest
+			{
+				PageRequest = page
+			}, default);
 
 			Assert.AreEqual(totalCount, result.TotalCount);
 

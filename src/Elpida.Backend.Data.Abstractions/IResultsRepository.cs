@@ -37,7 +37,7 @@ namespace Elpida.Backend.Data.Abstractions
 		Task<PagedQueryResult<ResultPreviewModel>> GetAsync<TOrderKey>(
 			int from, 
 			int count, 
-			bool desc, 
+			bool descending, 
 			Expression<Func<ResultModel, TOrderKey>> orderBy,
 			IEnumerable<Expression<Func<ResultModel, bool>>> filters,
 			bool calculateTotalCount,
