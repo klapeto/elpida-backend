@@ -82,7 +82,7 @@ namespace Elpida.Backend.Data
 		{
 			if (from < 0)
 			{
-				throw new ArgumentException("'from' must be positive or 0", nameof(@from));
+				throw new ArgumentException("'from' must be positive or 0", nameof(from));
 			}
 
 			if (count <= 0)

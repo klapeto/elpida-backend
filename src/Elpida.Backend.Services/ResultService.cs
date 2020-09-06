@@ -153,7 +153,7 @@ namespace Elpida.Backend.Services
 						fieldPart.Parameters));
 					break;
 				case "le":
-					accumulator.Add(Expression.Lambda<Func<ResultModel, bool>>(Expression.LessThan(fieldPart.Body,
+					accumulator.Add(Expression.Lambda<Func<ResultModel, bool>>(Expression.LessThanOrEqual(fieldPart.Body,
 							Expression.Constant(instance.Value)),
 						fieldPart.Parameters));
 					break;
