@@ -114,7 +114,9 @@ namespace Elpida.Backend
 				app.UseExceptionHandler(builder => builder.Run(ErrorHandler));
 
 			app.UseCors(builder =>
-				builder.WithOrigins("https://beta.elpida.dev", "https://elpida.dev").WithMethods("GET"));
+				builder.WithOrigins("https://beta.elpida.dev", "https://elpida.dev")
+					.WithMethods("GET")
+					.WithMethods("POST"));
 
 			app.UseHttpsRedirection();
 
