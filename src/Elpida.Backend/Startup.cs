@@ -36,6 +36,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using Microsoft.Net.Http.Headers;
 using MongoDB.Driver;
 
 namespace Elpida.Backend
@@ -115,9 +116,14 @@ namespace Elpida.Backend
 
 			app.UseCors(builder =>
 				builder.WithOrigins("https://beta.elpida.dev", "https://elpida.dev")
-					.WithMethods("GET")
-					.WithMethods("POST"));
-
+					.WithMethods(HttpMethods.Get, HttpMethods.Post)
+					.WithHeaders(HeaderNames.ContentType, HeaderNames.Accept)
+					.WithExposedHeaders(
+						HeaderNames.ContentLength, 
+						HeaderNames.ContentRange
+					)
+				);
+			
 			app.UseHttpsRedirection();
 
 			app.UseRouting();
