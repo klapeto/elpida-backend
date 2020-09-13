@@ -17,14 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System;
 using System.Net.Mime;
 using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Services.Abstractions;
 using Elpida.Backend.Services.Abstractions.Dtos.Result;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Elpida.Backend.Controllers
@@ -56,14 +54,14 @@ namespace Elpida.Backend.Controllers
 		[Consumes(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<IActionResult> PostNewResult([FromBody] ResultDto resultDto,
+		public async Task<IActionResult> PostNewResult([FromBody] ResultDto resultDto, ApiVersion apiVersion,
 			CancellationToken cancellationToken)
 		{
-			var id = await _resultsService.CreateAsync(resultDto, cancellationToken);
-			return Created(new Uri($"{Request.GetEncodedUrl()}{id}", UriKind.Absolute), null);
+			var cid = await _resultsService.CreateAsync(resultDto, cancellationToken);
+			return CreatedAtRoute(nameof(GetSingle), new {id = cid, version = $"{apiVersion}"}, null);
 		}
 
-		[HttpGet("{id}")]
+		[HttpGet("{id}", Name = nameof(GetSingle))]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<IActionResult> GetSingle([FromRoute] string id, CancellationToken cancellationToken)
@@ -89,8 +87,7 @@ namespace Elpida.Backend.Controllers
 			return Ok(await _resultsService.GetPagedAsync(new QueryRequest {PageRequest = pageRequest},
 				cancellationToken));
 		}
-
-
+		
 		[HttpPost("search")]
 		[Produces("application/json")]
 		[Consumes("application/json")]
