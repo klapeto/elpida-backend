@@ -110,9 +110,14 @@ namespace Elpida.Backend
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 		{
 			if (env.IsDevelopment())
+			{
 				app.UseDeveloperExceptionPage();
+			}
 			else
+			{
+				app.UseHttpsRedirection();
 				app.UseExceptionHandler(builder => builder.Run(ErrorHandler));
+			}
 
 			app.UseCors(builder =>
 				builder.WithOrigins("https://beta.elpida.dev", "https://elpida.dev")
@@ -123,8 +128,6 @@ namespace Elpida.Backend
 						HeaderNames.ContentRange
 					)
 				);
-			
-			app.UseHttpsRedirection();
 
 			app.UseRouting();
 
