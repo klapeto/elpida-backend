@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Data.Abstractions;
@@ -32,24 +33,43 @@ namespace Elpida.Backend.Services
 {
 	public class ResultService : IResultsService
 	{
-		private static readonly Dictionary<string, LambdaExpression> Expressions =
+		private static readonly MethodInfo StringContains =
+			typeof(string).GetMethod(nameof(string.Contains), new[] {typeof(string)});
+
+		private static readonly IReadOnlyDictionary<string, Func<Expression, Expression, Expression>>
+			ComparisonExpressionsFactories = new Dictionary<string, Func<Expression, Expression, Expression>>
+			{
+				[Filter.ComparisonMap[Filter.Comparison.Contains]] =
+					(left, right) => Expression.Call(left, StringContains, right),
+				[Filter.ComparisonMap[Filter.Comparison.Equal]] = Expression.Equal,
+				[Filter.ComparisonMap[Filter.Comparison.Greater]] = Expression.GreaterThan,
+				[Filter.ComparisonMap[Filter.Comparison.GreaterEqual]] = Expression.GreaterThanOrEqual,
+				[Filter.ComparisonMap[Filter.Comparison.Less]] = Expression.LessThan,
+				[Filter.ComparisonMap[Filter.Comparison.LessEqual]] = Expression.LessThanOrEqual,
+			};
+
+		private static readonly IReadOnlyDictionary<string, LambdaExpression> ModelExpressions =
 			new Dictionary<string, LambdaExpression>
 			{
-				["cpuCores".ToLowerInvariant()] = GetExpression(model => model.System.Topology.TotalPhysicalCores),
-				["cpuLogicalCores".ToLowerInvariant()] =
+				[Filter.TypeMap[Filter.Type.CpuCores].ToLowerInvariant()] =
+					GetExpression(model => model.System.Topology.TotalPhysicalCores),
+				[Filter.TypeMap[Filter.Type.CpuLogicalCores].ToLowerInvariant()] =
 					GetExpression(model => model.System.Topology.TotalLogicalCores),
-				["cpuCores".ToLowerInvariant()] = GetExpression(model => model.System.Topology.TotalPhysicalCores),
-				["cpuLogicalCores".ToLowerInvariant()] =
-					GetExpression(model => model.System.Topology.TotalLogicalCores),
-				["cpuFrequency".ToLowerInvariant()] = GetExpression(model => model.System.Cpu.Frequency),
-				["memorySize".ToLowerInvariant()] = GetExpression(model => model.System.Memory.TotalSize),
-				["timestamp".ToLowerInvariant()] = GetExpression(model => model.TimeStamp),
-				["name".ToLowerInvariant()] = GetExpression(model => model.Result.Name),
-				["cpuBrand".ToLowerInvariant()] = GetExpression(model => model.System.Cpu.Brand),
-				["cpuVendor".ToLowerInvariant()] = GetExpression(model => model.System.Cpu.Vendor),
-				["osCategory".ToLowerInvariant()] = GetExpression(model => model.System.Os.Category),
-				["osName".ToLowerInvariant()] = GetExpression(model => model.System.Os.Name),
-				["osVersion".ToLowerInvariant()] = GetExpression(model => model.System.Os.Version)
+				[Filter.TypeMap[Filter.Type.CpuFrequency].ToLowerInvariant()] =
+					GetExpression(model => model.System.Cpu.Frequency),
+				[Filter.TypeMap[Filter.Type.MemorySize].ToLowerInvariant()] =
+					GetExpression(model => model.System.Memory.TotalSize),
+				[Filter.TypeMap[Filter.Type.Timestamp].ToLowerInvariant()] = GetExpression(model => model.TimeStamp),
+				[Filter.TypeMap[Filter.Type.Name].ToLowerInvariant()] = GetExpression(model => model.Result.Name),
+				[Filter.TypeMap[Filter.Type.CpuBrand].ToLowerInvariant()] =
+					GetExpression(model => model.System.Cpu.Brand),
+				[Filter.TypeMap[Filter.Type.CpuVendor].ToLowerInvariant()] =
+					GetExpression(model => model.System.Cpu.Vendor),
+				[Filter.TypeMap[Filter.Type.OsCategory].ToLowerInvariant()] =
+					GetExpression(model => model.System.Os.Category),
+				[Filter.TypeMap[Filter.Type.OsName].ToLowerInvariant()] = GetExpression(model => model.System.Os.Name),
+				[Filter.TypeMap[Filter.Type.OsVersion].ToLowerInvariant()] =
+					GetExpression(model => model.System.Os.Version)
 			};
 
 		private readonly IResultsRepository _resultsRepository;
@@ -96,19 +116,6 @@ namespace Elpida.Backend.Services
 				throw new ArgumentNullException(nameof(queryRequest));
 			}
 
-			if (queryRequest.Filters != null)
-			{
-				foreach (var queryInstance in queryRequest.Filters.Where(f => f.Name == "startTime"))
-				{
-					queryInstance.Comp = "ge";
-				}
-
-				foreach (var queryInstance in queryRequest.Filters.Where(f => f.Name == "endTime"))
-				{
-					queryInstance.Comp = "le";
-				}
-			}
-
 			var result = await _resultsRepository.GetAsync(
 				queryRequest.PageRequest.Next,
 				queryRequest.PageRequest.Count,
@@ -137,11 +144,6 @@ namespace Elpida.Backend.Services
 			return baseExp;
 		}
 
-		private static IEnumerable<string> GetAllFilterKeys()
-		{
-			return Expressions.Keys;
-		}
-
 		private static void AddFilter(ICollection<Expression<Func<ResultModel, bool>>> accumulator,
 			QueryInstance instance, LambdaExpression fieldPart)
 		{
@@ -158,35 +160,46 @@ namespace Elpida.Backend.Services
 
 			if (instance.Value is string str && !DateTime.TryParse(str, out _))
 			{
-				switch (instance.Comp)
+				if (instance.Comp != null)
 				{
-					case "c":
-					case null:
-						middlePart = Expression.Call(
-							left,
-							typeof(string).GetMethod(nameof(string.Contains), new[] {typeof(string)}),
-							right);
-						break;
-					case "eq":
-						middlePart = Expression.Equal(left, right);
-						break;
-					default:
+					if (
+						Filter.StringComparisons.Contains(instance.Comp) &&
+						ComparisonExpressionsFactories.TryGetValue(instance.Comp, out var factory))
+					{
+						middlePart = factory(left, right);
+					}
+					else
+					{
 						throw new ArgumentException(
-							"String filter needs either 'c'/null for checking if the field contains or 'eq' for equality");
+							$"String value filter comparison types can be :[{string.Join(",", Filter.StringComparisons.Select(s => s))}]");
+					}
+				}
+				else
+				{
+					middlePart =
+						ComparisonExpressionsFactories[Filter.ComparisonMap[Filter.Comparison.Contains]](left, right);
 				}
 			}
 			else
 			{
-				middlePart = instance.Comp switch
+				if (instance.Comp != null)
 				{
-					"g" => Expression.GreaterThan(left, right),
-					"ge" => Expression.GreaterThanOrEqual(left, right),
-					"l" => Expression.LessThan(left, right),
-					"le" => Expression.LessThanOrEqual(left, right),
-					"eq" => Expression.Equal(left, right),
-					_ => throw new ArgumentException(
-						"Numeric value filter comparison types can be :[g,ge,l,le,eq] (Greater, Greater/Equal, Less, Less/Equal, Equal)")
-				};
+					if (Filter.NumberComparisons.Contains(instance.Comp) &&
+					    ComparisonExpressionsFactories.TryGetValue(instance.Comp, out var factory))
+					{
+						middlePart = factory(left, right);
+					}
+					else
+					{
+						throw new ArgumentException(
+							$"Numeric value filter comparison types can be :[{string.Join(",", Filter.NumberComparisons.Select(s => s))}]");
+					}
+				}
+				else
+				{
+					middlePart =
+						ComparisonExpressionsFactories[Filter.ComparisonMap[Filter.Comparison.Equal]](left, right);
+				}
 			}
 
 			accumulator.Add(Expression.Lambda<Func<ResultModel, bool>>(middlePart, parameters));
@@ -202,14 +215,14 @@ namespace Elpida.Backend.Services
 
 			var orderBy = queryRequest.OrderBy.ToLowerInvariant();
 
-			if (Expressions.TryGetValue(orderBy, out var strExpression))
+			if (ModelExpressions.TryGetValue(orderBy, out var strExpression))
 			{
 				return Expression.Lambda<Func<ResultModel, object>>(
 					Expression.Convert(strExpression.Body, typeof(object)), strExpression.Parameters);
 			}
 
 			throw new ArgumentException(
-				$"OrderBy is not a valid order field. Can be: {string.Join(',', GetAllFilterKeys())}");
+				$"OrderBy is not a valid order field. Can be: {string.Join(',', ModelExpressions.Keys)}");
 		}
 
 		private static IEnumerable<Expression<Func<ResultModel, bool>>> GetQueryFilters(QueryRequest queryRequest)
@@ -223,7 +236,7 @@ namespace Elpida.Backend.Services
 
 			foreach (var filter in queryRequest.Filters)
 			{
-				if (Expressions.TryGetValue(filter.Name.ToLowerInvariant(), out var expression))
+				if (ModelExpressions.TryGetValue(filter.Name.ToLowerInvariant(), out var expression))
 				{
 					AddFilter(returnList, filter, expression);
 				}
