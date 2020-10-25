@@ -204,10 +204,11 @@ namespace Elpida.Backend.Services.Tests
 			var result = await service.GetPagedAsync(new QueryRequest
 			{
 				PageRequest = page,
-				Filters = new FiltersCollection
+				Filters = new []
 				{
-					Name = new QueryInstance<string>
+					new QueryInstance
 					{
+						Name = "name",
 						Comp = "eq",
 						Value = filterValue
 					}
@@ -248,10 +249,11 @@ namespace Elpida.Backend.Services.Tests
 			var result = await service.GetPagedAsync(new QueryRequest
 			{
 				PageRequest = page,
-				Filters = new FiltersCollection
+				Filters = new []
 				{
-					Name = new QueryInstance<string>
+					new QueryInstance
 					{
+						Name = "name",
 						Comp = "c",
 						Value = filterValue
 					}
@@ -296,10 +298,11 @@ namespace Elpida.Backend.Services.Tests
 			var result = await service.GetPagedAsync(new QueryRequest
 			{
 				PageRequest = page,
-				Filters = new FiltersCollection
+				Filters = new []
 				{
-					MemorySize = new QueryInstance<ulong>
+					new QueryInstance
 					{
+						Name = "memorySize",
 						Comp = equalityType,
 						Value = 555
 					}
@@ -340,10 +343,11 @@ namespace Elpida.Backend.Services.Tests
 			var result = await service.GetPagedAsync(new QueryRequest
 			{
 				PageRequest = page,
-				Filters = new FiltersCollection
+				Filters = new []
 				{
-					Name = new QueryInstance<string>
+					 new QueryInstance
 					{
+						Name = "name",
 						Comp = "eq",
 						Value = filterValue
 					}

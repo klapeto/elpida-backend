@@ -19,9 +19,10 @@
 
 namespace Elpida.Backend.Services.Abstractions
 {
-	public class QueryInstance<T>
+	public class QueryInstance
 	{
-		public T Value { get; set; }
+		public string Name { get; set; }
+		public object Value { get; set; }
 		public string Comp { get; set; }
 	}
 }
