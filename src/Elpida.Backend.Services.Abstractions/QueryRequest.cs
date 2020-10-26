@@ -17,8 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System;
-
 namespace Elpida.Backend.Services.Abstractions
 {
 	public class QueryRequest
@@ -29,6 +27,6 @@ namespace Elpida.Backend.Services.Abstractions
 
 		public PageRequest PageRequest { get; set; }
 		
-		public FiltersCollection Filters { get; set; }
+		public QueryInstance[] Filters { get; set; }
 	}
 }
