@@ -17,18 +17,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using Elpida.Backend.Services.Abstractions.Dtos.Result;
+using Elpida.Backend.Services.Abstractions;
 using FluentValidation;
 
 namespace Elpida.Backend.Validators
 {
-	public class CpuCacheValidator : AbstractValidator<CpuCacheDto>
+	public class QueryInstanceValidator: AbstractValidator<QueryInstance>
 	{
-		public CpuCacheValidator()
+		public QueryInstanceValidator()
 		{
-			RuleFor(dto => dto.Name)
-				.NotEmpty()
-				.MaximumLength(50);
+			RuleFor(i => i.Name)
+				.NotEmpty();
+			RuleFor(i => i.Value)
+				.NotNull();
+			RuleFor(i => i.Comp)
+				.NotEmpty();
 		}
 	}
 }

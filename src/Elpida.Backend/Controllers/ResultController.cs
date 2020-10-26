@@ -99,9 +99,12 @@ namespace Elpida.Backend.Controllers
 		public async Task<IActionResult> Search([FromBody] QueryRequest queryRequest,
 			CancellationToken cancellationToken)
 		{
-			foreach (var queryRequestFilter in queryRequest.Filters)
+			if (queryRequest.Filters != null)
 			{
-				ConvertValues(queryRequestFilter);
+				foreach (var queryRequestFilter in queryRequest.Filters)
+				{
+					ConvertValues(queryRequestFilter);
+				}
 			}
 
 			return Ok(await _resultsService.GetPagedAsync(queryRequest, cancellationToken));
