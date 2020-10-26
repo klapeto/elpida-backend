@@ -17,12 +17,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-namespace Elpida.Backend.Services.Abstractions
+using Elpida.Backend.Services.Abstractions;
+using FluentValidation;
+
+namespace Elpida.Backend.Validators
 {
-	public class QueryInstance
+	public class QueryInstanceValidator: AbstractValidator<QueryInstance>
 	{
-		public string Name { get; set; }
-		public object Value { get; set; }
-		public string Comp { get; set; }
+		public QueryInstanceValidator()
+		{
+			RuleFor(i => i.Name)
+				.NotEmpty();
+			RuleFor(i => i.Value)
+				.NotNull();
+			RuleFor(i => i.Comp)
+				.NotEmpty();
+		}
 	}
 }
