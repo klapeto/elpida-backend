@@ -114,8 +114,8 @@ namespace Elpida.Backend.Services.Tests
 								LinesPerTag = 1
 							}
 						},
-						Family = 0, Features = new List<string>(), Frequency = 45455555555, Model = 0, Smt = true,
-						Stepping = 0, Vendor = "AMD", TurboBoost = false, TurboBoost3 = false
+						Features = new List<string>(), Frequency = 45455555555, Smt = true,
+						Vendor = "AMD", AdditionalInfo = new Dictionary<string, string>()
 					},
 					Memory = new MemoryModel
 					{
@@ -229,8 +229,8 @@ namespace Elpida.Backend.Services.Tests
 								LinesPerTag = 1
 							}
 						},
-						Family = 0, Features = new List<string>(), Frequency = 45455555555, Model = 0, Smt = true,
-						Stepping = 0, Vendor = "AMD", TurboBoost = false, TurboBoost3 = false
+						Features = new List<string>(), Frequency = 45455555555, Smt = true,
+						Vendor = "AMD", AdditionalInfo = new Dictionary<string, string>()
 					},
 					Memory = new MemoryDto
 					{
