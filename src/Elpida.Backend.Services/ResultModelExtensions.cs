@@ -78,15 +78,11 @@ namespace Elpida.Backend.Services
 						new CpuDto
 						{
 							Brand = resultModel.System.Cpu.Brand,
-							Family = resultModel.System.Cpu.Family,
+							AdditionalInfo = resultModel.System.Cpu.AdditionalInfo,
 							Frequency = resultModel.System.Cpu.Frequency,
-							Model = resultModel.System.Cpu.Model,
 							Smt = resultModel.System.Cpu.Smt,
-							Stepping = resultModel.System.Cpu.Stepping,
 							Features = resultModel.System.Cpu.Features,
 							Vendor = resultModel.System.Cpu.Vendor,
-							TurboBoost = resultModel.System.Cpu.TurboBoost,
-							TurboBoost3 = resultModel.System.Cpu.TurboBoost3,
 							Caches = resultModel.System.Cpu.Caches.Select(c => new CpuCacheDto
 							{
 								Associativity = c.Associativity,

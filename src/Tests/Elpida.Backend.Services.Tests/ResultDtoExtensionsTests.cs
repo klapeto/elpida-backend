@@ -62,14 +62,9 @@ namespace Elpida.Backend.Services.Tests
 				          && a.InputSize == b.InputSize));
 
 			Assert.AreEqual(dto.System.Cpu.Brand, model.System.Cpu.Brand);
-			Assert.AreEqual(dto.System.Cpu.Family, model.System.Cpu.Family);
 			Assert.AreEqual(dto.System.Cpu.Frequency, model.System.Cpu.Frequency);
-			Assert.AreEqual(dto.System.Cpu.Model, model.System.Cpu.Model);
 			Assert.AreEqual(dto.System.Cpu.Smt, model.System.Cpu.Smt);
-			Assert.AreEqual(dto.System.Cpu.Stepping, model.System.Cpu.Stepping);
 			Assert.AreEqual(dto.System.Cpu.Vendor, model.System.Cpu.Vendor);
-			Assert.AreEqual(dto.System.Cpu.TurboBoost, model.System.Cpu.TurboBoost);
-			Assert.AreEqual(dto.System.Cpu.TurboBoost3, model.System.Cpu.TurboBoost3);
 
 			Assert.True(Helpers.AssertCollectionsAreEqual(dto.System.Cpu.Features, model.System.Cpu.Features,
 				(a, b) => a == b));

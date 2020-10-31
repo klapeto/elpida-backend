@@ -78,15 +78,11 @@ namespace Elpida.Backend.Services
 						new CpuModel
 						{
 							Brand = resultDto.System.Cpu.Brand,
-							Family = resultDto.System.Cpu.Family,
+							AdditionalInfo = resultDto.System.Cpu.AdditionalInfo,
 							Frequency = resultDto.System.Cpu.Frequency,
-							Model = resultDto.System.Cpu.Model,
 							Smt = resultDto.System.Cpu.Smt,
-							Stepping = resultDto.System.Cpu.Stepping,
 							Features = resultDto.System.Cpu.Features,
 							Vendor = resultDto.System.Cpu.Vendor,
-							TurboBoost = resultDto.System.Cpu.TurboBoost,
-							TurboBoost3 = resultDto.System.Cpu.TurboBoost3,
 							Caches = resultDto.System.Cpu.Caches.Select(c => new CpuCacheModel
 							{
 								Associativity = c.Associativity,
