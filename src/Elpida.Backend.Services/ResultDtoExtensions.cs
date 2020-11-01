@@ -27,7 +27,66 @@ namespace Elpida.Backend.Services
 {
 	public static class ResultDtoExtensions
 	{
-		public static ResultModel ToModel(this ResultDto resultDto)
+		public static CpuModel ToModel(this CpuDto cpuDto, string hash = null)
+		{
+			return new CpuModel
+			{
+				Brand = cpuDto.Brand,
+				Caches = cpuDto.Caches.Select(c => new CpuCacheModel
+				{
+					Associativity = c.Associativity,
+					Name = c.Name,
+					Size = c.Size,
+					LineSize = c.LineSize,
+					LinesPerTag = c.LinesPerTag
+				}).ToList(),
+				Features = cpuDto.Features,
+				Frequency = cpuDto.Frequency,
+				Hash = hash,
+				Smt = cpuDto.Smt,
+				Vendor = cpuDto.Vendor,
+				AdditionalInfo = cpuDto.AdditionalInfo
+			};
+		}
+
+		public static TopologyModel ToModel(this TopologyDto topologyDto, string hash = null)
+		{
+			var model = new TopologyModel
+			{
+				TotalDepth = topologyDto.TotalDepth,
+				TotalLogicalCores = topologyDto.TotalLogicalCores,
+				TotalPhysicalCores = topologyDto.TotalLogicalCores,
+				Root = new CpuNodeModel
+				{
+					Name = topologyDto.Root.Name,
+					Value = topologyDto.Root.Value,
+					NodeType = topologyDto.Root.NodeType,
+					OsIndex = topologyDto.Root.OsIndex
+				}
+			};
+
+			if (topologyDto.Root.Children != null)
+			{
+				model.Root.Children = new List<CpuNodeModel>();
+				foreach (var child in topologyDto.Root.Children)
+				{
+					model.Root.Children.Add(CreateChild(child));
+				}
+			}
+
+			if (topologyDto.Root.MemoryChildren != null)
+			{
+				model.Root.MemoryChildren = new List<CpuNodeModel>();
+				foreach (var child in topologyDto.Root.MemoryChildren)
+				{
+					model.Root.MemoryChildren.Add(CreateChild(child));
+				}
+			}
+
+			return model;
+		}
+
+		public static ResultModel ToModel(this ResultDto resultDto, string cpuHash, string topologyHash)
 		{
 			if (resultDto == null) throw new ArgumentNullException(nameof(resultDto));
 			var resultModel = new ResultModel
@@ -74,64 +133,16 @@ namespace Elpida.Backend.Services
 						Name = resultDto.System.Os.Name,
 						Version = resultDto.System.Os.Version
 					},
-					Cpu =
-						new CpuModel
-						{
-							Brand = resultDto.System.Cpu.Brand,
-							AdditionalInfo = resultDto.System.Cpu.AdditionalInfo,
-							Frequency = resultDto.System.Cpu.Frequency,
-							Smt = resultDto.System.Cpu.Smt,
-							Features = resultDto.System.Cpu.Features,
-							Vendor = resultDto.System.Cpu.Vendor,
-							Caches = resultDto.System.Cpu.Caches.Select(c => new CpuCacheModel
-							{
-								Associativity = c.Associativity,
-								Name = c.Name,
-								Size = c.Size,
-								LineSize = c.LineSize,
-								LinesPerTag = c.LinesPerTag
-							}).ToList()
-						},
+					CpuHash = cpuHash,
+					TopologyHash = topologyHash,
 					Memory =
 						new MemoryModel
 						{
 							PageSize = resultDto.System.Memory.PageSize,
 							TotalSize = resultDto.System.Memory.TotalSize
 						},
-					Topology = new TopologyModel
-					{
-						TotalDepth = resultDto.System.Topology.TotalDepth,
-						TotalLogicalCores = resultDto.System.Topology.TotalLogicalCores,
-						TotalPhysicalCores = resultDto.System.Topology.TotalLogicalCores,
-						Root = new CpuNodeModel
-						{
-							Name = resultDto.System.Topology.Root.Name,
-							Value = resultDto.System.Topology.Root.Value,
-							NodeType = resultDto.System.Topology.Root.NodeType,
-							OsIndex = resultDto.System.Topology.Root.OsIndex
-						}
-					}
 				}
 			};
-
-			if (resultDto.System.Topology.Root.Children != null)
-			{
-				resultModel.System.Topology.Root.Children = new List<CpuNodeModel>();
-				foreach (var child in resultDto.System.Topology.Root.Children)
-				{
-					resultModel.System.Topology.Root.Children.Add(CreateChild(child));
-				}
-			}
-
-			if (resultDto.System.Topology.Root.MemoryChildren != null)
-			{
-				resultModel.System.Topology.Root.MemoryChildren = new List<CpuNodeModel>();
-				foreach (var child in resultDto.System.Topology.Root.MemoryChildren)
-				{
-					resultModel.System.Topology.Root.MemoryChildren.Add(CreateChild(child));
-				}
-			}
-
 
 			return resultModel;
 		}

@@ -22,6 +22,8 @@ namespace Elpida.Backend.Data
 	public interface IDocumentRepositorySettings
 	{
 		string ResultsCollectionName { get; set; }
+		public string CpusCollectionName { get; set; }
+		public string TopologiesCollectionName { get; set; }
 		string ConnectionString { get; set; }
 		string DatabaseName { get; set; }
 	}

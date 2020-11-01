@@ -76,15 +76,56 @@ namespace Elpida.Backend
 			services.AddTransient<IAssetsService, AssetsService>();
 
 			services.AddTransient(MongoResultsCollection_ImplementationFactory);
+			services.AddTransient(MongoCpuCollection_ImplementationFactory);
+			services.AddTransient(MongoTopologyCollection_ImplementationFactory);
 
 			services.AddTransient<IBlobClientFactory, AzureAssetsBlobClientFactory>();
 
 			services.AddTransient<IResultsRepository, MongoResultsRepository>();
+			services.AddTransient<ICpuRepository, MongoCpuRepository>();
 			services.AddTransient<IAssetsRepository, AzureBlobsAssetsRepository>();
 
 			services.AddApiVersioning();
 
 			services.AddCors();
+		}
+		
+		private static IMongoCollection<CpuModel> MongoCpuCollection_ImplementationFactory(
+			IServiceProvider serviceProvider)
+		{
+			var settings = serviceProvider.GetRequiredService<IDocumentRepositorySettings>();
+
+			if (string.IsNullOrWhiteSpace(settings.ConnectionString))
+				throw new ArgumentException("Documents Connection string is empty", nameof(settings.ConnectionString));
+			if (string.IsNullOrWhiteSpace(settings.DatabaseName))
+				throw new ArgumentException("Database name for documents is empty", nameof(settings.DatabaseName));
+			if (string.IsNullOrWhiteSpace(settings.ResultsCollectionName))
+				throw new ArgumentException("Collection name for Cpus documents is empty",
+					nameof(settings.ResultsCollectionName));
+
+			var client = new MongoClient(settings.ConnectionString);
+			var database = client.GetDatabase(settings.DatabaseName);
+
+			return database.GetCollection<CpuModel>(settings.CpusCollectionName);
+		}
+		
+		private static IMongoCollection<TopologyModel> MongoTopologyCollection_ImplementationFactory(
+			IServiceProvider serviceProvider)
+		{
+			var settings = serviceProvider.GetRequiredService<IDocumentRepositorySettings>();
+
+			if (string.IsNullOrWhiteSpace(settings.ConnectionString))
+				throw new ArgumentException("Documents Connection string is empty", nameof(settings.ConnectionString));
+			if (string.IsNullOrWhiteSpace(settings.DatabaseName))
+				throw new ArgumentException("Database name for documents is empty", nameof(settings.DatabaseName));
+			if (string.IsNullOrWhiteSpace(settings.ResultsCollectionName))
+				throw new ArgumentException("Collection name for Cpus documents is empty",
+					nameof(settings.ResultsCollectionName));
+
+			var client = new MongoClient(settings.ConnectionString);
+			var database = client.GetDatabase(settings.DatabaseName);
+			
+			return database.GetCollection<TopologyModel>(settings.CpusCollectionName);
 		}
 
 		private static IMongoCollection<ResultModel> MongoResultsCollection_ImplementationFactory(
@@ -150,6 +191,10 @@ namespace Elpida.Backend
 					break;
 				case NotFoundException _:
 					context.Response.StatusCode = (int) HttpStatusCode.NotFound;
+					break;
+				case CorruptedRecordException cre:
+					context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
+					await context.Response.WriteAsync($"The requested record is corrupted!. Please report this to Elpida Backend repository along with this id: {cre.Id}");
 					break;
 				default:
 					context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;

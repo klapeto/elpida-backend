@@ -19,12 +19,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Data.Abstractions;
+using Elpida.Backend.Data.Abstractions.Models;
 using Elpida.Backend.Data.Abstractions.Models.Result;
 using Elpida.Backend.Services.Abstractions;
 using Elpida.Backend.Services.Abstractions.Dtos.Result;
@@ -45,7 +49,7 @@ namespace Elpida.Backend.Services
 				[Filter.ComparisonMap[Filter.Comparison.Greater]] = Expression.GreaterThan,
 				[Filter.ComparisonMap[Filter.Comparison.GreaterEqual]] = Expression.GreaterThanOrEqual,
 				[Filter.ComparisonMap[Filter.Comparison.Less]] = Expression.LessThan,
-				[Filter.ComparisonMap[Filter.Comparison.LessEqual]] = Expression.LessThanOrEqual,
+				[Filter.ComparisonMap[Filter.Comparison.LessEqual]] = Expression.LessThanOrEqual
 			};
 
 		private static readonly IReadOnlyDictionary<string, LambdaExpression> ModelExpressions =
@@ -72,16 +76,20 @@ namespace Elpida.Backend.Services
 					GetExpression(model => model.System.Os.Version)
 			};
 
+		private static readonly uint[] Lookup32 = CreateLookup32();
+		private readonly ICpuRepository _cpuRepository;
+
 		private readonly IResultsRepository _resultsRepository;
 
-		public ResultService(IResultsRepository resultsRepository)
+		public ResultService(IResultsRepository resultsRepository, ICpuRepository cpuRepository)
 		{
 			_resultsRepository = resultsRepository ?? throw new ArgumentNullException(nameof(resultsRepository));
+			_cpuRepository = cpuRepository ?? throw new ArgumentNullException(nameof(cpuRepository));
 		}
 
 		#region IResultsService Members
 
-		public Task<string> CreateAsync(ResultDto resultDto, CancellationToken cancellationToken)
+		public async Task<string> CreateAsync(ResultDto resultDto, CancellationToken cancellationToken)
 		{
 			if (resultDto == null)
 			{
@@ -89,7 +97,11 @@ namespace Elpida.Backend.Services
 			}
 
 			resultDto.TimeStamp = DateTime.UtcNow;
-			return _resultsRepository.CreateAsync(resultDto.ToModel(), cancellationToken);
+
+			var cpuHash = await AssignCpu(resultDto.System.Cpu, cancellationToken);
+			var topologyHash = await AssignTopology(cpuHash, resultDto.System.Topology, cancellationToken);
+
+			return await _resultsRepository.CreateAsync(resultDto.ToModel(cpuHash, topologyHash), cancellationToken);
 		}
 
 		public async Task<ResultDto> GetSingleAsync(string id, CancellationToken cancellationToken)
@@ -138,13 +150,86 @@ namespace Elpida.Backend.Services
 
 		#endregion
 
-		private static LambdaExpression GetExpression<T>(Expression<Func<ResultModel, T>> baseExp)
+		private async Task<string> AssignCpu(CpuDto cpuDto, CancellationToken cancellationToken)
+		{
+			var cpuHash = CalculateCpuHash(cpuDto);
+			var cpuModel = await _cpuRepository.GetCpuByHashAsync(cpuHash, cancellationToken);
+			if (cpuModel == null)
+			{
+				cpuModel = cpuDto.ToModel();
+				cpuModel.Hash = cpuHash;
+				await _cpuRepository.CreateCpuAsync(cpuModel, cancellationToken);
+			}
+
+			return cpuHash;
+		}
+
+		private static uint[] CreateLookup32()
+		{
+			var result = new uint[256];
+			for (var i = 0; i < 256; i++)
+			{
+				var s = i.ToString("X2");
+				result[i] = s[0] + ((uint) s[1] << 16);
+			}
+
+			return result;
+		}
+
+		private static string ByteArrayToHexViaLookup32(IReadOnlyList<byte> bytes)
+		{
+			//https://stackoverflow.com/questions/311165/how-do-you-convert-a-byte-array-to-a-hexadecimal-string-and-vice-versa/24343727#24343727
+			var lookup32 = Lookup32;
+			var result = new char[bytes.Count * 2];
+			for (var i = 0; i < bytes.Count; i++)
+			{
+				var val = lookup32[bytes[i]];
+				result[2 * i] = (char) val;
+				result[2 * i + 1] = (char) (val >> 16);
+			}
+
+			return new string(result);
+		}
+
+		private async Task<string> AssignTopology(string cpuHash, TopologyDto topologyDto,
+			CancellationToken cancellationToken)
+		{
+			var topologyHash = CalculateTopologyHash(cpuHash, topologyDto);
+			var topologyModel = await _cpuRepository.GetTopologyByHashAsync(topologyHash, cancellationToken);
+			if (topologyModel == null)
+			{
+				topologyModel = topologyDto.ToModel();
+				topologyModel.Hash = topologyHash;
+				await _cpuRepository.CreateTopologyAsync(topologyModel, cancellationToken);
+			}
+
+			return topologyHash;
+		}
+
+		private static string CalculateTopologyHash(string cpuHash, TopologyDto topologyDto)
+		{
+			using var stream = new MemoryStream();
+
+			var formatter = new BinaryFormatter();
+			formatter.Serialize(stream, topologyDto);
+
+			using var md5 = MD5.Create();
+			return $"{cpuHash}_{ByteArrayToHexViaLookup32(md5.ComputeHash(stream))}";
+		}
+
+		private static string CalculateCpuHash(CpuDto cpuDto)
+		{
+			return
+				$"{cpuDto.Vendor}_{cpuDto.Brand}_{string.Join('_', cpuDto.AdditionalInfo.ToArray().OrderBy(c => c.Key).Select(c => c.Value))}";
+		}
+
+		private static LambdaExpression GetExpression<T>(Expression<Func<ResultProjection, T>> baseExp)
 		{
 			// Dirty hack to prevent boxing of values
 			return baseExp;
 		}
 
-		private static void AddFilter(ICollection<Expression<Func<ResultModel, bool>>> accumulator,
+		private static void AddFilter(ICollection<Expression<Func<ResultProjection, bool>>> accumulator,
 			QueryInstance instance, LambdaExpression fieldPart)
 		{
 			if (instance == null)
@@ -202,11 +287,11 @@ namespace Elpida.Backend.Services
 				}
 			}
 
-			accumulator.Add(Expression.Lambda<Func<ResultModel, bool>>(middlePart, parameters));
+			accumulator.Add(Expression.Lambda<Func<ResultProjection, bool>>(middlePart, parameters));
 		}
 
 
-		private static Expression<Func<ResultModel, object>> GetOrderBy(QueryRequest queryRequest)
+		private static Expression<Func<ResultProjection, object>> GetOrderBy(QueryRequest queryRequest)
 		{
 			if (queryRequest.OrderBy == null)
 			{
@@ -217,7 +302,7 @@ namespace Elpida.Backend.Services
 
 			if (ModelExpressions.TryGetValue(orderBy, out var strExpression))
 			{
-				return Expression.Lambda<Func<ResultModel, object>>(
+				return Expression.Lambda<Func<ResultProjection, object>>(
 					Expression.Convert(strExpression.Body, typeof(object)), strExpression.Parameters);
 			}
 
@@ -225,14 +310,14 @@ namespace Elpida.Backend.Services
 				$"OrderBy is not a valid order field. Can be: {string.Join(',', ModelExpressions.Keys)}");
 		}
 
-		private static IEnumerable<Expression<Func<ResultModel, bool>>> GetQueryFilters(QueryRequest queryRequest)
+		private static IEnumerable<Expression<Func<ResultProjection, bool>>> GetQueryFilters(QueryRequest queryRequest)
 		{
 			if (queryRequest.Filters == null)
 			{
 				return null;
 			}
 
-			var returnList = new List<Expression<Func<ResultModel, bool>>>();
+			var returnList = new List<Expression<Func<ResultProjection, bool>>>();
 
 			foreach (var filter in queryRequest.Filters)
 			{

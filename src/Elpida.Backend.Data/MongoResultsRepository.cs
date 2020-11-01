@@ -24,6 +24,7 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Data.Abstractions;
+using Elpida.Backend.Data.Abstractions.Models;
 using Elpida.Backend.Data.Abstractions.Models.Result;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -34,23 +35,26 @@ namespace Elpida.Backend.Data
 	public class MongoResultsRepository : IResultsRepository
 	{
 		private readonly IMongoCollection<ResultModel> _resultCollection;
+		private readonly IMongoCollection<CpuModel> _cpuCollection;
+		private readonly IMongoCollection<TopologyModel> _topologyModel;
 
-		public MongoResultsRepository(IMongoCollection<ResultModel> resultCollection)
+		public MongoResultsRepository(IMongoCollection<ResultModel> resultCollection, IMongoCollection<CpuModel> cpuCollection, IMongoCollection<TopologyModel> topologyModel)
 		{
 			_resultCollection = resultCollection ?? throw new ArgumentNullException(nameof(resultCollection));
+			_cpuCollection = cpuCollection;
+			_topologyModel = topologyModel;
 		}
 
 		#region IResultsRepository Members
 
-		public async Task<ResultModel> GetSingleAsync(string id, CancellationToken cancellationToken)
+		public Task<ResultProjection> GetSingleAsync(string id, CancellationToken cancellationToken)
 		{
 			if (string.IsNullOrWhiteSpace(id))
 			{
 				throw new ArgumentException("'Id' cannot be empty", nameof(id));
 			}
 
-			return await (await _resultCollection.FindAsync(r => r.Id == id, cancellationToken: cancellationToken))
-				.FirstOrDefaultAsync(cancellationToken);
+			return JoinCollectionData().FirstOrDefaultAsync(r => r.Id == id, cancellationToken: cancellationToken);
 		}
 
 		public async Task<string> CreateAsync(ResultModel resultModel, CancellationToken cancellationToken)
@@ -75,8 +79,8 @@ namespace Elpida.Backend.Data
 			int from,
 			int count,
 			bool descending,
-			Expression<Func<ResultModel, TOrderKey>> orderBy,
-			IEnumerable<Expression<Func<ResultModel, bool>>> filters,
+			Expression<Func<ResultProjection, TOrderKey>> orderBy,
+			IEnumerable<Expression<Func<ResultProjection, bool>>> filters,
 			bool calculateTotalCount,
 			CancellationToken cancellationToken = default)
 		{
@@ -90,21 +94,30 @@ namespace Elpida.Backend.Data
 				throw new ArgumentException("'count' must be positive", nameof(count));
 			}
 
-			var result = _resultCollection.AsQueryable();
+			var result = JoinCollectionData();
 
-			result = filters?.Aggregate(result, (current, filter) => current.Where(filter)) ?? result;
+			foreach (var filter in filters)
+			{
+				result = result.Where(filter);
+			}
+			
+			//result = filters?.Aggregate(result, (current, filter) => current.Where(filter)) ?? result;
 
 			if (orderBy != null)
 			{
 				result = descending ? result.OrderByDescending(orderBy) : result.OrderBy(orderBy);
 			}
 
-			var totalCount = calculateTotalCount ? await result.CountAsync(cancellationToken) : 0;
+			var totalCount = calculateTotalCount ? result.Count() : 0;
 
 			var results = await result.Skip(from)
 				.Take(count)
 				.Select(m => new ResultPreviewModel
 				{
+					CpuBrand = m.System.Cpu.Brand,
+					CpuCores = m.System.Topology.TotalPhysicalCores,
+					CpuLogicalCores = m.System.Topology.TotalLogicalCores,
+					CpuFrequency = m.System.Cpu.Frequency,
 					Name = m.Result.Name,
 					Id = m.Id,
 					OsName = m.System.Os.Name,
@@ -113,16 +126,38 @@ namespace Elpida.Backend.Data
 					ElpidaVersionMinor = m.Elpida.Version.Minor,
 					ElpidaVersionRevision = m.Elpida.Version.Revision,
 					ElpidaVersionBuild = m.Elpida.Version.Build,
-					CpuBrand = m.System.Cpu.Brand,
-					CpuCores = m.System.Topology.TotalPhysicalCores,
-					CpuLogicalCores = m.System.Topology.TotalLogicalCores,
-					CpuFrequency = m.System.Cpu.Frequency,
 					MemorySize = m.System.Memory.TotalSize,
 					TimeStamp = m.TimeStamp
 				})
 				.ToListAsync(cancellationToken);
 
 			return new PagedQueryResult<ResultPreviewModel>(totalCount, results);
+		}
+
+		private IMongoQueryable<ResultProjection> JoinCollectionData()
+		{
+			return _resultCollection.AsQueryable()
+				.Join(_cpuCollection.AsQueryable(),
+					rmodel => rmodel.System.CpuHash,
+					cmodel => cmodel.Hash,
+					(model, cpuModel) => new {ResultModel = model, CpuModel = cpuModel})
+				.Join(_topologyModel.AsQueryable(),
+					t => t.ResultModel.System.TopologyHash,
+					topology => topology.Hash, (t, topology) => new ResultProjection
+					{
+						Affinity = t.ResultModel.Affinity,
+						Elpida = t.ResultModel.Elpida,
+						Id = t.ResultModel.Id,
+						Result = t.ResultModel.Result,
+						System = new SystemModelProjection
+						{
+							Cpu = t.CpuModel,
+							Memory = t.ResultModel.System.Memory,
+							Os = t.ResultModel.System.Os,
+							Topology = topology
+						},
+						TimeStamp = t.ResultModel.TimeStamp
+					});
 		}
 
 		public Task DeleteAllAsync(CancellationToken cancellationToken)

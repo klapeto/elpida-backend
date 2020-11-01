@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Elpida.Backend.Data.Abstractions.Models;
 using Elpida.Backend.Data.Abstractions.Models.Result;
 using Elpida.Backend.Services.Abstractions.Dtos.Result;
 
@@ -27,7 +28,90 @@ namespace Elpida.Backend.Services
 {
 	public static class ResultModelExtensions
 	{
-		public static ResultDto ToDto(this ResultModel resultModel)
+		public static CpuCacheDto ToDto(this CpuCacheModel model)
+		{
+			if (model == null) throw new ArgumentNullException(nameof(model));
+
+			return new CpuCacheDto
+			{
+				Associativity = model.Associativity,
+				Name = model.Name,
+				Size = model.Size,
+				LineSize = model.LineSize,
+				LinesPerTag = model.LinesPerTag
+			};
+		}
+		
+		public static CpuDto ToDto(this CpuModel model)
+		{
+			if (model == null) throw new ArgumentNullException(nameof(model));
+
+			return new CpuDto
+			{
+				Brand = model.Brand,
+				Caches = model.Caches.Select(c => c.ToDto()).ToList(),
+				Features = model.Features,
+				Frequency = model.Frequency,
+				Smt = model.Smt,
+				Vendor = model.Vendor,
+				AdditionalInfo = model.AdditionalInfo
+			};
+		}
+
+		public static TopologyDto ToDto(this TopologyModel model)
+		{
+			if (model == null) throw new ArgumentNullException(nameof(model));
+
+			var topology = new TopologyDto
+			{
+				TotalDepth = model.TotalDepth,
+				TotalLogicalCores = model.TotalLogicalCores,
+				TotalPhysicalCores = model.TotalLogicalCores,
+				Root = new CpuNodeDto
+				{
+					Name = model.Root.Name,
+					Value = model.Root.Value,
+					NodeType = model.Root.NodeType,
+					OsIndex = model.Root.OsIndex
+				}
+			};
+
+			if (model.Root.Children != null)
+			{
+				topology.Root.Children = new List<CpuNodeDto>();
+				foreach (var child in model.Root.Children)
+				{
+					topology.Root.Children.Add(CreateChild(child));
+				}
+			}
+
+			if (model.Root.MemoryChildren != null)
+			{
+				topology.Root.MemoryChildren = new List<CpuNodeDto>();
+				foreach (var child in model.Root.MemoryChildren)
+				{
+					topology.Root.MemoryChildren.Add(CreateChild(child));
+				}
+			}
+
+			return topology;
+		}
+
+		private static CpuNodeDto CreateChild(CpuNodeModel cpuNodeModel)
+		{
+			return new CpuNodeDto
+			{
+				Name = cpuNodeModel.Name,
+				Value = cpuNodeModel.Value,
+				NodeType = cpuNodeModel.NodeType,
+				OsIndex = cpuNodeModel.OsIndex,
+				Children = cpuNodeModel.Children?.Select(CreateChild).ToList(),
+				MemoryChildren = cpuNodeModel.MemoryChildren?.Select(CreateChild).ToList()
+			};
+		}
+
+
+		public static ResultDto ToDto(this ResultProjection resultModel)
 		{
 			if (resultModel == null) throw new ArgumentNullException(nameof(resultModel));
 			var resultDto = new ResultDto
@@ -74,78 +158,18 @@ namespace Elpida.Backend.Services
 						Name = resultModel.System.Os.Name,
 						Version = resultModel.System.Os.Version
 					},
-					Cpu =
-						new CpuDto
-						{
-							Brand = resultModel.System.Cpu.Brand,
-							AdditionalInfo = resultModel.System.Cpu.AdditionalInfo,
-							Frequency = resultModel.System.Cpu.Frequency,
-							Smt = resultModel.System.Cpu.Smt,
-							Features = resultModel.System.Cpu.Features,
-							Vendor = resultModel.System.Cpu.Vendor,
-							Caches = resultModel.System.Cpu.Caches.Select(c => new CpuCacheDto
-							{
-								Associativity = c.Associativity,
-								Name = c.Name,
-								Size = c.Size,
-								LineSize = c.LineSize,
-								LinesPerTag = c.LinesPerTag
-							}).ToList()
-						},
+					Cpu = resultModel.System.Cpu.ToDto(),
 					Memory =
 						new MemoryDto
 						{
 							PageSize = resultModel.System.Memory.PageSize,
 							TotalSize = resultModel.System.Memory.TotalSize
 						},
-					Topology = new TopologyDto
-					{
-						TotalDepth = resultModel.System.Topology.TotalDepth,
-						TotalLogicalCores = resultModel.System.Topology.TotalLogicalCores,
-						TotalPhysicalCores = resultModel.System.Topology.TotalLogicalCores,
-						Root = new CpuNodeDto
-						{
-							Name = resultModel.System.Topology.Root.Name,
-							Value = resultModel.System.Topology.Root.Value,
-							NodeType = resultModel.System.Topology.Root.NodeType,
-							OsIndex = resultModel.System.Topology.Root.OsIndex
-						}
-					}
+					Topology = resultModel.System.Topology.ToDto(),
 				}
 			};
-
-			if (resultModel.System.Topology.Root.Children != null)
-			{
-				resultDto.System.Topology.Root.Children = new List<CpuNodeDto>();
-				foreach (var child in resultModel.System.Topology.Root.Children)
-				{
-					resultDto.System.Topology.Root.Children.Add(CreateChild(child));
-				}
-			}
-
-			if (resultModel.System.Topology.Root.MemoryChildren != null)
-			{
-				resultDto.System.Topology.Root.MemoryChildren = new List<CpuNodeDto>();
-				foreach (var child in resultModel.System.Topology.Root.MemoryChildren)
-				{
-					resultDto.System.Topology.Root.MemoryChildren.Add(CreateChild(child));
-				}
-			}
 
 			return resultDto;
-		}
-
-		private static CpuNodeDto CreateChild(CpuNodeModel cpuNodeModel)
-		{
-			return new CpuNodeDto
-			{
-				Name = cpuNodeModel.Name,
-				Value = cpuNodeModel.Value,
-				NodeType = cpuNodeModel.NodeType,
-				OsIndex = cpuNodeModel.OsIndex,
-				Children = cpuNodeModel.Children?.Select(CreateChild).ToList(),
-				MemoryChildren = cpuNodeModel.MemoryChildren?.Select(CreateChild).ToList()
-			};
 		}
 	}
 }

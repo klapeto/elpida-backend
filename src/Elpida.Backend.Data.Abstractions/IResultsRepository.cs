@@ -22,13 +22,14 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Elpida.Backend.Data.Abstractions.Models;
 using Elpida.Backend.Data.Abstractions.Models.Result;
 
 namespace Elpida.Backend.Data.Abstractions
 {
 	public interface IResultsRepository
 	{
-		Task<ResultModel> GetSingleAsync(string id, CancellationToken cancellationToken = default);
+		Task<ResultProjection> GetSingleAsync(string id, CancellationToken cancellationToken = default);
 
 		Task<string> CreateAsync(ResultModel resultModel, CancellationToken cancellationToken = default);
 
@@ -38,8 +39,8 @@ namespace Elpida.Backend.Data.Abstractions
 			int from, 
 			int count, 
 			bool descending, 
-			Expression<Func<ResultModel, TOrderKey>> orderBy,
-			IEnumerable<Expression<Func<ResultModel, bool>>> filters,
+			Expression<Func<ResultProjection, TOrderKey>> orderBy,
+			IEnumerable<Expression<Func<ResultProjection, bool>>> filters,
 			bool calculateTotalCount,
 			CancellationToken cancellationToken = default);
 

@@ -17,8 +17,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System;
+
 namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 {
+	[Serializable]
 	public class TopologyDto
 	{
 		public uint TotalLogicalCores { get; set; }
