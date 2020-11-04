@@ -25,6 +25,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Data.Abstractions;
@@ -37,14 +38,14 @@ namespace Elpida.Backend.Services
 {
 	public class ResultService : IResultsService
 	{
-		private static readonly MethodInfo StringContains =
-			typeof(string).GetMethod(nameof(string.Contains), new[] {typeof(string)});
+		private static readonly MethodInfo RegexIsMatch =
+			typeof(Regex).GetMethod(nameof(Regex.IsMatch), new[] {typeof(string), typeof(string)});
 
 		private static readonly IReadOnlyDictionary<string, Func<Expression, Expression, Expression>>
 			ComparisonExpressionsFactories = new Dictionary<string, Func<Expression, Expression, Expression>>
 			{
 				[Filter.ComparisonMap[Filter.Comparison.Contains]] =
-					(left, right) => Expression.Call(left, StringContains, right),
+					(left, right) => Expression.Call(RegexIsMatch, left, right),
 				[Filter.ComparisonMap[Filter.Comparison.Equal]] = Expression.Equal,
 				[Filter.ComparisonMap[Filter.Comparison.Greater]] = Expression.GreaterThan,
 				[Filter.ComparisonMap[Filter.Comparison.GreaterEqual]] = Expression.GreaterThanOrEqual,
