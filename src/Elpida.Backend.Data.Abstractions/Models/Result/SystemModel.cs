@@ -21,8 +21,8 @@ namespace Elpida.Backend.Data.Abstractions.Models.Result
 {
 	public class SystemModel
 	{
-		public string CpuHash { get; set; }
-		public string TopologyHash { get; set; }
+		public string CpuId { get; set; }
+		public string TopologyId { get; set; }
 		public OsModel Os { get; set; }
 		public MemoryModel Memory { get; set; }
 	}

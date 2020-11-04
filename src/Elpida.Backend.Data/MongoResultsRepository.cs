@@ -34,11 +34,12 @@ namespace Elpida.Backend.Data
 {
 	public class MongoResultsRepository : IResultsRepository
 	{
-		private readonly IMongoCollection<ResultModel> _resultCollection;
 		private readonly IMongoCollection<CpuModel> _cpuCollection;
+		private readonly IMongoCollection<ResultModel> _resultCollection;
 		private readonly IMongoCollection<TopologyModel> _topologyModel;
 
-		public MongoResultsRepository(IMongoCollection<ResultModel> resultCollection, IMongoCollection<CpuModel> cpuCollection, IMongoCollection<TopologyModel> topologyModel)
+		public MongoResultsRepository(IMongoCollection<ResultModel> resultCollection,
+			IMongoCollection<CpuModel> cpuCollection, IMongoCollection<TopologyModel> topologyModel)
 		{
 			_resultCollection = resultCollection ?? throw new ArgumentNullException(nameof(resultCollection));
 			_cpuCollection = cpuCollection;
@@ -54,7 +55,7 @@ namespace Elpida.Backend.Data
 				throw new ArgumentException("'Id' cannot be empty", nameof(id));
 			}
 
-			return JoinCollectionData().FirstOrDefaultAsync(r => r.Id == id, cancellationToken: cancellationToken);
+			return JoinCollectionData().FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
 		}
 
 		public async Task<string> CreateAsync(ResultModel resultModel, CancellationToken cancellationToken)
@@ -96,12 +97,7 @@ namespace Elpida.Backend.Data
 
 			var result = JoinCollectionData();
 
-			foreach (var filter in filters)
-			{
-				result = result.Where(filter);
-			}
-			
-			//result = filters?.Aggregate(result, (current, filter) => current.Where(filter)) ?? result;
+			result = filters.Aggregate(result, (current, filter) => current.Where(filter));
 
 			if (orderBy != null)
 			{
@@ -134,16 +130,23 @@ namespace Elpida.Backend.Data
 			return new PagedQueryResult<ResultPreviewModel>(totalCount, results);
 		}
 
+		public Task DeleteAllAsync(CancellationToken cancellationToken)
+		{
+			return _resultCollection.DeleteManyAsync(FilterDefinition<ResultModel>.Empty, cancellationToken);
+		}
+
+		#endregion
+
 		private IMongoQueryable<ResultProjection> JoinCollectionData()
 		{
 			return _resultCollection.AsQueryable()
 				.Join(_cpuCollection.AsQueryable(),
-					rmodel => rmodel.System.CpuHash,
-					cmodel => cmodel.Hash,
+					rmodel => rmodel.System.CpuId,
+					cmodel => cmodel.Id,
 					(model, cpuModel) => new {ResultModel = model, CpuModel = cpuModel})
 				.Join(_topologyModel.AsQueryable(),
-					t => t.ResultModel.System.TopologyHash,
-					topology => topology.Hash, (t, topology) => new ResultProjection
+					t => t.ResultModel.System.TopologyId,
+					topology => topology.Id, (t, topology) => new ResultProjection
 					{
 						Affinity = t.ResultModel.Affinity,
 						Elpida = t.ResultModel.Elpida,
@@ -159,12 +162,5 @@ namespace Elpida.Backend.Data
 						TimeStamp = t.ResultModel.TimeStamp
 					});
 		}
-
-		public Task DeleteAllAsync(CancellationToken cancellationToken)
-		{
-			return _resultCollection.DeleteManyAsync(FilterDefinition<ResultModel>.Empty, cancellationToken);
-		}
-
-		#endregion
 	}
 }

@@ -29,8 +29,6 @@ namespace Elpida.Backend.Data.Abstractions.Models.Result
 		public ulong Frequency { get; set; }
 		public bool Smt { get; set; }
 		
-		public string Hash { get; set; }
-		
 		public IDictionary<string, string> AdditionalInfo { get; set; }
 		public IList<CpuCacheModel> Caches { get; set; }
 		public IList<string> Features { get; set; }

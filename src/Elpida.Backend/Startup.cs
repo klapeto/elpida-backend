@@ -62,28 +62,21 @@ namespace Elpida.Backend
 
 			services.Configure<DocumentRepositorySettings>(
 				Configuration.GetSection(nameof(DocumentRepositorySettings)));
-
-			services.Configure<AzureBlobAssetsRepositorySettings>(
-				Configuration.GetSection(nameof(AzureBlobAssetsRepositorySettings)));
+			
 
 			services.AddSingleton<IDocumentRepositorySettings>(sp =>
 				sp.GetRequiredService<IOptions<DocumentRepositorySettings>>().Value);
-
-			services.AddSingleton<IAssetsRepositorySettings>(sp =>
-				sp.GetRequiredService<IOptions<AzureBlobAssetsRepositorySettings>>().Value);
-
+			
 			services.AddScoped<IResultsService, ResultService>();
-			services.AddTransient<IAssetsService, AssetsService>();
+			
+			services.AddTransient<IIdProvider, IdProvider>();
 
 			services.AddTransient(MongoResultsCollection_ImplementationFactory);
 			services.AddTransient(MongoCpuCollection_ImplementationFactory);
 			services.AddTransient(MongoTopologyCollection_ImplementationFactory);
 
-			services.AddTransient<IBlobClientFactory, AzureAssetsBlobClientFactory>();
-
 			services.AddTransient<IResultsRepository, MongoResultsRepository>();
 			services.AddTransient<ICpuRepository, MongoCpuRepository>();
-			services.AddTransient<IAssetsRepository, AzureBlobsAssetsRepository>();
 
 			services.AddApiVersioning();
 
@@ -99,9 +92,9 @@ namespace Elpida.Backend
 				throw new ArgumentException("Documents Connection string is empty", nameof(settings.ConnectionString));
 			if (string.IsNullOrWhiteSpace(settings.DatabaseName))
 				throw new ArgumentException("Database name for documents is empty", nameof(settings.DatabaseName));
-			if (string.IsNullOrWhiteSpace(settings.ResultsCollectionName))
+			if (string.IsNullOrWhiteSpace(settings.CpusCollectionName))
 				throw new ArgumentException("Collection name for Cpus documents is empty",
-					nameof(settings.ResultsCollectionName));
+					nameof(settings.CpusCollectionName));
 
 			var client = new MongoClient(settings.ConnectionString);
 			var database = client.GetDatabase(settings.DatabaseName);
@@ -118,14 +111,14 @@ namespace Elpida.Backend
 				throw new ArgumentException("Documents Connection string is empty", nameof(settings.ConnectionString));
 			if (string.IsNullOrWhiteSpace(settings.DatabaseName))
 				throw new ArgumentException("Database name for documents is empty", nameof(settings.DatabaseName));
-			if (string.IsNullOrWhiteSpace(settings.ResultsCollectionName))
-				throw new ArgumentException("Collection name for Cpus documents is empty",
-					nameof(settings.ResultsCollectionName));
+			if (string.IsNullOrWhiteSpace(settings.TopologiesCollectionName))
+				throw new ArgumentException("Collection name for Topologies documents is empty",
+					nameof(settings.TopologiesCollectionName));
 
 			var client = new MongoClient(settings.ConnectionString);
 			var database = client.GetDatabase(settings.DatabaseName);
 			
-			return database.GetCollection<TopologyModel>(settings.CpusCollectionName);
+			return database.GetCollection<TopologyModel>(settings.TopologiesCollectionName);
 		}
 
 		private static IMongoCollection<ResultModel> MongoResultsCollection_ImplementationFactory(

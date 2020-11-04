@@ -17,17 +17,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-namespace Elpida.Backend.Data
+using Elpida.Backend.Services.Abstractions.Dtos.Result;
+
+namespace Elpida.Backend.Services.Abstractions
 {
-	public class AzureBlobAssetsRepositorySettings : IAssetsRepositorySettings
+	public interface IIdProvider
 	{
-		#region IAssetsRepositorySettings Members
-
-		public string BlobStorageUri { get; set; }
-		public string BlobStorageContainer { get; set; }
-		public string AccountName { get; set; }
-		public string AccountKey { get; set; }
-
-		#endregion
+		string GetForCpu(CpuDto cpuDto);
+		string GetForTopology(string cpuId, TopologyDto topologyDto);
+		string GetForResult(ResultDto resultDto);
 	}
 }
