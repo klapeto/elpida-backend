@@ -18,7 +18,6 @@
  */
 
 using System;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Elpida.Backend.Data;
@@ -62,18 +61,27 @@ namespace Elpida.Backend
 
 			services.Configure<DocumentRepositorySettings>(
 				Configuration.GetSection(nameof(DocumentRepositorySettings)));
-			
+
 
 			services.AddSingleton<IDocumentRepositorySettings>(sp =>
 				sp.GetRequiredService<IOptions<DocumentRepositorySettings>>().Value);
-			
+
 			services.AddScoped<IResultsService, ResultService>();
-			
+
 			services.AddTransient<IIdProvider, IdProvider>();
 
-			services.AddTransient(MongoResultsCollection_ImplementationFactory);
-			services.AddTransient(MongoCpuCollection_ImplementationFactory);
-			services.AddTransient(MongoTopologyCollection_ImplementationFactory);
+
+			services.AddSingleton(IMongoClient_ImplementationFactory);
+			services.AddSingleton(IMongoDatabase_ImplementationFactory);
+
+			services.AddTransient(provider =>
+				MongoCollection_ImplementationFactory<CpuModel>(provider, settings => settings.CpusCollectionName));
+			services.AddTransient(provider =>
+				MongoCollection_ImplementationFactory<TopologyModel>(provider,
+					settings => settings.TopologiesCollectionName));
+			services.AddTransient(provider =>
+				MongoCollection_ImplementationFactory<ResultModel>(provider,
+					settings => settings.ResultsCollectionName));
 
 			services.AddTransient<IResultsRepository, MongoResultsRepository>();
 			services.AddTransient<ICpuRepository, MongoCpuRepository>();
@@ -82,62 +90,46 @@ namespace Elpida.Backend
 
 			services.AddCors();
 		}
-		
-		private static IMongoCollection<CpuModel> MongoCpuCollection_ImplementationFactory(
-			IServiceProvider serviceProvider)
+
+		private static IMongoClient IMongoClient_ImplementationFactory(IServiceProvider serviceProvider)
 		{
 			var settings = serviceProvider.GetRequiredService<IDocumentRepositorySettings>();
 
 			if (string.IsNullOrWhiteSpace(settings.ConnectionString))
+			{
 				throw new ArgumentException("Documents Connection string is empty", nameof(settings.ConnectionString));
-			if (string.IsNullOrWhiteSpace(settings.DatabaseName))
-				throw new ArgumentException("Database name for documents is empty", nameof(settings.DatabaseName));
-			if (string.IsNullOrWhiteSpace(settings.CpusCollectionName))
-				throw new ArgumentException("Collection name for Cpus documents is empty",
-					nameof(settings.CpusCollectionName));
+			}
 
-			var client = new MongoClient(settings.ConnectionString);
-			var database = client.GetDatabase(settings.DatabaseName);
-
-			return database.GetCollection<CpuModel>(settings.CpusCollectionName);
-		}
-		
-		private static IMongoCollection<TopologyModel> MongoTopologyCollection_ImplementationFactory(
-			IServiceProvider serviceProvider)
-		{
-			var settings = serviceProvider.GetRequiredService<IDocumentRepositorySettings>();
-
-			if (string.IsNullOrWhiteSpace(settings.ConnectionString))
-				throw new ArgumentException("Documents Connection string is empty", nameof(settings.ConnectionString));
-			if (string.IsNullOrWhiteSpace(settings.DatabaseName))
-				throw new ArgumentException("Database name for documents is empty", nameof(settings.DatabaseName));
-			if (string.IsNullOrWhiteSpace(settings.TopologiesCollectionName))
-				throw new ArgumentException("Collection name for Topologies documents is empty",
-					nameof(settings.TopologiesCollectionName));
-
-			var client = new MongoClient(settings.ConnectionString);
-			var database = client.GetDatabase(settings.DatabaseName);
-			
-			return database.GetCollection<TopologyModel>(settings.TopologiesCollectionName);
+			return new MongoClient(settings.ConnectionString);
 		}
 
-		private static IMongoCollection<ResultModel> MongoResultsCollection_ImplementationFactory(
-			IServiceProvider serviceProvider)
+		private static IMongoDatabase IMongoDatabase_ImplementationFactory(IServiceProvider serviceProvider)
+		{
+			var settings = serviceProvider.GetRequiredService<IDocumentRepositorySettings>();
+			var client = serviceProvider.GetRequiredService<IMongoClient>();
+
+			if (string.IsNullOrWhiteSpace(settings.DatabaseName))
+			{
+				throw new ArgumentException("Documents Database Name is empty", nameof(settings.DatabaseName));
+			}
+
+			return client.GetDatabase(settings.DatabaseName);
+		}
+
+		private static IMongoCollection<T> MongoCollection_ImplementationFactory<T>(
+			IServiceProvider serviceProvider, Func<IDocumentRepositorySettings, string> collectionNameGetter)
 		{
 			var settings = serviceProvider.GetRequiredService<IDocumentRepositorySettings>();
 
-			if (string.IsNullOrWhiteSpace(settings.ConnectionString))
-				throw new ArgumentException("Documents Connection string is empty", nameof(settings.ConnectionString));
-			if (string.IsNullOrWhiteSpace(settings.DatabaseName))
-				throw new ArgumentException("Database name for documents is empty", nameof(settings.DatabaseName));
-			if (string.IsNullOrWhiteSpace(settings.ResultsCollectionName))
-				throw new ArgumentException("Collection name for Results documents is empty",
-					nameof(settings.ResultsCollectionName));
+			var collectionName = collectionNameGetter(settings);
+			if (string.IsNullOrWhiteSpace(collectionName))
+			{
+				throw new ArgumentException($"Collection Name is empty for: {typeof(T).Name}");
+			}
 
-			var client = new MongoClient(settings.ConnectionString);
-			var database = client.GetDatabase(settings.DatabaseName);
+			var database = serviceProvider.GetRequiredService<IMongoDatabase>();
 
-			return database.GetCollection<ResultModel>(settings.ResultsCollectionName);
+			return database.GetCollection<T>(settings.ResultsCollectionName);
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -158,10 +150,10 @@ namespace Elpida.Backend
 					.WithMethods(HttpMethods.Get, HttpMethods.Post)
 					.WithHeaders(HeaderNames.ContentType, HeaderNames.Accept)
 					.WithExposedHeaders(
-						HeaderNames.ContentLength, 
+						HeaderNames.ContentLength,
 						HeaderNames.ContentRange
 					)
-				);
+			);
 
 			app.UseRouting();
 
@@ -187,7 +179,8 @@ namespace Elpida.Backend
 					break;
 				case CorruptedRecordException cre:
 					context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
-					await context.Response.WriteAsync($"The requested record is corrupted!. Please report this to Elpida Backend repository along with this id: {cre.Id}");
+					await context.Response.WriteAsync(
+						$"The requested record is corrupted!. Please report this to Elpida Backend repository along with this id: {cre.Id}");
 					break;
 				default:
 					context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
