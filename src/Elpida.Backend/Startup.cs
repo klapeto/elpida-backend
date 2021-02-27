@@ -129,7 +129,8 @@ namespace Elpida.Backend
 
 			var database = serviceProvider.GetRequiredService<IMongoDatabase>();
 
-			return database.GetCollection<T>(settings.ResultsCollectionName);
+			//return database.GetCollection<T>(settings.ResultsCollectionName);
+			return database.GetCollection<T>(collectionName);
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

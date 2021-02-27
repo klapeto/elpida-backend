@@ -19,7 +19,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Data.Abstractions.Models.Result;
@@ -42,7 +41,9 @@ namespace Elpida.Backend.Data.Tests
 		[Test]
 		public void Constructor_NullArgument_ThrowsArgumentNullException()
 		{
-			Assert.Throws<ArgumentNullException>(() => new MongoResultsRepository(null));
+			Assert.Throws<ArgumentNullException>(() => new MongoResultsRepository(null, 
+				Mock.Of<IMongoCollection<CpuModel>>(), 
+				Mock.Of<IMongoCollection<TopologyModel>>()));
 		}
 
 		[Test]
