@@ -40,7 +40,9 @@ namespace Elpida.Backend.Services
 			builder.Append('_');
 			builder.Append(cpuDto.Brand);
 
-			foreach (var infoPair in cpuDto.AdditionalInfo.ToArray().OrderBy(c => c.Key))
+			foreach (var infoPair in cpuDto.AdditionalInfo.
+				ToArray()
+				.OrderBy(c => c.Key))
 			{
 				builder.Append('_');
 				builder.Append(infoPair.Value);

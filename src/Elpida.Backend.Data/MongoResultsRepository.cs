@@ -26,29 +26,27 @@ using System.Threading.Tasks;
 using Elpida.Backend.Data.Abstractions;
 using Elpida.Backend.Data.Abstractions.Models;
 using Elpida.Backend.Data.Abstractions.Models.Result;
-using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
 namespace Elpida.Backend.Data
 {
-	public class MongoResultsRepository : IResultsRepository
+	public class MongoResultsRepository : MongoRepository<ResultModel>, IResultsRepository
 	{
 		private readonly IMongoCollection<CpuModel> _cpuCollection;
-		private readonly IMongoCollection<ResultModel> _resultCollection;
-		private readonly IMongoCollection<TopologyModel> _topologyModel;
+		private readonly IMongoCollection<TopologyModel> _topologyCollection;
 
-		public MongoResultsRepository(IMongoCollection<ResultModel> resultCollection,
-			IMongoCollection<CpuModel> cpuCollection, IMongoCollection<TopologyModel> topologyModel)
+		public MongoResultsRepository(
+			IMongoCollection<ResultModel> resultCollection,
+			IMongoCollection<CpuModel> cpuCollection,
+			IMongoCollection<TopologyModel> topologyCollection)
+			: base(resultCollection)
 		{
-			_resultCollection = resultCollection ?? throw new ArgumentNullException(nameof(resultCollection));
-			_cpuCollection = cpuCollection;
-			_topologyModel = topologyModel;
+			_cpuCollection = cpuCollection ?? throw new ArgumentNullException(nameof(cpuCollection));
+			_topologyCollection = topologyCollection ?? throw new ArgumentNullException(nameof(topologyCollection));
 		}
 
-		#region IResultsRepository Members
-
-		public Task<ResultProjection> GetSingleAsync(string id, CancellationToken cancellationToken)
+		public Task<ResultProjection> GetProjectionAsync(string id, CancellationToken cancellationToken = default)
 		{
 			if (string.IsNullOrWhiteSpace(id))
 			{
@@ -58,25 +56,7 @@ namespace Elpida.Backend.Data
 			return JoinCollectionData().FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
 		}
 
-		public async Task<string> CreateAsync(ResultModel resultModel, CancellationToken cancellationToken)
-		{
-			if (resultModel == null)
-			{
-				throw new ArgumentNullException(nameof(resultModel));
-			}
-
-			resultModel.Id = ObjectId.GenerateNewId(DateTime.UtcNow).ToString();
-			await _resultCollection.InsertOneAsync(resultModel, cancellationToken: cancellationToken);
-			return resultModel.Id;
-		}
-
-		public Task<long> GetTotalCountAsync(CancellationToken cancellationToken)
-		{
-			return _resultCollection.CountDocumentsAsync(FilterDefinition<ResultModel>.Empty,
-				cancellationToken: cancellationToken);
-		}
-
-		public async Task<PagedQueryResult<ResultPreviewModel>> GetAsync<TOrderKey>(
+		public async Task<PagedQueryResult<ResultPreviewModel>> GetPagedPreviewsAsync<TOrderKey>(
 			int from,
 			int count,
 			bool descending,
@@ -97,14 +77,17 @@ namespace Elpida.Backend.Data
 
 			var result = JoinCollectionData();
 
-			result = filters.Aggregate(result, (current, filter) => current.Where(filter));
-
+			if (filters != null)
+			{
+				result = filters.Aggregate(result, (current, filter) => current.Where(filter));
+			}
+			
 			if (orderBy != null)
 			{
 				result = descending ? result.OrderByDescending(orderBy) : result.OrderBy(orderBy);
 			}
 
-			var totalCount = calculateTotalCount ? result.Count() : 0;
+			var totalCount = calculateTotalCount ? await result.CountAsync(cancellationToken) : 0;
 
 			var results = await result.Skip(from)
 				.Take(count)
@@ -130,21 +113,14 @@ namespace Elpida.Backend.Data
 			return new PagedQueryResult<ResultPreviewModel>(totalCount, results);
 		}
 
-		public Task DeleteAllAsync(CancellationToken cancellationToken)
-		{
-			return _resultCollection.DeleteManyAsync(FilterDefinition<ResultModel>.Empty, cancellationToken);
-		}
-
-		#endregion
-
 		private IMongoQueryable<ResultProjection> JoinCollectionData()
 		{
-			return _resultCollection.AsQueryable()
+			return Collection.AsQueryable()
 				.Join(_cpuCollection.AsQueryable(),
-					rmodel => rmodel.System.CpuId,
-					cmodel => cmodel.Id,
+					rModel => rModel.System.CpuId,
+					cModel => cModel.Id,
 					(model, cpuModel) => new {ResultModel = model, CpuModel = cpuModel})
-				.Join(_topologyModel.AsQueryable(),
+				.Join(_topologyCollection.AsQueryable(),
 					t => t.ResultModel.System.TopologyId,
 					topology => topology.Id, (t, topology) => new ResultProjection
 					{

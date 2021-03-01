@@ -10,7 +10,7 @@ namespace Elpida.Backend.Data.Abstractions.Models
 
 		public DateTime TimeStamp { get; set; }
 		
-		public IList<ulong> Affinity { get; set; }
+		public IList<long> Affinity { get; set; }
 		public ElpidaModel Elpida { get; set; }
 		public SystemModelProjection System { get; set; }
 		public BenchmarkResultModel Result { get; set; }

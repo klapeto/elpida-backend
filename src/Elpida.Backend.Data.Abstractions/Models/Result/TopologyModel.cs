@@ -19,12 +19,12 @@
 
 namespace Elpida.Backend.Data.Abstractions.Models.Result
 {
-	public class TopologyModel
+	public class TopologyModel : IEntity
 	{
 		public string Id { get; set; }
-		public uint TotalLogicalCores { get; set; }
-		public uint TotalPhysicalCores { get; set; }
-		public uint TotalDepth { get; set; }
+		public int TotalLogicalCores { get; set; }
+		public int TotalPhysicalCores { get; set; }
+		public int TotalDepth { get; set; }
 		public CpuNodeModel Root { get; set; }
 	}
 }

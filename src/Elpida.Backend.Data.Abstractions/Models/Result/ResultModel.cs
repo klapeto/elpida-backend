@@ -22,13 +22,13 @@ using System.Collections.Generic;
 
 namespace Elpida.Backend.Data.Abstractions.Models.Result
 {
-	public class ResultModel
+	public class ResultModel : IEntity
 	{
 		public string Id { get; set; }
 
 		public DateTime TimeStamp { get; set; }
 		
-		public IList<ulong> Affinity { get; set; }
+		public IList<long> Affinity { get; set; }
 		public ElpidaModel Elpida { get; set; }
 		public SystemModel System { get; set; }
 		public BenchmarkResultModel Result { get; set; }

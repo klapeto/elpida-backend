@@ -251,6 +251,21 @@ namespace Elpida.Backend.Services
 				throw new ArgumentNullException(nameof(resultDto));
 			}
 
+			if (string.IsNullOrWhiteSpace(id))
+			{
+				throw new ArgumentException("id cannot be empty", nameof(id));
+			}
+			
+			if (string.IsNullOrWhiteSpace(cpuId))
+			{
+				throw new ArgumentException("cpuId cannot be empty", nameof(cpuId));
+			}
+			
+			if (string.IsNullOrWhiteSpace(topologyId))
+			{
+				throw new ArgumentException("cpuId cannot be empty", nameof(topologyId));
+			}
+
 			return new ResultModel
 			{
 				Id = id,

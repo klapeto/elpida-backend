@@ -25,7 +25,7 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 	{
 		public string Vendor { get; set; }
 		public string Brand { get; set; }
-		public ulong Frequency { get; set; }
+		public long Frequency { get; set; }
 		public bool Smt { get; set; }
 		
 		public IDictionary<string, string> AdditionalInfo { get; set; }

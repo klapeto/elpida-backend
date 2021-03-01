@@ -27,17 +27,27 @@ namespace Elpida.Backend.Services.Tests
 {
 	public static class Generators
 	{
-		public static AssetInfoModel CreateAssetInfoModel()
+		public static ResultProjection CreateProjection(string id)
 		{
-			return new AssetInfoModel
+			var result = CreateNewResultModel(id);
+			return new ResultProjection
 			{
-				Filename = "Test.xtx",
-				Location = new Uri("https://beta.elpida.dev"),
-				Md5 = "68546464654314",
-				Size = 6546543132
+				Affinity = result.Affinity,
+				Elpida = result.Elpida,
+				Id = result.Id,
+				Result = result.Result,
+				System = new SystemModelProjection
+				{
+					Cpu = CreateNewCpuModel(),
+					Memory = result.System.Memory,
+					Os = result.System.Os,
+					Topology = CreateNewTopology()
+				},
+				TimeStamp = result.TimeStamp
 			};
 		}
-
+		
+		
 		public static ResultPreviewModel CreateResultPreviewModel(string id)
 		{
 			return new ResultPreviewModel
@@ -65,7 +75,7 @@ namespace Elpida.Backend.Services.Tests
 			{
 				Id = id,
 				TimeStamp = DateTime.UtcNow,
-				Affinity = new List<ulong> {5, 3, 1},
+				Affinity = new List<long> {5, 3, 1},
 				Elpida = new ElpidaModel
 				{
 					Compiler = new CompilerModel
@@ -100,23 +110,8 @@ namespace Elpida.Backend.Services.Tests
 				},
 				System = new SystemModel
 				{
-					Cpu = new CpuModel
-					{
-						Brand = "AMD",
-						Caches = new List<CpuCacheModel>
-						{
-							new CpuCacheModel
-							{
-								Associativity = "Full",
-								Name = "L0",
-								Size = 100000000000,
-								LineSize = 64,
-								LinesPerTag = 1
-							}
-						},
-						Features = new List<string>(), Frequency = 45455555555, Smt = true,
-						Vendor = "AMD", AdditionalInfo = new Dictionary<string, string>()
-					},
+					CpuId = "AMD_TR",
+					TopologyId = "NUMA_C",
 					Memory = new MemoryModel
 					{
 						PageSize = 4096, TotalSize = 544465464
@@ -126,61 +121,52 @@ namespace Elpida.Backend.Services.Tests
 						Category = "Linux",
 						Name = "KDE Neon",
 						Version = "25.0"
-					},
-					Topology = new TopologyModel
-					{
-						Root = new CpuNodeModel
-						{
-							Children = new List<CpuNodeModel>
-							{
-								new CpuNodeModel
-								{
-									Children = new List<CpuNodeModel>(),
-									Name = "Core",
-									Value = null,
-									MemoryChildren = new List<CpuNodeModel>(),
-									NodeType = 1,
-									OsIndex = 1
-								}
-							},
-							Name = "Machine",
-							Value = null,
-							MemoryChildren = new List<CpuNodeModel>
-							{
-								new CpuNodeModel
-								{
-									Children = new List<CpuNodeModel>(),
-									Name = "NUMA",
-									Value = 45654,
-									MemoryChildren = new List<CpuNodeModel>(),
-									NodeType = 7,
-									OsIndex = 1
-								},
-								new CpuNodeModel
-								{
-									Children = new List<CpuNodeModel>(),
-									Name = "NUMA2",
-									Value = 4565455,
-									MemoryChildren = new List<CpuNodeModel>(),
-									NodeType = 7,
-									OsIndex = 2
-								}
-							},
-							NodeType = 0,
-							OsIndex = 0
-						},
-						TotalDepth = 1, TotalLogicalCores = 1, TotalPhysicalCores = 1
 					}
 				}
 			};
 		}
 
+		public static CpuModel CreateNewCpuModel()
+		{
+			return new CpuModel
+			{
+				Brand = "Sdsf",
+				Caches = new List<CpuCacheModel>(),
+				Features = new List<string>(),
+				Frequency = 644,
+				Id = "sadfsdfsd",
+				Smt = false,
+				Vendor = "dsafdsf",
+				AdditionalInfo = new Dictionary<string, string>()
+			};
+		}
 
+		public static TopologyModel CreateNewTopology()
+		{
+			return new TopologyModel
+			{
+				Id = "dsfds",
+				Root = new CpuNodeModel
+				{
+					Name = "dsfdsf",
+					Children = null,
+					Value = 455,
+					MemoryChildren = null,
+					NodeType = 1,
+					OsIndex = 0
+				},
+				TotalDepth = 1,
+				TotalLogicalCores = 1,
+				TotalPhysicalCores = 1
+			};
+		}
+		
 		public static ResultDto CreateNewResultDto()
 		{
 			return new ResultDto
 			{
-				Affinity = new List<ulong> {5, 3, 1},
+				Id = Guid.NewGuid().ToString("N"),
+				Affinity = new List<long> {5, 3, 1},
 				Elpida = new ElpidaDto
 				{
 					Compiler = new CompilerDto

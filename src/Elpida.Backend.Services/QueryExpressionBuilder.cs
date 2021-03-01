@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using Elpida.Backend.Data.Abstractions.Models.Result;
 using Elpida.Backend.Services.Abstractions;
 
 namespace Elpida.Backend.Services
@@ -35,19 +36,39 @@ namespace Elpida.Backend.Services
 				availableExpressions ?? throw new ArgumentNullException(nameof(availableExpressions));
 		}
 
-		public IList<Expression<Func<T, bool>>> Build<T>(IEnumerable<QueryInstance> queryInstances)
+		public IEnumerable<Expression<Func<T, bool>>> Build<T>(IEnumerable<QueryInstance> queryInstances)
 		{
-			var returnList = new List<Expression<Func<T, bool>>>();
+			if (queryInstances == null) yield break;
 
 			foreach (var queryInstance in queryInstances)
 			{
 				if (_availableExpressions.TryGetValue(queryInstance.Name.ToLowerInvariant(), out var expression))
 				{
-					AddFilter(returnList, queryInstance, expression);
+					yield return GetFilter<T>(queryInstance, expression);
+				}
+			}
+		}
+		
+		public static Expression<Func<T, bool>> BuildOr<T, TR>(Expression<Func<T, TR>> baseExpr, IEnumerable<string> values)
+		{
+			var baseAccess = baseExpr.Body;
+
+			Expression expr = null;
+
+			foreach (var value in values.ToArray())
+			{
+				var equal = Expression.Equal(baseAccess, Expression.Constant(value));
+				if (expr != null)
+				{
+					expr = Expression.Or(expr, equal);
+				}
+				else
+				{
+					expr = equal;
 				}
 			}
 
-			return returnList;
+			return Expression.Lambda<Func<T, bool>>(expr, false, baseExpr.Parameters);
 		}
 
 		public Expression<Func<T, object>> GetOrderBy<T>(QueryRequest queryRequest)
@@ -69,12 +90,11 @@ namespace Elpida.Backend.Services
 				$"OrderBy is not a valid order field. Can be: {string.Join(',', _availableExpressions.Keys)}");
 		}
 
-		private void AddFilter<T>(ICollection<Expression<Func<T, bool>>> accumulator,
-			QueryInstance instance, LambdaExpression fieldPart)
+		private Expression<Func<T, bool>> GetFilter<T>(QueryInstance instance, LambdaExpression fieldPart)
 		{
 			if (instance == null)
 			{
-				return;
+				return null;
 			}
 
 			Expression right = Expression.Constant(Convert.ChangeType(instance.Value, fieldPart.Body.Type));
@@ -129,7 +149,7 @@ namespace Elpida.Backend.Services
 				}
 			}
 
-			accumulator.Add(Expression.Lambda<Func<T, bool>>(middlePart, parameters));
+			return Expression.Lambda<Func<T, bool>>(middlePart, parameters);
 		}
 	}
 }

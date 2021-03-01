@@ -27,6 +27,6 @@ namespace Elpida.Backend.Data.Abstractions.Models.Result
 		public string Suffix { get; set; }
 		public int Type { get; set; }
 		public double Time { get; set; }
-		public ulong InputSize { get; set; }
+		public long InputSize { get; set; }
 	}
 }

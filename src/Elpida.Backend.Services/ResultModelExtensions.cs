@@ -110,10 +110,29 @@ namespace Elpida.Backend.Services
 			};
 		}
 
-
 		public static ResultDto ToDto(this ResultProjection resultModel)
 		{
+			return new ResultModel
+			{
+				Affinity = resultModel.Affinity,
+				Elpida = resultModel.Elpida,
+				Id = resultModel.Id,
+				Result = resultModel.Result,
+				System = new SystemModel
+				{
+					Memory = resultModel.System.Memory,
+					Os = resultModel.System.Os,
+				},
+				TimeStamp = resultModel.TimeStamp
+			}.ToDto(resultModel.System.Cpu, resultModel.System.Topology);
+		}
+		
+		public static ResultDto ToDto(this ResultModel resultModel, CpuModel cpuModel, TopologyModel topologyModel)
+		{
 			if (resultModel == null) throw new ArgumentNullException(nameof(resultModel));
+			if (cpuModel == null) throw new ArgumentNullException(nameof(cpuModel));
+			if (topologyModel == null) throw new ArgumentNullException(nameof(topologyModel));
+			
 			var resultDto = new ResultDto
 			{
 				TimeStamp = resultModel.TimeStamp,
@@ -158,14 +177,14 @@ namespace Elpida.Backend.Services
 						Name = resultModel.System.Os.Name,
 						Version = resultModel.System.Os.Version
 					},
-					Cpu = resultModel.System.Cpu.ToDto(),
+					Cpu = cpuModel.ToDto(),
 					Memory =
 						new MemoryDto
 						{
 							PageSize = resultModel.System.Memory.PageSize,
 							TotalSize = resultModel.System.Memory.TotalSize
 						},
-					Topology = resultModel.System.Topology.ToDto(),
+					Topology = topologyModel.ToDto(),
 				}
 			};
 

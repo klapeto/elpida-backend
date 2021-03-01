@@ -33,42 +33,51 @@ namespace Elpida.Backend.Services
 	public class ResultService : IResultsService
 	{
 		private readonly ICpuRepository _cpuRepository;
-
 		private readonly IIdProvider _idProvider;
-
 		private readonly IResultsRepository _resultsRepository;
+		private readonly ITopologyRepository _topologyRepository;
 
-		public ResultService(IResultsRepository resultsRepository, ICpuRepository cpuRepository, IIdProvider idProvider)
+		public ResultService(IResultsRepository resultsRepository, ICpuRepository cpuRepository,
+			ITopologyRepository topologyRepository, IIdProvider idProvider)
 		{
 			_resultsRepository = resultsRepository ?? throw new ArgumentNullException(nameof(resultsRepository));
 			_cpuRepository = cpuRepository ?? throw new ArgumentNullException(nameof(cpuRepository));
 			_idProvider = idProvider ?? throw new ArgumentNullException(nameof(idProvider));
-			;
+			_topologyRepository = topologyRepository ?? throw new ArgumentNullException(nameof(topologyRepository));
 		}
 
-		private static IReadOnlyDictionary<string, LambdaExpression> ResultProjectionExpressions { get; } =
+		private static IReadOnlyDictionary<string, LambdaExpression> CpuExpressions { get; } =
 			new Dictionary<string, LambdaExpression>
 			{
-				[Filter.TypeMap[Filter.Type.CpuCores].ToLowerInvariant()] =
-					GetExpression(model => model.System.Topology.TotalPhysicalCores),
-				[Filter.TypeMap[Filter.Type.CpuLogicalCores].ToLowerInvariant()] =
-					GetExpression(model => model.System.Topology.TotalLogicalCores),
-				[Filter.TypeMap[Filter.Type.CpuFrequency].ToLowerInvariant()] =
-					GetExpression(model => model.System.Cpu.Frequency),
-				[Filter.TypeMap[Filter.Type.MemorySize].ToLowerInvariant()] =
-					GetExpression(model => model.System.Memory.TotalSize),
-				[Filter.TypeMap[Filter.Type.Timestamp].ToLowerInvariant()] = GetExpression(model => model.TimeStamp),
-				[Filter.TypeMap[Filter.Type.Name].ToLowerInvariant()] = GetExpression(model => model.Result.Name),
-				[Filter.TypeMap[Filter.Type.CpuBrand].ToLowerInvariant()] =
-					GetExpression(model => model.System.Cpu.Brand),
-				[Filter.TypeMap[Filter.Type.CpuVendor].ToLowerInvariant()] =
-					GetExpression(model => model.System.Cpu.Vendor),
-				[Filter.TypeMap[Filter.Type.OsCategory].ToLowerInvariant()] =
-					GetExpression(model => model.System.Os.Category),
-				[Filter.TypeMap[Filter.Type.OsName].ToLowerInvariant()] = GetExpression(model => model.System.Os.Name),
-				[Filter.TypeMap[Filter.Type.OsVersion].ToLowerInvariant()] =
-					GetExpression(model => model.System.Os.Version)
+				[Filter.TypeMap[Filter.Type.CpuBrand]] = GetResultExpression(model => model.System.Cpu.Brand),
+				[Filter.TypeMap[Filter.Type.CpuVendor]] = GetResultExpression(model => model.System.Cpu.Vendor),
+				[Filter.TypeMap[Filter.Type.CpuFrequency]] = GetResultExpression(model => model.System.Cpu.Frequency),
 			};
+
+		private static IReadOnlyDictionary<string, LambdaExpression> TopologyExpressions { get; } =
+			new Dictionary<string, LambdaExpression>
+			{
+				[Filter.TypeMap[Filter.Type.CpuCores]] = GetResultExpression(model => model.System.Topology.TotalPhysicalCores),
+				[Filter.TypeMap[Filter.Type.CpuLogicalCores]] = GetResultExpression(model => model.System.Topology.TotalLogicalCores),
+			};
+
+		private static IReadOnlyDictionary<string, LambdaExpression> ResultExpressions { get; } =
+			new Dictionary<string, LambdaExpression>
+			{
+				[Filter.TypeMap[Filter.Type.MemorySize]] = GetResultExpression(model => model.System.Memory.TotalSize),
+				[Filter.TypeMap[Filter.Type.Timestamp]] = GetResultExpression(model => model.TimeStamp),
+				["startTime".ToLowerInvariant()] = GetResultExpression(model => model.TimeStamp),
+				["endTime".ToLowerInvariant()] = GetResultExpression(model => model.TimeStamp),
+				[Filter.TypeMap[Filter.Type.Name].ToLowerInvariant()] = GetResultExpression(model => model.Result.Name),
+				[Filter.TypeMap[Filter.Type.OsCategory]] = GetResultExpression(model => model.System.Os.Category),
+				[Filter.TypeMap[Filter.Type.OsName]] = GetResultExpression(model => model.System.Os.Name),
+				[Filter.TypeMap[Filter.Type.OsVersion]] = GetResultExpression(model => model.System.Os.Version),
+			};
+
+		private static IReadOnlyDictionary<string, LambdaExpression> ResultProjectionExpressions { get; } =
+			ResultExpressions.Concat(CpuExpressions)
+				.Concat(TopologyExpressions)
+				.ToDictionary(x => x.Key, x => x.Value);
 
 		#region IResultsService Members
 
@@ -84,7 +93,8 @@ namespace Elpida.Backend.Services
 			var cpuId = await AssignCpu(resultDto.System.Cpu, cancellationToken);
 			var topologyId = await AssignTopology(cpuId, resultDto.System.Topology, cancellationToken);
 
-			return await _resultsRepository.CreateAsync(resultDto.ToModel(_idProvider.GetForResult(resultDto), cpuId, topologyId), cancellationToken);
+			return await _resultsRepository.CreateAsync(
+				resultDto.ToModel(_idProvider.GetForResult(resultDto), cpuId, topologyId), cancellationToken);
 		}
 
 		public async Task<ResultDto> GetSingleAsync(string id, CancellationToken cancellationToken)
@@ -94,13 +104,13 @@ namespace Elpida.Backend.Services
 				throw new ArgumentException("Id cannot be empty", nameof(id));
 			}
 
-			var model = await _resultsRepository.GetSingleAsync(id, cancellationToken);
-			if (model == null)
+			var resultModel = await _resultsRepository.GetProjectionAsync(id, cancellationToken);
+			if (resultModel == null)
 			{
 				throw new NotFoundException(id);
 			}
 
-			return model.ToDto();
+			return resultModel.ToDto();
 		}
 
 		public async Task<PagedResult<ResultPreviewDto>> GetPagedAsync(QueryRequest queryRequest,
@@ -113,7 +123,7 @@ namespace Elpida.Backend.Services
 
 			var expressionBuilder = new QueryExpressionBuilder(ResultProjectionExpressions);
 
-			var result = await _resultsRepository.GetAsync(
+			var result = await _resultsRepository.GetPagedPreviewsAsync(
 				queryRequest.PageRequest.Next,
 				queryRequest.PageRequest.Count,
 				queryRequest.Descending,
@@ -135,7 +145,7 @@ namespace Elpida.Backend.Services
 
 		#endregion
 
-		private static LambdaExpression GetExpression<T>(Expression<Func<ResultProjection, T>> baseExp)
+		private static LambdaExpression GetResultExpression<T>(Expression<Func<ResultProjection, T>> baseExp)
 		{
 			// Dirty hack to prevent boxing of values
 			return baseExp;
@@ -144,26 +154,25 @@ namespace Elpida.Backend.Services
 		private async Task<string> AssignCpu(CpuDto cpuDto, CancellationToken cancellationToken)
 		{
 			var id = _idProvider.GetForCpu(cpuDto);
-			var cpuModel = await _cpuRepository.GetCpuByIdAsync(id, cancellationToken);
+			var cpuModel = await _cpuRepository.GetSingleAsync(id, cancellationToken);
 			if (cpuModel == null)
 			{
 				cpuModel = cpuDto.ToModel(id);
-				await _cpuRepository.CreateCpuAsync(cpuModel, cancellationToken);
+				await _cpuRepository.CreateAsync(cpuModel, cancellationToken);
 			}
 
 			return id;
 		}
 
-
 		private async Task<string> AssignTopology(string cpuId, TopologyDto topologyDto,
 			CancellationToken cancellationToken)
 		{
 			var id = _idProvider.GetForTopology(cpuId, topologyDto);
-			var topologyModel = await _cpuRepository.GetTopologyByIdAsync(id, cancellationToken);
+			var topologyModel = await _topologyRepository.GetSingleAsync(id, cancellationToken);
 			if (topologyModel == null)
 			{
 				topologyModel = topologyDto.ToModel(id);
-				await _cpuRepository.CreateTopologyAsync(topologyModel, cancellationToken);
+				await _topologyRepository.CreateAsync(topologyModel, cancellationToken);
 			}
 
 			return id;

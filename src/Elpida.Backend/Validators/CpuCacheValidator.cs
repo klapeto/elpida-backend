@@ -29,6 +29,15 @@ namespace Elpida.Backend.Validators
 			RuleFor(dto => dto.Name)
 				.NotEmpty()
 				.MaximumLength(50);
+
+			RuleFor(dto => dto.Size)
+				.GreaterThanOrEqualTo(0);
+			
+			RuleFor(dto => dto.LineSize)
+				.GreaterThanOrEqualTo(0);
+			
+			RuleFor(dto => dto.LinesPerTag)
+				.GreaterThanOrEqualTo(0);
 		}
 	}
 }

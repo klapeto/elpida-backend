@@ -34,6 +34,9 @@ namespace Elpida.Backend.Validators
 
 			RuleFor(dto => dto.Topology)
 				.NotNull();
+			
+			RuleFor(dto => dto.Os)
+				.NotNull();
 		}
 	}
 }

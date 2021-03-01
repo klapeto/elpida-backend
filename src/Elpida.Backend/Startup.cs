@@ -85,6 +85,7 @@ namespace Elpida.Backend
 
 			services.AddTransient<IResultsRepository, MongoResultsRepository>();
 			services.AddTransient<ICpuRepository, MongoCpuRepository>();
+			services.AddTransient<ITopologyRepository, MongoTopologyRepository>();
 
 			services.AddApiVersioning();
 
@@ -128,8 +129,7 @@ namespace Elpida.Backend
 			}
 
 			var database = serviceProvider.GetRequiredService<IMongoDatabase>();
-
-			//return database.GetCollection<T>(settings.ResultsCollectionName);
+			
 			return database.GetCollection<T>(collectionName);
 		}
 

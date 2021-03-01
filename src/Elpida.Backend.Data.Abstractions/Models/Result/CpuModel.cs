@@ -21,12 +21,12 @@ using System.Collections.Generic;
 
 namespace Elpida.Backend.Data.Abstractions.Models.Result
 {
-	public class CpuModel
+	public class CpuModel : IEntity
 	{
 		public string Id { get; set; }
 		public string Vendor { get; set; }
 		public string Brand { get; set; }
-		public ulong Frequency { get; set; }
+		public long Frequency { get; set; }
 		public bool Smt { get; set; }
 		
 		public IDictionary<string, string> AdditionalInfo { get; set; }

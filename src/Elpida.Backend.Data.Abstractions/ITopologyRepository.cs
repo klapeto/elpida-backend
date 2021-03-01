@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2020  Ioannis Panagiotopoulos
+ * Copyright (C) 2021  Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,30 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System;
-using Elpida.Backend.Data.Abstractions.Models;
-using NUnit.Framework;
+using Elpida.Backend.Data.Abstractions.Models.Result;
 
-namespace Elpida.Backend.Services.Tests
+namespace Elpida.Backend.Data.Abstractions
 {
-	public class AssetInfoModelExtensionsTests
+	public interface ITopologyRepository: IRepository<TopologyModel>
 	{
-		[Test]
-		public void ToDto_Null_ThrowsArgumentNullException()
-		{
-			Assert.Throws<ArgumentNullException>(() => ((AssetInfoModel) null).ToDto());
-		}
-
-		[Test]
-		public void ToDto_Success()
-		{
-			var model = Generators.CreateAssetInfoModel();
-			var dto = model.ToDto();
-
-			Assert.AreEqual(model.Filename, dto.Filename);
-			Assert.AreEqual(model.Location.ToString(), dto.Location.ToString());
-			Assert.AreEqual(model.Md5, dto.Md5);
-			Assert.AreEqual(model.Size, dto.Size);
-		}
+		
 	}
 }

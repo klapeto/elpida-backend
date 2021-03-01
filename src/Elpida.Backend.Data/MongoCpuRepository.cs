@@ -17,49 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System.Threading;
-using System.Threading.Tasks;
 using Elpida.Backend.Data.Abstractions;
 using Elpida.Backend.Data.Abstractions.Models.Result;
 using MongoDB.Driver;
-using MongoDB.Driver.Linq;
 
 namespace Elpida.Backend.Data
 {
-	public class MongoCpuRepository : ICpuRepository
+	public class MongoCpuRepository : MongoRepository<CpuModel>, ICpuRepository
 	{
-		private readonly IMongoCollection<CpuModel> _cpuCollection;
-		private readonly IMongoCollection<TopologyModel> _topologyCollection;
-
-		public MongoCpuRepository(IMongoCollection<CpuModel> cpuCollection,
-			IMongoCollection<TopologyModel> topologyCollection)
+		public MongoCpuRepository(IMongoCollection<CpuModel> cpuCollection)
+			: base(cpuCollection)
 		{
-			_cpuCollection = cpuCollection;
-			_topologyCollection = topologyCollection;
 		}
-
-		#region ICpuRepository Members
-
-		public Task<CpuModel> GetCpuByIdAsync(string id, CancellationToken cancellationToken)
-		{
-			return _cpuCollection.AsQueryable().Where(m => m.Id == id).FirstOrDefaultAsync(cancellationToken);
-		}
-
-		public Task<TopologyModel> GetTopologyByIdAsync(string id, CancellationToken cancellationToken)
-		{
-			return _topologyCollection.AsQueryable().Where(m => m.Id == id).FirstOrDefaultAsync(cancellationToken);
-		}
-
-		public Task CreateCpuAsync(CpuModel cpuModel, CancellationToken cancellationToken)
-		{
-			return _cpuCollection.InsertOneAsync(cpuModel, cancellationToken: cancellationToken);
-		}
-
-		public Task CreateTopologyAsync(TopologyModel topologyModel, CancellationToken cancellationToken)
-		{
-			return _topologyCollection.InsertOneAsync(topologyModel, cancellationToken: cancellationToken);
-		}
-
-		#endregion
 	}
 }

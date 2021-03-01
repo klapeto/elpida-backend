@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2020  Ioannis Panagiotopoulos
+ * Copyright (C) 2021  Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,26 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using Elpida.Backend.Services.Abstractions.Dtos.Result;
-using FluentValidation;
+using Elpida.Backend.Data.Abstractions;
+using Elpida.Backend.Data.Abstractions.Models.Result;
+using MongoDB.Driver;
 
-namespace Elpida.Backend.Validators
+namespace Elpida.Backend.Data
 {
-	public class VersionValidator : AbstractValidator<VersionDto>
+	public class MongoTopologyRepository : MongoRepository<TopologyModel>, ITopologyRepository
 	{
-		public VersionValidator()
+		public MongoTopologyRepository(IMongoCollection<TopologyModel> topologyCollection)
+			: base(topologyCollection)
 		{
-			RuleFor(dto => dto.Build)
-				.GreaterThanOrEqualTo(0);
-			
-			RuleFor(dto => dto.Major)
-				.GreaterThanOrEqualTo(0);
-			
-			RuleFor(dto => dto.Minor)
-				.GreaterThanOrEqualTo(0);
-			
-			RuleFor(dto => dto.Revision)
-				.GreaterThanOrEqualTo(0);
 		}
 	}
 }

@@ -18,6 +18,7 @@
  */
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MongoDB.Driver;
@@ -26,12 +27,11 @@ namespace Elpida.Backend.Data.Tests.Dummies
 {
 	public class DummyAsyncCursor<TResult> : IAsyncCursor<TResult>
 	{
-		private readonly IEnumerator<TResult> _internalEnumerator;
-
+		private bool _next = true;
+		
 		public DummyAsyncCursor(IEnumerable<TResult> @internal)
 		{
-			Current = @internal;
-			_internalEnumerator = Current.GetEnumerator();
+			Current = @internal.AsEnumerable();
 		}
 
 		#region IAsyncCursor<TResult> Members
@@ -42,7 +42,12 @@ namespace Elpida.Backend.Data.Tests.Dummies
 
 		public bool MoveNext(CancellationToken cancellationToken = new CancellationToken())
 		{
-			return _internalEnumerator.MoveNext();
+			if (_next)
+			{
+				_next = false;
+				return true;
+			}
+			return false;
 		}
 
 		public Task<bool> MoveNextAsync(CancellationToken cancellationToken = new CancellationToken())
