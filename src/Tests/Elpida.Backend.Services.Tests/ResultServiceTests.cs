@@ -99,13 +99,13 @@ namespace Elpida.Backend.Services.Tests
 		[Test]
 		public async Task CreateAsync_CpuNotExist_CreatesCpu()
 		{
-			var id = Guid.NewGuid().ToString("N");
+			var resultId = Guid.NewGuid().ToString("N");
 			var cpuId = Guid.NewGuid().ToString("N");
 			var topologyId = Guid.NewGuid().ToString("N");
 
 			_repoMock.Setup(r =>
 					r.CreateAsync(It.Is<ResultModel>(m => m.TimeStamp != default), It.IsAny<CancellationToken>()))
-				.ReturnsAsync(id)
+				.ReturnsAsync(resultId)
 				.Verifiable();
 
 			_idProvideMock.Setup(i => i.GetForCpu(It.IsAny<CpuDto>()))
@@ -117,7 +117,7 @@ namespace Elpida.Backend.Services.Tests
 				.Verifiable();
 			
 			_idProvideMock.Setup(i => i.GetForResult(It.IsAny<ResultDto>()))
-				.Returns(id)
+				.Returns(resultId)
 				.Verifiable();
 
 			_cpuMock.Setup(i => i.GetSingleAsync(cpuId, default))
@@ -136,7 +136,7 @@ namespace Elpida.Backend.Services.Tests
 
 			var result = await service.CreateAsync(Generators.CreateNewResultDto(), default);
 
-			Assert.AreEqual(id, result);
+			Assert.AreEqual(resultId, result);
 
 			VerifyMocks();
 		}
@@ -253,6 +253,23 @@ namespace Elpida.Backend.Services.Tests
 			var result = await service.GetSingleAsync(id, default);
 
 			Assert.AreEqual(id, result.Id);
+
+			VerifyMocks();
+		}
+
+		[Test]
+		public void  GetSingleAsync_NonExist_ThrowsNotFoundException()
+		{
+			var id = Guid.NewGuid().ToString("N");
+
+			_repoMock.Setup(r =>
+					r.GetProjectionAsync(It.Is<string>(i => i == id), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(() => null)
+				.Verifiable();
+
+			var service = GetService();
+
+			Assert.ThrowsAsync<NotFoundException>(async () => await service.GetSingleAsync(id, default));
 
 			VerifyMocks();
 		}
