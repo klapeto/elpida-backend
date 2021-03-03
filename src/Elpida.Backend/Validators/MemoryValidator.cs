@@ -24,5 +24,13 @@ namespace Elpida.Backend.Validators
 {
 	public class MemoryValidator : AbstractValidator<MemoryDto>
 	{
+		public MemoryValidator()
+		{
+			RuleFor(dto => dto.PageSize)
+				.GreaterThanOrEqualTo(0);
+			
+			RuleFor(dto => dto.TotalSize)
+				.GreaterThanOrEqualTo(0);
+		}
 	}
 }

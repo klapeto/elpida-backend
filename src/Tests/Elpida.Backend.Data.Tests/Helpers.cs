@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2020  Ioannis Panagiotopoulos
+ * Copyright (C) 2021  Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,19 +17,29 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Reflection;
+using MongoDB.Bson;
+using MongoDB.Driver;
 
-namespace Elpida.Backend.Services.Abstractions.Dtos.Result
+namespace Elpida.Backend.Data.Tests
 {
-	public class CpuDto
+	public class Helpers
 	{
-		public string Vendor { get; set; }
-		public string Brand { get; set; }
-		public long Frequency { get; set; }
-		public bool Smt { get; set; }
-		
-		public IDictionary<string, string> AdditionalInfo { get; set; }
-		public IList<CpuCacheDto> Caches { get; set; }
-		public IList<string> Features { get; set; }
+		public static bool AreEqual<T, TR>(PipelineDefinition<T, TR> a, PipelineDefinition<T, TR> b)
+		{
+			return a.ToString() == b.ToString();
+		}
+
+		public static BsonDocumentSortDefinition<TR> GetSortObject<T, TR>(Expression<Func<TR, T>> field, bool desc)
+		{
+			dynamic body = field.Body;
+
+			var member = (MemberInfo) body.Member;
+			return new BsonDocumentSortDefinition<TR>(new BsonDocument(new Dictionary<string, object>
+				{[(member.Name.ToLower() == "id" ? "_id" : member.Name)] = (desc ? -1 : 1)}));
+		}
 	}
 }

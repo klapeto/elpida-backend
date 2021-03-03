@@ -19,11 +19,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Elpida.Backend.Data.Abstractions.Models;
 using Elpida.Backend.Data.Abstractions.Models.Result;
 using Elpida.Backend.Data.Tests.Dummies;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using Moq;
@@ -33,172 +37,201 @@ namespace Elpida.Backend.Data.Tests
 {
 	public class MongoResultsRepositoryTests
 	{
+		private Mock<IMongoCollection<ResultModel>> _resultMock;
+		private Mock<IMongoCollection<CpuModel>> _cpuMock;
+		private Mock<IMongoCollection<TopologyModel>> _topologyMock;
+
 		[OneTimeSetUp]
 		public void Setup()
 		{
 			BsonClassMap.RegisterClassMap<ResultModel>();
 		}
+		
+		[SetUp]
+		public void CreateMocks()
+		{
+			_resultMock = new Mock<IMongoCollection<ResultModel>>(MockBehavior.Strict);
+			_cpuMock = new Mock<IMongoCollection<CpuModel>>(MockBehavior.Strict);
+			_topologyMock = new Mock<IMongoCollection<TopologyModel>>(MockBehavior.Strict);
+		}
+
+		private MongoResultsRepository GetRepo()
+		{
+			return new MongoResultsRepository(_resultMock.Object, _cpuMock.Object, _topologyMock.Object);
+		}
+
+		private void VerifyOtherCalls()
+		{
+			_resultMock.VerifyAll();
+			_resultMock.VerifyNoOtherCalls();
+			_cpuMock.VerifyAll();
+			_cpuMock.VerifyNoOtherCalls();
+			_topologyMock.VerifyAll();
+			_topologyMock.VerifyNoOtherCalls();
+		}
 
 		[Test]
 		public void Constructor_NullArgument_ThrowsArgumentNullException()
 		{
-			Assert.Throws<ArgumentNullException>(() => new MongoResultsRepository(null));
+			Assert.Throws<ArgumentNullException>(() => new MongoResultsRepository(null,
+				Mock.Of<IMongoCollection<CpuModel>>(),
+				Mock.Of<IMongoCollection<TopologyModel>>()));
+		}
+
+		private void ConfigureDefaultResultCollection(bool withCpu = true, bool withTopology = true)
+		{
+			_resultMock.SetupGet(r => r.CollectionNamespace)
+				.Returns(CollectionNamespace.FromFullName("x.Results"));
+			_resultMock.SetupGet(r => r.Settings)
+				.Returns(new MongoCollectionSettings());
+			_resultMock.SetupGet(r => r.DocumentSerializer)
+				.Returns(new BsonClassMapSerializer<ResultModel>(BsonClassMap.LookupClassMap(typeof(ResultModel))));
+
+			if (withCpu)
+			{
+				_cpuMock.SetupGet(r => r.CollectionNamespace)
+					.Returns(CollectionNamespace.FromFullName("x.Cpus"));
+				_cpuMock.SetupGet(r => r.DocumentSerializer)
+					.Returns(new BsonClassMapSerializer<CpuModel>(BsonClassMap.LookupClassMap(typeof(CpuModel))));
+			}
+
+			if (withTopology)
+			{
+				_topologyMock.SetupGet(r => r.CollectionNamespace)
+					.Returns(CollectionNamespace.FromFullName("x.Topologies"));
+				_topologyMock.SetupGet(r => r.DocumentSerializer)
+					.Returns(new BsonClassMapSerializer<TopologyModel>(BsonClassMap.LookupClassMap(typeof(TopologyModel))));	
+			}
 		}
 
 		[Test]
-		[TestCase(null)]
-		[TestCase("")]
-		public void GetSingleAsync_NullId_ThrowsArgumentException(string id)
+		public async Task GetPagedPreviewsAsync_Success()
 		{
-			var mock = new Mock<IMongoCollection<ResultModel>>(MockBehavior.Strict);
+			ConfigureDefaultResultCollection();
 
-			var repo = new MongoResultsRepository(mock.Object);
-			Assert.ThrowsAsync<ArgumentException>(async () => await repo.GetSingleAsync(id, default));
-
-			mock.VerifyAll();
-			mock.VerifyNoOtherCalls();
-		}
-
-		[Test]
-		public async Task GetSingleAsync_Success()
-		{
-			var mock = new Mock<IMongoCollection<ResultModel>>(MockBehavior.Strict);
-
-			mock.Setup(r => r.FindAsync(It.IsAny<FilterDefinition<ResultModel>>(),
-					It.IsAny<FindOptions<ResultModel, ResultModel>>(), It.IsAny<CancellationToken>()))
-				.ReturnsAsync(new DummyAsyncCursor<ResultModel>(new List<ResultModel>()))
+			_resultMock.Setup(r => r.AggregateAsync(It.IsAny<PipelineDefinition<ResultModel, ResultPreviewModel>>(),
+					It.IsAny<AggregateOptions>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new DummyAsyncCursor<ResultPreviewModel>(new List<ResultPreviewModel>()))
 				.Verifiable();
-			var repo = new MongoResultsRepository(mock.Object);
+			
+			var repo = GetRepo();
+			await repo.GetPagedPreviewsAsync<object>(0, 10, false, null, null, false);
 
-			await repo.GetSingleAsync("Haha", default);
-
-			mock.VerifyAll();
-			mock.VerifyNoOtherCalls();
+			VerifyOtherCalls();
 		}
-
+		
 		[Test]
-		public void GetSingleAsync_NullModel_ThrowsArgumentNullException()
+		public async Task GetPagedPreviewsAsync_WithFilters_Success()
 		{
-			var collection = new Mock<IMongoCollection<ResultModel>>(MockBehavior.Strict);
+			ConfigureDefaultResultCollection();
 
-			var repo = new MongoResultsRepository(collection.Object);
-			Assert.ThrowsAsync<ArgumentNullException>(async () => await repo.CreateAsync(null, default));
+			const int expectedCount = 50;
+			
+			var models = new List<ResultPreviewModel>
+			{
+				new ResultPreviewModel
+				{
+					Id = Guid.NewGuid().ToString("N"),
+				},
+				new ResultPreviewModel
+				{
+					Id = Guid.NewGuid().ToString("N"),
+				}
+			};
 
-			collection.VerifyAll();
-			collection.VerifyNoOtherCalls();
-		}
+			const int count = 26;
+			const int from = 12;
+			const bool desc = true;
+			const string matchStr = "xsf";
+			Expression<Func<ResultProjection, DateTime>> orderBy = a => a.TimeStamp;
 
-		[Test]
-		public async Task CreateAsync_Success()
-		{
-			var collection = new Mock<IMongoCollection<ResultModel>>(MockBehavior.Strict);
+			var filters = new List<Expression<Func<ResultProjection, bool>>> {a => a.Id == matchStr};
 
-			collection.Setup(r =>
-					r.InsertOneAsync(It.IsAny<ResultModel>(), It.IsAny<InsertOneOptions>(),
-						It.IsAny<CancellationToken>()))
-				.Returns(Task.CompletedTask)
+			_resultMock.Setup(r => r.AggregateAsync(
+					It.IsAny<PipelineDefinition<ResultModel, ResultPreviewModel>>(),
+					It.IsAny<AggregateOptions>(), 
+					It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new DummyAsyncCursor<ResultPreviewModel>(models))
+				.Verifiable();
+			
+			_resultMock.Setup(r => r.AggregateAsync(It.IsAny<PipelineDefinition<ResultModel, int>>(),
+					It.IsAny<AggregateOptions>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new DummyAsyncCursor<int>(new[] {expectedCount}))
 				.Verifiable();
 
-			var repo = new MongoResultsRepository(collection.Object);
-			await repo.CreateAsync(new ResultModel(), default);
+			var repo = GetRepo();
 
-			collection.VerifyAll();
-			collection.VerifyNoOtherCalls();
+			var results = await repo.GetPagedPreviewsAsync(
+				from, 
+				count, 
+				desc, 
+				orderBy,
+				filters, 
+				true);
+
+			Assert.AreEqual(models.Count, results.Items.Count);
+			Assert.AreEqual(expectedCount, results.TotalCount);
+			
+			VerifyOtherCalls();
 		}
-
-		[Test]
-		public async Task GetCountAsync_Success()
-		{
-			var collection = new Mock<IMongoCollection<ResultModel>>(MockBehavior.Strict);
-
-			collection.Setup(r => r.CountDocumentsAsync(It.IsAny<FilterDefinition<ResultModel>>(),
-					It.IsAny<CountOptions>(), It.IsAny<CancellationToken>()))
-				.ReturnsAsync(5)
-				.Verifiable();
-
-			var repo = new MongoResultsRepository(collection.Object);
-			await repo.GetTotalCountAsync(default);
-
-			collection.VerifyAll();
-			collection.VerifyNoOtherCalls();
-		}
-
-
+		
 		[Test]
 		[TestCase(-5, 10)]
 		[TestCase(0, -8)]
-		public void GetAsync_InvalidRange_ThrowsArgumentException(int from, int count)
+		[TestCase(-1, -8)]
+		public void GetPagedPreviewsAsync_InvalidRange_ThrowsArgumentException(int from, int count)
 		{
-			var mock = new Mock<IMongoCollection<ResultModel>>(MockBehavior.Strict);
+			var repo = GetRepo();
 
-			var repo = new MongoResultsRepository(mock.Object);
-			Assert.ThrowsAsync<ArgumentException>(async () => await repo.GetAsync<object>(from, count, false, null, null, false));
+			Assert.ThrowsAsync<ArgumentException>(async () =>
+				await repo.GetPagedPreviewsAsync<object>(from, count, false, null, null, false));
 
-			mock.VerifyNoOtherCalls();
+			VerifyOtherCalls();
 		}
-
+		
 		[Test]
-		public async Task DeleteAllAsync_Success()
+		[TestCase(null)]
+		[TestCase("")]
+		[TestCase("\t")]
+		[TestCase("\n")]
+		[TestCase("\t \n ")]
+		public void GetProjectionAsync_EmptyId_ThrowsArgumentException(string id)
 		{
-			var mock = new Mock<IMongoCollection<ResultModel>>(MockBehavior.Strict);
+			var repo = GetRepo();
 
-			mock.Setup(r => r.DeleteManyAsync(It.IsAny<FilterDefinition<ResultModel>>(), It.IsAny<CancellationToken>()))
-				.ReturnsAsync(new DeleteResult.Acknowledged(5))
-				.Verifiable();
-
-			var repo = new MongoResultsRepository(mock.Object);
-			await repo.DeleteAllAsync(default);
-
-			mock.VerifyAll();
-			mock.VerifyNoOtherCalls();
+			Assert.ThrowsAsync<ArgumentException>(async () => await repo.GetProjectionAsync(id));
+			
+			VerifyOtherCalls();
 		}
-
-		private static Mock<IMongoCollection<ResultModel>> GetDefaultCollectionMock()
-		{
-			var mock = new Mock<IMongoCollection<ResultModel>>(MockBehavior.Strict);
-
-			mock.SetupGet(r => r.CollectionNamespace)
-				.Returns(CollectionNamespace.FromFullName("x.x"));
-			mock.SetupGet(r => r.Settings)
-				.Returns(new MongoCollectionSettings());
-			mock.SetupGet(r => r.DocumentSerializer)
-				.Returns(new BsonClassMapSerializer<ResultModel>(BsonClassMap.LookupClassMap(typeof(ResultModel))));
-
-			return mock;
-		}
-
+		
 		[Test]
-		public async Task GetAsync_Success()
+		public async Task GetGetProjectionAsync_Success()
 		{
-			var mock = GetDefaultCollectionMock();
+			ConfigureDefaultResultCollection();
 
-			mock.Setup(r => r.AggregateAsync(It.IsAny<PipelineDefinition<ResultModel, ResultPreviewModel>>(),
-					It.IsAny<AggregateOptions>(), It.IsAny<CancellationToken>()))
-				.ReturnsAsync(new DummyAsyncCursor<ResultPreviewModel>(new List<ResultPreviewModel>()))
+			var models = new List<ResultProjection>
+			{
+				new ResultProjection
+				{
+					Id = Guid.NewGuid().ToString("N"),
+				}
+			};
+
+			_resultMock.Setup(r => r.AggregateAsync(
+					It.IsAny<PipelineDefinition<ResultModel, ResultProjection>>(),
+					It.IsAny<AggregateOptions>(), 
+					It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new DummyAsyncCursor<ResultProjection>(models))
 				.Verifiable();
+			
+			var repo = GetRepo();
 
-			var repo = new MongoResultsRepository(mock.Object);
-			await repo.GetAsync<object>(0, 10, false, null, null, false);
+			var result = await repo.GetProjectionAsync(models.First().Id);
+			
+			Assert.NotNull(result);
+			Assert.AreEqual(models.First().Id, result.Id);
 
-			mock.VerifyAll();
-			mock.VerifyNoOtherCalls();
-		}
-
-		[Test]
-		public async Task GetAsync_Desc_Success()
-		{
-			var mock = GetDefaultCollectionMock();
-
-			mock.Setup(r => r.AggregateAsync(It.IsAny<PipelineDefinition<ResultModel, ResultPreviewModel>>(),
-					It.IsAny<AggregateOptions>(), It.IsAny<CancellationToken>()))
-				.ReturnsAsync(new DummyAsyncCursor<ResultPreviewModel>(new List<ResultPreviewModel>()))
-				.Verifiable();
-
-			var repo = new MongoResultsRepository(mock.Object);
-			await repo.GetAsync(0, 10, true, model => model.TimeStamp, null, false);
-
-			mock.VerifyAll();
-			mock.VerifyNoOtherCalls();
+			VerifyOtherCalls();
 		}
 	}
 }

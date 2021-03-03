@@ -23,8 +23,8 @@ namespace Elpida.Backend.Data.Abstractions.Models.Result
 	{
 		public string Name { get; set; }
 		public string Associativity { get; set; }
-		public ulong Size { get; set; }
-		public uint LinesPerTag { get; set; }
-		public uint LineSize { get; set; }
+		public long Size { get; set; }
+		public int LinesPerTag { get; set; }
+		public int LineSize { get; set; }
 	}
 }

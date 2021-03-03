@@ -36,9 +36,9 @@ namespace Elpida.Backend.Data.Abstractions.Models.Result
 		public string OsName { get; set; }
 		public string OsVersion { get; set; }
 		public string CpuBrand { get; set; }
-		public ulong CpuFrequency { get; set; }
-		public uint CpuCores { get; set; }
-		public uint CpuLogicalCores { get; set; }
-		public ulong MemorySize { get; set; }
+		public long CpuFrequency { get; set; }
+		public int CpuCores { get; set; }
+		public int CpuLogicalCores { get; set; }
+		public long MemorySize { get; set; }
 	}
 }

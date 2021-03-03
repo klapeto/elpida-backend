@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2020  Ioannis Panagiotopoulos
+ * Copyright (C) 2021  Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,29 +17,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using Elpida.Backend.Services.Abstractions.Dtos.Result;
-using FluentValidation;
+using Elpida.Backend.Data.Abstractions.Models.Result;
 
-namespace Elpida.Backend.Validators
+namespace Elpida.Backend.Data.Abstractions.Models
 {
-	public class SystemValidator : AbstractValidator<SystemDto>
+	public class SystemModelProjection
 	{
-		public SystemValidator()
-		{
-			RuleFor(dto => dto.Cpu)
-				.NotNull();
-
-			RuleFor(dto => dto.Memory)
-				.NotNull();
-
-			RuleFor(dto => dto.Topology)
-				.NotNull();
-			
-			RuleFor(dto => dto.Os)
-				.NotNull();
-			
-			RuleFor(dto => dto.Timing)
-				.NotNull();
-		}
+		public CpuModel Cpu { get; set; }
+		public TopologyModel Topology { get; set; }
+		public OsModel Os { get; set; }
+		public MemoryModel Memory { get; set; }
+		public TimingModel Timing { get; set; }
 	}
 }

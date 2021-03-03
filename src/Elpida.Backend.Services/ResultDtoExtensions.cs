@@ -27,125 +27,309 @@ namespace Elpida.Backend.Services
 {
 	public static class ResultDtoExtensions
 	{
-		public static ResultModel ToModel(this ResultDto resultDto)
+		public static TaskOutlierModel ToModel(this TaskOutlierDto outlierDto)
 		{
-			if (resultDto == null) throw new ArgumentNullException(nameof(resultDto));
-			var resultModel = new ResultModel
+			if (outlierDto == null)
 			{
-				Id = resultDto.Id,
-				TimeStamp = resultDto.TimeStamp,
-				Elpida =
-					new ElpidaModel
-					{
-						Compiler = new CompilerModel
-						{
-							Name = resultDto.Elpida.Compiler.Name,
-							Version = resultDto.Elpida.Compiler.Version
-						},
-						Version = new VersionModel
-						{
-							Build = resultDto.Elpida.Version.Build,
-							Major = resultDto.Elpida.Version.Major,
-							Minor = resultDto.Elpida.Version.Minor,
-							Revision = resultDto.Elpida.Version.Revision
-						}
-					},
-				Result =
-					new BenchmarkResultModel
-					{
-						Name = resultDto.Result.Name,
-						TaskResults = resultDto.Result.TaskResults.Select(d => new TaskResultModel
-						{
-							Description = d.Description,
-							Name = d.Name,
-							Suffix = d.Suffix,
-							Time = d.Time,
-							Type = d.Type,
-							Value = d.Value,
-							InputSize = d.InputSize
-						}).ToList()
-					},
-				Affinity = resultDto.Affinity.ToList(),
-				System = new SystemModel
-				{
-					Os = new OsModel
-					{
-						Category = resultDto.System.Os.Category,
-						Name = resultDto.System.Os.Name,
-						Version = resultDto.System.Os.Version
-					},
-					Cpu =
-						new CpuModel
-						{
-							Brand = resultDto.System.Cpu.Brand,
-							AdditionalInfo = resultDto.System.Cpu.AdditionalInfo,
-							Frequency = resultDto.System.Cpu.Frequency,
-							Smt = resultDto.System.Cpu.Smt,
-							Features = resultDto.System.Cpu.Features,
-							Vendor = resultDto.System.Cpu.Vendor,
-							Caches = resultDto.System.Cpu.Caches.Select(c => new CpuCacheModel
-							{
-								Associativity = c.Associativity,
-								Name = c.Name,
-								Size = c.Size,
-								LineSize = c.LineSize,
-								LinesPerTag = c.LinesPerTag
-							}).ToList()
-						},
-					Memory =
-						new MemoryModel
-						{
-							PageSize = resultDto.System.Memory.PageSize,
-							TotalSize = resultDto.System.Memory.TotalSize
-						},
-					Topology = new TopologyModel
-					{
-						TotalDepth = resultDto.System.Topology.TotalDepth,
-						TotalLogicalCores = resultDto.System.Topology.TotalLogicalCores,
-						TotalPhysicalCores = resultDto.System.Topology.TotalLogicalCores,
-						Root = new CpuNodeModel
-						{
-							Name = resultDto.System.Topology.Root.Name,
-							Value = resultDto.System.Topology.Root.Value,
-							NodeType = resultDto.System.Topology.Root.NodeType,
-							OsIndex = resultDto.System.Topology.Root.OsIndex
-						}
-					}
-				}
+				throw new ArgumentNullException(nameof(outlierDto));
+			}
+
+			return new TaskOutlierModel
+			{
+				Time = outlierDto.Time,
+				Value = outlierDto.Value,
 			};
-
-			if (resultDto.System.Topology.Root.Children != null)
+		}
+		
+		public static TaskStatisticsModel ToModel(this TaskStatisticsDto statisticsDto)
+		{
+			if (statisticsDto == null)
 			{
-				resultModel.System.Topology.Root.Children = new List<CpuNodeModel>();
-				foreach (var child in resultDto.System.Topology.Root.Children)
-				{
-					resultModel.System.Topology.Root.Children.Add(CreateChild(child));
-				}
+				throw new ArgumentNullException(nameof(statisticsDto));
 			}
 
-			if (resultDto.System.Topology.Root.MemoryChildren != null)
+			return new TaskStatisticsModel
 			{
-				resultModel.System.Topology.Root.MemoryChildren = new List<CpuNodeModel>();
-				foreach (var child in resultDto.System.Topology.Root.MemoryChildren)
-				{
-					resultModel.System.Topology.Root.MemoryChildren.Add(CreateChild(child));
-				}
+				Max = statisticsDto.Max,
+				Mean = statisticsDto.Mean,
+				Min = statisticsDto.Min,
+				Sd = statisticsDto.Sd,
+				Tau = statisticsDto.Tau,
+				SampleSize = statisticsDto.SampleSize,
+				MarginOfError = statisticsDto.MarginOfError,
+			};
+		}
+		
+		public static TimingModel ToModel(this TimingDto timingDto)
+		{
+			if (timingDto == null)
+			{
+				throw new ArgumentNullException(nameof(timingDto));
 			}
 
+			return new TimingModel
+			{
+				JoinOverhead = timingDto.JoinOverhead,
+				LockOverhead = timingDto.LockOverhead,
+				LoopOverhead = timingDto.LoopOverhead,
+				NotifyOverhead = timingDto.NotifyOverhead,
+				NowOverhead = timingDto.NowOverhead,
+				SleepOverhead = timingDto.SleepOverhead,
+				TargetTime = timingDto.TargetTime,
+				WakeupOverhead = timingDto.WakeupOverhead,
+			};
+		}
+		
+		public static CpuCacheModel ToModel(this CpuCacheDto cpuCacheDto)
+		{
+			if (cpuCacheDto == null)
+			{
+				throw new ArgumentNullException(nameof(cpuCacheDto));
+			}
 
-			return resultModel;
+			return new CpuCacheModel
+			{
+				Associativity = cpuCacheDto.Associativity,
+				Name = cpuCacheDto.Name,
+				Size = cpuCacheDto.Size,
+				LineSize = cpuCacheDto.LineSize,
+				LinesPerTag = cpuCacheDto.LinesPerTag
+			};
 		}
 
-		private static CpuNodeModel CreateChild(CpuNodeDto cpuNodeDto)
+		public static CpuNodeModel ToModel(this CpuNodeDto cpuNodeDto)
 		{
+			if (cpuNodeDto == null)
+			{
+				throw new ArgumentNullException(nameof(cpuNodeDto));
+			}
+
 			return new CpuNodeModel
 			{
 				Name = cpuNodeDto.Name,
 				Value = cpuNodeDto.Value,
 				NodeType = cpuNodeDto.NodeType,
 				OsIndex = cpuNodeDto.OsIndex,
-				Children = cpuNodeDto.Children?.Select(CreateChild).ToList(),
-				MemoryChildren = cpuNodeDto.MemoryChildren?.Select(CreateChild).ToList()
+				Children = cpuNodeDto.Children?.Select(c => c.ToModel()).ToList() ?? new List<CpuNodeModel>(),
+				MemoryChildren = cpuNodeDto.MemoryChildren?.Select(c => c.ToModel()).ToList() ??
+				                 new List<CpuNodeModel>()
+			};
+		}
+
+		public static CpuModel ToModel(this CpuDto cpuDto, string id)
+		{
+			if (cpuDto == null)
+			{
+				throw new ArgumentNullException(nameof(cpuDto));
+			}
+
+			if (string.IsNullOrWhiteSpace(id))
+			{
+				throw new ArgumentException("'id' cannot be empty", nameof(id));
+			}
+
+			return new CpuModel
+			{
+				Id = id,
+				Brand = cpuDto.Brand,
+				Caches = cpuDto.Caches.Select(c => c.ToModel()).ToList(),
+				Features = cpuDto.Features,
+				Frequency = cpuDto.Frequency,
+				Smt = cpuDto.Smt,
+				Vendor = cpuDto.Vendor,
+				AdditionalInfo = cpuDto.AdditionalInfo
+			};
+		}
+
+		public static TopologyModel ToModel(this TopologyDto topologyDto, string id)
+		{
+			if (topologyDto == null)
+			{
+				throw new ArgumentNullException(nameof(topologyDto));
+			}
+
+			if (string.IsNullOrWhiteSpace(id))
+			{
+				throw new ArgumentException("'id' cannot be empty", nameof(id));
+			}
+
+			return new TopologyModel
+			{
+				Id = id,
+				TotalDepth = topologyDto.TotalDepth,
+				TotalLogicalCores = topologyDto.TotalLogicalCores,
+				TotalPhysicalCores = topologyDto.TotalLogicalCores,
+				Root = topologyDto.Root.ToModel()
+			};
+		}
+
+		public static ElpidaModel ToModel(this ElpidaDto elpidaDto)
+		{
+			if (elpidaDto == null)
+			{
+				throw new ArgumentNullException(nameof(elpidaDto));
+			}
+
+			return new ElpidaModel
+			{
+				Compiler = elpidaDto.Compiler.ToModel(),
+				Version = elpidaDto.Version.ToModel()
+			};
+		}
+
+		public static CompilerModel ToModel(this CompilerDto compilerDto)
+		{
+			if (compilerDto == null)
+			{
+				throw new ArgumentNullException(nameof(compilerDto));
+			}
+
+			return new CompilerModel
+			{
+				Name = compilerDto.Name,
+				Version = compilerDto.Version
+			};
+		}
+
+
+		public static VersionModel ToModel(this VersionDto versionDto)
+		{
+			if (versionDto == null)
+			{
+				throw new ArgumentNullException(nameof(versionDto));
+			}
+
+			return new VersionModel
+			{
+				Build = versionDto.Build,
+				Major = versionDto.Major,
+				Minor = versionDto.Minor,
+				Revision = versionDto.Revision
+			};
+		}
+
+		public static TaskResultModel ToModel(this TaskResultDto taskResultDto)
+		{
+			if (taskResultDto == null)
+			{
+				throw new ArgumentNullException(nameof(taskResultDto));
+			}
+
+			return new TaskResultModel
+			{
+				Description = taskResultDto.Description,
+				Name = taskResultDto.Name,
+				Suffix = taskResultDto.Suffix,
+				Time = taskResultDto.Time,
+				Type = taskResultDto.Type,
+				Value = taskResultDto.Value,
+				InputSize = taskResultDto.InputSize,
+				Outliers = taskResultDto.Outliers.Select(dto => dto.ToModel()).ToList(),
+				Statistics = taskResultDto.Statistics.ToModel()
+			};
+		}
+
+		public static BenchmarkResultModel ToModel(this BenchmarkResultDto benchmarkResultDto)
+		{
+			if (benchmarkResultDto == null)
+			{
+				throw new ArgumentNullException(nameof(benchmarkResultDto));
+			}
+
+			return new BenchmarkResultModel
+			{
+				Name = benchmarkResultDto.Name,
+				TaskResults = benchmarkResultDto.TaskResults.Select(r => r.ToModel()).ToList()
+			};
+		}
+
+		public static OsModel ToModel(this OsDto osDto)
+		{
+			if (osDto == null)
+			{
+				throw new ArgumentNullException(nameof(osDto));
+			}
+
+			return new OsModel
+			{
+				Category = osDto.Category,
+				Name = osDto.Name,
+				Version = osDto.Version
+			};
+		}
+
+		public static MemoryModel ToModel(this MemoryDto memoryDto)
+		{
+			if (memoryDto == null)
+			{
+				throw new ArgumentNullException(nameof(memoryDto));
+			}
+
+			return new MemoryModel
+			{
+				PageSize = memoryDto.PageSize,
+				TotalSize = memoryDto.TotalSize
+			};
+		}
+
+
+		public static SystemModel ToModel(this SystemDto systemDto, string cpuId, string topologyId)
+		{
+			if (systemDto == null)
+			{
+				throw new ArgumentNullException(nameof(systemDto));
+			}
+
+			if (string.IsNullOrWhiteSpace(cpuId))
+			{
+				throw new ArgumentException("'cpuId' cannot be empty", nameof(cpuId));
+			}
+
+			if (string.IsNullOrWhiteSpace(topologyId))
+			{
+				throw new ArgumentException("'topologyId' cannot be empty", nameof(topologyId));
+			}
+
+			return new SystemModel
+			{
+				Memory = systemDto.Memory.ToModel(),
+				Os = systemDto.Os.ToModel(),
+				Timing = systemDto.Timing.ToModel(),
+				CpuId = cpuId,
+				TopologyId = topologyId
+			};
+		}
+
+		public static ResultModel ToModel(this ResultDto resultDto, string id, string cpuId, string topologyId)
+		{
+			if (resultDto == null)
+			{
+				throw new ArgumentNullException(nameof(resultDto));
+			}
+
+			if (string.IsNullOrWhiteSpace(id))
+			{
+				throw new ArgumentException("id cannot be empty", nameof(id));
+			}
+			
+			if (string.IsNullOrWhiteSpace(cpuId))
+			{
+				throw new ArgumentException("cpuId cannot be empty", nameof(cpuId));
+			}
+			
+			if (string.IsNullOrWhiteSpace(topologyId))
+			{
+				throw new ArgumentException("cpuId cannot be empty", nameof(topologyId));
+			}
+
+			return new ResultModel
+			{
+				Id = id,
+				TimeStamp = resultDto.TimeStamp,
+				Elpida = resultDto.Elpida.ToModel(),
+				Result = resultDto.Result.ToModel(),
+				Affinity = resultDto.Affinity.ToList(),
+				System = resultDto.System.ToModel(cpuId, topologyId)
 			};
 		}
 	}

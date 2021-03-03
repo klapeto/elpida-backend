@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2020  Ioannis Panagiotopoulos
+ * Copyright (C) 2021  Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,17 +17,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-namespace Elpida.Backend.Data
+using NUnit.Framework;
+
+namespace Elpida.Backend.Services.Tests
 {
-	public class AzureBlobAssetsRepositorySettings : IAssetsRepositorySettings
+	[TestFixture]
+	public class ByteArrayExtensionsTests
 	{
-		#region IAssetsRepositorySettings Members
-
-		public string BlobStorageUri { get; set; }
-		public string BlobStorageContainer { get; set; }
-		public string AccountName { get; set; }
-		public string AccountKey { get; set; }
-
-		#endregion
+		[Test]
+		public void Success()
+		{
+			Assert.AreEqual("3112FCA8571B", new byte[] {0x31, 0x12, 0xFC, 0xA8, 0x57, 0x1B}.ToHexString());
+			
+			Assert.AreEqual("CD84ACF04891", new byte[] {0xCD, 0x84, 0xAC, 0xF0, 0x48, 0x91}.ToHexString());
+		}
 	}
 }

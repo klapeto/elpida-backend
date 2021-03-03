@@ -58,17 +58,17 @@ namespace Elpida.Backend.Services.Abstractions
 
 		public static IReadOnlyDictionary<Type, string> TypeMap { get; } = new Dictionary<Type, string>
 		{
-			[Type.Timestamp] = "timeStamp",
-			[Type.CpuCores] = "cpuCores",
-			[Type.CpuLogicalCores] = "cpuLogicalCores",
-			[Type.CpuFrequency] = "cpuFrequency",
-			[Type.MemorySize] = "memorySize",
-			[Type.Name] = "name",
-			[Type.CpuBrand] = "cpuBrand",
-			[Type.CpuVendor] = "cpuVendor",
-			[Type.OsCategory] = "osCategory",
-			[Type.OsName] = "osName",
-			[Type.OsVersion] = "osVersion"
+			[Type.Timestamp] = "timeStamp".ToLowerInvariant(),
+			[Type.CpuCores] = "cpuCores".ToLowerInvariant(),
+			[Type.CpuLogicalCores] = "cpuLogicalCores".ToLowerInvariant(),
+			[Type.CpuFrequency] = "cpuFrequency".ToLowerInvariant(),
+			[Type.MemorySize] = "memorySize".ToLowerInvariant(),
+			[Type.Name] = "name".ToLowerInvariant(),
+			[Type.CpuBrand] = "cpuBrand".ToLowerInvariant(),
+			[Type.CpuVendor] = "cpuVendor".ToLowerInvariant(),
+			[Type.OsCategory] = "osCategory".ToLowerInvariant(),
+			[Type.OsName] = "osName".ToLowerInvariant(),
+			[Type.OsVersion] = "osVersion".ToLowerInvariant()
 		};
 
 		public static IReadOnlyDictionary<Comparison, string> ComparisonMap { get; } =

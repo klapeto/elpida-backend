@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2020  Ioannis Panagiotopoulos
+ * Copyright (C) 2021  Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,14 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using Azure.Storage.Blobs;
+using Elpida.Backend.Data.Abstractions.Models.Result;
 
-namespace Elpida.Backend.Data
+namespace Elpida.Backend.Data.Abstractions
 {
-	public interface IBlobClientFactory
+	public interface ITopologyRepository: IRepository<TopologyModel>
 	{
-		BlobClient CreateClient(string filename);
-
-		BlobContainerClient CreateContainerClient();
+		
 	}
 }

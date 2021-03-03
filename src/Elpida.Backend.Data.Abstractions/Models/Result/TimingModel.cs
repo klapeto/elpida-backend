@@ -17,17 +17,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System;
 
-namespace Elpida.Backend.Data.Abstractions.Models
+namespace Elpida.Backend.Data.Abstractions.Models.Result
 {
-	public class AssetInfoModel
+	public class TimingModel
 	{
-		public Uri Location { get; set; }
-		
-		public long Size { get; set; }
-		public string Filename { get; set; }
-		
-		public string Md5 { get; set; }
+		public double NotifyOverhead { get; set; }
+		public double WakeupOverhead { get; set; }
+		public double SleepOverhead { get; set; }
+		public double NowOverhead { get; set; }
+		public double LockOverhead { get; set; }
+		public double LoopOverhead { get; set; }
+		public double JoinOverhead { get; set; }
+		public double TargetTime { get; set; }
 	}
 }

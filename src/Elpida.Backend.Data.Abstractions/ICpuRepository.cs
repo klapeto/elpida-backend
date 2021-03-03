@@ -17,29 +17,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using Elpida.Backend.Services.Abstractions.Dtos.Result;
-using FluentValidation;
+using Elpida.Backend.Data.Abstractions.Models.Result;
 
-namespace Elpida.Backend.Validators
+namespace Elpida.Backend.Data.Abstractions
 {
-	public class SystemValidator : AbstractValidator<SystemDto>
+	public interface ICpuRepository : IRepository<CpuModel>
 	{
-		public SystemValidator()
-		{
-			RuleFor(dto => dto.Cpu)
-				.NotNull();
-
-			RuleFor(dto => dto.Memory)
-				.NotNull();
-
-			RuleFor(dto => dto.Topology)
-				.NotNull();
-			
-			RuleFor(dto => dto.Os)
-				.NotNull();
-			
-			RuleFor(dto => dto.Timing)
-				.NotNull();
-		}
 	}
 }

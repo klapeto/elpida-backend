@@ -17,29 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using Elpida.Backend.Services.Abstractions.Dtos.Result;
-using FluentValidation;
+using Elpida.Backend.Data.Abstractions;
+using Elpida.Backend.Data.Abstractions.Models.Result;
+using MongoDB.Driver;
 
-namespace Elpida.Backend.Validators
+namespace Elpida.Backend.Data
 {
-	public class SystemValidator : AbstractValidator<SystemDto>
+	public class MongoCpuRepository : MongoRepository<CpuModel>, ICpuRepository
 	{
-		public SystemValidator()
+		public MongoCpuRepository(IMongoCollection<CpuModel> cpuCollection)
+			: base(cpuCollection)
 		{
-			RuleFor(dto => dto.Cpu)
-				.NotNull();
-
-			RuleFor(dto => dto.Memory)
-				.NotNull();
-
-			RuleFor(dto => dto.Topology)
-				.NotNull();
-			
-			RuleFor(dto => dto.Os)
-				.NotNull();
-			
-			RuleFor(dto => dto.Timing)
-				.NotNull();
 		}
 	}
 }

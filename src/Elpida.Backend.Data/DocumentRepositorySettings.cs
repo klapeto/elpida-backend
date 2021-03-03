@@ -24,6 +24,10 @@ namespace Elpida.Backend.Data
 		#region IDocumentRepositorySettings Members
 
 		public string ResultsCollectionName { get; set; }
+		
+		public string CpusCollectionName { get; set; }
+		
+		public string TopologiesCollectionName { get; set; }
 		public string ConnectionString { get; set; }
 		public string DatabaseName { get; set; }
 

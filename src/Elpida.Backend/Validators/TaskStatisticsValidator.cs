@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2020  Ioannis Panagiotopoulos
+ * Copyright (C) 2021  Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,24 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System;
-using Elpida.Backend.Data.Abstractions.Models;
-using Elpida.Backend.Services.Abstractions.Dtos;
+using Elpida.Backend.Services.Abstractions.Dtos.Result;
+using FluentValidation;
 
-namespace Elpida.Backend.Services
+namespace Elpida.Backend.Validators
 {
-	public static class AssetInfoModelExtensions
+	public class TaskStatisticsValidator : AbstractValidator<TaskStatisticsDto>
 	{
-		public static AssetInfoDto ToDto(this AssetInfoModel model)
+		public TaskStatisticsValidator()
 		{
-			if (model == null) throw new ArgumentNullException(nameof(model));
-			return new AssetInfoDto
-			{
-				Location = model.Location,
-				Size = model.Size,
-				Filename = model.Filename,
-				Md5 = model.Md5
-			};
+			RuleFor(dto => dto.SampleSize)
+				.GreaterThanOrEqualTo(1);
 		}
 	}
 }

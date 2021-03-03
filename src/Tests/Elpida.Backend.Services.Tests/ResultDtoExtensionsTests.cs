@@ -25,10 +25,20 @@ namespace Elpida.Backend.Services.Tests
 {
 	public class ResultDtoExtensionsTests
 	{
+		
 		[Test]
 		public void ToResultModel_Null_ThrowsArgumentNullException()
 		{
-			Assert.Throws<ArgumentNullException>(() => ((ResultDto) null).ToModel());
+			Assert.Throws<ArgumentNullException>(() => ((ResultDto) null).ToModel("x", "y", "z"));
+		}
+		
+		[Test]
+		[TestCase(null, "Test", "Test")]
+		[TestCase("Test", null, "Test")]
+		[TestCase("Test", "Test", null)]
+		public void ToResultModel_Null_ThrowsArgumentException(string id, string cpuId, string topologyId)
+		{
+			Assert.Throws<ArgumentException>(() => new ResultDto().ToModel(id, cpuId, topologyId));
 		}
 		
 		[Test]
@@ -36,7 +46,7 @@ namespace Elpida.Backend.Services.Tests
 		{
 			const double tolerance = 0.01;
 			var dto = Generators.CreateNewResultDto();
-			var model = dto.ToModel();
+			var model = dto.ToModel(dto.Id, "y", "z");
 
 			Assert.AreEqual(dto.Id, model.Id);
 			Assert.AreEqual(dto.TimeStamp, model.TimeStamp);
@@ -59,22 +69,9 @@ namespace Elpida.Backend.Services.Tests
 				          && Math.Abs(a.Time - b.Time) < tolerance
 				          && a.Type == b.Type
 				          && Math.Abs(a.Value - b.Value) < tolerance
-				          && a.InputSize == b.InputSize));
-
-			Assert.AreEqual(dto.System.Cpu.Brand, model.System.Cpu.Brand);
-			Assert.AreEqual(dto.System.Cpu.Frequency, model.System.Cpu.Frequency);
-			Assert.AreEqual(dto.System.Cpu.Smt, model.System.Cpu.Smt);
-			Assert.AreEqual(dto.System.Cpu.Vendor, model.System.Cpu.Vendor);
-
-			Assert.True(Helpers.AssertCollectionsAreEqual(dto.System.Cpu.Features, model.System.Cpu.Features,
-				(a, b) => a == b));
-
-			Assert.True(Helpers.AssertCollectionsAreEqual(dto.System.Cpu.Caches, model.System.Cpu.Caches, (a, b) =>
-				a.Associativity == b.Associativity
-				&& a.Name == b.Name
-				&& a.Size == b.Size
-				&& a.LineSize == b.LineSize
-				&& a.LinesPerTag == b.LinesPerTag));
+				          && a.InputSize == b.InputSize
+				          && Helpers.AreEqual(b.Statistics, a.Statistics, tolerance)
+				          && Helpers.AssertCollectionsAreEqual(a.Outliers, b.Outliers, (c,d) => Helpers.AreEqual(d,c,tolerance))));
 
 
 			Assert.AreEqual(dto.System.Memory.PageSize, model.System.Memory.PageSize);
@@ -83,12 +80,16 @@ namespace Elpida.Backend.Services.Tests
 			Assert.AreEqual(dto.System.Os.Category, model.System.Os.Category);
 			Assert.AreEqual(dto.System.Os.Name, model.System.Os.Name);
 			Assert.AreEqual(dto.System.Os.Version, model.System.Os.Version);
+			
+			Assert.AreEqual(dto.System.Timing.JoinOverhead, model.System.Timing.JoinOverhead);
+			Assert.AreEqual(dto.System.Timing.LockOverhead, model.System.Timing.LockOverhead);
+			Assert.AreEqual(dto.System.Timing.LoopOverhead, model.System.Timing.LoopOverhead);
+			Assert.AreEqual(dto.System.Timing.NotifyOverhead, model.System.Timing.NotifyOverhead);
+			Assert.AreEqual(dto.System.Timing.NowOverhead, model.System.Timing.NowOverhead);
+			Assert.AreEqual(dto.System.Timing.SleepOverhead, model.System.Timing.SleepOverhead);
+			Assert.AreEqual(dto.System.Timing.TargetTime, model.System.Timing.TargetTime);
+			Assert.AreEqual(dto.System.Timing.WakeupOverhead, model.System.Timing.WakeupOverhead);
 
-			Assert.AreEqual(dto.System.Topology.TotalDepth, dto.System.Topology.TotalDepth);
-			Assert.AreEqual(dto.System.Topology.TotalLogicalCores, dto.System.Topology.TotalLogicalCores);
-			Assert.AreEqual(dto.System.Topology.TotalPhysicalCores, dto.System.Topology.TotalPhysicalCores);
-
-			Helpers.AssertTopology(model.System.Topology.Root, dto.System.Topology.Root);
 		}
 	}
 }

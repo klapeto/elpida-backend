@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2020  Ioannis Panagiotopoulos
+ * Copyright (C) 2021  Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,19 +17,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using Elpida.Backend.Services.Abstractions.Dtos;
+using Elpida.Backend.Services.Abstractions.Dtos.Result;
+using FluentValidation;
 
-namespace Elpida.Backend.Services.Abstractions
+namespace Elpida.Backend.Validators
 {
-	public interface IAssetsService
+	public class TaskOutlierValidator: AbstractValidator<TaskOutlierDto>
 	{
-		Task<Uri> CreateAsync(string filename, Stream inputData, CancellationToken cancellationToken = default);
-		
-		Task<IEnumerable<AssetInfoDto>> GetAssetsAsync(CancellationToken cancellationToken = default);
+		public TaskOutlierValidator()
+		{
+			RuleFor(dto => dto.Time)
+				.GreaterThanOrEqualTo(0.0);
+
+			RuleFor(dto => dto.Value)
+				.GreaterThanOrEqualTo(0.0);
+		}
 	}
 }

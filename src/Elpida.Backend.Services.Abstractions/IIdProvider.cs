@@ -17,31 +17,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System.Collections.Generic;
-using System.Threading;
-using Azure;
+using Elpida.Backend.Services.Abstractions.Dtos.Result;
 
-namespace Elpida.Backend.Data.Tests.Dummies
+namespace Elpida.Backend.Services.Abstractions
 {
-	public class DummyAsyncPageable<T> : AsyncPageable<T>
+	public interface IIdProvider
 	{
-		private readonly IEnumerable<T> _internal;
-
-		public DummyAsyncPageable(IEnumerable<T> @internal)
-		{
-			_internal = @internal;
-		}
-
-
-		public override IAsyncEnumerator<T> GetAsyncEnumerator(
-			CancellationToken cancellationToken = new CancellationToken())
-		{
-			return new DummyAsyncEnumerator<T>(_internal.GetEnumerator());
-		}
-
-		public override IAsyncEnumerable<Page<T>> AsPages(string? continuationToken = null, int? pageSizeHint = null)
-		{
-			return new DummyAsyncPageable<Page<T>>(new Page<T>[] {new DummyPage<T>(_internal)});
-		}
+		string GetForCpu(CpuDto cpuDto);
+		string GetForTopology(string cpuId, TopologyDto topologyDto);
+		string GetForResult(ResultDto resultDto);
 	}
 }

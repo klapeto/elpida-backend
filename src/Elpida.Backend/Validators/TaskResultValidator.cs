@@ -47,7 +47,10 @@ namespace Elpida.Backend.Validators
 				.GreaterThan(0.0);
 
 			RuleFor(dto => dto.InputSize)
-				.GreaterThanOrEqualTo(0ul);
+				.GreaterThanOrEqualTo(0);
+
+			RuleFor(dto => dto.Statistics)
+				.NotNull();
 		}
 	}
 }

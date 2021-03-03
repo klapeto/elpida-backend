@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2020  Ioannis Panagiotopoulos
+ * Copyright (C) 2021  Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -22,21 +22,29 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Elpida.Backend.Data.Abstractions.Models;
-using Elpida.Backend.Data.Abstractions.Models.Result;
 
 namespace Elpida.Backend.Data.Abstractions
 {
-	public interface IResultsRepository : IRepository<ResultModel>
+	public interface IRepository<T> where T: IEntity
 	{
-		Task<ResultProjection> GetProjectionAsync(string id, CancellationToken cancellationToken = default);
-		
-		Task<PagedQueryResult<ResultPreviewModel>> GetPagedPreviewsAsync<TOrderKey>(int from,
-			int count,
-			bool descending,
-			Expression<Func<ResultProjection, TOrderKey>> orderBy,
-			IEnumerable<Expression<Func<ResultProjection, bool>>> filters,
+		Task<T> GetSingleAsync(string id, CancellationToken cancellationToken = default);
+
+		Task<string> CreateAsync(T model, CancellationToken cancellationToken = default);
+
+		Task<long> GetTotalCountAsync(CancellationToken cancellationToken = default);
+
+		Task<PagedQueryResult<T>> GetPagedAsync<TOrderKey>(
+			int from, 
+			int count, 
+			bool descending, 
+			Expression<Func<T, TOrderKey>> orderBy,
+			IEnumerable<Expression<Func<T, bool>>> filters,
 			bool calculateTotalCount,
 			CancellationToken cancellationToken = default);
+		
+		Task<List<T>> GetAsync(IEnumerable<Expression<Func<T, bool>>> filters,
+			CancellationToken cancellationToken = default);
+
+		Task DeleteAllAsync(CancellationToken cancellationToken = default);
 	}
 }

@@ -17,6 +17,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System.Collections.Generic;
+
 namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 {
 	public class TaskResultDto
@@ -27,6 +29,8 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 		public string Suffix { get; set; }
 		public int Type { get; set; }
 		public double Time { get; set; }
-		public ulong InputSize { get; set; }
+		public long InputSize { get; set; }
+		public TaskStatisticsDto Statistics { get; set; }
+		public IList<TaskOutlierDto> Outliers { get; set; }
 	}
 }

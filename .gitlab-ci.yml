@@ -19,7 +19,7 @@ test:
         - cd src
         - dotnet test
 
-docker-build-master:
+docker-build:
     # Official docker image.
     image: docker:latest
     stage: deploy

@@ -24,5 +24,19 @@ namespace Elpida.Backend.Validators
 {
 	public class VersionValidator : AbstractValidator<VersionDto>
 	{
+		public VersionValidator()
+		{
+			RuleFor(dto => dto.Build)
+				.GreaterThanOrEqualTo(0);
+			
+			RuleFor(dto => dto.Major)
+				.GreaterThanOrEqualTo(0);
+			
+			RuleFor(dto => dto.Minor)
+				.GreaterThanOrEqualTo(0);
+			
+			RuleFor(dto => dto.Revision)
+				.GreaterThanOrEqualTo(0);
+		}
 	}
 }

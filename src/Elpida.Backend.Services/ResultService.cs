@@ -21,11 +21,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Data.Abstractions;
-using Elpida.Backend.Data.Abstractions.Models.Result;
+using Elpida.Backend.Data.Abstractions.Models;
 using Elpida.Backend.Services.Abstractions;
 using Elpida.Backend.Services.Abstractions.Dtos.Result;
 
@@ -33,55 +32,56 @@ namespace Elpida.Backend.Services
 {
 	public class ResultService : IResultsService
 	{
-		private static readonly MethodInfo StringContains =
-			typeof(string).GetMethod(nameof(string.Contains), new[] {typeof(string)});
-
-		private static readonly IReadOnlyDictionary<string, Func<Expression, Expression, Expression>>
-			ComparisonExpressionsFactories = new Dictionary<string, Func<Expression, Expression, Expression>>
-			{
-				[Filter.ComparisonMap[Filter.Comparison.Contains]] =
-					(left, right) => Expression.Call(left, StringContains, right),
-				[Filter.ComparisonMap[Filter.Comparison.Equal]] = Expression.Equal,
-				[Filter.ComparisonMap[Filter.Comparison.Greater]] = Expression.GreaterThan,
-				[Filter.ComparisonMap[Filter.Comparison.GreaterEqual]] = Expression.GreaterThanOrEqual,
-				[Filter.ComparisonMap[Filter.Comparison.Less]] = Expression.LessThan,
-				[Filter.ComparisonMap[Filter.Comparison.LessEqual]] = Expression.LessThanOrEqual,
-			};
-
-		private static readonly IReadOnlyDictionary<string, LambdaExpression> ModelExpressions =
-			new Dictionary<string, LambdaExpression>
-			{
-				[Filter.TypeMap[Filter.Type.CpuCores].ToLowerInvariant()] =
-					GetExpression(model => model.System.Topology.TotalPhysicalCores),
-				[Filter.TypeMap[Filter.Type.CpuLogicalCores].ToLowerInvariant()] =
-					GetExpression(model => model.System.Topology.TotalLogicalCores),
-				[Filter.TypeMap[Filter.Type.CpuFrequency].ToLowerInvariant()] =
-					GetExpression(model => model.System.Cpu.Frequency),
-				[Filter.TypeMap[Filter.Type.MemorySize].ToLowerInvariant()] =
-					GetExpression(model => model.System.Memory.TotalSize),
-				[Filter.TypeMap[Filter.Type.Timestamp].ToLowerInvariant()] = GetExpression(model => model.TimeStamp),
-				[Filter.TypeMap[Filter.Type.Name].ToLowerInvariant()] = GetExpression(model => model.Result.Name),
-				[Filter.TypeMap[Filter.Type.CpuBrand].ToLowerInvariant()] =
-					GetExpression(model => model.System.Cpu.Brand),
-				[Filter.TypeMap[Filter.Type.CpuVendor].ToLowerInvariant()] =
-					GetExpression(model => model.System.Cpu.Vendor),
-				[Filter.TypeMap[Filter.Type.OsCategory].ToLowerInvariant()] =
-					GetExpression(model => model.System.Os.Category),
-				[Filter.TypeMap[Filter.Type.OsName].ToLowerInvariant()] = GetExpression(model => model.System.Os.Name),
-				[Filter.TypeMap[Filter.Type.OsVersion].ToLowerInvariant()] =
-					GetExpression(model => model.System.Os.Version)
-			};
-
+		private readonly ICpuRepository _cpuRepository;
+		private readonly IIdProvider _idProvider;
 		private readonly IResultsRepository _resultsRepository;
+		private readonly ITopologyRepository _topologyRepository;
 
-		public ResultService(IResultsRepository resultsRepository)
+		public ResultService(IResultsRepository resultsRepository, ICpuRepository cpuRepository,
+			ITopologyRepository topologyRepository, IIdProvider idProvider)
 		{
 			_resultsRepository = resultsRepository ?? throw new ArgumentNullException(nameof(resultsRepository));
+			_cpuRepository = cpuRepository ?? throw new ArgumentNullException(nameof(cpuRepository));
+			_idProvider = idProvider ?? throw new ArgumentNullException(nameof(idProvider));
+			_topologyRepository = topologyRepository ?? throw new ArgumentNullException(nameof(topologyRepository));
 		}
+
+		private static IReadOnlyDictionary<string, LambdaExpression> CpuExpressions { get; } =
+			new Dictionary<string, LambdaExpression>
+			{
+				[Filter.TypeMap[Filter.Type.CpuBrand]] = GetResultExpression(model => model.System.Cpu.Brand),
+				[Filter.TypeMap[Filter.Type.CpuVendor]] = GetResultExpression(model => model.System.Cpu.Vendor),
+				[Filter.TypeMap[Filter.Type.CpuFrequency]] = GetResultExpression(model => model.System.Cpu.Frequency),
+			};
+
+		private static IReadOnlyDictionary<string, LambdaExpression> TopologyExpressions { get; } =
+			new Dictionary<string, LambdaExpression>
+			{
+				[Filter.TypeMap[Filter.Type.CpuCores]] = GetResultExpression(model => model.System.Topology.TotalPhysicalCores),
+				[Filter.TypeMap[Filter.Type.CpuLogicalCores]] = GetResultExpression(model => model.System.Topology.TotalLogicalCores),
+			};
+
+		private static IReadOnlyDictionary<string, LambdaExpression> ResultExpressions { get; } =
+			new Dictionary<string, LambdaExpression>
+			{
+				[Filter.TypeMap[Filter.Type.MemorySize]] = GetResultExpression(model => model.System.Memory.TotalSize),
+				[Filter.TypeMap[Filter.Type.Timestamp]] = GetResultExpression(model => model.TimeStamp),
+				["startTime".ToLowerInvariant()] = GetResultExpression(model => model.TimeStamp),
+				["endTime".ToLowerInvariant()] = GetResultExpression(model => model.TimeStamp),
+				[Filter.TypeMap[Filter.Type.Name].ToLowerInvariant()] = GetResultExpression(model => model.Result.Name),
+				[Filter.TypeMap[Filter.Type.OsCategory]] = GetResultExpression(model => model.System.Os.Category),
+				[Filter.TypeMap[Filter.Type.OsName]] = GetResultExpression(model => model.System.Os.Name),
+				[Filter.TypeMap[Filter.Type.OsVersion]] = GetResultExpression(model => model.System.Os.Version),
+			};
+
+		private static IReadOnlyDictionary<string, LambdaExpression> ResultProjectionExpressions { get; } =
+			ResultExpressions.Concat(CpuExpressions)
+				.Concat(TopologyExpressions)
+				.ToDictionary(x => x.Key, x => x.Value);
 
 		#region IResultsService Members
 
-		public Task<string> CreateAsync(ResultDto resultDto, CancellationToken cancellationToken)
+		public async Task<string> CreateAsync(ResultDto resultDto, CancellationToken cancellationToken)
 		{
 			if (resultDto == null)
 			{
@@ -89,7 +89,12 @@ namespace Elpida.Backend.Services
 			}
 
 			resultDto.TimeStamp = DateTime.UtcNow;
-			return _resultsRepository.CreateAsync(resultDto.ToModel(), cancellationToken);
+
+			var cpuId = await AssignCpu(resultDto.System.Cpu, cancellationToken);
+			var topologyId = await AssignTopology(cpuId, resultDto.System.Topology, cancellationToken);
+
+			return await _resultsRepository.CreateAsync(
+				resultDto.ToModel(_idProvider.GetForResult(resultDto), cpuId, topologyId), cancellationToken);
 		}
 
 		public async Task<ResultDto> GetSingleAsync(string id, CancellationToken cancellationToken)
@@ -99,13 +104,13 @@ namespace Elpida.Backend.Services
 				throw new ArgumentException("Id cannot be empty", nameof(id));
 			}
 
-			var model = await _resultsRepository.GetSingleAsync(id, cancellationToken);
-			if (model == null)
+			var resultModel = await _resultsRepository.GetProjectionAsync(id, cancellationToken);
+			if (resultModel == null)
 			{
 				throw new NotFoundException(id);
 			}
 
-			return model.ToDto();
+			return resultModel.ToDto();
 		}
 
 		public async Task<PagedResult<ResultPreviewDto>> GetPagedAsync(QueryRequest queryRequest,
@@ -116,12 +121,14 @@ namespace Elpida.Backend.Services
 				throw new ArgumentNullException(nameof(queryRequest));
 			}
 
-			var result = await _resultsRepository.GetAsync(
+			var expressionBuilder = new QueryExpressionBuilder(ResultProjectionExpressions);
+
+			var result = await _resultsRepository.GetPagedPreviewsAsync(
 				queryRequest.PageRequest.Next,
 				queryRequest.PageRequest.Count,
 				queryRequest.Descending,
-				GetOrderBy(queryRequest),
-				GetQueryFilters(queryRequest),
+				expressionBuilder.GetOrderBy<ResultProjection>(queryRequest),
+				expressionBuilder.Build<ResultProjection>(queryRequest.Filters),
 				queryRequest.PageRequest.TotalCount == 0,
 				cancellationToken);
 
@@ -138,111 +145,37 @@ namespace Elpida.Backend.Services
 
 		#endregion
 
-		private static LambdaExpression GetExpression<T>(Expression<Func<ResultModel, T>> baseExp)
+		private static LambdaExpression GetResultExpression<T>(Expression<Func<ResultProjection, T>> baseExp)
 		{
 			// Dirty hack to prevent boxing of values
 			return baseExp;
 		}
 
-		private static void AddFilter(ICollection<Expression<Func<ResultModel, bool>>> accumulator,
-			QueryInstance instance, LambdaExpression fieldPart)
+		private async Task<string> AssignCpu(CpuDto cpuDto, CancellationToken cancellationToken)
 		{
-			if (instance == null)
+			var id = _idProvider.GetForCpu(cpuDto);
+			var cpuModel = await _cpuRepository.GetSingleAsync(id, cancellationToken);
+			if (cpuModel == null)
 			{
-				return;
+				cpuModel = cpuDto.ToModel(id);
+				await _cpuRepository.CreateAsync(cpuModel, cancellationToken);
 			}
 
-			Expression right = Expression.Constant(Convert.ChangeType(instance.Value, fieldPart.Body.Type));
-			var left = fieldPart.Body;
-			var parameters = fieldPart.Parameters;
-
-			Expression middlePart;
-
-			if (instance.Value is string str && !DateTime.TryParse(str, out _))
-			{
-				if (instance.Comp != null)
-				{
-					if (
-						Filter.StringComparisons.Contains(instance.Comp) &&
-						ComparisonExpressionsFactories.TryGetValue(instance.Comp, out var factory))
-					{
-						middlePart = factory(left, right);
-					}
-					else
-					{
-						throw new ArgumentException(
-							$"String value filter comparison types can be :[{string.Join(",", Filter.StringComparisons.Select(s => s))}]");
-					}
-				}
-				else
-				{
-					middlePart =
-						ComparisonExpressionsFactories[Filter.ComparisonMap[Filter.Comparison.Contains]](left, right);
-				}
-			}
-			else
-			{
-				if (instance.Comp != null)
-				{
-					if (Filter.NumberComparisons.Contains(instance.Comp) &&
-					    ComparisonExpressionsFactories.TryGetValue(instance.Comp, out var factory))
-					{
-						middlePart = factory(left, right);
-					}
-					else
-					{
-						throw new ArgumentException(
-							$"Numeric value filter comparison types can be :[{string.Join(",", Filter.NumberComparisons.Select(s => s))}]");
-					}
-				}
-				else
-				{
-					middlePart =
-						ComparisonExpressionsFactories[Filter.ComparisonMap[Filter.Comparison.Equal]](left, right);
-				}
-			}
-
-			accumulator.Add(Expression.Lambda<Func<ResultModel, bool>>(middlePart, parameters));
+			return id;
 		}
 
-
-		private static Expression<Func<ResultModel, object>> GetOrderBy(QueryRequest queryRequest)
+		private async Task<string> AssignTopology(string cpuId, TopologyDto topologyDto,
+			CancellationToken cancellationToken)
 		{
-			if (queryRequest.OrderBy == null)
+			var id = _idProvider.GetForTopology(cpuId, topologyDto);
+			var topologyModel = await _topologyRepository.GetSingleAsync(id, cancellationToken);
+			if (topologyModel == null)
 			{
-				return null;
+				topologyModel = topologyDto.ToModel(id);
+				await _topologyRepository.CreateAsync(topologyModel, cancellationToken);
 			}
 
-			var orderBy = queryRequest.OrderBy.ToLowerInvariant();
-
-			if (ModelExpressions.TryGetValue(orderBy, out var strExpression))
-			{
-				return Expression.Lambda<Func<ResultModel, object>>(
-					Expression.Convert(strExpression.Body, typeof(object)), strExpression.Parameters);
-			}
-
-			throw new ArgumentException(
-				$"OrderBy is not a valid order field. Can be: {string.Join(',', ModelExpressions.Keys)}");
-		}
-
-		private static IEnumerable<Expression<Func<ResultModel, bool>>> GetQueryFilters(QueryRequest queryRequest)
-		{
-			if (queryRequest.Filters == null)
-			{
-				return null;
-			}
-
-			var returnList = new List<Expression<Func<ResultModel, bool>>>();
-
-			foreach (var filter in queryRequest.Filters)
-			{
-				if (ModelExpressions.TryGetValue(filter.Name.ToLowerInvariant(), out var expression))
-				{
-					AddFilter(returnList, filter, expression);
-				}
-			}
-
-			return returnList;
+			return id;
 		}
 	}
 }

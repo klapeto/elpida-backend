@@ -24,59 +24,44 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Data.Abstractions;
+using Elpida.Backend.Data.Abstractions.Models;
 using Elpida.Backend.Data.Abstractions.Models.Result;
-using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
 namespace Elpida.Backend.Data
 {
-	public class MongoResultsRepository : IResultsRepository
+	public class MongoResultsRepository : MongoRepository<ResultModel>, IResultsRepository
 	{
-		private readonly IMongoCollection<ResultModel> _resultCollection;
+		private readonly IMongoCollection<CpuModel> _cpuCollection;
+		private readonly IMongoCollection<TopologyModel> _topologyCollection;
 
-		public MongoResultsRepository(IMongoCollection<ResultModel> resultCollection)
+		public MongoResultsRepository(
+			IMongoCollection<ResultModel> resultCollection,
+			IMongoCollection<CpuModel> cpuCollection,
+			IMongoCollection<TopologyModel> topologyCollection)
+			: base(resultCollection)
 		{
-			_resultCollection = resultCollection ?? throw new ArgumentNullException(nameof(resultCollection));
+			_cpuCollection = cpuCollection ?? throw new ArgumentNullException(nameof(cpuCollection));
+			_topologyCollection = topologyCollection ?? throw new ArgumentNullException(nameof(topologyCollection));
 		}
 
-		#region IResultsRepository Members
-
-		public async Task<ResultModel> GetSingleAsync(string id, CancellationToken cancellationToken)
+		public Task<ResultProjection> GetProjectionAsync(string id, CancellationToken cancellationToken = default)
 		{
 			if (string.IsNullOrWhiteSpace(id))
 			{
 				throw new ArgumentException("'Id' cannot be empty", nameof(id));
 			}
 
-			return await (await _resultCollection.FindAsync(r => r.Id == id, cancellationToken: cancellationToken))
-				.FirstOrDefaultAsync(cancellationToken);
+			return JoinCollectionData().FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
 		}
 
-		public async Task<string> CreateAsync(ResultModel resultModel, CancellationToken cancellationToken)
-		{
-			if (resultModel == null)
-			{
-				throw new ArgumentNullException(nameof(resultModel));
-			}
-
-			resultModel.Id = ObjectId.GenerateNewId(DateTime.UtcNow).ToString();
-			await _resultCollection.InsertOneAsync(resultModel, cancellationToken: cancellationToken);
-			return resultModel.Id;
-		}
-
-		public Task<long> GetTotalCountAsync(CancellationToken cancellationToken)
-		{
-			return _resultCollection.CountDocumentsAsync(FilterDefinition<ResultModel>.Empty,
-				cancellationToken: cancellationToken);
-		}
-
-		public async Task<PagedQueryResult<ResultPreviewModel>> GetAsync<TOrderKey>(
+		public async Task<PagedQueryResult<ResultPreviewModel>> GetPagedPreviewsAsync<TOrderKey>(
 			int from,
 			int count,
 			bool descending,
-			Expression<Func<ResultModel, TOrderKey>> orderBy,
-			IEnumerable<Expression<Func<ResultModel, bool>>> filters,
+			Expression<Func<ResultProjection, TOrderKey>> orderBy,
+			IEnumerable<Expression<Func<ResultProjection, bool>>> filters,
 			bool calculateTotalCount,
 			CancellationToken cancellationToken = default)
 		{
@@ -90,10 +75,13 @@ namespace Elpida.Backend.Data
 				throw new ArgumentException("'count' must be positive", nameof(count));
 			}
 
-			var result = _resultCollection.AsQueryable();
+			var result = JoinCollectionData();
 
-			result = filters?.Aggregate(result, (current, filter) => current.Where(filter)) ?? result;
-
+			if (filters != null)
+			{
+				result = filters.Aggregate(result, (current, filter) => current.Where(filter));
+			}
+			
 			if (orderBy != null)
 			{
 				result = descending ? result.OrderByDescending(orderBy) : result.OrderBy(orderBy);
@@ -105,6 +93,10 @@ namespace Elpida.Backend.Data
 				.Take(count)
 				.Select(m => new ResultPreviewModel
 				{
+					CpuBrand = m.System.Cpu.Brand,
+					CpuCores = m.System.Topology.TotalPhysicalCores,
+					CpuLogicalCores = m.System.Topology.TotalLogicalCores,
+					CpuFrequency = m.System.Cpu.Frequency,
 					Name = m.Result.Name,
 					Id = m.Id,
 					OsName = m.System.Os.Name,
@@ -113,10 +105,6 @@ namespace Elpida.Backend.Data
 					ElpidaVersionMinor = m.Elpida.Version.Minor,
 					ElpidaVersionRevision = m.Elpida.Version.Revision,
 					ElpidaVersionBuild = m.Elpida.Version.Build,
-					CpuBrand = m.System.Cpu.Brand,
-					CpuCores = m.System.Topology.TotalPhysicalCores,
-					CpuLogicalCores = m.System.Topology.TotalLogicalCores,
-					CpuFrequency = m.System.Cpu.Frequency,
 					MemorySize = m.System.Memory.TotalSize,
 					TimeStamp = m.TimeStamp
 				})
@@ -125,11 +113,31 @@ namespace Elpida.Backend.Data
 			return new PagedQueryResult<ResultPreviewModel>(totalCount, results);
 		}
 
-		public Task DeleteAllAsync(CancellationToken cancellationToken)
+		private IMongoQueryable<ResultProjection> JoinCollectionData()
 		{
-			return _resultCollection.DeleteManyAsync(FilterDefinition<ResultModel>.Empty, cancellationToken);
+			return Collection.AsQueryable()
+				.Join(_cpuCollection.AsQueryable(),
+					rModel => rModel.System.CpuId,
+					cModel => cModel.Id,
+					(model, cpuModel) => new {ResultModel = model, CpuModel = cpuModel})
+				.Join(_topologyCollection.AsQueryable(),
+					t => t.ResultModel.System.TopologyId,
+					topology => topology.Id, (t, topology) => new ResultProjection
+					{
+						Affinity = t.ResultModel.Affinity,
+						Elpida = t.ResultModel.Elpida,
+						Id = t.ResultModel.Id,
+						Result = t.ResultModel.Result,
+						System = new SystemModelProjection
+						{
+							Cpu = t.CpuModel,
+							Memory = t.ResultModel.System.Memory,
+							Os = t.ResultModel.System.Os,
+							Timing = t.ResultModel.System.Timing,
+							Topology = topology
+						},
+						TimeStamp = t.ResultModel.TimeStamp
+					});
 		}
-
-		#endregion
 	}
 }

@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2020  Ioannis Panagiotopoulos
+ * Copyright (C) 2021  Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,27 +17,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System.Collections.Generic;
-using System.Linq;
-using Azure;
-
-namespace Elpida.Backend.Data.Tests.Dummies
+namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 {
-	public class DummyPage<T> : Page<T>
+	public class TaskOutlierDto
 	{
-		private readonly IEnumerable<T> _internal;
-
-		public DummyPage(IEnumerable<T> @internal)
-		{
-			_internal = @internal;
-		}
-
-		public override IReadOnlyList<T> Values => _internal.ToArray();
-		public override string? ContinuationToken { get; } = null;
-
-		public override Response GetRawResponse()
-		{
-			return null;
-		}
+		public double Value { get; set; }
+		public double Time { get; set; }
 	}
 }

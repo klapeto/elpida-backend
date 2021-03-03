@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System.Linq;
 using Elpida.Backend.Services.Abstractions.Dtos.Result;
 using FluentValidation;
 
@@ -31,6 +32,12 @@ namespace Elpida.Backend.Validators
 				.MaximumLength(100);
 
 			RuleFor(dto => dto.NodeType)
+				.GreaterThanOrEqualTo(0);
+			
+			RuleFor(dto => dto.Value)
+				.GreaterThanOrEqualTo(0);
+			
+			RuleFor(dto => dto.OsIndex)
 				.GreaterThanOrEqualTo(0);
 		}
 	}

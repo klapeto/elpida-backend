@@ -23,8 +23,11 @@ namespace Elpida.Backend.Services.Abstractions
 {
 	public class PagedResult<T>
 	{
+		public static PagedResult<T> Empty() => new PagedResult<T>(new List<T>(), new PageRequest());
+		
 		public PagedResult()
 		{
+			
 		}
 
 		public PagedResult(IList<T> list, PageRequest pageRequest)

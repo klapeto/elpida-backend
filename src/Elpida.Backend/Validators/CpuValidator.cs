@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System.Linq;
 using Elpida.Backend.Services.Abstractions.Dtos.Result;
 using FluentValidation;
 
@@ -29,6 +30,12 @@ namespace Elpida.Backend.Validators
 			RuleFor(dto => dto.Vendor)
 				.NotEmpty()
 				.MaximumLength(50);
+			
+			RuleFor(dto => dto.Brand)
+				.MaximumLength(50);
+
+			RuleFor(dto => dto.Frequency)
+				.GreaterThanOrEqualTo(0);
 		}
 	}
 }
