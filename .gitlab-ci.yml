@@ -7,17 +7,19 @@ build:
     image: mcr.microsoft.com/dotnet/core/sdk:latest
     stage: build
     script:
-        - "dotnet build"
+        - cd src
+        - dotnet build
     artifacts:
       paths:
-        - bin/
+        - src/Elpida.Backend/bin/
 test:
     image: mcr.microsoft.com/dotnet/core/sdk:latest
     stage: test
     script: 
-        - "dotnet test"
+        - cd src
+        - dotnet test
 
-docker-build-master:
+docker-build:
     # Official docker image.
     image: docker:latest
     stage: deploy
@@ -40,7 +42,7 @@ docker-build-develop:
     before_script:
         - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     script:
-        - docker build --pull -t "$CI_REGISTRY_IMAGE" .
-        - docker push "$CI_REGISTRY_IMAGE"
+        - docker build --pull -t "$CI_REGISTRY_IMAGE:develop" .
+        - docker push "$CI_REGISTRY_IMAGE:develop"
     only:
         - develop
