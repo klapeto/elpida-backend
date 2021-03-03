@@ -147,7 +147,7 @@ namespace Elpida.Backend
 			}
 
 			app.UseCors(builder =>
-				builder.WithOrigins("https://beta.elpida.dev", "https://elpida.dev")
+				builder.WithOrigins("https://beta.elpida.dev", "https://elpida.dev", "https://www.elpida.dev")
 					.WithMethods(HttpMethods.Get, HttpMethods.Post)
 					.WithHeaders(HeaderNames.ContentType, HeaderNames.Accept)
 					.WithExposedHeaders(
