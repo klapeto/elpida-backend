@@ -19,10 +19,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Elpida.Backend.Data.Abstractions.Models;
 using Elpida.Backend.Data.Abstractions.Models.Result;
 using Elpida.Backend.Data.Tests.Dummies;
 using MongoDB.Bson;
@@ -44,8 +46,7 @@ namespace Elpida.Backend.Data.Tests
 		{
 			BsonClassMap.RegisterClassMap<ResultModel>();
 		}
-
-
+		
 		[SetUp]
 		public void CreateMocks()
 		{
@@ -76,13 +77,6 @@ namespace Elpida.Backend.Data.Tests
 				Mock.Of<IMongoCollection<CpuModel>>(),
 				Mock.Of<IMongoCollection<TopologyModel>>()));
 		}
-		
-		private static SortDefinition<T> GetSortObject<T>(Expression<Func<T, object>> field, bool desc)
-		{
-			var builder = new SortDefinitionBuilder<T>();
-			
-			return desc ? builder.Descending(field) : builder.Ascending(field);
-		}
 
 		private void ConfigureDefaultResultCollection(bool withCpu = true, bool withTopology = true)
 		{
@@ -109,11 +103,6 @@ namespace Elpida.Backend.Data.Tests
 					.Returns(new BsonClassMapSerializer<TopologyModel>(BsonClassMap.LookupClassMap(typeof(TopologyModel))));	
 			}
 		}
-		
-		private static bool AreEqual<T,TR>(PipelineDefinition<T, TR> a, PipelineDefinition<T, TR> b)
-		{
-			return a.ToString() == b.ToString();
-		}
 
 		[Test]
 		public async Task GetPagedPreviewsAsync_Success()
@@ -127,6 +116,120 @@ namespace Elpida.Backend.Data.Tests
 			
 			var repo = GetRepo();
 			await repo.GetPagedPreviewsAsync<object>(0, 10, false, null, null, false);
+
+			VerifyOtherCalls();
+		}
+		
+		[Test]
+		public async Task GetPagedPreviewsAsync_WithFilters_Success()
+		{
+			ConfigureDefaultResultCollection();
+
+			const int expectedCount = 50;
+			
+			var models = new List<ResultPreviewModel>
+			{
+				new ResultPreviewModel
+				{
+					Id = Guid.NewGuid().ToString("N"),
+				},
+				new ResultPreviewModel
+				{
+					Id = Guid.NewGuid().ToString("N"),
+				}
+			};
+
+			const int count = 26;
+			const int from = 12;
+			const bool desc = true;
+			const string matchStr = "xsf";
+			Expression<Func<ResultProjection, DateTime>> orderBy = a => a.TimeStamp;
+
+			var filters = new List<Expression<Func<ResultProjection, bool>>> {a => a.Id == matchStr};
+
+			_resultMock.Setup(r => r.AggregateAsync(
+					It.IsAny<PipelineDefinition<ResultModel, ResultPreviewModel>>(),
+					It.IsAny<AggregateOptions>(), 
+					It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new DummyAsyncCursor<ResultPreviewModel>(models))
+				.Verifiable();
+			
+			_resultMock.Setup(r => r.AggregateAsync(It.IsAny<PipelineDefinition<ResultModel, int>>(),
+					It.IsAny<AggregateOptions>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new DummyAsyncCursor<int>(new[] {expectedCount}))
+				.Verifiable();
+
+			var repo = GetRepo();
+
+			var results = await repo.GetPagedPreviewsAsync(
+				from, 
+				count, 
+				desc, 
+				orderBy,
+				filters, 
+				true);
+
+			Assert.AreEqual(models.Count, results.Items.Count);
+			Assert.AreEqual(expectedCount, results.TotalCount);
+			
+			VerifyOtherCalls();
+		}
+		
+		[Test]
+		[TestCase(-5, 10)]
+		[TestCase(0, -8)]
+		[TestCase(-1, -8)]
+		public void GetPagedPreviewsAsync_InvalidRange_ThrowsArgumentException(int from, int count)
+		{
+			var repo = GetRepo();
+
+			Assert.ThrowsAsync<ArgumentException>(async () =>
+				await repo.GetPagedPreviewsAsync<object>(from, count, false, null, null, false));
+
+			VerifyOtherCalls();
+		}
+		
+		[Test]
+		[TestCase(null)]
+		[TestCase("")]
+		[TestCase("\t")]
+		[TestCase("\n")]
+		[TestCase("\t \n ")]
+		public void GetProjectionAsync_EmptyId_ThrowsArgumentException(string id)
+		{
+			var repo = GetRepo();
+
+			Assert.ThrowsAsync<ArgumentException>(async () => await repo.GetProjectionAsync(id));
+			
+			VerifyOtherCalls();
+		}
+		
+		[Test]
+		public async Task GetGetProjectionAsync_Success()
+		{
+			ConfigureDefaultResultCollection();
+
+			var models = new List<ResultProjection>
+			{
+				new ResultProjection
+				{
+					Id = Guid.NewGuid().ToString("N"),
+				}
+			};
+
+			_resultMock.Setup(r => r.AggregateAsync(
+					It.IsAny<PipelineDefinition<ResultModel, ResultProjection>>(),
+					It.IsAny<AggregateOptions>(), 
+					It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new DummyAsyncCursor<ResultProjection>(models))
+				.Verifiable();
+			
+			var repo = GetRepo();
+
+			var result = await repo.GetProjectionAsync(models.First().Id);
+			
+			Assert.NotNull(result);
+			Assert.AreEqual(models.First().Id, result.Id);
 
 			VerifyOtherCalls();
 		}

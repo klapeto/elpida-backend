@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2020  Ioannis Panagiotopoulos
+ * Copyright (C) 2021  Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,19 +17,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using Elpida.Backend.Services.Abstractions.Dtos;
-
-namespace Elpida.Backend.Services.Abstractions
+namespace Elpida.Backend.Data.Abstractions.Models.Result
 {
-	public interface IAssetsService
+	public class TaskStatisticsModel
 	{
-		Task<Uri> CreateAsync(string filename, Stream inputData, CancellationToken cancellationToken = default);
-		
-		Task<IEnumerable<AssetInfoDto>> GetAssetsAsync(CancellationToken cancellationToken = default);
+		public long SampleSize { get; set; }
+		public double Max { get; set; }
+		public double Min { get; set; }
+		public double Mean { get; set; }
+		public double Sd { get; set; }
+		public double Tau { get; set; }
+		public double MarginOfError { get; set; }
 	}
 }

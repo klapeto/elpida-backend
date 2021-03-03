@@ -133,6 +133,7 @@ namespace Elpida.Backend.Data
 							Cpu = t.CpuModel,
 							Memory = t.ResultModel.System.Memory,
 							Os = t.ResultModel.System.Os,
+							Timing = t.ResultModel.System.Timing,
 							Topology = topology
 						},
 						TimeStamp = t.ResultModel.TimeStamp

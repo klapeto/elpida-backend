@@ -28,6 +28,23 @@ namespace Elpida.Backend.Services.Tests
 {
 	public static class Helpers
 	{
+		public static bool AreEqual(TaskOutlierModel model, TaskOutlierDto dto, double tolerance)
+		{
+			return Math.Abs(model.Time - dto.Time) < tolerance
+			       && Math.Abs(model.Value - dto.Value) < tolerance;
+		}
+		
+		public static bool AreEqual(TaskStatisticsModel model, TaskStatisticsDto dto, double tolerance)
+		{
+			return Math.Abs(model.Max - dto.Max) < tolerance
+			       && Math.Abs(model.Min - dto.Min) < tolerance
+			       && Math.Abs(model.Mean - dto.Mean) < tolerance
+			       && Math.Abs(model.Sd - dto.Sd) < tolerance
+			       && Math.Abs(model.Tau - dto.Tau) < tolerance
+			       && Math.Abs(model.SampleSize - dto.SampleSize) < tolerance
+			       && Math.Abs(model.MarginOfError - dto.MarginOfError) < tolerance;
+		}
+
 		public static void AssertTopology(CpuNodeModel model, CpuNodeDto dto)
 		{
 			Assert.AreEqual(model.Name, dto.Name);

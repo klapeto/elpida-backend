@@ -25,5 +25,6 @@ namespace Elpida.Backend.Data.Abstractions.Models.Result
 		public string TopologyId { get; set; }
 		public OsModel Os { get; set; }
 		public MemoryModel Memory { get; set; }
+		public TimingModel Timing { get; set; }
 	}
 }

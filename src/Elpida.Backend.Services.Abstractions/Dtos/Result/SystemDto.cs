@@ -25,5 +25,6 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 		public OsDto Os { get; set; }
 		public TopologyDto Topology { get; set; }
 		public MemoryDto Memory { get; set; }
+		public TimingDto Timing { get; set; }
 	}
 }

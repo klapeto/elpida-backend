@@ -57,6 +57,7 @@ namespace Elpida.Backend.Services
 
 			var formatter = new BinaryFormatter();
 			formatter.Serialize(stream, topologyDto);
+			stream.Position = 0;
 
 			using var md5 = MD5.Create();
 			return $"{cpuId}_{md5.ComputeHash(stream).ToHexString()}";

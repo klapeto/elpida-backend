@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2020  Ioannis Panagiotopoulos
+ * Copyright (C) 2021  Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,29 +17,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using Elpida.Backend.Services.Abstractions.Dtos.Result;
-using FluentValidation;
+using NUnit.Framework;
 
-namespace Elpida.Backend.Validators
+namespace Elpida.Backend.Services.Tests
 {
-	public class SystemValidator : AbstractValidator<SystemDto>
+	[TestFixture]
+	public class ByteArrayExtensionsTests
 	{
-		public SystemValidator()
+		[Test]
+		public void Success()
 		{
-			RuleFor(dto => dto.Cpu)
-				.NotNull();
-
-			RuleFor(dto => dto.Memory)
-				.NotNull();
-
-			RuleFor(dto => dto.Topology)
-				.NotNull();
+			Assert.AreEqual("3112FCA8571B", new byte[] {0x31, 0x12, 0xFC, 0xA8, 0x57, 0x1B}.ToHexString());
 			
-			RuleFor(dto => dto.Os)
-				.NotNull();
-			
-			RuleFor(dto => dto.Timing)
-				.NotNull();
+			Assert.AreEqual("CD84ACF04891", new byte[] {0xCD, 0x84, 0xAC, 0xF0, 0x48, 0x91}.ToHexString());
 		}
 	}
 }

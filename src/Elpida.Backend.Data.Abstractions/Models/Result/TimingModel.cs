@@ -17,29 +17,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using Elpida.Backend.Services.Abstractions.Dtos.Result;
-using FluentValidation;
 
-namespace Elpida.Backend.Validators
+namespace Elpida.Backend.Data.Abstractions.Models.Result
 {
-	public class SystemValidator : AbstractValidator<SystemDto>
+	public class TimingModel
 	{
-		public SystemValidator()
-		{
-			RuleFor(dto => dto.Cpu)
-				.NotNull();
-
-			RuleFor(dto => dto.Memory)
-				.NotNull();
-
-			RuleFor(dto => dto.Topology)
-				.NotNull();
-			
-			RuleFor(dto => dto.Os)
-				.NotNull();
-			
-			RuleFor(dto => dto.Timing)
-				.NotNull();
-		}
+		public double NotifyOverhead { get; set; }
+		public double WakeupOverhead { get; set; }
+		public double SleepOverhead { get; set; }
+		public double NowOverhead { get; set; }
+		public double LockOverhead { get; set; }
+		public double LoopOverhead { get; set; }
+		public double JoinOverhead { get; set; }
+		public double TargetTime { get; set; }
 	}
 }

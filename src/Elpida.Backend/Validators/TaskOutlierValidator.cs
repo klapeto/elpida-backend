@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2020  Ioannis Panagiotopoulos
+ * Copyright (C) 2021  Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -22,24 +22,15 @@ using FluentValidation;
 
 namespace Elpida.Backend.Validators
 {
-	public class SystemValidator : AbstractValidator<SystemDto>
+	public class TaskOutlierValidator: AbstractValidator<TaskOutlierDto>
 	{
-		public SystemValidator()
+		public TaskOutlierValidator()
 		{
-			RuleFor(dto => dto.Cpu)
-				.NotNull();
+			RuleFor(dto => dto.Time)
+				.GreaterThanOrEqualTo(0.0);
 
-			RuleFor(dto => dto.Memory)
-				.NotNull();
-
-			RuleFor(dto => dto.Topology)
-				.NotNull();
-			
-			RuleFor(dto => dto.Os)
-				.NotNull();
-			
-			RuleFor(dto => dto.Timing)
-				.NotNull();
+			RuleFor(dto => dto.Value)
+				.GreaterThanOrEqualTo(0.0);
 		}
 	}
 }

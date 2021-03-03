@@ -27,6 +27,59 @@ namespace Elpida.Backend.Services
 {
 	public static class ResultDtoExtensions
 	{
+		public static TaskOutlierModel ToModel(this TaskOutlierDto outlierDto)
+		{
+			if (outlierDto == null)
+			{
+				throw new ArgumentNullException(nameof(outlierDto));
+			}
+
+			return new TaskOutlierModel
+			{
+				Time = outlierDto.Time,
+				Value = outlierDto.Value,
+			};
+		}
+		
+		public static TaskStatisticsModel ToModel(this TaskStatisticsDto statisticsDto)
+		{
+			if (statisticsDto == null)
+			{
+				throw new ArgumentNullException(nameof(statisticsDto));
+			}
+
+			return new TaskStatisticsModel
+			{
+				Max = statisticsDto.Max,
+				Mean = statisticsDto.Mean,
+				Min = statisticsDto.Min,
+				Sd = statisticsDto.Sd,
+				Tau = statisticsDto.Tau,
+				SampleSize = statisticsDto.SampleSize,
+				MarginOfError = statisticsDto.MarginOfError,
+			};
+		}
+		
+		public static TimingModel ToModel(this TimingDto timingDto)
+		{
+			if (timingDto == null)
+			{
+				throw new ArgumentNullException(nameof(timingDto));
+			}
+
+			return new TimingModel
+			{
+				JoinOverhead = timingDto.JoinOverhead,
+				LockOverhead = timingDto.LockOverhead,
+				LoopOverhead = timingDto.LoopOverhead,
+				NotifyOverhead = timingDto.NotifyOverhead,
+				NowOverhead = timingDto.NowOverhead,
+				SleepOverhead = timingDto.SleepOverhead,
+				TargetTime = timingDto.TargetTime,
+				WakeupOverhead = timingDto.WakeupOverhead,
+			};
+		}
+		
 		public static CpuCacheModel ToModel(this CpuCacheDto cpuCacheDto)
 		{
 			if (cpuCacheDto == null)
@@ -170,7 +223,9 @@ namespace Elpida.Backend.Services
 				Time = taskResultDto.Time,
 				Type = taskResultDto.Type,
 				Value = taskResultDto.Value,
-				InputSize = taskResultDto.InputSize
+				InputSize = taskResultDto.InputSize,
+				Outliers = taskResultDto.Outliers.Select(dto => dto.ToModel()).ToList(),
+				Statistics = taskResultDto.Statistics.ToModel()
 			};
 		}
 
@@ -239,6 +294,7 @@ namespace Elpida.Backend.Services
 			{
 				Memory = systemDto.Memory.ToModel(),
 				Os = systemDto.Os.ToModel(),
+				Timing = systemDto.Timing.ToModel(),
 				CpuId = cpuId,
 				TopologyId = topologyId
 			};

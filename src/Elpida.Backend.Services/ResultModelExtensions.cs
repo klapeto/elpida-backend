@@ -28,6 +28,60 @@ namespace Elpida.Backend.Services
 {
 	public static class ResultModelExtensions
 	{
+		public static TaskOutlierDto ToDto(this TaskOutlierModel outlierModel)
+		{
+			if (outlierModel == null)
+			{
+				throw new ArgumentNullException(nameof(outlierModel));
+			}
+
+			return new TaskOutlierDto
+			{
+				Time = outlierModel.Time,
+				Value = outlierModel.Value,
+			};
+		}
+		
+		public static TaskStatisticsDto ToDto(this TaskStatisticsModel statisticsModel)
+		{
+			if (statisticsModel == null)
+			{
+				throw new ArgumentNullException(nameof(statisticsModel));
+			}
+
+			return new TaskStatisticsDto
+			{
+				Max = statisticsModel.Max,
+				Mean = statisticsModel.Mean,
+				Min = statisticsModel.Min,
+				Sd = statisticsModel.Sd,
+				Tau = statisticsModel.Tau,
+				SampleSize = statisticsModel.SampleSize,
+				MarginOfError = statisticsModel.MarginOfError,
+			};
+		}
+		
+		public static TimingDto ToDto(this TimingModel timingModel)
+		{
+			if (timingModel == null)
+			{
+				throw new ArgumentNullException(nameof(timingModel));
+			}
+
+			return new TimingDto
+			{
+				JoinOverhead = timingModel.JoinOverhead,
+				LockOverhead = timingModel.LockOverhead,
+				LoopOverhead = timingModel.LoopOverhead,
+				NotifyOverhead = timingModel.NotifyOverhead,
+				NowOverhead = timingModel.NowOverhead,
+				SleepOverhead = timingModel.SleepOverhead,
+				TargetTime = timingModel.TargetTime,
+				WakeupOverhead = timingModel.WakeupOverhead,
+			};
+		}
+
+		
 		public static CpuCacheDto ToDto(this CpuCacheModel model)
 		{
 			if (model == null) throw new ArgumentNullException(nameof(model));
@@ -122,6 +176,7 @@ namespace Elpida.Backend.Services
 				{
 					Memory = resultModel.System.Memory,
 					Os = resultModel.System.Os,
+					Timing = resultModel.System.Timing,
 				},
 				TimeStamp = resultModel.TimeStamp
 			}.ToDto(resultModel.System.Cpu, resultModel.System.Topology);
@@ -166,7 +221,9 @@ namespace Elpida.Backend.Services
 							Time = d.Time,
 							Type = d.Type,
 							Value = d.Value,
-							InputSize = d.InputSize
+							InputSize = d.InputSize,
+							Outliers = d.Outliers.Select(o => o.ToDto()).ToList(),
+							Statistics = d.Statistics.ToDto()
 						}).ToList()
 					},
 				System = new SystemDto
@@ -178,6 +235,7 @@ namespace Elpida.Backend.Services
 						Version = resultModel.System.Os.Version
 					},
 					Cpu = cpuModel.ToDto(),
+					Timing = resultModel.System.Timing.ToDto(),
 					Memory =
 						new MemoryDto
 						{

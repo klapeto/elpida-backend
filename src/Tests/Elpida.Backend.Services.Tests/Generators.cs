@@ -41,13 +41,24 @@ namespace Elpida.Backend.Services.Tests
 					Cpu = CreateNewCpuModel(),
 					Memory = result.System.Memory,
 					Os = result.System.Os,
-					Topology = CreateNewTopology()
+					Topology = CreateNewTopology(),
+					Timing = new TimingModel
+					{
+						JoinOverhead = 454,
+						LockOverhead = 4664,
+						LoopOverhead = 56465,
+						NotifyOverhead = 6544,
+						NowOverhead = 564456,
+						SleepOverhead = 13213,
+						TargetTime = 156341,
+						WakeupOverhead = 155,
+					}
 				},
 				TimeStamp = result.TimeStamp
 			};
 		}
-		
-		
+
+
 		public static ResultPreviewModel CreateResultPreviewModel(string id)
 		{
 			return new ResultPreviewModel
@@ -104,7 +115,30 @@ namespace Elpida.Backend.Services.Tests
 							Time = 255.0,
 							Type = 0,
 							Value = 656566.0,
-							InputSize = 56665
+							InputSize = 56665,
+							Outliers = new List<TaskOutlierModel>
+							{
+								new TaskOutlierModel
+								{
+									Time = 213,
+									Value = 16341,
+								},
+								new TaskOutlierModel
+								{
+									Time = 65466,
+									Value = 415,
+								}
+							},
+							Statistics = new TaskStatisticsModel
+							{
+								Max = 141635,
+								Mean = 52452,
+								Min = 5465,
+								Sd = 5464,
+								Tau = 465,
+								SampleSize = 54454,
+								MarginOfError = 4441
+							}
 						}
 					}
 				},
@@ -112,9 +146,21 @@ namespace Elpida.Backend.Services.Tests
 				{
 					CpuId = "AMD_TR",
 					TopologyId = "NUMA_C",
+					Timing = new TimingModel
+					{
+						JoinOverhead = 0.23,
+						LockOverhead = 021,
+						LoopOverhead = 3213,
+						NotifyOverhead = 12365,
+						NowOverhead = 6132,
+						SleepOverhead = 1566,
+						TargetTime = 4684,
+						WakeupOverhead = 5644
+					},
 					Memory = new MemoryModel
 					{
-						PageSize = 4096, TotalSize = 544465464
+						PageSize = 4096,
+						TotalSize = 544465464
 					},
 					Os = new OsModel
 					{
@@ -131,13 +177,17 @@ namespace Elpida.Backend.Services.Tests
 			return new CpuModel
 			{
 				Brand = "Sdsf",
-				Caches = new List<CpuCacheModel>(),
-				Features = new List<string>(),
+				Caches = new List<CpuCacheModel>
+				{
+					new CpuCacheModel
+						{Associativity = "Full", Name = "L1", Size = 4546, LineSize = 65465, LinesPerTag = 46462}
+				},
+				Features = new List<string> {"LOL", "XD"},
 				Frequency = 644,
 				Id = "sadfsdfsd",
 				Smt = false,
 				Vendor = "dsafdsf",
-				AdditionalInfo = new Dictionary<string, string>()
+				AdditionalInfo = new Dictionary<string, string> {["Fast"] = "yes", ["Sffv"] = "dfsf"}
 			};
 		}
 
@@ -160,7 +210,7 @@ namespace Elpida.Backend.Services.Tests
 				TotalPhysicalCores = 1
 			};
 		}
-		
+
 		public static ResultDto CreateNewResultDto()
 		{
 			return new ResultDto
@@ -195,12 +245,46 @@ namespace Elpida.Backend.Services.Tests
 							Time = 255.0,
 							Type = 0,
 							Value = 656566.0,
-							InputSize = 56665
+							InputSize = 56665,
+							Outliers = new List<TaskOutlierDto>
+							{
+								new TaskOutlierDto
+								{
+									Time = 0.5554,
+									Value = 163163,
+								},
+								new TaskOutlierDto
+								{
+									Time = 0.546896,
+									Value = 654464,
+								}
+							},
+							Statistics = new TaskStatisticsDto
+							{
+								Max = 15165,
+								Mean = 6454,
+								Min = 541541,
+								Sd = 145,
+								Tau = 154465,
+								SampleSize = 4654456,
+								MarginOfError = 211564,
+							}
 						}
 					}
 				},
 				System = new SystemDto
 				{
+					Timing = new TimingDto
+					{
+						JoinOverhead = 0.23,
+						LockOverhead = 021,
+						LoopOverhead = 3213,
+						NotifyOverhead = 12365,
+						NowOverhead = 6132,
+						SleepOverhead = 1566,
+						TargetTime = 4684,
+						WakeupOverhead = 5644
+					},
 					Cpu = new CpuDto
 					{
 						Brand = "AMD",
@@ -215,12 +299,16 @@ namespace Elpida.Backend.Services.Tests
 								LinesPerTag = 1
 							}
 						},
-						Features = new List<string>(), Frequency = 45455555555, Smt = true,
-						Vendor = "AMD", AdditionalInfo = new Dictionary<string, string>()
+						Features = new List<string>(),
+						Frequency = 45455555555,
+						Smt = true,
+						Vendor = "AMD",
+						AdditionalInfo = new Dictionary<string, string>()
 					},
 					Memory = new MemoryDto
 					{
-						PageSize = 4096, TotalSize = 544465464
+						PageSize = 4096,
+						TotalSize = 544465464
 					},
 					Os = new OsDto
 					{
@@ -270,7 +358,9 @@ namespace Elpida.Backend.Services.Tests
 							NodeType = 0,
 							OsIndex = 0
 						},
-						TotalDepth = 1, TotalLogicalCores = 1, TotalPhysicalCores = 1
+						TotalDepth = 1,
+						TotalLogicalCores = 1,
+						TotalPhysicalCores = 1
 					}
 				}
 			};

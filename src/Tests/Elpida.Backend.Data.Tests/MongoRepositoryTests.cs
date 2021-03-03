@@ -59,20 +59,7 @@ namespace Elpida.Backend.Data.Tests
 			_collection.SetupGet(r => r.DocumentSerializer)
 				.Returns(new BsonClassMapSerializer<A>(BsonClassMap.LookupClassMap(typeof(A))));
 		}
-
-		private static bool AreEqual<T,TR>(PipelineDefinition<T, TR> a, PipelineDefinition<T, TR> b)
-		{
-			return a.ToString() == b.ToString();
-		}
-
-		private static BsonDocumentSortDefinition<A> GetSortObject<T>(Expression<Func<A,T>> field, bool desc)
-		{
-			dynamic body = field.Body;
-
-			var member = (MemberInfo) body.Member;
-			return new BsonDocumentSortDefinition<A>(new BsonDocument(new Dictionary<string, object>
-				{[(member.Name.ToLower() == "id" ? "_id" : member.Name)] = (desc ? -1 : 1)}));
-		}
+		
 
 		[OneTimeSetUp]
 		public void Setup()
@@ -288,7 +275,7 @@ namespace Elpida.Backend.Data.Tests
 			var matchDef = new EmptyPipelineDefinition<A>()
 				.Match(a => a.Id == matchStr);
 
-			_collection.Setup(r => r.AggregateAsync(It.Is<PipelineDefinition<A, A>>(x => AreEqual(x, matchDef)),
+			_collection.Setup(r => r.AggregateAsync(It.Is<PipelineDefinition<A, A>>(x => Helpers.AreEqual(x, matchDef)),
 					It.IsAny<AggregateOptions>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync(new DummyAsyncCursor<A>(models))
 				.Verifiable();
@@ -349,11 +336,11 @@ namespace Elpida.Backend.Data.Tests
 
 			var matchDef = new EmptyPipelineDefinition<A>()
 				.Match(a => a.Id == matchStr)
-				.Sort(GetSortObject(orderBy, desc))
+				.Sort(Helpers.GetSortObject(orderBy, desc))
 				.Skip(from)
 				.Limit(count);
 
-			_collection.Setup(r => r.AggregateAsync(It.Is<PipelineDefinition<A, A>>(x => AreEqual(x, matchDef)),
+			_collection.Setup(r => r.AggregateAsync(It.Is<PipelineDefinition<A, A>>(x => Helpers.AreEqual(x, matchDef)),
 					It.IsAny<AggregateOptions>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync(new DummyAsyncCursor<A>(models))
 				.Verifiable();

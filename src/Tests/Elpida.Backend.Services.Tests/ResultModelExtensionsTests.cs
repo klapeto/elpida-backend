@@ -61,7 +61,9 @@ namespace Elpida.Backend.Services.Tests
 				          && Math.Abs(a.Time - b.Time) < tolerance
 				          && a.Type == b.Type
 				          && Math.Abs(a.Value - b.Value) < tolerance
-				          && a.InputSize == b.InputSize));
+				          && a.InputSize == b.InputSize
+				          && Helpers.AreEqual(a.Statistics, b.Statistics, tolerance)
+				          && Helpers.AssertCollectionsAreEqual(a.Outliers, b.Outliers, (c,d) => Helpers.AreEqual(c, d, tolerance))));
 
 
 			Assert.AreEqual(model.System.Memory.PageSize, dto.System.Memory.PageSize);
@@ -70,6 +72,16 @@ namespace Elpida.Backend.Services.Tests
 			Assert.AreEqual(model.System.Os.Category, dto.System.Os.Category);
 			Assert.AreEqual(model.System.Os.Name, dto.System.Os.Name);
 			Assert.AreEqual(model.System.Os.Version, dto.System.Os.Version);
+			
+			
+			Assert.AreEqual(model.System.Timing.JoinOverhead, dto.System.Timing.JoinOverhead);
+			Assert.AreEqual(model.System.Timing.LockOverhead, dto.System.Timing.LockOverhead);
+			Assert.AreEqual(model.System.Timing.LoopOverhead, dto.System.Timing.LoopOverhead);
+			Assert.AreEqual(model.System.Timing.NotifyOverhead, dto.System.Timing.NotifyOverhead);
+			Assert.AreEqual(model.System.Timing.NowOverhead, dto.System.Timing.NowOverhead);
+			Assert.AreEqual(model.System.Timing.SleepOverhead, dto.System.Timing.SleepOverhead);
+			Assert.AreEqual(model.System.Timing.TargetTime, dto.System.Timing.TargetTime);
+			Assert.AreEqual(model.System.Timing.WakeupOverhead, dto.System.Timing.WakeupOverhead);
 		}
 	}
 }
