@@ -22,9 +22,16 @@ using System.Net;
 using System.Threading.Tasks;
 using Elpida.Backend.Data;
 using Elpida.Backend.Data.Abstractions;
+using Elpida.Backend.Data.Abstractions.Models;
+using Elpida.Backend.Data.Abstractions.Models.Cpu;
 using Elpida.Backend.Data.Abstractions.Models.Result;
+using Elpida.Backend.Data.Abstractions.Models.Task;
+using Elpida.Backend.Data.Abstractions.Models.Topology;
+using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services;
 using Elpida.Backend.Services.Abstractions;
+using Elpida.Backend.Services.Abstractions.Exceptions;
+using Elpida.Backend.Services.Abstractions.Interfaces;
 using Elpida.Backend.Validators;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
@@ -62,15 +69,13 @@ namespace Elpida.Backend
 			services.Configure<DocumentRepositorySettings>(
 				Configuration.GetSection(nameof(DocumentRepositorySettings)));
 
-
 			services.AddSingleton<IDocumentRepositorySettings>(sp =>
 				sp.GetRequiredService<IOptions<DocumentRepositorySettings>>().Value);
 
 			services.AddScoped<IResultsService, ResultService>();
 
 			services.AddTransient<IIdProvider, IdProvider>();
-
-
+			
 			services.AddSingleton(IMongoClient_ImplementationFactory);
 			services.AddSingleton(IMongoDatabase_ImplementationFactory);
 
@@ -82,16 +87,86 @@ namespace Elpida.Backend
 			services.AddTransient(provider =>
 				MongoCollection_ImplementationFactory<ResultModel>(provider,
 					settings => settings.ResultsCollectionName));
+			services.AddTransient(provider =>
+				MongoCollection_ImplementationFactory<BenchmarkModel>(provider,
+					settings => settings.BenchmarksCollectionName));
+			services.AddTransient(provider =>
+				MongoCollection_ImplementationFactory<TaskModel>(provider,
+					settings => settings.TasksCollectionName));
 
 			services.AddTransient<IResultsRepository, MongoResultsRepository>();
 			services.AddTransient<ICpuRepository, MongoCpuRepository>();
 			services.AddTransient<ITopologyRepository, MongoTopologyRepository>();
+			services.AddTransient<IBenchmarkRepository, MongoBenchmarkRepository>();
+			services.AddTransient<ITaskRepository, MongoTaskRepository>();
 
 			services.AddApiVersioning();
 
 			services.AddCors();
 		}
+		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+		{
+			if (env.IsDevelopment())
+			{
+				app.UseDeveloperExceptionPage();
+			}
+			else
+			{
+				app.UseHttpsRedirection();
+				app.UseExceptionHandler(builder => builder.Run(ErrorHandler));
+			}
 
+			app.UseCors(builder =>
+				builder.WithOrigins("https://beta.elpida.dev",
+						"https://elpida.dev",
+						"https://www.elpida.dev"
+					)
+					.WithMethods(HttpMethods.Get, HttpMethods.Post)
+					.WithHeaders(HeaderNames.ContentType, HeaderNames.Accept)
+					.WithExposedHeaders(
+						HeaderNames.ContentLength,
+						HeaderNames.ContentRange
+					)
+			);
+
+			app.UseRouting();
+
+			app.UseAuthorization();
+
+			app.UseEndpoints(endpoints => endpoints.MapControllers());
+		}
+
+		private static async Task ErrorHandler(HttpContext context)
+		{
+			var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
+
+			context.Response.ContentType = "text/plain";
+
+			switch (exceptionHandlerPathFeature.Error)
+			{
+				case ArgumentException ae:
+					context.Response.StatusCode = (int) HttpStatusCode.BadRequest;
+					await context.Response.WriteAsync($"{ae.Message}: '{ae.ParamName}'");
+					break;
+				case ConflictException ce:
+					context.Response.StatusCode = (int) HttpStatusCode.Conflict;
+					await context.Response.WriteAsync($"Conflict detected for id: '{ce.Id}' Reason: {ce.Message}");
+					break;
+				case NotFoundException _:
+					context.Response.StatusCode = (int) HttpStatusCode.NotFound;
+					break;
+				case CorruptedRecordException cre:
+					context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
+					await context.Response.WriteAsync(
+						$"The requested record is corrupted!. Please report this to Elpida Backend repository along with this id: {cre.Id}");
+					break;
+				default:
+					context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
+					break;
+			}
+		}
+		
 		private static IMongoClient IMongoClient_ImplementationFactory(IServiceProvider serviceProvider)
 		{
 			var settings = serviceProvider.GetRequiredService<IDocumentRepositorySettings>();
@@ -129,64 +204,9 @@ namespace Elpida.Backend
 			}
 
 			var database = serviceProvider.GetRequiredService<IMongoDatabase>();
-			
+
 			return database.GetCollection<T>(collectionName);
 		}
 
-		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-		{
-			if (env.IsDevelopment())
-			{
-				app.UseDeveloperExceptionPage();
-			}
-			else
-			{
-				app.UseHttpsRedirection();
-				app.UseExceptionHandler(builder => builder.Run(ErrorHandler));
-			}
-
-			app.UseCors(builder =>
-				builder.WithOrigins("https://beta.elpida.dev", "https://elpida.dev", "https://www.elpida.dev")
-					.WithMethods(HttpMethods.Get, HttpMethods.Post)
-					.WithHeaders(HeaderNames.ContentType, HeaderNames.Accept)
-					.WithExposedHeaders(
-						HeaderNames.ContentLength,
-						HeaderNames.ContentRange
-					)
-			);
-
-			app.UseRouting();
-
-			app.UseAuthorization();
-
-			app.UseEndpoints(endpoints => endpoints.MapControllers());
-		}
-
-		private static async Task ErrorHandler(HttpContext context)
-		{
-			var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
-
-			context.Response.ContentType = "text/plain";
-
-			switch (exceptionHandlerPathFeature.Error)
-			{
-				case ArgumentException ae:
-					context.Response.StatusCode = (int) HttpStatusCode.BadRequest;
-					await context.Response.WriteAsync($"{ae.Message}: '{ae.ParamName}'");
-					break;
-				case NotFoundException _:
-					context.Response.StatusCode = (int) HttpStatusCode.NotFound;
-					break;
-				case CorruptedRecordException cre:
-					context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
-					await context.Response.WriteAsync(
-						$"The requested record is corrupted!. Please report this to Elpida Backend repository along with this id: {cre.Id}");
-					break;
-				default:
-					context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
-					break;
-			}
-		}
 	}
 }

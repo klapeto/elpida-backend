@@ -23,10 +23,19 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Elpida.Backend.Data.Abstractions;
 using Elpida.Backend.Data.Abstractions.Models;
+using Elpida.Backend.Data.Abstractions.Models.Task;
+using Elpida.Backend.Data.Abstractions.Projections;
+using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services.Abstractions;
+using Elpida.Backend.Services.Abstractions.Dtos.Cpu;
 using Elpida.Backend.Services.Abstractions.Dtos.Result;
+using Elpida.Backend.Services.Abstractions.Dtos.Topology;
+using Elpida.Backend.Services.Abstractions.Exceptions;
+using Elpida.Backend.Services.Abstractions.Interfaces;
+using Elpida.Backend.Services.Extensions.Cpu;
+using Elpida.Backend.Services.Extensions.Result;
+using Elpida.Backend.Services.Extensions.Topology;
 
 namespace Elpida.Backend.Services
 {
@@ -36,42 +45,49 @@ namespace Elpida.Backend.Services
 		private readonly IIdProvider _idProvider;
 		private readonly IResultsRepository _resultsRepository;
 		private readonly ITopologyRepository _topologyRepository;
+		private readonly IBenchmarkRepository _benchmarkRepository;
 
-		public ResultService(IResultsRepository resultsRepository, ICpuRepository cpuRepository,
-			ITopologyRepository topologyRepository, IIdProvider idProvider)
+		public ResultService(IResultsRepository resultsRepository,
+			ICpuRepository cpuRepository,
+			ITopologyRepository topologyRepository,
+			IIdProvider idProvider,
+			IBenchmarkRepository benchmarkRepository)
 		{
-			_resultsRepository = resultsRepository ?? throw new ArgumentNullException(nameof(resultsRepository));
-			_cpuRepository = cpuRepository ?? throw new ArgumentNullException(nameof(cpuRepository));
-			_idProvider = idProvider ?? throw new ArgumentNullException(nameof(idProvider));
-			_topologyRepository = topologyRepository ?? throw new ArgumentNullException(nameof(topologyRepository));
+			_resultsRepository = resultsRepository;
+			_cpuRepository = cpuRepository;
+			_idProvider = idProvider;
+			_benchmarkRepository = benchmarkRepository;
+			_topologyRepository = topologyRepository;
 		}
 
 		private static IReadOnlyDictionary<string, LambdaExpression> CpuExpressions { get; } =
 			new Dictionary<string, LambdaExpression>
 			{
-				[Filter.TypeMap[Filter.Type.CpuBrand]] = GetResultExpression(model => model.System.Cpu.Brand),
-				[Filter.TypeMap[Filter.Type.CpuVendor]] = GetResultExpression(model => model.System.Cpu.Vendor),
-				[Filter.TypeMap[Filter.Type.CpuFrequency]] = GetResultExpression(model => model.System.Cpu.Frequency),
+				[FilterHelpers.TypeMap[FilterHelpers.Type.CpuBrand]] = GetResultExpression(model => model.System.Cpu.Brand),
+				[FilterHelpers.TypeMap[FilterHelpers.Type.CpuVendor]] = GetResultExpression(model => model.System.Cpu.Vendor),
+				[FilterHelpers.TypeMap[FilterHelpers.Type.CpuFrequency]] = GetResultExpression(model => model.System.Cpu.Frequency),
 			};
 
 		private static IReadOnlyDictionary<string, LambdaExpression> TopologyExpressions { get; } =
 			new Dictionary<string, LambdaExpression>
 			{
-				[Filter.TypeMap[Filter.Type.CpuCores]] = GetResultExpression(model => model.System.Topology.TotalPhysicalCores),
-				[Filter.TypeMap[Filter.Type.CpuLogicalCores]] = GetResultExpression(model => model.System.Topology.TotalLogicalCores),
+				[FilterHelpers.TypeMap[FilterHelpers.Type.CpuCores]] =
+					GetResultExpression(model => model.System.Topology.TotalPhysicalCores),
+				[FilterHelpers.TypeMap[FilterHelpers.Type.CpuLogicalCores]] =
+					GetResultExpression(model => model.System.Topology.TotalLogicalCores),
 			};
 
 		private static IReadOnlyDictionary<string, LambdaExpression> ResultExpressions { get; } =
 			new Dictionary<string, LambdaExpression>
 			{
-				[Filter.TypeMap[Filter.Type.MemorySize]] = GetResultExpression(model => model.System.Memory.TotalSize),
-				[Filter.TypeMap[Filter.Type.Timestamp]] = GetResultExpression(model => model.TimeStamp),
+				[FilterHelpers.TypeMap[FilterHelpers.Type.MemorySize]] = GetResultExpression(model => model.System.Memory.TotalSize),
+				[FilterHelpers.TypeMap[FilterHelpers.Type.Timestamp]] = GetResultExpression(model => model.TimeStamp),
 				["startTime".ToLowerInvariant()] = GetResultExpression(model => model.TimeStamp),
 				["endTime".ToLowerInvariant()] = GetResultExpression(model => model.TimeStamp),
-				[Filter.TypeMap[Filter.Type.Name].ToLowerInvariant()] = GetResultExpression(model => model.Result.Name),
-				[Filter.TypeMap[Filter.Type.OsCategory]] = GetResultExpression(model => model.System.Os.Category),
-				[Filter.TypeMap[Filter.Type.OsName]] = GetResultExpression(model => model.System.Os.Name),
-				[Filter.TypeMap[Filter.Type.OsVersion]] = GetResultExpression(model => model.System.Os.Version),
+				[FilterHelpers.TypeMap[FilterHelpers.Type.Name].ToLowerInvariant()] = GetResultExpression(model => model.Result.Benchmark.Name),
+				[FilterHelpers.TypeMap[FilterHelpers.Type.OsCategory]] = GetResultExpression(model => model.System.Os.Category),
+				[FilterHelpers.TypeMap[FilterHelpers.Type.OsName]] = GetResultExpression(model => model.System.Os.Name),
+				[FilterHelpers.TypeMap[FilterHelpers.Type.OsVersion]] = GetResultExpression(model => model.System.Os.Version),
 			};
 
 		private static IReadOnlyDictionary<string, LambdaExpression> ResultProjectionExpressions { get; } =
@@ -88,11 +104,17 @@ namespace Elpida.Backend.Services
 				throw new ArgumentNullException(nameof(resultDto));
 			}
 
+			var benchmark = await _benchmarkRepository.GetSingleAsync(resultDto.Result.Id, cancellationToken);
+			if (benchmark == null)
+			{
+				throw new NotFoundException($"The benchmark '{resultDto.Result.Name}' was not found in database.",resultDto.Result.Id);
+			}
+
 			resultDto.TimeStamp = DateTime.UtcNow;
 
 			var cpuId = await AssignCpu(resultDto.System.Cpu, cancellationToken);
 			var topologyId = await AssignTopology(cpuId, resultDto.System.Topology, cancellationToken);
-
+			
 			return await _resultsRepository.CreateAsync(
 				resultDto.ToModel(_idProvider.GetForResult(resultDto), cpuId, topologyId), cancellationToken);
 		}

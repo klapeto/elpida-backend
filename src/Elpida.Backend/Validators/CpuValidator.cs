@@ -18,6 +18,7 @@
  */
 
 using System.Linq;
+using Elpida.Backend.Services.Abstractions.Dtos.Cpu;
 using Elpida.Backend.Services.Abstractions.Dtos.Result;
 using FluentValidation;
 

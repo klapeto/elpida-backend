@@ -21,10 +21,10 @@ namespace Elpida.Backend.Data.Abstractions.Models.Result
 {
 	public class SystemModel
 	{
-		public string CpuId { get; set; }
-		public string TopologyId { get; set; }
-		public OsModel Os { get; set; }
-		public MemoryModel Memory { get; set; }
-		public TimingModel Timing { get; set; }
+		public string CpuId { get; set; } = string.Empty;
+		public string TopologyId { get; set; } = string.Empty;
+		public OsModel Os { get; set; } = new OsModel();
+		public MemoryModel Memory { get; set; } = new MemoryModel();
+		public TimingModel Timing { get; set; } = new TimingModel();
 	}
 }

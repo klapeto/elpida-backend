@@ -33,15 +33,8 @@ namespace Elpida.Backend.Validators
 			RuleFor(dto => dto.Description)
 				.MaximumLength(250);
 
-			RuleFor(dto => dto.Suffix)
-				.NotEmpty()
-				.MaximumLength(30);
-
 			RuleFor(dto => dto.Time)
 				.GreaterThan(0.0);
-
-			RuleFor(dto => dto.Type)
-				.GreaterThanOrEqualTo(0);
 
 			RuleFor(dto => dto.Value)
 				.GreaterThan(0.0);
@@ -50,6 +43,12 @@ namespace Elpida.Backend.Validators
 				.GreaterThanOrEqualTo(0);
 
 			RuleFor(dto => dto.Statistics)
+				.NotNull();
+
+			RuleFor(dto => dto.Outliers)
+				.NotNull();
+
+			RuleFor(dto => dto.Result)
 				.NotNull();
 		}
 	}

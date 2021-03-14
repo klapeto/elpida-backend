@@ -21,7 +21,7 @@ namespace Elpida.Backend.Data.Abstractions.Models.Result
 {
 	public class ElpidaModel
 	{
-		public VersionModel Version { get; set; }
-		public CompilerModel Compiler { get; set; }
+		public VersionModel Version { get; set; } = new VersionModel();
+		public CompilerModel Compiler { get; set; } = new CompilerModel();
 	}
 }

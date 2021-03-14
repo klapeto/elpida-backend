@@ -1,0 +1,329 @@
+{
+  "benchmarks": [
+    {
+      "id": "9B198C61-5907-481F-8E67-A59EA885CA0A",
+      "name": "Memory Read Bandwidth",
+      "taskSpecifications": [
+        "A5FAC385-C58B-44EA-AC3C-2A15447698D0"
+      ]
+    },
+    {
+      "id": "B635458F-018C-4291-AF82-94ABB40EC6DD",
+      "name": "Memory Read Latency (Slow)",
+      "taskSpecifications": [
+        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
+        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
+        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
+        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
+        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
+        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
+        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
+        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
+        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
+        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
+        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
+        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
+        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
+        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
+        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
+        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
+        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
+        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
+        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8"
+      ]
+    },
+    {
+      "id": "AB56495E-F6CF-4EB3-A8A9-2550C2C9A735",
+      "name": "Memory Read Latency (Fast)",
+      "taskSpecifications": [
+        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
+        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
+        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
+        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8"
+      ]
+    },
+    {
+      "id": "551735e9-e789-46af-89cd-0f2f54665a88",
+      "name": "Test Benchmark",
+      "taskSpecifications": [
+        "BE159A99-83C7-4699-9F0C-28851CFA5DDA",
+        "F52DD25E-B626-4655-8165-6BC0D81C140F"
+      ]
+    },
+    {
+      "id": "98D86779-62F1-4F75-9262-0A65705DFCA3",
+      "name": "Floyd Steinberg Dithering",
+      "taskSpecifications": [
+        "BE159A99-83C7-4699-9F0C-28851CFA5DDA",
+        "B0B5E44D-04B1-44AE-9C1D-757B0E97A652",
+        "0E442DBF-5E96-4190-81B8-1435765546E0",
+        "BA657EF0-80EE-45B6-AABA-306435774F75",
+        "51CEE7BF-1E78-4647-BA01-1DC95EF3DCB1",
+        "050B949C-D4A7-4AC2-8F86-7E659EA2FAB3",
+        "30948762-9B7B-4CEA-8D9B-6913F3DA2097",
+        "F52DD25E-B626-4655-8165-6BC0D81C140F"
+      ]
+    },
+    {
+      "id": "FE6B2282-34FF-4AA1-BBA9-CA0DE7BAF086",
+      "name": "Png Encoding/Decoding",
+      "taskSpecifications": [
+        "BE159A99-83C7-4699-9F0C-28851CFA5DDA",
+        "B0B5E44D-04B1-44AE-9C1D-757B0E97A652",
+        "30948762-9B7B-4CEA-8D9B-6913F3DA2097"
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "description": "Encodes the image data to PNG Format",
+      "id": "30948762-9B7B-4CEA-8D9B-6913F3DA2097",
+      "input": {
+        "description": "The input image data in UInt8 to encode into PNG",
+        "name": "Input image data",
+        "requiredProperties": [
+          "width",
+          "height",
+          "stride"
+        ],
+        "unit": "Pixels"
+      },
+      "name": "Encode to PNG",
+      "output": {
+        "description": "The image encoded to PNG format",
+        "name": "PNG data",
+        "unit": "B"
+      },
+      "result": {
+        "aggregation": 0,
+        "description": "The rate that pixels are encoded into PNG format",
+        "name": "Encode rate",
+        "type": 0,
+        "unit": "Pixels"
+      }
+    },
+    {
+      "description": "Converts the image data from float to integer",
+      "id": "050B949C-D4A7-4AC2-8F86-7E659EA2FAB3",
+      "input": {
+        "description": "The input image data to convert to integer",
+        "name": "Input image data",
+        "requiredProperties": [
+          "width",
+          "height",
+          "stride"
+        ],
+        "unit": "Pixels"
+      },
+      "name": "Convert to UInt8",
+      "output": {
+        "description": "The output image data that were converted to integer",
+        "name": "Output image data",
+        "unit": "Pixels"
+      },
+      "result": {
+        "aggregation": 0,
+        "description": "The rate the pixels are converted from float to int",
+        "name": "Conversion Rate",
+        "type": 0,
+        "unit": "Pixels"
+      }
+    },
+    {
+      "description": "Converts image data to Gray scale using the average of pixels",
+      "id": "BA657EF0-80EE-45B6-AABA-306435774F75",
+      "input": {
+        "description": "The image to convert to grayscale in float pixels",
+        "name": "Input Image data",
+        "requiredProperties": [
+          "width",
+          "height",
+          "stride"
+        ],
+        "unit": "Pixels"
+      },
+      "name": "Convert to Gray Scale (Average)",
+      "output": {
+        "description": "The converted image in float pixels",
+        "name": "Output Image data",
+        "unit": "Pixels"
+      },
+      "result": {
+        "aggregation": 0,
+        "description": "Pixel conversion rate",
+        "name": "Conversion Rate",
+        "type": 0,
+        "unit": "Pixels"
+      }
+    },
+    {
+      "description": "Converts an Image with integer values to float values between 0.0 and 1.0",
+      "id": "0E442DBF-5E96-4190-81B8-1435765546E0",
+      "input": {
+        "description": "Input image in RGBA and integer values (0-255)",
+        "name": "Input image",
+        "requiredProperties": [
+          "width",
+          "height",
+          "stride"
+        ],
+        "unit": "Pixels"
+      },
+      "name": "Convert To Float",
+      "output": {
+        "description": "Output image in RGBA and float values (0.0-1.0)",
+        "name": "Output image",
+        "unit": "Pixels"
+      },
+      "result": {
+        "aggregation": 0,
+        "description": "",
+        "name": "Convert Rate",
+        "type": 0,
+        "unit": "Pixels"
+      }
+    },
+    {
+      "description": "Decodes raw Png data to RGBA pixel array",
+      "id": "B0B5E44D-04B1-44AE-9C1D-757B0E97A652",
+      "input": {
+        "description": "The raw png file data",
+        "name": "Input file data",
+        "requiredProperties": [],
+        "unit": "B"
+      },
+      "name": "Png Decoding",
+      "output": {
+        "description": "The image data in RGBA pixel array",
+        "name": "Output image data",
+        "unit": "Pixels"
+      },
+      "result": {
+        "aggregation": 0,
+        "description": "",
+        "name": "Decode Rate",
+        "type": 0,
+        "unit": "B"
+      }
+    },
+    {
+      "description": "Converts an Gray Scale image to Black-White dithered with Floyd Steinbergs algorithm",
+      "id": "51CEE7BF-1E78-4647-BA01-1DC95EF3DCB1",
+      "input": {
+        "description": "Input image data in Grayscale and RGBA float pixels",
+        "name": "Input Image Data",
+        "requiredProperties": [
+          "width",
+          "height",
+          "stride"
+        ],
+        "unit": "Pixels"
+      },
+      "name": "Floyd-Steinberg Dithering",
+      "output": {
+        "description": "Output image data in Black-White dithered and RGBA float pixels",
+        "name": "Output Image Data",
+        "unit": "Pixels"
+      },
+      "result": {
+        "aggregation": 0,
+        "description": "",
+        "name": "Conversion Rate",
+        "type": 0,
+        "unit": "Pixels"
+      }
+    },
+    {
+      "description": "Writes data received from other tasks to file on disk",
+      "id": "F52DD25E-B626-4655-8165-6BC0D81C140F",
+      "input": {
+        "description": "The bytes to write to file",
+        "name": "Data to write",
+        "requiredProperties": [],
+        "unit": "B"
+      },
+      "name": "Write from memory to file",
+      "output": {
+        "description": "",
+        "name": "",
+        "unit": ""
+      },
+      "result": {
+        "aggregation": 0,
+        "description": "",
+        "name": "Write Rate",
+        "type": 0,
+        "unit": "B"
+      }
+    },
+    {
+      "description": "Reads a file from disk to memory",
+      "id": "BE159A99-83C7-4699-9F0C-28851CFA5DDA",
+      "input": {
+        "description": "",
+        "name": "",
+        "requiredProperties": [],
+        "unit": ""
+      },
+      "name": "Read File to Memory",
+      "output": {
+        "description": "File contents in bytes",
+        "name": "File contents",
+        "unit": "B"
+      },
+      "result": {
+        "aggregation": 0,
+        "description": "",
+        "name": "Read Rate",
+        "type": 0,
+        "unit": "B"
+      }
+    },
+    {
+      "description": "Reads continuously a memory region to determine memory read latency",
+      "id": "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
+      "input": {
+        "description": "",
+        "name": "",
+        "requiredProperties": [],
+        "unit": ""
+      },
+      "name": "Memory Latency",
+      "output": {
+        "description": "",
+        "name": "",
+        "unit": ""
+      },
+      "result": {
+        "aggregation": 1,
+        "description": "",
+        "name": "Access time",
+        "type": 1,
+        "unit": "s"
+      }
+    },
+    {
+      "description": "Reads continuously a memory region to determine Memory Read Bandwidth",
+      "id": "A5FAC385-C58B-44EA-AC3C-2A15447698D0",
+      "input": {
+        "description": "",
+        "name": "",
+        "requiredProperties": [],
+        "unit": ""
+      },
+      "name": "Memory Read Bandwidth",
+      "output": {
+        "description": "",
+        "name": "",
+        "unit": ""
+      },
+      "result": {
+        "aggregation": 0,
+        "description": "",
+        "name": "Read Rate",
+        "type": 0,
+        "unit": "B"
+      }
+    }
+  ]
+}

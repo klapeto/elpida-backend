@@ -19,6 +19,7 @@
 
 using System.Linq;
 using Elpida.Backend.Services.Abstractions.Dtos.Result;
+using Elpida.Backend.Services.Abstractions.Dtos.Topology;
 using FluentValidation;
 
 namespace Elpida.Backend.Validators

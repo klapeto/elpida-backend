@@ -24,6 +24,8 @@ namespace Elpida.Backend.Data
 		string ResultsCollectionName { get; set; }
 		public string CpusCollectionName { get; set; }
 		public string TopologiesCollectionName { get; set; }
+		public string TasksCollectionName { get; set; }
+		public string BenchmarksCollectionName { get; set; }
 		string ConnectionString { get; set; }
 		string DatabaseName { get; set; }
 	}

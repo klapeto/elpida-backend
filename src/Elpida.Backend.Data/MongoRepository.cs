@@ -24,6 +24,7 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Data.Abstractions;
+using Elpida.Backend.Data.Abstractions.Interfaces;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
@@ -40,6 +41,10 @@ namespace Elpida.Backend.Data
 
 		#region IRepository<T> Members
 
+		public Task UpdateAsync(T model, CancellationToken cancellationToken = default)
+		{
+			return Collection.ReplaceOneAsync(m => m.Id == model.Id, model, cancellationToken: cancellationToken);
+		}
 		public Task<long> GetTotalCountAsync(CancellationToken cancellationToken = default)
 		{
 			return Collection.CountDocumentsAsync(FilterDefinition<T>.Empty, cancellationToken: cancellationToken);

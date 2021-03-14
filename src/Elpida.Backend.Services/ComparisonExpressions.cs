@@ -34,13 +34,13 @@ namespace Elpida.Backend.Services
 		public static IReadOnlyDictionary<string, Func<Expression, Expression, Expression>>
 			ExpressionFactories { get; } = new Dictionary<string, Func<Expression, Expression, Expression>>
 		{
-			[Filter.ComparisonMap[Filter.Comparison.Contains]] =
+			[FilterHelpers.ComparisonMap[FilterHelpers.Comparison.Contains]] =
 				(left, right) => Expression.Call(RegexIsMatch, left, right),
-			[Filter.ComparisonMap[Filter.Comparison.Equal]] = Expression.Equal,
-			[Filter.ComparisonMap[Filter.Comparison.Greater]] = Expression.GreaterThan,
-			[Filter.ComparisonMap[Filter.Comparison.GreaterEqual]] = Expression.GreaterThanOrEqual,
-			[Filter.ComparisonMap[Filter.Comparison.Less]] = Expression.LessThan,
-			[Filter.ComparisonMap[Filter.Comparison.LessEqual]] = Expression.LessThanOrEqual
+			[FilterHelpers.ComparisonMap[FilterHelpers.Comparison.Equal]] = Expression.Equal,
+			[FilterHelpers.ComparisonMap[FilterHelpers.Comparison.Greater]] = Expression.GreaterThan,
+			[FilterHelpers.ComparisonMap[FilterHelpers.Comparison.GreaterEqual]] = Expression.GreaterThanOrEqual,
+			[FilterHelpers.ComparisonMap[FilterHelpers.Comparison.Less]] = Expression.LessThan,
+			[FilterHelpers.ComparisonMap[FilterHelpers.Comparison.LessEqual]] = Expression.LessThanOrEqual
 		};
 	}
 }

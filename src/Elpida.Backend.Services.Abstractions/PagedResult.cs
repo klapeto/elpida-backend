@@ -25,11 +25,6 @@ namespace Elpida.Backend.Services.Abstractions
 	{
 		public static PagedResult<T> Empty() => new PagedResult<T>(new List<T>(), new PageRequest());
 		
-		public PagedResult()
-		{
-			
-		}
-
 		public PagedResult(IList<T> list, PageRequest pageRequest)
 		{
 			Count = list.Count;
@@ -43,9 +38,9 @@ namespace Elpida.Backend.Services.Abstractions
 		public IList<T> List { get; set; }
 
 		public int Count { get; set; }
-		
+
 		public long TotalCount { get; set; }
 
-		public PageRequest NextPage { get; set; }
+		public PageRequest? NextPage { get; set; }
 	}
 }

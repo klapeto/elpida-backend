@@ -23,7 +23,8 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 {
 	public class BenchmarkResultDto
 	{
-		public string Name { get; set; }
-		public IList<TaskResultDto> TaskResults { get; set; }
+		public string Id { get; set; } = string.Empty;
+		public string Name { get; set; } = string.Empty;
+		public IList<TaskResultDto> TaskResults { get; set; } = new List<TaskResultDto>();
 	}
 }

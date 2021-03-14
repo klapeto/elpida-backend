@@ -25,7 +25,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Data.Abstractions;
 using Elpida.Backend.Data.Abstractions.Models;
+using Elpida.Backend.Data.Abstractions.Models.Cpu;
 using Elpida.Backend.Data.Abstractions.Models.Result;
+using Elpida.Backend.Data.Abstractions.Models.Task;
+using Elpida.Backend.Data.Abstractions.Models.Topology;
+using Elpida.Backend.Data.Abstractions.Projections;
+using Elpida.Backend.Data.Abstractions.Repositories;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
@@ -35,15 +40,21 @@ namespace Elpida.Backend.Data
 	{
 		private readonly IMongoCollection<CpuModel> _cpuCollection;
 		private readonly IMongoCollection<TopologyModel> _topologyCollection;
+		private readonly IMongoCollection<BenchmarkModel> _benchmarkCollection;
+		private readonly IMongoCollection<TaskModel> _taskCollection;
 
 		public MongoResultsRepository(
 			IMongoCollection<ResultModel> resultCollection,
 			IMongoCollection<CpuModel> cpuCollection,
-			IMongoCollection<TopologyModel> topologyCollection)
+			IMongoCollection<TopologyModel> topologyCollection,
+			IMongoCollection<BenchmarkModel> benchmarkCollection,
+			IMongoCollection<TaskModel> taskCollection)
 			: base(resultCollection)
 		{
 			_cpuCollection = cpuCollection ?? throw new ArgumentNullException(nameof(cpuCollection));
 			_topologyCollection = topologyCollection ?? throw new ArgumentNullException(nameof(topologyCollection));
+			_benchmarkCollection = benchmarkCollection;
+			_taskCollection = taskCollection;
 		}
 
 		public Task<ResultProjection> GetProjectionAsync(string id, CancellationToken cancellationToken = default)
@@ -81,7 +92,7 @@ namespace Elpida.Backend.Data
 			{
 				result = filters.Aggregate(result, (current, filter) => current.Where(filter));
 			}
-			
+
 			if (orderBy != null)
 			{
 				result = descending ? result.OrderByDescending(orderBy) : result.OrderBy(orderBy);
@@ -97,7 +108,7 @@ namespace Elpida.Backend.Data
 					CpuCores = m.System.Topology.TotalPhysicalCores,
 					CpuLogicalCores = m.System.Topology.TotalLogicalCores,
 					CpuFrequency = m.System.Cpu.Frequency,
-					Name = m.Result.Name,
+					Name = m.Result.Benchmark.Name,
 					Id = m.Id,
 					OsName = m.System.Os.Name,
 					OsVersion = m.System.Os.Version,
@@ -119,24 +130,51 @@ namespace Elpida.Backend.Data
 				.Join(_cpuCollection.AsQueryable(),
 					rModel => rModel.System.CpuId,
 					cModel => cModel.Id,
-					(model, cpuModel) => new {ResultModel = model, CpuModel = cpuModel})
+					(model, cpuModel) => new
+					{
+						ResultModel = model,
+						CpuModel = cpuModel
+					})
 				.Join(_topologyCollection.AsQueryable(),
 					t => t.ResultModel.System.TopologyId,
-					topology => topology.Id, (t, topology) => new ResultProjection
+					topology => topology.Id,
+					(models, topology) => new
 					{
-						Affinity = t.ResultModel.Affinity,
-						Elpida = t.ResultModel.Elpida,
-						Id = t.ResultModel.Id,
-						Result = t.ResultModel.Result,
+						ResultModel = models.ResultModel,
+						CpuModel = models.CpuModel,
+						TopologyModel = topology
+					})
+				.Join(_benchmarkCollection.AsQueryable(),
+					models => models.ResultModel.Result.BenchmarkId,
+					model => model.Id,
+					(models, benchmark) => new ResultProjection
+					{
+						Id = models.ResultModel.Id,
+						Affinity = models.ResultModel.Affinity,
+						Elpida = models.ResultModel.Elpida,
+						TimeStamp = models.ResultModel.TimeStamp,
 						System = new SystemModelProjection
 						{
-							Cpu = t.CpuModel,
-							Memory = t.ResultModel.System.Memory,
-							Os = t.ResultModel.System.Os,
-							Timing = t.ResultModel.System.Timing,
-							Topology = topology
+							Os = models.ResultModel.System.Os,
+							Memory = models.ResultModel.System.Memory,
+							Timing = models.ResultModel.System.Timing,
+							Cpu = models.CpuModel,
+							Topology = models.TopologyModel
 						},
-						TimeStamp = t.ResultModel.TimeStamp
+						Result = new BenchmarkResultModelProjection
+						{
+							Benchmark = benchmark,
+							TaskResults = _taskCollection.AsQueryable(null)
+								.Join(models.ResultModel.Result.TaskResults,
+									taskModel => taskModel.Id,
+									resultModel => resultModel.TaskId,
+									(taskModel, resultModel) => new TaskResultModelProjection
+									{
+										Result = resultModel,
+										Task = taskModel
+									})
+								.ToList()
+						}
 					});
 		}
 	}

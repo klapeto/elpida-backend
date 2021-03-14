@@ -108,7 +108,7 @@ namespace Elpida.Backend.Services
 				if (instance.Comp != null)
 				{
 					if (
-						Filter.StringComparisons.Contains(instance.Comp) &&
+						FilterHelpers.StringComparisons.Contains(instance.Comp) &&
 						ComparisonExpressions.ExpressionFactories.TryGetValue(instance.Comp, out var factory))
 					{
 						middlePart = factory(left, right);
@@ -116,21 +116,21 @@ namespace Elpida.Backend.Services
 					else
 					{
 						throw new ArgumentException(
-							$"String value filter comparison types can be :[{string.Join(",", Filter.StringComparisons.Select(s => s))}]");
+							$"String value filter comparison types can be :[{string.Join(",", FilterHelpers.StringComparisons.Select(s => s))}]");
 					}
 				}
 				else
 				{
 					middlePart =
 						ComparisonExpressions.ExpressionFactories
-							[Filter.ComparisonMap[Filter.Comparison.Contains]](left, right);
+							[FilterHelpers.ComparisonMap[FilterHelpers.Comparison.Contains]](left, right);
 				}
 			}
 			else
 			{
 				if (instance.Comp != null)
 				{
-					if (Filter.NumberComparisons.Contains(instance.Comp) &&
+					if (FilterHelpers.NumberComparisons.Contains(instance.Comp) &&
 					    ComparisonExpressions.ExpressionFactories.TryGetValue(instance.Comp, out var factory))
 					{
 						middlePart = factory(left, right);
@@ -138,13 +138,13 @@ namespace Elpida.Backend.Services
 					else
 					{
 						throw new ArgumentException(
-							$"Numeric value filter comparison types can be :[{string.Join(",", Filter.NumberComparisons.Select(s => s))}]");
+							$"Numeric value filter comparison types can be :[{string.Join(",", FilterHelpers.NumberComparisons.Select(s => s))}]");
 					}
 				}
 				else
 				{
 					middlePart =
-						ComparisonExpressions.ExpressionFactories[Filter.ComparisonMap[Filter.Comparison.Equal]](left,
+						ComparisonExpressions.ExpressionFactories[FilterHelpers.ComparisonMap[FilterHelpers.Comparison.Equal]](left,
 							right);
 				}
 			}

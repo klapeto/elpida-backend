@@ -17,14 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using Elpida.Backend.Services.Abstractions.Dtos.Cpu;
+using Elpida.Backend.Services.Abstractions.Dtos.Topology;
+
 namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 {
 	public class SystemDto
 	{
-		public CpuDto Cpu { get; set; }
-		public OsDto Os { get; set; }
-		public TopologyDto Topology { get; set; }
-		public MemoryDto Memory { get; set; }
-		public TimingDto Timing { get; set; }
+		public CpuDto Cpu { get; set; } = new CpuDto();
+		public OsDto Os { get; set; } = new OsDto();
+		public TopologyDto Topology { get; set; } = new TopologyDto();
+		public MemoryDto Memory { get; set; } = new MemoryDto();
+		public TimingDto Timing { get; set; } = new TimingDto();
 	}
 }

@@ -17,16 +17,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System;
+
 namespace Elpida.Backend.Services.Abstractions
 {
 	public class QueryRequest
 	{
 		public bool Descending { get; set; }
 
-		public string OrderBy { get; set; }
+		public string OrderBy { get; set; } = string.Empty;
 
-		public PageRequest PageRequest { get; set; }
+		public PageRequest PageRequest { get; set; } = new PageRequest();
 		
-		public QueryInstance[] Filters { get; set; }
+		public QueryInstance[] Filters { get; set; } = new QueryInstance[0];
 	}
 }

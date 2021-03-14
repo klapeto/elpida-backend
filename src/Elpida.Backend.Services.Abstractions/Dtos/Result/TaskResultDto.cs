@@ -21,16 +21,12 @@ using System.Collections.Generic;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 {
-	public class TaskResultDto
+	public class TaskResultDto : TaskDto
 	{
-		public string Name { get; set; }
-		public string Description { get; set; }
 		public double Value { get; set; }
-		public string Suffix { get; set; }
-		public int Type { get; set; }
 		public double Time { get; set; }
 		public long InputSize { get; set; }
-		public TaskStatisticsDto Statistics { get; set; }
-		public IList<TaskOutlierDto> Outliers { get; set; }
+		public TaskStatisticsDto Statistics { get; set; } = new TaskStatisticsDto();
+		public IList<TaskOutlierDto> Outliers { get; set; } = new List<TaskOutlierDto>();
 	}
 }

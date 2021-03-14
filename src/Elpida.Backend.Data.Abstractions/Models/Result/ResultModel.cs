@@ -19,18 +19,17 @@
 
 using System;
 using System.Collections.Generic;
+using Elpida.Backend.Data.Abstractions.Interfaces;
 
 namespace Elpida.Backend.Data.Abstractions.Models.Result
 {
 	public class ResultModel : IEntity
 	{
-		public string Id { get; set; }
-
+		public string Id { get; set; } = string.Empty;
 		public DateTime TimeStamp { get; set; }
-		
-		public IList<long> Affinity { get; set; }
-		public ElpidaModel Elpida { get; set; }
-		public SystemModel System { get; set; }
-		public BenchmarkResultModel Result { get; set; }
+		public IList<long> Affinity { get; set; } = new List<long>();
+		public ElpidaModel Elpida { get; set; } = new ElpidaModel();
+		public SystemModel System { get; set; } = new SystemModel();
+		public BenchmarkResultModel Result { get; set; } = new BenchmarkResultModel();
 	}
 }

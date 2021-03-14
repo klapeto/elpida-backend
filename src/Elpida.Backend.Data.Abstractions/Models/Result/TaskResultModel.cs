@@ -23,14 +23,11 @@ namespace Elpida.Backend.Data.Abstractions.Models.Result
 {
 	public class TaskResultModel
 	{
-		public string Name { get; set; }
-		public string Description { get; set; }
+		public string TaskId { get; set; } = string.Empty;
 		public double Value { get; set; }
-		public string Suffix { get; set; }
-		public int Type { get; set; }
 		public double Time { get; set; }
 		public long InputSize { get; set; }
-		public TaskStatisticsModel Statistics { get; set; }
-		public IList<TaskOutlierModel> Outliers { get; set; }
+		public TaskStatisticsModel Statistics { get; set; } = new TaskStatisticsModel();
+		public IList<TaskOutlierModel> Outliers { get; set; } = new List<TaskOutlierModel>();
 	}
 }

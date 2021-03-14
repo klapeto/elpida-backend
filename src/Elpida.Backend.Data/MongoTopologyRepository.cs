@@ -19,6 +19,8 @@
 
 using Elpida.Backend.Data.Abstractions;
 using Elpida.Backend.Data.Abstractions.Models.Result;
+using Elpida.Backend.Data.Abstractions.Models.Topology;
+using Elpida.Backend.Data.Abstractions.Repositories;
 using MongoDB.Driver;
 
 namespace Elpida.Backend.Data
