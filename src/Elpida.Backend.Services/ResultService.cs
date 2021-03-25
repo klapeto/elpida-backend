@@ -46,10 +46,10 @@ namespace Elpida.Backend.Services
 {
 	public class ResultService : IResultsService
 	{
+		private readonly IBenchmarkRepository _benchmarkRepository;
 		private readonly ICpuRepository _cpuRepository;
 		private readonly IResultsRepository _resultsRepository;
 		private readonly ITopologyRepository _topologyRepository;
-		private readonly IBenchmarkRepository _benchmarkRepository;
 
 		public ResultService(IResultsRepository resultsRepository,
 			ICpuRepository cpuRepository,
@@ -65,9 +65,12 @@ namespace Elpida.Backend.Services
 		private static IReadOnlyDictionary<string, LambdaExpression> CpuExpressions { get; } =
 			new Dictionary<string, LambdaExpression>
 			{
-				[FilterHelpers.TypeMap[FilterHelpers.Type.CpuBrand]] = GetResultExpression(model => model.Topology.Cpu.Brand),
-				[FilterHelpers.TypeMap[FilterHelpers.Type.CpuVendor]] = GetResultExpression(model => model.Topology.Cpu.Vendor),
-				[FilterHelpers.TypeMap[FilterHelpers.Type.CpuFrequency]] = GetResultExpression(model => model.Topology.Cpu.Frequency),
+				[FilterHelpers.TypeMap[FilterHelpers.Type.CpuBrand]] =
+					GetResultExpression(model => model.Topology.Cpu.Brand),
+				[FilterHelpers.TypeMap[FilterHelpers.Type.CpuVendor]] =
+					GetResultExpression(model => model.Topology.Cpu.Vendor),
+				[FilterHelpers.TypeMap[FilterHelpers.Type.CpuFrequency]] =
+					GetResultExpression(model => model.Topology.Cpu.Frequency)
 			};
 
 		private static IReadOnlyDictionary<string, LambdaExpression> TopologyExpressions { get; } =
@@ -76,7 +79,7 @@ namespace Elpida.Backend.Services
 				[FilterHelpers.TypeMap[FilterHelpers.Type.CpuCores]] =
 					GetResultExpression(model => model.Topology.TotalPhysicalCores),
 				[FilterHelpers.TypeMap[FilterHelpers.Type.CpuLogicalCores]] =
-					GetResultExpression(model => model.Topology.TotalLogicalCores),
+					GetResultExpression(model => model.Topology.TotalLogicalCores)
 			};
 
 		private static IReadOnlyDictionary<string, LambdaExpression> ResultExpressions { get; } =
@@ -86,10 +89,11 @@ namespace Elpida.Backend.Services
 				[FilterHelpers.TypeMap[FilterHelpers.Type.Timestamp]] = GetResultExpression(model => model.TimeStamp),
 				["startTime".ToLowerInvariant()] = GetResultExpression(model => model.TimeStamp),
 				["endTime".ToLowerInvariant()] = GetResultExpression(model => model.TimeStamp),
-				[FilterHelpers.TypeMap[FilterHelpers.Type.Name].ToLowerInvariant()] = GetResultExpression(model => model.Benchmark.Name),
+				[FilterHelpers.TypeMap[FilterHelpers.Type.Name].ToLowerInvariant()] =
+					GetResultExpression(model => model.Benchmark.Name),
 				[FilterHelpers.TypeMap[FilterHelpers.Type.OsCategory]] = GetResultExpression(model => model.OsCategory),
 				[FilterHelpers.TypeMap[FilterHelpers.Type.OsName]] = GetResultExpression(model => model.OsName),
-				[FilterHelpers.TypeMap[FilterHelpers.Type.OsVersion]] = GetResultExpression(model => model.OsVersion),
+				[FilterHelpers.TypeMap[FilterHelpers.Type.OsVersion]] = GetResultExpression(model => model.OsVersion)
 			};
 
 		private static IReadOnlyDictionary<string, LambdaExpression> ResultProjectionExpressions { get; } =
@@ -101,30 +105,37 @@ namespace Elpida.Backend.Services
 
 		public async Task<string> CreateAsync(ResultDto resultDto, CancellationToken cancellationToken)
 		{
-			var benchmark = await _benchmarkRepository.GetSingleAsync(t => t.Uuid == resultDto.Result.Uuid, cancellationToken);
+			var benchmark =
+				await _benchmarkRepository.GetSingleAsync(t => t.Uuid == resultDto.Result.Uuid, cancellationToken);
 			if (benchmark == null)
 			{
-				throw new NotFoundException($"The benchmark '{resultDto.Result.Name}' was not found in database.",string.Empty);
+				throw new NotFoundException($"The benchmark '{resultDto.Result.Name}' was not found in database.",
+					string.Empty);
 			}
-			
+
 			resultDto.TimeStamp = DateTime.UtcNow;
 
 			var cpu = await AssignCpu(resultDto.System.Cpu, cancellationToken);
 			var topology = await AssignTopology(cpu, resultDto.System.Topology, cancellationToken);
-			
+
 			var resultModel = resultDto.ToModel(benchmark, topology, resultDto.Result.TaskResults.Select(r =>
 			{
 				var task = benchmark.Tasks.FirstOrDefault(t => t.Uuid == r.Uuid);
-				if (task == null) throw new ConflictException($"The task '{r.Name}' was not found in the benchmark '{benchmark.Name}' tasks", string.Empty);
+				if (task == null)
+				{
+					throw new ConflictException(
+						$"The task '{r.Name}' was not found in the benchmark '{benchmark.Name}' tasks", string.Empty);
+				}
+
 				return r.ToModel(task);
 			}).ToList());
 
 			var result = await _resultsRepository.CreateAsync(resultModel, cancellationToken);
-			
+
 			await _resultsRepository.SaveChangesAsync(cancellationToken);
 			await _cpuRepository.SaveChangesAsync(cancellationToken);
 			await _topologyRepository.SaveChangesAsync(cancellationToken);
-			
+
 			return result.Id.ToString();
 		}
 
@@ -141,7 +152,7 @@ namespace Elpida.Backend.Services
 			}
 
 			var resultModel = await _resultsRepository.GetSingleAsync(idL, cancellationToken);
-			
+
 			if (resultModel == null)
 			{
 				throw new NotFoundException(id);
@@ -186,10 +197,10 @@ namespace Elpida.Backend.Services
 		private async Task<CpuModel> AssignCpu(CpuDto cpuDto, CancellationToken cancellationToken)
 		{
 			var additionalInfo = cpuDto.ToModel(0).AdditionalInfo;
-			
-			var cpuModel = await _cpuRepository.GetSingleAsync(model => 
-				model.Vendor == cpuDto.Vendor 
-				&& model.Brand == cpuDto.Brand 
+
+			var cpuModel = await _cpuRepository.GetSingleAsync(model =>
+				model.Vendor == cpuDto.Vendor
+				&& model.Brand == cpuDto.Brand
 				&& model.AdditionalInfo == additionalInfo, cancellationToken);
 			if (cpuModel == null)
 			{
@@ -204,19 +215,19 @@ namespace Elpida.Backend.Services
 		{
 			using var md5 = MD5.Create();
 			using var ms = new MemoryStream(Encoding.UTF8.GetBytes(str));
-			
+
 			return md5.ComputeHash(ms).ToHexString();
 		}
-		
+
 		private async Task<TopologyModel> AssignTopology(CpuModel cpu, TopologyDto topologyDto,
 			CancellationToken cancellationToken)
 		{
 			var topologyRoot = JsonConvert.SerializeObject(topologyDto.Root);
 			var topologyHash = GetHash(topologyRoot);
-			
+
 			var topologyModel = await _topologyRepository.GetSingleAsync(t =>
-				t.CpuId == cpu.Id
-				&& t.TopologyHash == topologyHash, 
+					t.CpuId == cpu.Id
+					&& t.TopologyHash == topologyHash,
 				cancellationToken);
 			if (topologyModel == null)
 			{

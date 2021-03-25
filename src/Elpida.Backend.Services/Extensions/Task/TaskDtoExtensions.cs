@@ -1,3 +1,22 @@
+/*
+ * Elpida HTTP Rest API
+ *   
+ * Copyright (C) 2021  Ioannis Panagiotopoulos
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 using System.Collections.Generic;
 using Elpida.Backend.Data.Abstractions.Models.Task;
 using Elpida.Backend.Services.Abstractions.Dtos;
@@ -18,18 +37,18 @@ namespace Elpida.Backend.Services.Extensions.Task
 					? new DataSpecificationDto
 					{
 						Name = model.InputName,
-						Description = model.InputDescription,
-						Unit = model.InputDescription,
-						RequiredProperties = JsonConvert.DeserializeObject<List<string>>(model.InputProperties)
+						Description = model.InputDescription!,
+						Unit = model.InputDescription!,
+						RequiredProperties = JsonConvert.DeserializeObject<List<string>>(model.InputProperties!)
 					}
 					: null,
 				Output = model.OutputName != null
 					? new DataSpecificationDto
 					{
 						Name = model.OutputName,
-						Description = model.OutputDescription,
-						Unit = model.OutputDescription,
-						RequiredProperties = JsonConvert.DeserializeObject<List<string>>(model.OutputProperties)
+						Description = model.OutputDescription!,
+						Unit = model.OutputDescription!,
+						RequiredProperties = JsonConvert.DeserializeObject<List<string>>(model.OutputProperties!)
 					}
 					: null,
 				Result = new ResultSpecificationDto
@@ -89,7 +108,7 @@ namespace Elpida.Backend.Services.Extensions.Task
 				ResultDescription = dto.Description,
 				ResultAggregation = dto.Result.Aggregation,
 				ResultType = dto.Result.Type,
-				ResultUnit = dto.Result.Unit,
+				ResultUnit = dto.Result.Unit
 			};
 		}
 	}

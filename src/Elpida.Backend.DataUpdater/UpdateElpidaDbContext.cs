@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2020  Ioannis Panagiotopoulos
+ * Copyright (C) 2021  Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,16 +17,28 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using Elpida.Backend.Services.Abstractions.Dtos.Cpu;
-using Elpida.Backend.Services.Abstractions.Dtos.Result;
-using Elpida.Backend.Services.Abstractions.Dtos.Topology;
+using Elpida.Backend.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
-namespace Elpida.Backend.Services.Abstractions.Interfaces
+namespace Elpida.Backend.DataUpdater
 {
-	public interface IIdProvider
+	public class UpdateElpidaDbContext : ElpidaContext
 	{
-		string GetForCpu(CpuDto cpuDto);
-		string GetForTopology(string cpuId, TopologyDto topologyDto);
-		string GetForResult(ResultDto resultDto);
+		private readonly string _connectionString;
+		private readonly ILoggerFactory _loggerFactory;
+
+		public UpdateElpidaDbContext(string connectionString, ILoggerFactory loggerFactory)
+			: base(new DbContextOptions<ElpidaContext>())
+		{
+			_connectionString = connectionString;
+			_loggerFactory = loggerFactory;
+		}
+
+		protected override void OnConfiguring(DbContextOptionsBuilder options)
+		{
+			options.UseLoggerFactory(_loggerFactory);
+			options.UseSqlite(_connectionString);
+		}
 	}
 }

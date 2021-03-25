@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Elpida.Backend.Migrations
 {
     [DbContext(typeof(ElpidaContext))]
-    [Migration("20210325112152_InitialCreate")]
+    [Migration("20210325182342_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -109,9 +109,17 @@ namespace Elpida.Backend.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("ElpidaVersion")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("ElpidaVersionBuild")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ElpidaVersionMajor")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ElpidaVersionMinor")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ElpidaVersionRevision")
+                        .HasColumnType("INTEGER");
 
                     b.Property<double>("JoinOverhead")
                         .HasColumnType("REAL");

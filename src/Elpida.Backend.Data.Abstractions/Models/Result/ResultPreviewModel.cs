@@ -26,8 +26,10 @@ namespace Elpida.Backend.Data.Abstractions.Models.Result
 		public long Id { get; set; }
 		public string Name { get; set; } = default!;
 		public DateTime TimeStamp { get; set; }
-		
-		public string ElpidaVersion { get; set; } = default!;
+		public int ElpidaVersionMajor { get; set; }
+		public int ElpidaVersionMinor { get; set; }
+		public int ElpidaVersionRevision { get; set; }
+		public int ElpidaVersionBuild { get; set; }
 		public string OsName { get; set; } = default!;
 		public string OsVersion { get; set; } = default!;
 		public string CpuBrand { get; set; } = default!;

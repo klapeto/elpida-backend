@@ -17,19 +17,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Elpida.Backend.Data.Abstractions.Models;
-using Elpida.Backend.Data.Abstractions.Models.Cpu;
 using Elpida.Backend.Data.Abstractions.Models.Result;
-using Elpida.Backend.Data.Abstractions.Models.Task;
 using Elpida.Backend.Data.Abstractions.Models.Topology;
 using Elpida.Backend.Services.Abstractions.Dtos;
 using Elpida.Backend.Services.Abstractions.Dtos.Result;
 using Elpida.Backend.Services.Abstractions.Dtos.Topology;
 using Elpida.Backend.Services.Extensions.Cpu;
-using Elpida.Backend.Services.Extensions.Topology;
 using Newtonsoft.Json;
 
 namespace Elpida.Backend.Services.Extensions.Result
@@ -47,9 +43,15 @@ namespace Elpida.Backend.Services.Extensions.Result
 					Compiler = new CompilerDto
 					{
 						Name = resultModel.CompilerName,
-						Version = resultModel.CompilerVersion,
+						Version = resultModel.CompilerVersion
 					},
-					Version = JsonConvert.DeserializeObject<VersionDto>(resultModel.ElpidaVersion)
+					Version = new VersionDto
+					{
+						Major = resultModel.ElpidaVersionMajor,
+						Minor = resultModel.ElpidaVersionMinor,
+						Revision = resultModel.ElpidaVersionRevision,
+						Build = resultModel.ElpidaVersionBuild
+					}
 				},
 				Affinity = JsonConvert.DeserializeObject<List<long>>(resultModel.Affinity),
 				Result = new BenchmarkResultDto
@@ -61,20 +63,26 @@ namespace Elpida.Backend.Services.Extensions.Result
 						Id = r.Task.Id,
 						Name = r.Task.Name,
 						Description = r.Task.Description,
-						Input = r.Task.InputName != null ? new DataSpecificationDto
-						{
-							Name = r.Task.InputName,
-							Description = r.Task.InputDescription,
-							Unit = r.Task.InputDescription,
-							RequiredProperties = JsonConvert.DeserializeObject<List<string>>(r.Task.InputProperties)
-						} : null,
-						Output = r.Task.OutputName != null ? new DataSpecificationDto
-						{
-							Name = r.Task.OutputName,
-							Description = r.Task.OutputDescription,
-							Unit = r.Task.OutputDescription,
-							RequiredProperties = JsonConvert.DeserializeObject<List<string>>(r.Task.OutputProperties)
-						} : null,
+						Input = r.Task.InputName != null
+							? new DataSpecificationDto
+							{
+								Name = r.Task.InputName,
+								Description = r.Task.InputDescription!,
+								Unit = r.Task.InputDescription!,
+								RequiredProperties =
+									JsonConvert.DeserializeObject<List<string>>(r.Task.InputProperties!)
+							}
+							: null,
+						Output = r.Task.OutputName != null
+							? new DataSpecificationDto
+							{
+								Name = r.Task.OutputName,
+								Description = r.Task.OutputDescription!,
+								Unit = r.Task.OutputDescription!,
+								RequiredProperties =
+									JsonConvert.DeserializeObject<List<string>>(r.Task.OutputProperties!)
+							}
+							: null,
 						Result = new ResultSpecificationDto
 						{
 							Name = r.Task.ResultName,
@@ -104,7 +112,7 @@ namespace Elpida.Backend.Services.Extensions.Result
 					Memory = new MemoryDto
 					{
 						PageSize = resultModel.PageSize,
-						TotalSize = resultModel.MemorySize,
+						TotalSize = resultModel.MemorySize
 					},
 					Os = new OsDto
 					{
@@ -121,7 +129,7 @@ namespace Elpida.Backend.Services.Extensions.Result
 						NowOverhead = resultModel.NowOverhead,
 						SleepOverhead = resultModel.SleepOverhead,
 						TargetTime = resultModel.TargetTime,
-						WakeupOverhead = resultModel.WakeupOverhead,
+						WakeupOverhead = resultModel.WakeupOverhead
 					},
 					Topology = new TopologyDto
 					{
@@ -148,7 +156,10 @@ namespace Elpida.Backend.Services.Extensions.Result
 				Topology = topologyModel,
 				CompilerName = resultDto.Elpida.Compiler.Name,
 				CompilerVersion = resultDto.Elpida.Compiler.Version,
-				ElpidaVersion = JsonConvert.SerializeObject(resultDto.Elpida.Version),
+				ElpidaVersionMajor = resultDto.Elpida.Version.Major,
+				ElpidaVersionMinor = resultDto.Elpida.Version.Minor,
+				ElpidaVersionRevision = resultDto.Elpida.Version.Revision,
+				ElpidaVersionBuild = resultDto.Elpida.Version.Build,
 				JoinOverhead = resultDto.System.Timing.JoinOverhead,
 				LockOverhead = resultDto.System.Timing.LockOverhead,
 				LoopOverhead = resultDto.System.Timing.LoopOverhead,

@@ -23,8 +23,6 @@ namespace Elpida.Backend.Services.Abstractions
 {
 	public class PagedResult<T>
 	{
-		public static PagedResult<T> Empty() => new PagedResult<T>(new List<T>(), new PageRequest());
-		
 		public PagedResult(IList<T> list, PageRequest pageRequest)
 		{
 			Count = list.Count;
@@ -42,5 +40,10 @@ namespace Elpida.Backend.Services.Abstractions
 		public long TotalCount { get; set; }
 
 		public PageRequest? NextPage { get; set; }
+
+		public static PagedResult<T> Empty()
+		{
+			return new PagedResult<T>(new List<T>(), new PageRequest());
+		}
 	}
 }

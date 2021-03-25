@@ -24,11 +24,12 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 	public class ResultPreviewDto
 	{
 		public long Id { get; set; }
-
 		public string Name { get; set; } = string.Empty;
 		public DateTime TimeStamp { get; set; }
-
-		public string ElpidaVersion{ get; set; } = string.Empty;
+		public int ElpidaVersionMajor { get; set; }
+		public int ElpidaVersionMinor { get; set; }
+		public int ElpidaVersionRevision { get; set; }
+		public int ElpidaVersionBuild{ get; set; }
 		public string OsName { get; set; } = string.Empty;
 		public string OsVersion { get; set; } = string.Empty;
 		public string CpuBrand { get; set; } = string.Empty;

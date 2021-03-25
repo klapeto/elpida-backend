@@ -22,11 +22,11 @@ namespace Elpida.Backend.Services.Abstractions
 	public class PageRequest
 	{
 		public const int MaxCount = 500;
-		
+
 		public int Next { get; set; }
 
 		public int Count { get; set; } = 10;
-		
+
 		public long TotalCount { get; set; }
 	}
 }

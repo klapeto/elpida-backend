@@ -22,8 +22,7 @@ using Elpida.Backend.Data.Abstractions.Models.Topology;
 
 namespace Elpida.Backend.Data.Abstractions.Repositories
 {
-	public interface ITopologyRepository: IRepository<TopologyModel>
+	public interface ITopologyRepository : IRepository<TopologyModel>
 	{
-		
 	}
 }

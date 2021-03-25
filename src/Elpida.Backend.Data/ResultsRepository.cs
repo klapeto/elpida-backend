@@ -35,18 +35,9 @@ namespace Elpida.Backend.Data
 		public ResultsRepository(ElpidaContext elpidaContext)
 			: base(elpidaContext, elpidaContext.Results)
 		{
+		}
 
-		}
-		
-		protected override IQueryable<ResultModel> ProcessGetSingle(IQueryable<ResultModel> queryable)
-		{
-			return queryable
-				.Include(model => model.Benchmark)
-				.Include(model => model.TaskResults)
-				.ThenInclude(model => model.Task)
-				.Include(model => model.Topology)
-				.ThenInclude(model => model.Cpu);
-		}
+		#region IResultsRepository Members
 
 		public async Task<PagedQueryResult<ResultPreviewModel>> GetPagedPreviewsAsync<TOrderKey>(
 			int from,
@@ -67,7 +58,9 @@ namespace Elpida.Backend.Data
 				throw new ArgumentException("'count' must be positive", nameof(count));
 			}
 
-			var result = Collection.AsQueryable();
+			var result = Collection
+				.AsQueryable()
+				.AsNoTracking();
 
 			if (filters != null)
 			{
@@ -94,7 +87,10 @@ namespace Elpida.Backend.Data
 					CpuBrand = m.Topology.Cpu.Brand,
 					CpuCores = m.Topology.TotalPhysicalCores,
 					CpuFrequency = m.Topology.Cpu.Frequency,
-					ElpidaVersion = m.ElpidaVersion,
+					ElpidaVersionMajor = m.ElpidaVersionMajor,
+					ElpidaVersionMinor = m.ElpidaVersionMinor,
+					ElpidaVersionRevision = m.ElpidaVersionRevision,
+					ElpidaVersionBuild = m.ElpidaVersionBuild,
 					MemorySize = m.MemorySize,
 					OsName = m.OsName,
 					OsVersion = m.OsVersion,
@@ -104,6 +100,29 @@ namespace Elpida.Backend.Data
 				.ToListAsync(cancellationToken);
 
 			return new PagedQueryResult<ResultPreviewModel>(totalCount, results);
+		}
+
+		#endregion
+
+		protected override IQueryable<ResultModel> ProcessGetMultiple(IQueryable<ResultModel> queryable)
+		{
+			return ProcessGetSingle(queryable);
+		}
+
+		protected override IQueryable<ResultModel> ProcessGetMultiplePaged(IQueryable<ResultModel> queryable)
+		{
+			return ProcessGetSingle(queryable);
+		}
+
+		protected override IQueryable<ResultModel> ProcessGetSingle(IQueryable<ResultModel> queryable)
+		{
+			return queryable
+				.AsNoTracking()
+				.Include(model => model.Benchmark)
+				.Include(model => model.TaskResults)
+				.ThenInclude(model => model.Task)
+				.Include(model => model.Topology)
+				.ThenInclude(model => model.Cpu);
 		}
 	}
 }

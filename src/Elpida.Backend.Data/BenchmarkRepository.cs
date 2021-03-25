@@ -26,24 +26,25 @@ namespace Elpida.Backend.Data
 {
 	public class BenchmarkRepository : EntityRepository<BenchmarkModel>, IBenchmarkRepository
 	{
-		public BenchmarkRepository(ElpidaContext elpidaContext) 
+		public BenchmarkRepository(ElpidaContext elpidaContext)
 			: base(elpidaContext, elpidaContext.Benchmarks)
 		{
 		}
 
 		protected override IQueryable<BenchmarkModel> ProcessGetSingle(IQueryable<BenchmarkModel> queryable)
 		{
-			return queryable.Include(model => model.Tasks);
+			return queryable
+				.Include(model => model.Tasks);
 		}
 
 		protected override IQueryable<BenchmarkModel> ProcessGetMultiple(IQueryable<BenchmarkModel> queryable)
 		{
-			return queryable.Include(model => model.Tasks);
+			return ProcessGetSingle(queryable);
 		}
 
 		protected override IQueryable<BenchmarkModel> ProcessGetMultiplePaged(IQueryable<BenchmarkModel> queryable)
 		{
-			return queryable.Include(model => model.Tasks);
+			return ProcessGetSingle(queryable);
 		}
 	}
 }

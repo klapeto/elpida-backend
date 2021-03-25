@@ -1,3 +1,22 @@
+/*
+ * Elpida HTTP Rest API
+ *   
+ * Copyright (C) 2021  Ioannis Panagiotopoulos
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,14 +31,16 @@ namespace Elpida.Backend.Data
 {
 	public class EntityRepository<TEntity> : IRepository<TEntity> where TEntity : Entity
 	{
-		protected DbSet<TEntity> Collection { get; }
-		protected DbContext Context { get; }
-
 		public EntityRepository(DbContext context, DbSet<TEntity> collection)
 		{
 			Collection = collection;
 			Context = context;
 		}
+
+		protected DbSet<TEntity> Collection { get; }
+		protected DbContext Context { get; }
+
+		#region IRepository<TEntity> Members
 
 		public Task<TEntity> GetSingleAsync(long id, CancellationToken cancellationToken = default)
 		{
@@ -27,33 +48,25 @@ namespace Elpida.Backend.Data
 				.FirstAsync(e => e.Id == id, cancellationToken);
 		}
 
-		protected virtual IQueryable<TEntity> ProcessGetSingle(IQueryable<TEntity> queryable)
-		{
-			return queryable;
-		}
-
-		protected virtual IQueryable<TEntity> ProcessGetMultiplePaged(IQueryable<TEntity> queryable)
-		{
-			return queryable;
-		}
-		
-		protected virtual IQueryable<TEntity> ProcessGetMultiple(IQueryable<TEntity> queryable)
-		{
-			return queryable;
-		}
-		
-		public Task<TEntity> GetSingleAsync(Expression<Func<TEntity, bool>> filters, CancellationToken cancellationToken = default)
+		public Task<TEntity> GetSingleAsync(Expression<Func<TEntity, bool>> filters,
+			CancellationToken cancellationToken = default)
 		{
 			return ProcessGetSingle(Collection.AsQueryable())
 				.FirstOrDefaultAsync(filters, cancellationToken);
 		}
-		
+
 		public async Task<TEntity> CreateAsync(TEntity entity, CancellationToken cancellationToken = default)
 		{
 			var addedEntity = await Collection.AddAsync(entity, cancellationToken);
 			return addedEntity.Entity;
 		}
-
+		
+		public Task SaveChangesAsync(CancellationToken cancellationToken = default)
+		{
+			return Context.SaveChangesAsync(cancellationToken);
+		}
+		
+#if false
 		public Task UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
 		{
 			Collection.Update(entity);
@@ -66,12 +79,12 @@ namespace Elpida.Backend.Data
 		}
 
 		public async Task<PagedQueryResult<TEntity>> GetMultiplePagedAsync<TOrderKey>(
-			int from, 
+			int from,
 			int count,
 			bool descending,
-			Expression<Func<TEntity, TOrderKey>> orderBy, 
+			Expression<Func<TEntity, TOrderKey>> orderBy,
 			IEnumerable<Expression<Func<TEntity, bool>>> filters,
-			bool calculateTotalCount, 
+			bool calculateTotalCount,
 			CancellationToken cancellationToken = default)
 		{
 			if (from < 0)
@@ -90,14 +103,14 @@ namespace Elpida.Backend.Data
 			{
 				query = filters.Aggregate(query, (current, filter) => current.Where(filter));
 			}
-			
+
 			var totalCount = calculateTotalCount ? await query.CountAsync(cancellationToken) : 0;
 
 			if (orderBy != null)
 			{
 				query = descending ? query.OrderByDescending(orderBy) : query.OrderBy(orderBy);
 			}
-			
+
 			query = ProcessGetMultiplePaged(query);
 
 			var results = await query
@@ -117,9 +130,9 @@ namespace Elpida.Backend.Data
 			{
 				query = filters.Aggregate(query, (current, filter) => current.Where(filter));
 			}
-			
+
 			query = ProcessGetMultiple(query);
-			
+
 			return query.ToListAsync(cancellationToken);
 		}
 
@@ -128,10 +141,23 @@ namespace Elpida.Backend.Data
 			Collection.Remove(entity);
 			return Task.CompletedTask;
 		}
+		
+#endif
+		#endregion
 
-		public Task SaveChangesAsync(CancellationToken cancellationToken = default)
+		protected virtual IQueryable<TEntity> ProcessGetSingle(IQueryable<TEntity> queryable)
 		{
-			return Context.SaveChangesAsync(cancellationToken);
+			return queryable;
+		}
+
+		protected virtual IQueryable<TEntity> ProcessGetMultiplePaged(IQueryable<TEntity> queryable)
+		{
+			return queryable;
+		}
+
+		protected virtual IQueryable<TEntity> ProcessGetMultiple(IQueryable<TEntity> queryable)
+		{
+			return queryable;
 		}
 	}
 }

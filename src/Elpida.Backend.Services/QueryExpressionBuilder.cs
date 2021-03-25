@@ -21,7 +21,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using Elpida.Backend.Data.Abstractions.Models.Result;
 using Elpida.Backend.Services.Abstractions;
 
 namespace Elpida.Backend.Services
@@ -38,7 +37,10 @@ namespace Elpida.Backend.Services
 
 		public IEnumerable<Expression<Func<T, bool>>> Build<T>(IEnumerable<QueryInstance>? queryInstances)
 		{
-			if (queryInstances == null) yield break;
+			if (queryInstances == null)
+			{
+				yield break;
+			}
 
 			foreach (var queryInstance in queryInstances)
 			{
@@ -48,7 +50,8 @@ namespace Elpida.Backend.Services
 				}
 			}
 		}
-		
+
+#if false
 		public static Expression<Func<T, bool>> BuildOr<T, TR>(Expression<Func<T, TR>> baseExpr, IEnumerable<string> values)
 		{
 			var baseAccess = baseExpr.Body;
@@ -70,6 +73,7 @@ namespace Elpida.Backend.Services
 
 			return Expression.Lambda<Func<T, bool>>(expr, false, baseExpr.Parameters);
 		}
+#endif
 
 		public Expression<Func<T, object>> GetOrderBy<T>(QueryRequest queryRequest)
 		{
@@ -144,7 +148,8 @@ namespace Elpida.Backend.Services
 				else
 				{
 					middlePart =
-						ComparisonExpressions.ExpressionFactories[FilterHelpers.ComparisonMap[FilterHelpers.Comparison.Equal]](left,
+						ComparisonExpressions.ExpressionFactories[
+							FilterHelpers.ComparisonMap[FilterHelpers.Comparison.Equal]](left,
 							right);
 				}
 			}
