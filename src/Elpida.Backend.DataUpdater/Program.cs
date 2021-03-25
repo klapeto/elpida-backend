@@ -24,8 +24,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Elpida.Backend.Data.Abstractions.Models;
 using Elpida.Backend.Data.Abstractions.Models.Task;
-using Elpida.Backend.Services.Extensions.Benchmark;
-using Elpida.Backend.Services.Extensions.Task;
+using Elpida.Backend.Services.Abstractions.Dtos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -33,8 +32,58 @@ using Newtonsoft.Json;
 
 namespace Elpida.Backend.DataUpdater
 {
-	internal class Program
+	internal static class Program
 	{
+		private static void Update(this TaskModel model, TaskModel other)
+		{
+			model.Uuid = other.Uuid;
+			model.Name = other.Name;
+			model.Description = other.Description;
+
+			model.InputName = other.InputName;
+			model.InputDescription = other.InputDescription;
+			model.InputUnit = other.InputUnit;
+			model.InputProperties = JsonConvert.SerializeObject(other.InputProperties);
+
+			model.OutputName = other.OutputName;
+			model.OutputDescription = other.OutputDescription;
+			model.OutputUnit = other.OutputUnit;
+			model.OutputProperties = JsonConvert.SerializeObject(other.OutputProperties);
+
+			model.ResultName = other.ResultName;
+			model.ResultDescription = other.Description;
+			model.ResultAggregation = other.ResultAggregation;
+			model.ResultType = other.ResultType;
+			model.ResultUnit = other.ResultUnit;
+		}
+
+		private static TaskModel ToModel(this TaskDto dto)
+		{
+			return new TaskModel
+			{
+				Id = dto.Id,
+				Uuid = dto.Uuid,
+				Name = dto.Name,
+				Description = dto.Description,
+
+				InputName = dto.Input?.Name,
+				InputDescription = dto.Input?.Description,
+				InputUnit = dto.Input?.Unit,
+				InputProperties = JsonConvert.SerializeObject(dto.Input?.RequiredProperties),
+
+				OutputName = dto.Output?.Name,
+				OutputDescription = dto.Output?.Description,
+				OutputUnit = dto.Output?.Unit,
+				OutputProperties = JsonConvert.SerializeObject(dto.Output?.RequiredProperties),
+
+				ResultName = dto.Result.Name,
+				ResultDescription = dto.Description,
+				ResultAggregation = dto.Result.Aggregation,
+				ResultType = dto.Result.Type,
+				ResultUnit = dto.Result.Unit
+			};
+		}
+		
 		private static async Task Main(string[] args)
 		{
 			var config = new ConfigurationBuilder()
@@ -103,15 +152,11 @@ namespace Elpida.Backend.DataUpdater
 							}
 							else
 							{
-								updatedBenchmark.Update(new BenchmarkModel
-								{
-									Id = updatedBenchmark.Id,
-									Uuid = benchmark.Uuid,
-									Name = benchmark.Name,
-									Tasks = benchmark.TaskSpecifications
-										.Select(t => addedTasks.First(a => a.Uuid == t))
-										.ToList()
-								});
+								updatedBenchmark.Name = benchmark.Name;
+								updatedBenchmark.Uuid = benchmark.Uuid;
+								updatedBenchmark.Tasks = benchmark.TaskSpecifications
+									.Select(t => addedTasks.First(a => a.Uuid == t))
+									.ToList();
 							}
 						}
 

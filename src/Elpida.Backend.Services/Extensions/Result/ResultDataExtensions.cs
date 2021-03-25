@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Elpida.Backend.Data.Abstractions.Models;
 using Elpida.Backend.Data.Abstractions.Models.Result;
+using Elpida.Backend.Data.Abstractions.Models.Task;
 using Elpida.Backend.Data.Abstractions.Models.Topology;
 using Elpida.Backend.Services.Abstractions.Dtos;
 using Elpida.Backend.Services.Abstractions.Dtos.Result;
@@ -32,6 +33,32 @@ namespace Elpida.Backend.Services.Extensions.Result
 {
 	public static class ResultDataExtensions
 	{
+		private static DataSpecificationDto? CreateInputSpecDto(this TaskModel model)
+		{
+			if (model.InputName == null) return null;
+
+			return new DataSpecificationDto
+			{
+				Name = model.InputName,
+				Description = model.InputDescription!,
+				Unit = model.InputDescription!,
+				RequiredProperties = JsonConvert.DeserializeObject<List<string>>(model.InputProperties!)
+			};
+		}
+
+		private static DataSpecificationDto? CreateOutputSpecDto(this TaskModel model)
+		{
+			if (model.OutputName == null) return null;
+
+			return new DataSpecificationDto
+			{
+				Name = model.OutputName,
+				Description = model.OutputDescription!,
+				Unit = model.OutputUnit!,
+				RequiredProperties = JsonConvert.DeserializeObject<List<string>>(model.OutputProperties!)
+			};
+		}
+		
 		public static ResultDto ToDto(this ResultModel resultModel)
 		{
 			var resultDto = new ResultDto
@@ -63,26 +90,8 @@ namespace Elpida.Backend.Services.Extensions.Result
 						Id = r.Task.Id,
 						Name = r.Task.Name,
 						Description = r.Task.Description,
-						Input = r.Task.InputName != null
-							? new DataSpecificationDto
-							{
-								Name = r.Task.InputName,
-								Description = r.Task.InputDescription!,
-								Unit = r.Task.InputDescription!,
-								RequiredProperties =
-									JsonConvert.DeserializeObject<List<string>>(r.Task.InputProperties!)
-							}
-							: null,
-						Output = r.Task.OutputName != null
-							? new DataSpecificationDto
-							{
-								Name = r.Task.OutputName,
-								Description = r.Task.OutputDescription!,
-								Unit = r.Task.OutputDescription!,
-								RequiredProperties =
-									JsonConvert.DeserializeObject<List<string>>(r.Task.OutputProperties!)
-							}
-							: null,
+						Input = r.Task.CreateInputSpecDto(),
+						Output = r.Task.CreateOutputSpecDto(),
 						Result = new ResultSpecificationDto
 						{
 							Name = r.Task.ResultName,
