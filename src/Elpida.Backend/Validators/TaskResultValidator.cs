@@ -45,9 +45,6 @@ namespace Elpida.Backend.Validators
 			RuleFor(dto => dto.Statistics)
 				.NotNull();
 
-			RuleFor(dto => dto.Outliers)
-				.NotNull();
-
 			RuleFor(dto => dto.Result)
 				.NotNull();
 		}

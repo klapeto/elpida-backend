@@ -28,14 +28,14 @@ namespace Elpida.Backend.Services
 {
 	public static class ComparisonExpressions
 	{
-		private static readonly MethodInfo RegexIsMatch =
-			typeof(Regex).GetMethod(nameof(Regex.IsMatch), new[] {typeof(string), typeof(string)});
+		private static readonly MethodInfo Contains =
+			typeof(string).GetMethod(nameof(string.Contains), new[] {typeof(string)});
 
 		public static IReadOnlyDictionary<string, Func<Expression, Expression, Expression>>
 			ExpressionFactories { get; } = new Dictionary<string, Func<Expression, Expression, Expression>>
 		{
 			[FilterHelpers.ComparisonMap[FilterHelpers.Comparison.Contains]] =
-				(left, right) => Expression.Call(RegexIsMatch, left, right),
+				(left, right) => Expression.Call(left, Contains, right),
 			[FilterHelpers.ComparisonMap[FilterHelpers.Comparison.Equal]] = Expression.Equal,
 			[FilterHelpers.ComparisonMap[FilterHelpers.Comparison.Greater]] = Expression.GreaterThan,
 			[FilterHelpers.ComparisonMap[FilterHelpers.Comparison.GreaterEqual]] = Expression.GreaterThanOrEqual,

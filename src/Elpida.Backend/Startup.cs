@@ -19,17 +19,11 @@
 
 using System;
 using System.Net;
+using System.Reflection;
 using System.Threading.Tasks;
 using Elpida.Backend.Data;
-using Elpida.Backend.Data.Abstractions;
-using Elpida.Backend.Data.Abstractions.Models;
-using Elpida.Backend.Data.Abstractions.Models.Cpu;
-using Elpida.Backend.Data.Abstractions.Models.Result;
-using Elpida.Backend.Data.Abstractions.Models.Task;
-using Elpida.Backend.Data.Abstractions.Models.Topology;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services;
-using Elpida.Backend.Services.Abstractions;
 using Elpida.Backend.Services.Abstractions.Exceptions;
 using Elpida.Backend.Services.Abstractions.Interfaces;
 using Elpida.Backend.Validators;
@@ -38,12 +32,11 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
-using MongoDB.Driver;
 
 namespace Elpida.Backend
 {
@@ -66,44 +59,30 @@ namespace Elpida.Backend
 					configuration.RegisterValidatorsFromAssemblyContaining<ResultValidator>();
 				});
 
-			services.Configure<DocumentRepositorySettings>(
-				Configuration.GetSection(nameof(DocumentRepositorySettings)));
-
-			services.AddSingleton<IDocumentRepositorySettings>(sp =>
-				sp.GetRequiredService<IOptions<DocumentRepositorySettings>>().Value);
-
 			services.AddScoped<IResultsService, ResultService>();
 
-			services.AddTransient<IIdProvider, IdProvider>();
-			
-			services.AddSingleton(IMongoClient_ImplementationFactory);
-			services.AddSingleton(IMongoDatabase_ImplementationFactory);
+			services.AddTransient<IResultsRepository, ResultsRepository>();
+			services.AddTransient<ICpuRepository, CpuRepository>();
+			services.AddTransient<ITopologyRepository, TopologyRepository>();
+			services.AddTransient<IBenchmarkRepository, BenchmarkRepository>();
+			services.AddTransient<ITaskRepository, TaskRepository>();
 
-			services.AddTransient(provider =>
-				MongoCollection_ImplementationFactory<CpuModel>(provider, settings => settings.CpusCollectionName));
-			services.AddTransient(provider =>
-				MongoCollection_ImplementationFactory<TopologyModel>(provider,
-					settings => settings.TopologiesCollectionName));
-			services.AddTransient(provider =>
-				MongoCollection_ImplementationFactory<ResultModel>(provider,
-					settings => settings.ResultsCollectionName));
-			services.AddTransient(provider =>
-				MongoCollection_ImplementationFactory<BenchmarkModel>(provider,
-					settings => settings.BenchmarksCollectionName));
-			services.AddTransient(provider =>
-				MongoCollection_ImplementationFactory<TaskModel>(provider,
-					settings => settings.TasksCollectionName));
-
-			services.AddTransient<IResultsRepository, MongoResultsRepository>();
-			services.AddTransient<ICpuRepository, MongoCpuRepository>();
-			services.AddTransient<ITopologyRepository, MongoTopologyRepository>();
-			services.AddTransient<IBenchmarkRepository, MongoBenchmarkRepository>();
-			services.AddTransient<ITaskRepository, MongoTaskRepository>();
+			services.AddDbContext<ElpidaContext>(builder =>
+			{
+#if DEBUG
+				builder.UseSqlite("Data Source=results.db",
+					b => b.MigrationsAssembly(Assembly.GetExecutingAssembly().GetName().Name));
+#else
+				// Use something else, eg SQL Server
+				#error
+#endif
+			});
 
 			services.AddApiVersioning();
 
 			services.AddCors();
 		}
+
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 		{
@@ -166,47 +145,5 @@ namespace Elpida.Backend
 					break;
 			}
 		}
-		
-		private static IMongoClient IMongoClient_ImplementationFactory(IServiceProvider serviceProvider)
-		{
-			var settings = serviceProvider.GetRequiredService<IDocumentRepositorySettings>();
-
-			if (string.IsNullOrWhiteSpace(settings.ConnectionString))
-			{
-				throw new ArgumentException("Documents Connection string is empty", nameof(settings.ConnectionString));
-			}
-
-			return new MongoClient(settings.ConnectionString);
-		}
-
-		private static IMongoDatabase IMongoDatabase_ImplementationFactory(IServiceProvider serviceProvider)
-		{
-			var settings = serviceProvider.GetRequiredService<IDocumentRepositorySettings>();
-			var client = serviceProvider.GetRequiredService<IMongoClient>();
-
-			if (string.IsNullOrWhiteSpace(settings.DatabaseName))
-			{
-				throw new ArgumentException("Documents Database Name is empty", nameof(settings.DatabaseName));
-			}
-
-			return client.GetDatabase(settings.DatabaseName);
-		}
-
-		private static IMongoCollection<T> MongoCollection_ImplementationFactory<T>(
-			IServiceProvider serviceProvider, Func<IDocumentRepositorySettings, string> collectionNameGetter)
-		{
-			var settings = serviceProvider.GetRequiredService<IDocumentRepositorySettings>();
-
-			var collectionName = collectionNameGetter(settings);
-			if (string.IsNullOrWhiteSpace(collectionName))
-			{
-				throw new ArgumentException($"Collection Name is empty for: {typeof(T).Name}");
-			}
-
-			var database = serviceProvider.GetRequiredService<IMongoDatabase>();
-
-			return database.GetCollection<T>(collectionName);
-		}
-
 	}
 }

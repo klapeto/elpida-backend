@@ -20,16 +20,40 @@
 using System;
 using System.Collections.Generic;
 using Elpida.Backend.Data.Abstractions.Interfaces;
+using Elpida.Backend.Data.Abstractions.Models.Cpu;
+using Elpida.Backend.Data.Abstractions.Models.Topology;
 
 namespace Elpida.Backend.Data.Abstractions.Models.Result
 {
-	public class ResultModel : IEntity
+	public class ResultModel : Entity
 	{
-		public string Id { get; set; } = string.Empty;
 		public DateTime TimeStamp { get; set; }
-		public IList<long> Affinity { get; set; } = new List<long>();
-		public ElpidaModel Elpida { get; set; } = new ElpidaModel();
-		public SystemModel System { get; set; } = new SystemModel();
-		public BenchmarkResultModel Result { get; set; } = new BenchmarkResultModel();
+		public string Affinity { get; set; } = default!;
+
+		public string ElpidaVersion { get; set; } = default!;
+		
+		public string CompilerVersion { get; set; } = default!;
+		public string CompilerName { get; set; } = default!;
+		
+		public string OsCategory { get; set; } = default!;
+		public string OsName { get; set; } = default!;
+		public string OsVersion { get; set; } = default!;
+		
+		public long MemorySize { get; set; }
+		public long PageSize { get; set; }
+		
+		public TopologyModel Topology { get; set; } = null!;
+
+		public double NotifyOverhead { get; set; }
+		public double WakeupOverhead { get; set; }
+		public double SleepOverhead { get; set; }
+		public double NowOverhead { get; set; }
+		public double LockOverhead { get; set; }
+		public double LoopOverhead { get; set; }
+		public double JoinOverhead { get; set; }
+		public double TargetTime { get; set; }
+		
+		public BenchmarkModel Benchmark { get; set; } = null!;
+		public ICollection<TaskResultModel> TaskResults { get; set; } = null!;
 	}
 }

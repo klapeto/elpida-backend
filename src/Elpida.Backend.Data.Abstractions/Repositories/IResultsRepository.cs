@@ -23,21 +23,18 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Data.Abstractions.Interfaces;
-using Elpida.Backend.Data.Abstractions.Models;
 using Elpida.Backend.Data.Abstractions.Models.Result;
-using Elpida.Backend.Data.Abstractions.Projections;
 
 namespace Elpida.Backend.Data.Abstractions.Repositories
 {
 	public interface IResultsRepository : IRepository<ResultModel>
 	{
-		Task<ResultProjection> GetProjectionAsync(string id, CancellationToken cancellationToken = default);
-		
-		Task<PagedQueryResult<ResultPreviewModel>> GetPagedPreviewsAsync<TOrderKey>(int from,
+		Task<PagedQueryResult<ResultPreviewModel>> GetPagedPreviewsAsync<TOrderKey>(
+			int from,
 			int count,
 			bool descending,
-			Expression<Func<ResultProjection, TOrderKey>> orderBy,
-			IEnumerable<Expression<Func<ResultProjection, bool>>> filters,
+			Expression<Func<ResultModel, TOrderKey>> orderBy,
+			IEnumerable<Expression<Func<ResultModel, bool>>> filters,
 			bool calculateTotalCount,
 			CancellationToken cancellationToken = default);
 	}

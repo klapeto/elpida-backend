@@ -27,6 +27,5 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 		public double Time { get; set; }
 		public long InputSize { get; set; }
 		public TaskStatisticsDto Statistics { get; set; } = new TaskStatisticsDto();
-		public IList<TaskOutlierDto> Outliers { get; set; } = new List<TaskOutlierDto>();
 	}
 }

@@ -25,92 +25,145 @@ using Elpida.Backend.Data.Abstractions.Models.Cpu;
 using Elpida.Backend.Data.Abstractions.Models.Result;
 using Elpida.Backend.Data.Abstractions.Models.Task;
 using Elpida.Backend.Data.Abstractions.Models.Topology;
-using Elpida.Backend.Data.Abstractions.Projections;
+using Elpida.Backend.Services.Abstractions.Dtos;
 using Elpida.Backend.Services.Abstractions.Dtos.Result;
+using Elpida.Backend.Services.Abstractions.Dtos.Topology;
 using Elpida.Backend.Services.Extensions.Cpu;
 using Elpida.Backend.Services.Extensions.Topology;
+using Newtonsoft.Json;
 
 namespace Elpida.Backend.Services.Extensions.Result
 {
 	public static class ResultDataExtensions
 	{
-		public static ResultDto ToDto(this ResultProjection resultProjection)
-		{
-			return new ResultModel
-			{
-				Affinity = resultProjection.Affinity,
-				Elpida = resultProjection.Elpida,
-				Id = resultProjection.Id,
-				Result = new BenchmarkResultModel
-				{
-					BenchmarkId = resultProjection.Result.Benchmark.Id,
-					TaskResults = resultProjection.Result.TaskResults.Select(projection => new TaskResultModel
-					{
-						TaskId = projection.Task.Id,
-						Outliers = projection.Result.Outliers,
-						Statistics = projection.Result.Statistics,
-						Time = projection.Result.Time,
-						Value = projection.Result.Value,
-						InputSize = projection.Result.InputSize
-					}).ToList()
-				},
-				System = new SystemModel
-				{
-					Memory = resultProjection.System.Memory,
-					Os = resultProjection.System.Os,
-					Timing = resultProjection.System.Timing,
-				},
-				TimeStamp = resultProjection.TimeStamp
-			}.ToDto(resultProjection.System.Cpu, 
-				resultProjection.System.Topology, 
-				resultProjection.Result.Benchmark,
-				resultProjection.Result.TaskResults.Select(r => r.Task));
-		}
-		
-		public static ResultDto ToDto(this ResultModel resultModel, 
-			CpuModel cpuModel, 
-			TopologyModel topologyModel,
-			BenchmarkModel benchmarkModel,
-			IEnumerable<TaskModel> tasks)
+		public static ResultDto ToDto(this ResultModel resultModel)
 		{
 			var resultDto = new ResultDto
 			{
 				TimeStamp = resultModel.TimeStamp,
 				Id = resultModel.Id,
-				Elpida = resultModel.Elpida.ToDto(),
-				Affinity = resultModel.Affinity.ToList(),
-				Result = resultModel.Result.ToDto(benchmarkModel, tasks),
-				System = resultModel.System.ToDto(cpuModel, topologyModel)
+				Elpida = new ElpidaDto
+				{
+					Compiler = new CompilerDto
+					{
+						Name = resultModel.CompilerName,
+						Version = resultModel.CompilerVersion,
+					},
+					Version = JsonConvert.DeserializeObject<VersionDto>(resultModel.ElpidaVersion)
+				},
+				Affinity = JsonConvert.DeserializeObject<List<long>>(resultModel.Affinity),
+				Result = new BenchmarkResultDto
+				{
+					Id = resultModel.Benchmark.Id,
+					Name = resultModel.Benchmark.Name,
+					TaskResults = resultModel.TaskResults.Select(r => new TaskResultDto
+					{
+						Id = r.Task.Id,
+						Name = r.Task.Name,
+						Description = r.Task.Description,
+						Input = r.Task.InputName != null ? new DataSpecificationDto
+						{
+							Name = r.Task.InputName,
+							Description = r.Task.InputDescription,
+							Unit = r.Task.InputDescription,
+							RequiredProperties = JsonConvert.DeserializeObject<List<string>>(r.Task.InputProperties)
+						} : null,
+						Output = r.Task.OutputName != null ? new DataSpecificationDto
+						{
+							Name = r.Task.OutputName,
+							Description = r.Task.OutputDescription,
+							Unit = r.Task.OutputDescription,
+							RequiredProperties = JsonConvert.DeserializeObject<List<string>>(r.Task.OutputProperties)
+						} : null,
+						Result = new ResultSpecificationDto
+						{
+							Name = r.Task.ResultName,
+							Description = r.Task.ResultDescription,
+							Aggregation = r.Task.ResultAggregation,
+							Type = r.Task.ResultType,
+							Unit = r.Task.ResultUnit
+						},
+						Statistics = new TaskStatisticsDto
+						{
+							Max = r.Max,
+							Mean = r.Mean,
+							Min = r.Min,
+							Sd = r.StandardDeviation,
+							Tau = r.Tau,
+							SampleSize = r.SampleSize,
+							MarginOfError = r.MarginOfError
+						},
+						Time = r.Time,
+						Value = r.Value,
+						InputSize = r.InputSize
+					}).ToList()
+				},
+				System = new SystemDto
+				{
+					Cpu = resultModel.Topology.Cpu.ToDto(),
+					Memory = new MemoryDto
+					{
+						PageSize = resultModel.PageSize,
+						TotalSize = resultModel.MemorySize,
+					},
+					Os = new OsDto
+					{
+						Category = resultModel.OsCategory,
+						Name = resultModel.OsName,
+						Version = resultModel.OsVersion
+					},
+					Timing = new TimingDto
+					{
+						JoinOverhead = resultModel.JoinOverhead,
+						LockOverhead = resultModel.LockOverhead,
+						LoopOverhead = resultModel.LoopOverhead,
+						NotifyOverhead = resultModel.NotifyOverhead,
+						NowOverhead = resultModel.NowOverhead,
+						SleepOverhead = resultModel.SleepOverhead,
+						TargetTime = resultModel.TargetTime,
+						WakeupOverhead = resultModel.WakeupOverhead,
+					},
+					Topology = new TopologyDto
+					{
+						TotalDepth = resultModel.Topology.TotalDepth,
+						TotalLogicalCores = resultModel.Topology.TotalLogicalCores,
+						TotalPhysicalCores = resultModel.Topology.TotalPhysicalCores,
+						Root = JsonConvert.DeserializeObject<CpuNodeDto>(resultModel.Topology.Root)
+					}
+				}
 			};
 
 			return resultDto;
 		}
 
-		public static ResultModel ToModel(this ResultDto resultDto, string id, string cpuId, string topologyId)
+		public static ResultModel ToModel(this ResultDto resultDto,
+			BenchmarkModel benchmarkModel,
+			TopologyModel topologyModel,
+			ICollection<TaskResultModel> resultModels)
 		{
-			if (string.IsNullOrWhiteSpace(id))
-			{
-				throw new ArgumentException("id cannot be empty", nameof(id));
-			}
-
-			if (string.IsNullOrWhiteSpace(cpuId))
-			{
-				throw new ArgumentException("cpuId cannot be empty", nameof(cpuId));
-			}
-
-			if (string.IsNullOrWhiteSpace(topologyId))
-			{
-				throw new ArgumentException("cpuId cannot be empty", nameof(topologyId));
-			}
-
 			return new ResultModel
 			{
-				Id = id,
-				TimeStamp = resultDto.TimeStamp,
-				Elpida = resultDto.Elpida.ToModel(),
-				Result = resultDto.Result.ToModel(),
-				Affinity = resultDto.Affinity.ToList(),
-				System = resultDto.System.ToModel(cpuId, topologyId)
+				Affinity = JsonConvert.SerializeObject(resultDto.Affinity),
+				Benchmark = benchmarkModel,
+				Topology = topologyModel,
+				CompilerName = resultDto.Elpida.Compiler.Name,
+				CompilerVersion = resultDto.Elpida.Compiler.Version,
+				ElpidaVersion = JsonConvert.SerializeObject(resultDto.Elpida.Version),
+				JoinOverhead = resultDto.System.Timing.JoinOverhead,
+				LockOverhead = resultDto.System.Timing.LockOverhead,
+				LoopOverhead = resultDto.System.Timing.LoopOverhead,
+				NotifyOverhead = resultDto.System.Timing.NotifyOverhead,
+				NowOverhead = resultDto.System.Timing.NowOverhead,
+				SleepOverhead = resultDto.System.Timing.SleepOverhead,
+				TargetTime = resultDto.System.Timing.TargetTime,
+				WakeupOverhead = resultDto.System.Timing.WakeupOverhead,
+				MemorySize = resultDto.System.Memory.TotalSize,
+				PageSize = resultDto.System.Memory.PageSize,
+				OsCategory = resultDto.System.Os.Category,
+				OsName = resultDto.System.Os.Name,
+				OsVersion = resultDto.System.Os.Version,
+				TaskResults = resultModels,
+				TimeStamp = resultDto.TimeStamp
 			};
 		}
 	}

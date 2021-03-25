@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2021  Ioannis Panagiotopoulos
+ * Copyright (C) 2020  Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,16 +17,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-namespace Elpida.Backend.Data.Abstractions.Models.Result
+using Elpida.Backend.Data.Abstractions.Models.Cpu;
+using Elpida.Backend.Data.Abstractions.Repositories;
+
+namespace Elpida.Backend.Data
 {
-	public class TaskStatisticsModel
+	public class CpuRepository : EntityRepository<CpuModel>, ICpuRepository
 	{
-		public long SampleSize { get; set; }
-		public double Max { get; set; }
-		public double Min { get; set; }
-		public double Mean { get; set; }
-		public double Sd { get; set; }
-		public double Tau { get; set; }
-		public double MarginOfError { get; set; }
+		public CpuRepository(ElpidaContext elpidaContext)
+			: base(elpidaContext, elpidaContext.Cpus)
+		{
+		}
 	}
 }

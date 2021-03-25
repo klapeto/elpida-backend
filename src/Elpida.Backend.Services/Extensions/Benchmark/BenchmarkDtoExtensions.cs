@@ -1,5 +1,9 @@
+using System.Collections.Generic;
+using System.Linq;
 using Elpida.Backend.Data.Abstractions.Models;
+using Elpida.Backend.Data.Abstractions.Models.Task;
 using Elpida.Backend.Services.Abstractions.Dtos;
+using Elpida.Backend.Services.Extensions.Task;
 
 namespace Elpida.Backend.Services.Extensions.Benchmark
 {
@@ -10,9 +14,17 @@ namespace Elpida.Backend.Services.Extensions.Benchmark
 			return new BenchmarkDto
 			{
 				Id = model.Id,
+				Uuid = model.Uuid,
 				Name = model.Name,
-				TaskSpecifications = model.TaskSpecifications
+				TaskSpecifications = model.Tasks.Select(t => t.ToDto()).ToList()
 			};
+		}
+
+		public static void Update(this BenchmarkModel model, BenchmarkModel other)
+		{
+			model.Name = other.Name;
+			model.Uuid = other.Uuid;
+			model.Tasks = other.Tasks.ToList();
 		}
 
 		public static BenchmarkModel ToModel(this BenchmarkDto dto)
@@ -20,8 +32,9 @@ namespace Elpida.Backend.Services.Extensions.Benchmark
 			return new BenchmarkModel
 			{
 				Id = dto.Id,
+				Uuid = dto.Uuid,
 				Name = dto.Name,
-				TaskSpecifications = dto.TaskSpecifications
+				Tasks = dto.TaskSpecifications.Select(t => t.ToModel()).ToList()
 			};
 		}
 	}

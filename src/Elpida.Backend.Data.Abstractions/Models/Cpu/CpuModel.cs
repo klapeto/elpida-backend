@@ -17,20 +17,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System.Collections.Generic;
 using Elpida.Backend.Data.Abstractions.Interfaces;
 
 namespace Elpida.Backend.Data.Abstractions.Models.Cpu
 {
-	public class CpuModel : IEntity
+	public class CpuModel : Entity
 	{
-		public string Id { get; set; } = string.Empty;
-		public string Vendor { get; set; } = string.Empty;
-		public string Brand { get; set; } = string.Empty;
+		public string Vendor { get; set; } = default!;
+		public string Brand { get; set; } = default!;
 		public long Frequency { get; set; }
 		public bool Smt { get; set; }
-		public IDictionary<string, string> AdditionalInfo { get; set; } = new Dictionary<string, string>();
-		public IList<CpuCacheModel> Caches { get; set; } = new List<CpuCacheModel>();
-		public IList<string> Features { get; set; } = new List<string>();
+		public string AdditionalInfo { get; set; } = default!;
+		public string Caches { get; set; } = default!;
+		public string Features { get; set; } = default!;
 	}
 }

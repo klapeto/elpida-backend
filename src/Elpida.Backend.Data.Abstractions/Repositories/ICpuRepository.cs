@@ -17,13 +17,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System.Threading.Tasks;
 using Elpida.Backend.Data.Abstractions.Interfaces;
 using Elpida.Backend.Data.Abstractions.Models.Cpu;
-using Elpida.Backend.Data.Abstractions.Models.Result;
 
 namespace Elpida.Backend.Data.Abstractions.Repositories
 {
 	public interface ICpuRepository : IRepository<CpuModel>
 	{
+		
 	}
 }

@@ -18,15 +18,18 @@
  */
 
 using Elpida.Backend.Data.Abstractions.Interfaces;
+using Elpida.Backend.Data.Abstractions.Models.Cpu;
 
 namespace Elpida.Backend.Data.Abstractions.Models.Topology
 {
-	public class TopologyModel : IEntity
+	public class TopologyModel : Entity
 	{
-		public string Id { get; set; } = string.Empty;
+		public long CpuId { get; set; }
+		public CpuModel Cpu { get; set; } = default!;
+		public string TopologyHash { get; set; } = default!;
 		public int TotalLogicalCores { get; set; }
 		public int TotalPhysicalCores { get; set; }
 		public int TotalDepth { get; set; }
-		public CpuNodeModel Root { get; set; } = new CpuNodeModel();
+		public string Root { get; set; } = default!;
 	}
 }

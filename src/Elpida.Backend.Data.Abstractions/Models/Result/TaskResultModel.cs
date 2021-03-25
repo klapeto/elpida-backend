@@ -17,17 +17,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System.Collections.Generic;
+using Elpida.Backend.Data.Abstractions.Interfaces;
+using Elpida.Backend.Data.Abstractions.Models.Task;
 
 namespace Elpida.Backend.Data.Abstractions.Models.Result
 {
-	public class TaskResultModel
+	public class TaskResultModel : Entity
 	{
-		public string TaskId { get; set; } = string.Empty;
+		public ResultModel Result { get; set; } = default!;
+		public TaskModel Task { get; set; } = default!;
 		public double Value { get; set; }
 		public double Time { get; set; }
 		public long InputSize { get; set; }
-		public TaskStatisticsModel Statistics { get; set; } = new TaskStatisticsModel();
-		public IList<TaskOutlierModel> Outliers { get; set; } = new List<TaskOutlierModel>();
+		public long SampleSize { get; set; }
+		public double Max { get; set; }
+		public double Min { get; set; }
+		public double Mean { get; set; }
+		public double StandardDeviation { get; set; }
+		public double Tau { get; set; }
+		public double MarginOfError { get; set; }
 	}
 }

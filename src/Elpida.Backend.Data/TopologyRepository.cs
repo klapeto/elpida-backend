@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2020  Ioannis Panagiotopoulos
+ * Copyright (C) 2021  Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,14 +17,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-namespace Elpida.Backend.Data.Abstractions.Models.Cpu
+using Elpida.Backend.Data.Abstractions.Models.Topology;
+using Elpida.Backend.Data.Abstractions.Repositories;
+
+namespace Elpida.Backend.Data
 {
-	public class CpuCacheModel
+	public class TopologyRepository : EntityRepository<TopologyModel>, ITopologyRepository
 	{
-		public string Name { get; set; } = string.Empty;
-		public string Associativity { get; set; } = string.Empty;
-		public long Size { get; set; }
-		public int LinesPerTag { get; set; }
-		public int LineSize { get; set; }
+		public TopologyRepository(ElpidaContext context)
+			: base(context, context.Topologies)
+		{
+		}
 	}
 }

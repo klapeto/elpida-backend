@@ -42,17 +42,6 @@ namespace Elpida.Backend.Controllers
 			_resultsService = resultsService;
 		}
 
-		[HttpDelete]
-		[Consumes(MediaTypeNames.Application.Json)]
-		[ProducesResponseType(StatusCodes.Status200OK)]
-		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		[ApiKeyAuthentication(KeyName = "Results")]
-		public async Task<IActionResult> ClearResults(CancellationToken cancellationToken)
-		{
-			await _resultsService.ClearResultsAsync(cancellationToken);
-			return Ok();
-		}
-
 		[HttpPost]
 		[Consumes(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(StatusCodes.Status201Created)]
@@ -69,13 +58,7 @@ namespace Elpida.Backend.Controllers
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<IActionResult> GetSingle([FromRoute] string id, CancellationToken cancellationToken)
 		{
-			var resultDto = await _resultsService.GetSingleAsync(id, cancellationToken);
-			if (resultDto != null)
-			{
-				return Ok(resultDto);
-			}
-
-			return NotFound(id);
+			return Ok(await _resultsService.GetSingleAsync(id, cancellationToken));
 		}
 
 		[HttpGet]

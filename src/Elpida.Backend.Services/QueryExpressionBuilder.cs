@@ -36,7 +36,7 @@ namespace Elpida.Backend.Services
 				availableExpressions ?? throw new ArgumentNullException(nameof(availableExpressions));
 		}
 
-		public IEnumerable<Expression<Func<T, bool>>> Build<T>(IEnumerable<QueryInstance> queryInstances)
+		public IEnumerable<Expression<Func<T, bool>>> Build<T>(IEnumerable<QueryInstance>? queryInstances)
 		{
 			if (queryInstances == null) yield break;
 

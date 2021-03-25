@@ -23,16 +23,14 @@ namespace Elpida.Backend.Data.Abstractions.Models.Result
 {
 	public class ResultPreviewModel
 	{
-		public string Id { get; set; } = string.Empty;
-		public string Name { get; set; } = string.Empty;
+		public long Id { get; set; }
+		public string Name { get; set; } = default!;
 		public DateTime TimeStamp { get; set; }
-		public int ElpidaVersionMajor { get; set; }
-		public int ElpidaVersionMinor { get; set; }
-		public int ElpidaVersionRevision { get; set; }
-		public int ElpidaVersionBuild { get; set; }
-		public string OsName { get; set; } = string.Empty;
-		public string OsVersion { get; set; } = string.Empty;
-		public string CpuBrand { get; set; } = string.Empty;
+		
+		public string ElpidaVersion { get; set; } = default!;
+		public string OsName { get; set; } = default!;
+		public string OsVersion { get; set; } = default!;
+		public string CpuBrand { get; set; } = default!;
 		public long CpuFrequency { get; set; }
 		public int CpuCores { get; set; }
 		public int CpuLogicalCores { get; set; }

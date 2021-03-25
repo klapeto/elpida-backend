@@ -10,38 +10,28 @@ namespace Elpida.Backend.Services.Extensions.Result
 {
 	public static class SystemDataExtensions
 	{
-		public static SystemDto ToDto(this SystemModel model, CpuModel cpuModel, TopologyModel topologyModel)
-		{
-			return new SystemDto
-			{
-				Os = model.Os.ToDto(),
-				Cpu = cpuModel.ToDto(),
-				Timing = model.Timing.ToDto(),
-				Memory = model.Memory.ToDto(),
-				Topology = topologyModel.ToDto(),
-			};
-		}
-
-		public static SystemModel ToModel(this SystemDto dto, string cpuId, string topologyId)
-		{
-			if (string.IsNullOrWhiteSpace(cpuId))
-			{
-				throw new ArgumentException("'cpuId' cannot be empty", nameof(cpuId));
-			}
-
-			if (string.IsNullOrWhiteSpace(topologyId))
-			{
-				throw new ArgumentException("'topologyId' cannot be empty", nameof(topologyId));
-			}
-
-			return new SystemModel
-			{
-				Memory = dto.Memory.ToModel(),
-				Os = dto.Os.ToModel(),
-				Timing = dto.Timing.ToModel(),
-				CpuId = cpuId,
-				TopologyId = topologyId
-			};
-		}
+		// 	public static SystemDto ToDto(this SystemModel model, CpuModel cpuModel, TopologyModel topologyModel)
+		// 	{
+		// 		return new SystemDto
+		// 		{
+		// 			Os = model.Os.ToDto(),
+		// 			Cpu = cpuModel.ToDto(),
+		// 			Timing = model.Timing.ToDto(),
+		// 			Memory = model.Memory.ToDto(),
+		// 			Topology = topologyModel.ToDto(),
+		// 		};
+		// 	}
+		//
+		// 	public static SystemModel ToModel(this SystemDto dto, int cpuId, int topologyId)
+		// 	{
+		// 		return new SystemModel
+		// 		{
+		// 			Memory = dto.Memory.ToModel(),
+		// 			Os = dto.Os.ToModel(),
+		// 			Timing = dto.Timing.ToModel(),
+		// 			CpuId = cpuId,
+		// 			TopologyId = topologyId
+		// 		};
+		// 	}
 	}
 }

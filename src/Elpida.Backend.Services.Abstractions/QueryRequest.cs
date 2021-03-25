@@ -29,6 +29,6 @@ namespace Elpida.Backend.Services.Abstractions
 
 		public PageRequest PageRequest { get; set; } = new PageRequest();
 		
-		public QueryInstance[] Filters { get; set; } = new QueryInstance[0];
+		public QueryInstance[]? Filters { get; set; }
 	}
 }

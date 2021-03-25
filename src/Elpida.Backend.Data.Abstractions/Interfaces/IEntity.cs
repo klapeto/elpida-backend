@@ -19,8 +19,8 @@
 
 namespace Elpida.Backend.Data.Abstractions.Interfaces
 {
-	public interface IEntity
+	public class Entity
 	{
-		public string Id { get; }
+		public long Id { get; set; }
 	}
 }

@@ -17,19 +17,33 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using Elpida.Backend.Data.Abstractions;
-using Elpida.Backend.Data.Abstractions.Models.Result;
-using Elpida.Backend.Data.Abstractions.Models.Topology;
+using System.Linq;
+using Elpida.Backend.Data.Abstractions.Models;
 using Elpida.Backend.Data.Abstractions.Repositories;
-using MongoDB.Driver;
+using Microsoft.EntityFrameworkCore;
 
 namespace Elpida.Backend.Data
 {
-	public class MongoTopologyRepository : MongoRepository<TopologyModel>, ITopologyRepository
+	public class BenchmarkRepository : EntityRepository<BenchmarkModel>, IBenchmarkRepository
 	{
-		public MongoTopologyRepository(IMongoCollection<TopologyModel> topologyCollection)
-			: base(topologyCollection)
+		public BenchmarkRepository(ElpidaContext elpidaContext) 
+			: base(elpidaContext, elpidaContext.Benchmarks)
 		{
+		}
+
+		protected override IQueryable<BenchmarkModel> ProcessGetSingle(IQueryable<BenchmarkModel> queryable)
+		{
+			return queryable.Include(model => model.Tasks);
+		}
+
+		protected override IQueryable<BenchmarkModel> ProcessGetMultiple(IQueryable<BenchmarkModel> queryable)
+		{
+			return queryable.Include(model => model.Tasks);
+		}
+
+		protected override IQueryable<BenchmarkModel> ProcessGetMultiplePaged(IQueryable<BenchmarkModel> queryable)
+		{
+			return queryable.Include(model => model.Tasks);
 		}
 	}
 }

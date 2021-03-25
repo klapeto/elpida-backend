@@ -1,7 +1,8 @@
+using System.Collections.Generic;
 using System.Linq;
 using Elpida.Backend.Data.Abstractions.Models.Cpu;
 using Elpida.Backend.Services.Abstractions.Dtos.Cpu;
-using Elpida.Backend.Services.Abstractions.Dtos.Result;
+using Newtonsoft.Json;
 
 namespace Elpida.Backend.Services.Extensions.Cpu
 {
@@ -12,27 +13,27 @@ namespace Elpida.Backend.Services.Extensions.Cpu
 			return new CpuDto
 			{
 				Brand = model.Brand,
-				Caches = model.Caches.Select(c => c.ToDto()).ToList(),
-				Features = model.Features,
+				Caches = JsonConvert.DeserializeObject<List<CpuCacheDto>>(model.Caches),
+				Features = JsonConvert.DeserializeObject<List<string>>(model.Features),
 				Frequency = model.Frequency,
 				Smt = model.Smt,
 				Vendor = model.Vendor,
-				AdditionalInfo = model.AdditionalInfo
+				AdditionalInfo = JsonConvert.DeserializeObject<Dictionary<string, string>>(model.AdditionalInfo)
 			};
 		}
 		
-		public static CpuModel ToModel(this CpuDto cpuDto, string id)
+		public static CpuModel ToModel(this CpuDto cpuDto, int id)
 		{
 			return new CpuModel
 			{
 				Id = id,
 				Brand = cpuDto.Brand,
-				Caches = cpuDto.Caches.Select(c => c.ToModel()).ToList(),
-				Features = cpuDto.Features,
+				Caches = JsonConvert.SerializeObject(cpuDto.Caches),
+				Features = JsonConvert.SerializeObject(cpuDto.Features),
 				Frequency = cpuDto.Frequency,
 				Smt = cpuDto.Smt,
 				Vendor = cpuDto.Vendor,
-				AdditionalInfo = cpuDto.AdditionalInfo
+				AdditionalInfo = JsonConvert.SerializeObject(cpuDto.AdditionalInfo)
 			};
 		}
 	}

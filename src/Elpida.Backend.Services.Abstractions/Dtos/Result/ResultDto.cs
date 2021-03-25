@@ -24,7 +24,7 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 {
 	public class ResultDto
 	{
-		public string? Id { get; set; }
+		public long? Id { get; set; }
 		public DateTime TimeStamp { get; set; }
 		public IList<long> Affinity { get; set; } = new List<long>();
 		public ElpidaDto Elpida { get; set; } = new ElpidaDto();

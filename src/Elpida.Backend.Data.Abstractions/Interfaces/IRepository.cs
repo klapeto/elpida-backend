@@ -25,28 +25,32 @@ using System.Threading.Tasks;
 
 namespace Elpida.Backend.Data.Abstractions.Interfaces
 {
-	public interface IRepository<T> where T: IEntity
+	public interface IRepository<TEntity> where TEntity : Entity
 	{
-		Task<T> GetSingleAsync(string id, CancellationToken cancellationToken = default);
+		Task<TEntity> GetSingleAsync(long id, CancellationToken cancellationToken = default);
+		
+		Task<TEntity> GetSingleAsync(Expression<Func<TEntity, bool>> filters, CancellationToken cancellationToken = default);
 
-		Task<string> CreateAsync(T model, CancellationToken cancellationToken = default);
+		Task<TEntity> CreateAsync(TEntity entity, CancellationToken cancellationToken = default);
 
-		Task UpdateAsync(T model, CancellationToken cancellationToken = default);
+		Task UpdateAsync(TEntity entity, CancellationToken cancellationToken = default);
 
 		Task<long> GetTotalCountAsync(CancellationToken cancellationToken = default);
 
-		Task<PagedQueryResult<T>> GetPagedAsync<TOrderKey>(
-			int from, 
-			int count, 
-			bool descending, 
-			Expression<Func<T, TOrderKey>> orderBy,
-			IEnumerable<Expression<Func<T, bool>>> filters,
+		Task<PagedQueryResult<TEntity>> GetMultiplePagedAsync<TOrderKey>(
+			int from,
+			int count,
+			bool descending,
+			Expression<Func<TEntity, TOrderKey>> orderBy,
+			IEnumerable<Expression<Func<TEntity, bool>>> filters,
 			bool calculateTotalCount,
 			CancellationToken cancellationToken = default);
-		
-		Task<List<T>> GetAsync(IEnumerable<Expression<Func<T, bool>>> filters,
+
+		Task<List<TEntity>> GetMultipleAsync(IEnumerable<Expression<Func<TEntity, bool>>> filters,
 			CancellationToken cancellationToken = default);
 
-		Task DeleteAllAsync(CancellationToken cancellationToken = default);
+		Task DeleteAsync(TEntity entity, CancellationToken cancellationToken = default);
+
+		Task SaveChangesAsync(CancellationToken cancellationToken = default);
 	}
 }

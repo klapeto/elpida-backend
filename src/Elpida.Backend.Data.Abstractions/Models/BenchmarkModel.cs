@@ -1,14 +1,14 @@
+using System;
 using System.Collections.Generic;
 using Elpida.Backend.Data.Abstractions.Interfaces;
+using Elpida.Backend.Data.Abstractions.Models.Task;
 
 namespace Elpida.Backend.Data.Abstractions.Models
 {
-	public class BenchmarkModel : IEntity
+	public class BenchmarkModel : Entity
 	{
-		public string Id { get; set; } = string.Empty;
-
-		public string Name { get; set; } = string.Empty;
-
-		public IList<string> TaskSpecifications { get; set; } = new List<string>();
+		public Guid Uuid { get; set; }
+		public string Name { get; set; } = default!;
+		public IList<TaskModel> Tasks { get; set; } = default!;
 	}
 }
