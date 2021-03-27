@@ -58,7 +58,12 @@ namespace Elpida.Backend.Controllers
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<IActionResult> GetSingle([FromRoute] string id, CancellationToken cancellationToken)
 		{
-			return Ok(await _resultsService.GetSingleAsync(id, cancellationToken));
+			if (long.TryParse(id, out var lid))
+			{
+				return Ok(await _resultsService.GetSingleAsync(lid, cancellationToken));
+			}
+
+			return BadRequest("Id must be an Integer number");
 		}
 
 		[HttpGet]

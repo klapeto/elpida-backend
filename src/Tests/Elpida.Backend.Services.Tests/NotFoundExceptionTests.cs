@@ -19,6 +19,7 @@
 
 using System;
 using Elpida.Backend.Services.Abstractions;
+using Elpida.Backend.Services.Abstractions.Exceptions;
 using NUnit.Framework;
 
 namespace Elpida.Backend.Services.Tests

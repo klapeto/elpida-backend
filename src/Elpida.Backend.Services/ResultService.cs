@@ -103,7 +103,7 @@ namespace Elpida.Backend.Services
 
 		#region IResultsService Members
 
-		public async Task<string> CreateAsync(ResultDto resultDto, CancellationToken cancellationToken)
+		public async Task<long> CreateAsync(ResultDto resultDto, CancellationToken cancellationToken)
 		{
 			var benchmark =
 				await _benchmarkRepository.GetSingleAsync(t => t.Uuid == resultDto.Result.Uuid, cancellationToken);
@@ -136,26 +136,16 @@ namespace Elpida.Backend.Services
 			await _cpuRepository.SaveChangesAsync(cancellationToken);
 			await _topologyRepository.SaveChangesAsync(cancellationToken);
 
-			return result.Id.ToString();
+			return result.Id;
 		}
 
-		public async Task<ResultDto> GetSingleAsync(string id, CancellationToken cancellationToken)
+		public async Task<ResultDto> GetSingleAsync(long id, CancellationToken cancellationToken)
 		{
-			if (string.IsNullOrWhiteSpace(id))
-			{
-				throw new ArgumentException("Id cannot be empty", nameof(id));
-			}
-
-			if (!long.TryParse(id, out var idL))
-			{
-				throw new ArgumentException("Id cannot must be a number", nameof(id));
-			}
-
-			var resultModel = await _resultsRepository.GetSingleAsync(idL, cancellationToken);
+			var resultModel = await _resultsRepository.GetSingleAsync(id, cancellationToken);
 
 			if (resultModel == null)
 			{
-				throw new NotFoundException(id);
+				throw new NotFoundException(id.ToString());
 			}
 
 			return resultModel.ToDto();
@@ -164,11 +154,6 @@ namespace Elpida.Backend.Services
 		public async Task<PagedResult<ResultPreviewDto>> GetPagedAsync(QueryRequest queryRequest,
 			CancellationToken cancellationToken)
 		{
-			if (queryRequest == null)
-			{
-				throw new ArgumentNullException(nameof(queryRequest));
-			}
-
 			var expressionBuilder = new QueryExpressionBuilder(ResultProjectionExpressions);
 
 			var result = await _resultsRepository.GetPagedPreviewsAsync(

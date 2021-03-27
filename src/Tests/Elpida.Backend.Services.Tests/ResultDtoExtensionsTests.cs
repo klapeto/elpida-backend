@@ -18,77 +18,51 @@
  */
 
 using System;
+using System.Linq;
 using Elpida.Backend.Services.Abstractions.Dtos.Result;
+using Elpida.Backend.Services.Extensions.Result;
+using Newtonsoft.Json;
 using NUnit.Framework;
 
 namespace Elpida.Backend.Services.Tests
 {
 	public class ResultDtoExtensionsTests
 	{
-		
-		[Test]
-		public void ToResultModel_Null_ThrowsArgumentNullException()
-		{
-			Assert.Throws<ArgumentNullException>(() => ((ResultDto) null).ToModel("x", "y", "z"));
-		}
-		
-		[Test]
-		[TestCase(null, "Test", "Test")]
-		[TestCase("Test", null, "Test")]
-		[TestCase("Test", "Test", null)]
-		public void ToResultModel_Null_ThrowsArgumentException(string id, string cpuId, string topologyId)
-		{
-			Assert.Throws<ArgumentException>(() => new ResultDto().ToModel(id, cpuId, topologyId));
-		}
-		
 		[Test]
 		public void ToModelSuccess()
 		{
 			const double tolerance = 0.01;
 			var dto = Generators.CreateNewResultDto();
-			var model = dto.ToModel(dto.Id, "y", "z");
+			var model = dto.ToModel(Generators.CreateNewResultModel(41).Benchmark, Generators.CreateNewResultModel(41).Topology, Generators.CreateNewResultModel(41).TaskResults);
 
-			Assert.AreEqual(dto.Id, model.Id);
-			Assert.AreEqual(dto.TimeStamp, model.TimeStamp);
+			Assert.AreEqual(model.Id, 0);
+			Assert.AreEqual(model.TimeStamp, dto.TimeStamp);
 
-			Assert.True(Helpers.AssertCollectionsAreEqual(dto.Affinity, model.Affinity, (a, b) => a == b));
+			Assert.AreEqual(model.Affinity, JsonConvert.SerializeObject(dto.Affinity));
 
-			Assert.AreEqual(dto.Elpida.Compiler.Name, model.Elpida.Compiler.Name);
-			Assert.AreEqual(dto.Elpida.Compiler.Version, model.Elpida.Compiler.Version);
-			Assert.AreEqual(dto.Elpida.Version.Build, model.Elpida.Version.Build);
-			Assert.AreEqual(dto.Elpida.Version.Major, model.Elpida.Version.Major);
-			Assert.AreEqual(dto.Elpida.Version.Minor, model.Elpida.Version.Minor);
-			Assert.AreEqual(dto.Elpida.Version.Revision, model.Elpida.Version.Revision);
-
-			Assert.AreEqual(dto.Result.Name, model.Result.Name);
-
-			Assert.True(Helpers.AssertCollectionsAreEqual(dto.Result.TaskResults, model.Result.TaskResults,
-				(a, b) => a.Name == b.Name
-				          && a.Description == b.Description
-				          && a.Suffix == b.Suffix
-				          && Math.Abs(a.Time - b.Time) < tolerance
-				          && a.Type == b.Type
-				          && Math.Abs(a.Value - b.Value) < tolerance
-				          && a.InputSize == b.InputSize
-				          && Helpers.AreEqual(b.Statistics, a.Statistics, tolerance)
-				          && Helpers.AssertCollectionsAreEqual(a.Outliers, b.Outliers, (c,d) => Helpers.AreEqual(d,c,tolerance))));
-
-
-			Assert.AreEqual(dto.System.Memory.PageSize, model.System.Memory.PageSize);
-			Assert.AreEqual(dto.System.Memory.TotalSize, model.System.Memory.TotalSize);
-
-			Assert.AreEqual(dto.System.Os.Category, model.System.Os.Category);
-			Assert.AreEqual(dto.System.Os.Name, model.System.Os.Name);
-			Assert.AreEqual(dto.System.Os.Version, model.System.Os.Version);
+			Assert.AreEqual(model.CompilerName, dto.Elpida.Compiler.Name);
+			Assert.AreEqual(model.CompilerVersion, dto.Elpida.Compiler.Version);
 			
-			Assert.AreEqual(dto.System.Timing.JoinOverhead, model.System.Timing.JoinOverhead);
-			Assert.AreEqual(dto.System.Timing.LockOverhead, model.System.Timing.LockOverhead);
-			Assert.AreEqual(dto.System.Timing.LoopOverhead, model.System.Timing.LoopOverhead);
-			Assert.AreEqual(dto.System.Timing.NotifyOverhead, model.System.Timing.NotifyOverhead);
-			Assert.AreEqual(dto.System.Timing.NowOverhead, model.System.Timing.NowOverhead);
-			Assert.AreEqual(dto.System.Timing.SleepOverhead, model.System.Timing.SleepOverhead);
-			Assert.AreEqual(dto.System.Timing.TargetTime, model.System.Timing.TargetTime);
-			Assert.AreEqual(dto.System.Timing.WakeupOverhead, model.System.Timing.WakeupOverhead);
+			Assert.AreEqual(model.ElpidaVersionBuild, dto.Elpida.Version.Build);
+			Assert.AreEqual(model.ElpidaVersionMajor, dto.Elpida.Version.Major);
+			Assert.AreEqual(model.ElpidaVersionMinor, dto.Elpida.Version.Minor);
+			Assert.AreEqual(model.ElpidaVersionRevision, dto.Elpida.Version.Revision);
+
+			Assert.AreEqual(model.PageSize, dto.System.Memory.PageSize);
+			Assert.AreEqual(model.MemorySize, dto.System.Memory.TotalSize);
+
+			Assert.AreEqual(model.OsCategory, dto.System.Os.Category);
+			Assert.AreEqual(model.OsName, dto.System.Os.Name);
+			Assert.AreEqual(model.OsVersion, dto.System.Os.Version);
+
+			Assert.AreEqual(model.JoinOverhead, dto.System.Timing.JoinOverhead);
+			Assert.AreEqual(model.LockOverhead, dto.System.Timing.LockOverhead);
+			Assert.AreEqual(model.LoopOverhead, dto.System.Timing.LoopOverhead);
+			Assert.AreEqual(model.NotifyOverhead, dto.System.Timing.NotifyOverhead);
+			Assert.AreEqual(model.NowOverhead, dto.System.Timing.NowOverhead);
+			Assert.AreEqual(model.SleepOverhead, dto.System.Timing.SleepOverhead);
+			Assert.AreEqual(model.TargetTime, dto.System.Timing.TargetTime);
+			Assert.AreEqual(model.WakeupOverhead, dto.System.Timing.WakeupOverhead);
 
 		}
 	}

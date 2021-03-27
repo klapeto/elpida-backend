@@ -22,49 +22,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Elpida.Backend.Data.Abstractions.Models.Result;
 using Elpida.Backend.Services.Abstractions.Dtos.Result;
+using Elpida.Backend.Services.Abstractions.Dtos.Topology;
 using NUnit.Framework;
 
 namespace Elpida.Backend.Services.Tests
 {
 	public static class Helpers
 	{
-		public static bool AreEqual(TaskOutlierModel model, TaskOutlierDto dto, double tolerance)
-		{
-			return Math.Abs(model.Time - dto.Time) < tolerance
-			       && Math.Abs(model.Value - dto.Value) < tolerance;
-		}
-		
-		public static bool AreEqual(TaskStatisticsModel model, TaskStatisticsDto dto, double tolerance)
-		{
-			return Math.Abs(model.Max - dto.Max) < tolerance
-			       && Math.Abs(model.Min - dto.Min) < tolerance
-			       && Math.Abs(model.Mean - dto.Mean) < tolerance
-			       && Math.Abs(model.Sd - dto.Sd) < tolerance
-			       && Math.Abs(model.Tau - dto.Tau) < tolerance
-			       && Math.Abs(model.SampleSize - dto.SampleSize) < tolerance
-			       && Math.Abs(model.MarginOfError - dto.MarginOfError) < tolerance;
-		}
-
-		public static void AssertTopology(CpuNodeModel model, CpuNodeDto dto)
-		{
-			Assert.AreEqual(model.Name, dto.Name);
-			Assert.AreEqual(model.Value, dto.Value);
-			Assert.AreEqual(model.NodeType, dto.NodeType);
-			Assert.AreEqual(model.OsIndex, dto.OsIndex);
-
-			AssertCollectionsAreEqual(model.MemoryChildren, dto.MemoryChildren, (a, b) =>
-			{
-				AssertTopology(a, b);
-				return true;
-			});
-
-			AssertCollectionsAreEqual(model.Children, dto.Children, (a, b) =>
-			{
-				AssertTopology(a, b);
-				return true;
-			});
-		}
-
 		public static bool AssertCollectionsAreEqual<T, R>(IEnumerable<T> ea, IEnumerable<R> eb,
 			Func<T, R, bool> assertion)
 		{

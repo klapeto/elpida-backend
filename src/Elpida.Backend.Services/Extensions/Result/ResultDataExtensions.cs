@@ -61,7 +61,7 @@ namespace Elpida.Backend.Services.Extensions.Result
 		
 		public static ResultDto ToDto(this ResultModel resultModel)
 		{
-			var resultDto = new ResultDto
+			return new ResultDto
 			{
 				TimeStamp = resultModel.TimeStamp,
 				Id = resultModel.Id,
@@ -84,10 +84,12 @@ namespace Elpida.Backend.Services.Extensions.Result
 				Result = new BenchmarkResultDto
 				{
 					Id = resultModel.Benchmark.Id,
+					Uuid = resultModel.Benchmark.Uuid,
 					Name = resultModel.Benchmark.Name,
 					TaskResults = resultModel.TaskResults.Select(r => new TaskResultDto
 					{
 						Id = r.Task.Id,
+						Uuid = r.Task.Uuid,
 						Name = r.Task.Name,
 						Description = r.Task.Description,
 						Input = r.Task.CreateInputSpecDto(),
@@ -149,8 +151,6 @@ namespace Elpida.Backend.Services.Extensions.Result
 					}
 				}
 			};
-
-			return resultDto;
 		}
 
 		public static ResultModel ToModel(this ResultDto resultDto,

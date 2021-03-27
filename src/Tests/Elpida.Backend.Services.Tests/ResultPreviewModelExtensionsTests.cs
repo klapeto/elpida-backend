@@ -18,6 +18,7 @@
  */
 
 using System;
+using Elpida.Backend.Services.Extensions.Result;
 using NUnit.Framework;
 
 namespace Elpida.Backend.Services.Tests
@@ -27,7 +28,7 @@ namespace Elpida.Backend.Services.Tests
 		[Test]
 		public void ToDto_Success()
 		{
-			var model = Generators.CreateResultPreviewModel(Guid.NewGuid().ToString("N"));
+			var model = Generators.CreateResultPreviewModel(146);
 			var dto = model.ToDto();
 			
 			Assert.AreEqual(model.Id, dto.Id);

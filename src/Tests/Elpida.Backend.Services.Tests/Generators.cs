@@ -20,46 +20,45 @@
 using System;
 using System.Collections.Generic;
 using Elpida.Backend.Data.Abstractions.Models;
+using Elpida.Backend.Data.Abstractions.Models.Cpu;
 using Elpida.Backend.Data.Abstractions.Models.Result;
+using Elpida.Backend.Data.Abstractions.Models.Task;
+using Elpida.Backend.Data.Abstractions.Models.Topology;
+using Elpida.Backend.Services.Abstractions.Dtos;
+using Elpida.Backend.Services.Abstractions.Dtos.Cpu;
 using Elpida.Backend.Services.Abstractions.Dtos.Result;
+using Elpida.Backend.Services.Abstractions.Dtos.Topology;
 
 namespace Elpida.Backend.Services.Tests
 {
 	public static class Generators
 	{
-		public static ResultProjection CreateProjection(string id)
+
+		public static TaskModel CreateNewTaskModel()
 		{
-			var result = CreateNewResultModel(id);
-			return new ResultProjection
+			return new TaskModel
 			{
-				Affinity = result.Affinity,
-				Elpida = result.Elpida,
-				Id = result.Id,
-				Result = result.Result,
-				System = new SystemModelProjection
-				{
-					Cpu = CreateNewCpuModel(),
-					Memory = result.System.Memory,
-					Os = result.System.Os,
-					Topology = CreateNewTopology(),
-					Timing = new TimingModel
-					{
-						JoinOverhead = 454,
-						LockOverhead = 4664,
-						LoopOverhead = 56465,
-						NotifyOverhead = 6544,
-						NowOverhead = 564456,
-						SleepOverhead = 13213,
-						TargetTime = 156341,
-						WakeupOverhead = 155,
-					}
-				},
-				TimeStamp = result.TimeStamp
+				Id = 131,
+				Description = "sdfsdf",
+				Name = "dsfdsfds",
+				Uuid = Guid.NewGuid(),
+				InputDescription = "sdfsdf",
+				InputName = "sdfsdfdsf",
+				InputProperties = "[]",
+				InputUnit = "s",
+				OutputDescription = "sadfsdfsd",
+				OutputName = "sdfsdfdsf",
+				OutputProperties = "[]",
+				OutputUnit = "s",
+				ResultAggregation = 2,
+				ResultDescription = "dsfsdfs",
+				ResultName = "sdfsdfsd",
+				ResultType = 211,
+				ResultUnit = "LOLs",
 			};
 		}
 
-
-		public static ResultPreviewModel CreateResultPreviewModel(string id)
+		public static ResultPreviewModel CreateResultPreviewModel(long id)
 		{
 			return new ResultPreviewModel
 			{
@@ -80,93 +79,55 @@ namespace Elpida.Backend.Services.Tests
 			};
 		}
 
-		public static ResultModel CreateNewResultModel(string id)
+		public static ResultModel CreateNewResultModel(long id)
 		{
 			return new ResultModel
 			{
 				Id = id,
 				TimeStamp = DateTime.UtcNow,
-				Affinity = new List<long> {5, 3, 1},
-				Elpida = new ElpidaModel
+				Affinity = "[1,2,3]",
+				Benchmark = new BenchmarkModel
 				{
-					Compiler = new CompilerModel
-					{
-						Name = "GCC",
-						Version = "10.0.0"
-					},
-					Version = new VersionModel
-					{
-						Build = 2110,
-						Major = 1,
-						Minor = 0,
-						Revision = 1
-					}
+					Id = 123,
+					Name = "Memeory Read",
+					Uuid = Guid.NewGuid()
 				},
-				Result = new BenchmarkResultModel
+				Topology = CreateNewTopology(),
+				ElpidaVersionBuild = 131,
+				ElpidaVersionMajor = 153,
+				ElpidaVersionMinor = 1564,
+				ElpidaVersionRevision = 1354,
+				CompilerName = "GCC",
+				CompilerVersion = "10.0.0",
+				JoinOverhead = 0.23,
+				LockOverhead = 021,
+				LoopOverhead = 3213,
+				NotifyOverhead = 12365,
+				NowOverhead = 6132,
+				SleepOverhead = 1566,
+				TargetTime = 4684,
+				WakeupOverhead = 5644,
+				MemorySize = 616584,
+				OsCategory = "Linux",
+				OsName = "Windows",
+				OsVersion = "1.12",
+				PageSize = 32513,
+				TaskResults = new List<TaskResultModel>
 				{
-					Name = "Memory Read Bandwidth",
-					TaskResults = new List<TaskResultModel>
+					new TaskResultModel
 					{
-						new TaskResultModel
-						{
-							Description = "Read Bandwidth",
-							Name = "Read Bandwidth",
-							Suffix = "B",
-							Time = 255.0,
-							Type = 0,
-							Value = 656566.0,
-							InputSize = 56665,
-							Outliers = new List<TaskOutlierModel>
-							{
-								new TaskOutlierModel
-								{
-									Time = 213,
-									Value = 16341,
-								},
-								new TaskOutlierModel
-								{
-									Time = 65466,
-									Value = 415,
-								}
-							},
-							Statistics = new TaskStatisticsModel
-							{
-								Max = 141635,
-								Mean = 52452,
-								Min = 5465,
-								Sd = 5464,
-								Tau = 465,
-								SampleSize = 54454,
-								MarginOfError = 4441
-							}
-						}
-					}
-				},
-				System = new SystemModel
-				{
-					CpuId = "AMD_TR",
-					TopologyId = "NUMA_C",
-					Timing = new TimingModel
-					{
-						JoinOverhead = 0.23,
-						LockOverhead = 021,
-						LoopOverhead = 3213,
-						NotifyOverhead = 12365,
-						NowOverhead = 6132,
-						SleepOverhead = 1566,
-						TargetTime = 4684,
-						WakeupOverhead = 5644
-					},
-					Memory = new MemoryModel
-					{
-						PageSize = 4096,
-						TotalSize = 544465464
-					},
-					Os = new OsModel
-					{
-						Category = "Linux",
-						Name = "KDE Neon",
-						Version = "25.0"
+						Id = 464,
+						Time = 255.0,
+						Value = 656566.0,
+						InputSize = 56665,
+						Max = 141635,
+						Mean = 52452,
+						Min = 5465,
+						StandardDeviation = 5464,
+						Tau = 465,
+						SampleSize = 54454,
+						MarginOfError = 4441,
+						Task = CreateNewTaskModel()
 					}
 				}
 			};
@@ -177,17 +138,13 @@ namespace Elpida.Backend.Services.Tests
 			return new CpuModel
 			{
 				Brand = "Sdsf",
-				Caches = new List<CpuCacheModel>
-				{
-					new CpuCacheModel
-						{Associativity = "Full", Name = "L1", Size = 4546, LineSize = 65465, LinesPerTag = 46462}
-				},
-				Features = new List<string> {"LOL", "XD"},
+				Caches = "[]",
+				Features = "[]",
 				Frequency = 644,
-				Id = "sadfsdfsd",
+				Id = 32465,
 				Smt = false,
 				Vendor = "dsafdsf",
-				AdditionalInfo = new Dictionary<string, string> {["Fast"] = "yes", ["Sffv"] = "dfsf"}
+				AdditionalInfo = "{}"
 			};
 		}
 
@@ -195,19 +152,13 @@ namespace Elpida.Backend.Services.Tests
 		{
 			return new TopologyModel
 			{
-				Id = "dsfds",
-				Root = new CpuNodeModel
-				{
-					Name = "dsfdsf",
-					Children = null,
-					Value = 455,
-					MemoryChildren = null,
-					NodeType = 1,
-					OsIndex = 0
-				},
+				Id = 4654,
+				Root = "null",
 				TotalDepth = 1,
 				TotalLogicalCores = 1,
-				TotalPhysicalCores = 1
+				TotalPhysicalCores = 1,
+				Cpu = CreateNewCpuModel(),
+				TopologyHash = "sdfgsdfsdf",
 			};
 		}
 
@@ -215,7 +166,7 @@ namespace Elpida.Backend.Services.Tests
 		{
 			return new ResultDto
 			{
-				Id = Guid.NewGuid().ToString("N"),
+				Id = 4556,
 				Affinity = new List<long> {5, 3, 1},
 				Elpida = new ElpidaDto
 				{
@@ -241,24 +192,33 @@ namespace Elpida.Backend.Services.Tests
 						{
 							Description = "Read Bandwidth",
 							Name = "Read Bandwidth",
-							Suffix = "B",
+							Id = 12,
+							Input = new DataSpecificationDto
+							{
+								Name = "Ll;sf",
+								Description = "dsfdsf",
+								Unit = "lols",
+								RequiredProperties = new List<string>{"lo"}
+							},
+							Output = new DataSpecificationDto
+							{
+								Name = "Lfsdfl;sf",
+								Description = "dsdfssfdsf",
+								Unit = "losdfsls",
+								RequiredProperties = new List<string>{"lo","sdfsdf"}
+							},
+							Result = new ResultSpecificationDto
+							{
+								Aggregation = 21,
+								Description = "sadfsdfdsfsd",
+								Name = "sdfsdfsf",
+								Type = 123,
+								Unit = "lsdfgvb"
+							},
+							Uuid = Guid.NewGuid(),
 							Time = 255.0,
-							Type = 0,
 							Value = 656566.0,
 							InputSize = 56665,
-							Outliers = new List<TaskOutlierDto>
-							{
-								new TaskOutlierDto
-								{
-									Time = 0.5554,
-									Value = 163163,
-								},
-								new TaskOutlierDto
-								{
-									Time = 0.546896,
-									Value = 654464,
-								}
-							},
 							Statistics = new TaskStatisticsDto
 							{
 								Max = 15165,

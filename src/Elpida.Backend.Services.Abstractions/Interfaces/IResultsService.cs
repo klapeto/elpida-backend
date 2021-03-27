@@ -25,9 +25,9 @@ namespace Elpida.Backend.Services.Abstractions.Interfaces
 {
 	public interface IResultsService
 	{
-		Task<string> CreateAsync(ResultDto resultDto, CancellationToken cancellationToken = default);
+		Task<long> CreateAsync(ResultDto resultDto, CancellationToken cancellationToken = default);
 
-		Task<ResultDto> GetSingleAsync(string id, CancellationToken cancellationToken = default);
+		Task<ResultDto> GetSingleAsync(long id, CancellationToken cancellationToken = default);
 
 		Task<PagedResult<ResultPreviewDto>> GetPagedAsync(QueryRequest queryRequest,
 			CancellationToken cancellationToken = default);

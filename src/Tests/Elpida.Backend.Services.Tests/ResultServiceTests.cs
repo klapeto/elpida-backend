@@ -25,10 +25,19 @@ using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Data.Abstractions;
 using Elpida.Backend.Data.Abstractions.Models;
+using Elpida.Backend.Data.Abstractions.Models.Cpu;
 using Elpida.Backend.Data.Abstractions.Models.Result;
+using Elpida.Backend.Data.Abstractions.Models.Task;
+using Elpida.Backend.Data.Abstractions.Models.Topology;
+using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services.Abstractions;
+using Elpida.Backend.Services.Abstractions.Dtos.Cpu;
 using Elpida.Backend.Services.Abstractions.Dtos.Result;
+using Elpida.Backend.Services.Abstractions.Dtos.Topology;
+using Elpida.Backend.Services.Abstractions.Exceptions;
+using Elpida.Backend.Services.Extensions.Result;
 using Moq;
+using Newtonsoft.Json;
 using NUnit.Framework;
 
 namespace Elpida.Backend.Services.Tests
@@ -38,7 +47,7 @@ namespace Elpida.Backend.Services.Tests
 		private Mock<IResultsRepository> _repoMock;
 		private Mock<ICpuRepository> _cpuMock;
 		private Mock<ITopologyRepository> _topologyMock;
-		private Mock<IIdProvider> _idProvideMock;
+		private Mock<IBenchmarkRepository> _benchmarkMock;
 
 
 		[SetUp]
@@ -47,12 +56,12 @@ namespace Elpida.Backend.Services.Tests
 			_repoMock = new Mock<IResultsRepository>(MockBehavior.Strict);
 			_cpuMock = new Mock<ICpuRepository>(MockBehavior.Strict);
 			_topologyMock = new Mock<ITopologyRepository>(MockBehavior.Strict);
-			_idProvideMock = new Mock<IIdProvider>(MockBehavior.Strict);
+			_benchmarkMock = new Mock<IBenchmarkRepository>(MockBehavior.Strict);
 		}
 
 		private ResultService GetService()
 		{
-			return new ResultService(_repoMock.Object, _cpuMock.Object, _topologyMock.Object, _idProvideMock.Object);
+			return new ResultService(_repoMock.Object, _cpuMock.Object, _topologyMock.Object, _benchmarkMock.Object);
 		}
 
 		private void VerifyMocks()
@@ -63,177 +72,224 @@ namespace Elpida.Backend.Services.Tests
 			_cpuMock.VerifyNoOtherCalls();
 			_topologyMock.VerifyAll();
 			_topologyMock.VerifyNoOtherCalls();
-			_idProvideMock.VerifyAll();
-			_idProvideMock.VerifyNoOtherCalls();
+			_benchmarkMock.VerifyAll();
+			_benchmarkMock.VerifyNoOtherCalls();
 		}
 
-		[Test]
-		public void Constructor_NullArgument_ThrowsArgumentNullException()
-		{
-			Assert.Throws<ArgumentNullException>(() => new ResultService(null,
-				Mock.Of<ICpuRepository>(),
-				Mock.Of<ITopologyRepository>(),
-				Mock.Of<IIdProvider>()));
-
-			Assert.Throws<ArgumentNullException>(() => new ResultService(null,
-				Mock.Of<ICpuRepository>(),
-				Mock.Of<ITopologyRepository>(),
-				Mock.Of<IIdProvider>()));
-
-			Assert.Throws<ArgumentNullException>(() => new ResultService(Mock.Of<IResultsRepository>(),
-				null,
-				Mock.Of<ITopologyRepository>(),
-				Mock.Of<IIdProvider>()));
-
-			Assert.Throws<ArgumentNullException>(() => new ResultService(null,
-				Mock.Of<ICpuRepository>(),
-				null,
-				Mock.Of<IIdProvider>()));
-
-			Assert.Throws<ArgumentNullException>(() => new ResultService(null,
-				Mock.Of<ICpuRepository>(),
-				Mock.Of<ITopologyRepository>(),
-				null));
-		}
-		
 		[Test]
 		public async Task CreateAsync_CpuNotExist_CreatesCpu()
 		{
-			var resultId = Guid.NewGuid().ToString("N");
-			var cpuId = Guid.NewGuid().ToString("N");
-			var topologyId = Guid.NewGuid().ToString("N");
+			var resultId = 410;
+
+			var dummyDto = Generators.CreateNewResultDto();
+			var topology = Generators.CreateNewTopology();
+			var cpu = topology.Cpu;
 
 			_repoMock.Setup(r =>
 					r.CreateAsync(It.Is<ResultModel>(m => m.TimeStamp != default), It.IsAny<CancellationToken>()))
-				.ReturnsAsync(resultId)
+				.ReturnsAsync(new ResultModel
+				{
+					Id = resultId
+				})
 				.Verifiable();
 
-			_idProvideMock.Setup(i => i.GetForCpu(It.IsAny<CpuDto>()))
-				.Returns(cpuId)
+			_benchmarkMock.Setup(r => r.GetSingleAsync(model => model.Uuid == dummyDto.Result.Uuid, default))
+				.ReturnsAsync(new BenchmarkModel
+				{
+					Id = 41,
+					Name = "LOL",
+					Uuid = dummyDto.Result.Uuid,
+					Tasks = dummyDto.Result.TaskResults.Select(c => new TaskModel
+					{
+						Id = c.Id,
+						Uuid = c.Uuid,
+						Description = c.Description,
+						Name = c.Name,
+						InputDescription = c.Input?.Description,
+						InputName = c.Input?.Name,
+						InputUnit = c.Input?.Unit,
+						InputProperties = "[]",
+						OutputDescription = c.Output?.Description,
+						OutputName = c.Output?.Name,
+						OutputUnit = c.Output?.Unit,
+						OutputProperties = "[]",
+						ResultAggregation = c.Result.Aggregation,
+						ResultDescription = c.Result.Description,
+						ResultName = c.Result.Description,
+						ResultType = c.Result.Type,
+						ResultUnit = c.Result.Unit
+					}).ToList()
+				});
+
+			_cpuMock.Setup(i => i.GetSingleAsync(It.IsAny<Expression<Func<CpuModel, bool>>>(), default))
+				.ReturnsAsync((CpuModel) null)
 				.Verifiable();
 
-			_idProvideMock.Setup(i => i.GetForTopology(cpuId,It.IsAny<TopologyDto>()))
-				.Returns(topologyId)
+			_cpuMock.Setup(i => i.CreateAsync(It.IsAny<CpuModel>(), default))
+				.ReturnsAsync(cpu)
+				.Verifiable();
+
+			_topologyMock.Setup(i =>
+					i.GetSingleAsync(It.IsAny<Expression<Func<TopologyModel, bool>>>(), default))
+				.ReturnsAsync(topology)
 				.Verifiable();
 			
-			_idProvideMock.Setup(i => i.GetForResult(It.IsAny<ResultDto>()))
-				.Returns(resultId)
-				.Verifiable();
+			_repoMock.Setup(c => c.SaveChangesAsync(default))
+				.Returns(Task.CompletedTask);
+			_cpuMock.Setup(c => c.SaveChangesAsync(default))
+				.Returns(Task.CompletedTask);
+			_topologyMock.Setup(c => c.SaveChangesAsync(default))
+				.Returns(Task.CompletedTask);
 
-			_cpuMock.Setup(i => i.GetSingleAsync(cpuId, default))
-				.ReturnsAsync((CpuModel)null)
-				.Verifiable();
-			
-			_cpuMock.Setup(i => i.CreateAsync(It.Is<CpuModel>(c => c.Id == cpuId), default))
-				.ReturnsAsync(cpuId)
-				.Verifiable();
-
-			_topologyMock.Setup(i => i.GetSingleAsync(topologyId, default))
-				.ReturnsAsync(Generators.CreateNewTopology)
-				.Verifiable();
-			
 			var service = GetService();
 
-			var result = await service.CreateAsync(Generators.CreateNewResultDto(), default);
+			var result = await service.CreateAsync(dummyDto, default);
 
 			Assert.AreEqual(resultId, result);
 
 			VerifyMocks();
 		}
-		
+
 		[Test]
 		public async Task CreateAsync_TopologyNotExist_CreatesTopology()
 		{
-			var id = Guid.NewGuid().ToString("N");
-			var cpuId = Guid.NewGuid().ToString("N");
-			var topologyId = Guid.NewGuid().ToString("N");
+			var resultId = 410;
 
+			var dummyDto = Generators.CreateNewResultDto();
+			var topology = Generators.CreateNewTopology();
+			var cpu = topology.Cpu;
+			
 			_repoMock.Setup(r =>
 					r.CreateAsync(It.Is<ResultModel>(m => m.TimeStamp != default), It.IsAny<CancellationToken>()))
-				.ReturnsAsync(id)
+				.ReturnsAsync(new ResultModel
+				{
+					Id = resultId
+				})
 				.Verifiable();
 
-			_idProvideMock.Setup(i => i.GetForCpu(It.IsAny<CpuDto>()))
-				.Returns(cpuId)
-				.Verifiable();
-
-			_idProvideMock.Setup(i => i.GetForTopology(cpuId,It.IsAny<TopologyDto>()))
-				.Returns(topologyId)
-				.Verifiable();
 			
-			_idProvideMock.Setup(i => i.GetForResult(It.IsAny<ResultDto>()))
-				.Returns(id)
+			_benchmarkMock.Setup(r => r.GetSingleAsync(model => model.Uuid == dummyDto.Result.Uuid, default))
+				.ReturnsAsync(new BenchmarkModel
+				{
+					Id = 41,
+					Name = "LOL",
+					Uuid = dummyDto.Result.Uuid,
+					Tasks = dummyDto.Result.TaskResults.Select(c => new TaskModel
+					{
+						Id = c.Id,
+						Uuid = c.Uuid,
+						Description = c.Description,
+						Name = c.Name,
+						InputDescription = c.Input?.Description,
+						InputName = c.Input?.Name,
+						InputUnit = c.Input?.Unit,
+						InputProperties = "[]",
+						OutputDescription = c.Output?.Description,
+						OutputName = c.Output?.Name,
+						OutputUnit = c.Output?.Unit,
+						OutputProperties = "[]",
+						ResultAggregation = c.Result.Aggregation,
+						ResultDescription = c.Result.Description,
+						ResultName = c.Result.Description,
+						ResultType = c.Result.Type,
+						ResultUnit = c.Result.Unit
+					}).ToList()
+				});
+
+			_cpuMock.Setup(i => i.GetSingleAsync(It.IsAny<Expression<Func<CpuModel, bool>>>(), default))
+				.ReturnsAsync(cpu)
 				.Verifiable();
 
-			_cpuMock.Setup(i => i.GetSingleAsync(cpuId, default))
-				.ReturnsAsync(Generators.CreateNewCpuModel)
-				.Verifiable();
-			
-			_topologyMock.Setup(i => i.GetSingleAsync(topologyId, default))
+			_topologyMock.Setup(i =>
+					i.GetSingleAsync(It.IsAny<Expression<Func<TopologyModel, bool>>>(), default))
 				.ReturnsAsync((TopologyModel)null)
 				.Verifiable();
 			
-			_topologyMock.Setup(i => i.CreateAsync(It.Is<TopologyModel>(c => c.Id == topologyId), default))
-				.ReturnsAsync(topologyId)
+			_topologyMock.Setup(i => i.CreateAsync(It.IsAny<TopologyModel>(), default))
+				.ReturnsAsync(topology)
 				.Verifiable();
-
 			
+			_repoMock.Setup(c => c.SaveChangesAsync(default))
+				.Returns(Task.CompletedTask);
+			_cpuMock.Setup(c => c.SaveChangesAsync(default))
+				.Returns(Task.CompletedTask);
+			_topologyMock.Setup(c => c.SaveChangesAsync(default))
+				.Returns(Task.CompletedTask);
+
 			var service = GetService();
 
-			var result = await service.CreateAsync(Generators.CreateNewResultDto(), default);
+			var result = await service.CreateAsync(dummyDto, default);
 
-			Assert.AreEqual(id, result);
+			Assert.AreEqual(resultId, result);
 
 			VerifyMocks();
 		}
-		
+
 		[Test]
 		public async Task CreateAsync_Success()
 		{
-			var id = Guid.NewGuid().ToString("N");
-			var cpuId = Guid.NewGuid().ToString("N");
-			var topologyId = Guid.NewGuid().ToString("N");
-
+			var resultId = 410;
+	
+			var dummyDto = Generators.CreateNewResultDto();
+			var topology = Generators.CreateNewTopology();
+			var cpu = topology.Cpu;
+			
 			_repoMock.Setup(r =>
 					r.CreateAsync(It.Is<ResultModel>(m => m.TimeStamp != default), It.IsAny<CancellationToken>()))
-				.ReturnsAsync(id)
-				.Verifiable();
-
-			_idProvideMock.Setup(i => i.GetForCpu(It.IsAny<CpuDto>()))
-				.Returns(cpuId)
-				.Verifiable();
-
-			_idProvideMock.Setup(i => i.GetForTopology(cpuId,It.IsAny<TopologyDto>()))
-				.Returns(topologyId)
+				.ReturnsAsync(new ResultModel
+				{
+					Id = resultId
+				})
 				.Verifiable();
 			
-			_idProvideMock.Setup(i => i.GetForResult(It.IsAny<ResultDto>()))
-				.Returns(id)
+			_benchmarkMock.Setup(r => r.GetSingleAsync(model => model.Uuid == dummyDto.Result.Uuid, default))
+				.ReturnsAsync(new BenchmarkModel
+				{
+					Id = 41,
+					Name = "LOL",
+					Uuid = dummyDto.Result.Uuid,
+					Tasks = dummyDto.Result.TaskResults.Select(c => new TaskModel
+					{
+						Id = c.Id,
+						Uuid = c.Uuid,
+						Description = c.Description,
+						Name = c.Name,
+						InputDescription = c.Input?.Description,
+						InputName = c.Input?.Name,
+						InputUnit = c.Input?.Unit,
+						InputProperties = "[]",
+						OutputDescription = c.Output?.Description,
+						OutputName = c.Output?.Name,
+						OutputUnit = c.Output?.Unit,
+						OutputProperties = "[]",
+						ResultAggregation = c.Result.Aggregation,
+						ResultDescription = c.Result.Description,
+						ResultName = c.Result.Description,
+						ResultType = c.Result.Type,
+						ResultUnit = c.Result.Unit
+					}).ToList()
+				});
+
+			_cpuMock.Setup(i => i.GetSingleAsync(It.IsAny<Expression<Func<CpuModel, bool>>>(), default))
+				.ReturnsAsync(cpu)
 				.Verifiable();
 
-			_cpuMock.Setup(i => i.GetSingleAsync(cpuId, default))
-				.ReturnsAsync(Generators.CreateNewCpuModel)
+			_topologyMock.Setup(i => i.GetSingleAsync(It.IsAny<Expression<Func<TopologyModel, bool>>>(), default))
+				.ReturnsAsync(topology)
 				.Verifiable();
 			
-			_topologyMock.Setup(i => i.GetSingleAsync(topologyId, default))
-				.ReturnsAsync(Generators.CreateNewTopology)
-				.Verifiable();
-			
+			_repoMock.Setup(c => c.SaveChangesAsync(default))
+				.Returns(Task.CompletedTask);
+			_cpuMock.Setup(c => c.SaveChangesAsync(default))
+				.Returns(Task.CompletedTask);
+			_topologyMock.Setup(c => c.SaveChangesAsync(default))
+				.Returns(Task.CompletedTask);
+
 			var service = GetService();
 
-			var result = await service.CreateAsync(Generators.CreateNewResultDto(), default);
+			var result = await service.CreateAsync(dummyDto, default);
 
-			Assert.AreEqual(id, result);
-
-			VerifyMocks();
-		}
-
-		[Test]
-		public void CreateAsync_NullDto_ThrowsArgumentNullException()
-		{
-			var service = GetService();
-
-			Assert.ThrowsAsync<ArgumentNullException>(async () => await service.CreateAsync(null, default));
+			Assert.AreEqual(resultId, result);
 
 			VerifyMocks();
 		}
@@ -241,11 +297,11 @@ namespace Elpida.Backend.Services.Tests
 		[Test]
 		public async Task GetSingleAsync_Success()
 		{
-			var id = Guid.NewGuid().ToString("N");
+			var id = 1654;
 
 			_repoMock.Setup(r =>
-					r.GetProjectionAsync(It.Is<string>(i => i == id), It.IsAny<CancellationToken>()))
-				.ReturnsAsync(() => Generators.CreateProjection(id))
+					r.GetSingleAsync(It.Is<long>(i => i == id), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(() => Generators.CreateNewResultModel(id))
 				.Verifiable();
 
 			var service = GetService();
@@ -258,28 +314,18 @@ namespace Elpida.Backend.Services.Tests
 		}
 
 		[Test]
-		public void  GetSingleAsync_NonExist_ThrowsNotFoundException()
+		public void GetSingleAsync_NonExist_ThrowsNotFoundException()
 		{
-			var id = Guid.NewGuid().ToString("N");
+			var id = 464;
 
 			_repoMock.Setup(r =>
-					r.GetProjectionAsync(It.Is<string>(i => i == id), It.IsAny<CancellationToken>()))
+					r.GetSingleAsync(It.Is<long>(i => i == id), It.IsAny<CancellationToken>()))
 				.ReturnsAsync(() => null)
 				.Verifiable();
 
 			var service = GetService();
 
 			Assert.ThrowsAsync<NotFoundException>(async () => await service.GetSingleAsync(id, default));
-
-			VerifyMocks();
-		}
-
-		[Test]
-		public void GetPagedAsync_NullPageRequest_ThrowsArgumentNullException()
-		{
-			var service = GetService();
-
-			Assert.ThrowsAsync<ArgumentNullException>(async () => await service.GetPagedAsync(null, default));
 
 			VerifyMocks();
 		}
@@ -293,16 +339,16 @@ namespace Elpida.Backend.Services.Tests
 			};
 
 			_repoMock.Setup(r =>
-					r.GetPagedPreviewsAsync<object>(It.Is<int>(i => i == page.Next), 
+					r.GetPagedPreviewsAsync<object>(It.Is<int>(i => i == page.Next),
 						It.Is<int>(i => i == page.Count),
-						false, 
+						false,
 						null,
-						It.Is<IEnumerable<Expression<Func<ResultProjection, bool>>>>(e => !e.Any()), 
-						false, 
+						It.Is<IEnumerable<Expression<Func<ResultModel, bool>>>>(e => !e.Any()),
+						false,
 						default))
 				.ReturnsAsync(() => new PagedQueryResult<ResultPreviewModel>(0, new List<ResultPreviewModel>
 				{
-					Generators.CreateResultPreviewModel(Guid.NewGuid().ToString("N"))
+					Generators.CreateResultPreviewModel(54654)
 				}))
 				.Verifiable();
 
@@ -330,16 +376,16 @@ namespace Elpida.Backend.Services.Tests
 
 			_repoMock.Setup(r =>
 					r.GetPagedPreviewsAsync<object>(
-						It.Is<int>(i => i == page.Next), 
-						It.Is<int>(i => i == page.Count), 
+						It.Is<int>(i => i == page.Next),
+						It.Is<int>(i => i == page.Count),
 						false,
 						null,
-						It.Is<IEnumerable<Expression<Func<ResultProjection, bool>>>>(e => !e.Any()), 
-						true, 
+						It.Is<IEnumerable<Expression<Func<ResultModel, bool>>>>(e => !e.Any()),
+						true,
 						default))
 				.ReturnsAsync(() => new PagedQueryResult<ResultPreviewModel>(totalCount, new List<ResultPreviewModel>
 				{
-					Generators.CreateResultPreviewModel(Guid.NewGuid().ToString("N"))
+					Generators.CreateResultPreviewModel(546554)
 				}))
 				.Verifiable();
 
@@ -368,17 +414,17 @@ namespace Elpida.Backend.Services.Tests
 
 			_repoMock.Setup(r =>
 					r.GetPagedPreviewsAsync<object>(
-						It.Is<int>(i => i == page.Next), 
-						It.Is<int>(i => i == page.Count), 
+						It.Is<int>(i => i == page.Next),
+						It.Is<int>(i => i == page.Count),
 						false,
 						null,
-						It.Is<IEnumerable<Expression<Func<ResultProjection, bool>>>>(enumerable =>
-							enumerable.Any(x => x.Body.ToString().Contains(filterValue))), 
+						It.Is<IEnumerable<Expression<Func<ResultModel, bool>>>>(enumerable =>
+							enumerable.Any(x => x.Body.ToString().Contains(filterValue))),
 						true,
 						default))
 				.ReturnsAsync(() => new PagedQueryResult<ResultPreviewModel>(totalCount, new List<ResultPreviewModel>
 				{
-					Generators.CreateResultPreviewModel(Guid.NewGuid().ToString("N"))
+					Generators.CreateResultPreviewModel(54684)
 				}))
 				.Verifiable();
 
@@ -416,17 +462,17 @@ namespace Elpida.Backend.Services.Tests
 
 			_repoMock.Setup(r =>
 					r.GetPagedPreviewsAsync<object>(
-						It.Is<int>(i => i == page.Next), 
-						It.Is<int>(i => i == page.Count), 
-						false, 
+						It.Is<int>(i => i == page.Next),
+						It.Is<int>(i => i == page.Count),
+						false,
 						null,
-						It.Is<IEnumerable<Expression<Func<ResultProjection, bool>>>>(enumerable =>
-							enumerable.Any(x => x.Body.ToString().Contains(filterValue))), 
+						It.Is<IEnumerable<Expression<Func<ResultModel, bool>>>>(enumerable =>
+							enumerable.Any(x => x.Body.ToString().Contains(filterValue))),
 						true,
 						default))
 				.ReturnsAsync(() => new PagedQueryResult<ResultPreviewModel>(totalCount, new List<ResultPreviewModel>
 				{
-					Generators.CreateResultPreviewModel(Guid.NewGuid().ToString("N"))
+					Generators.CreateResultPreviewModel(464847)
 				}))
 				.Verifiable();
 
@@ -468,16 +514,16 @@ namespace Elpida.Backend.Services.Tests
 
 			_repoMock.Setup(r =>
 					r.GetPagedPreviewsAsync<object>(
-						It.Is<int>(i => i == page.Next), 
-						It.Is<int>(i => i == page.Count), 
-						false, 
+						It.Is<int>(i => i == page.Next),
+						It.Is<int>(i => i == page.Count),
+						false,
 						null,
-						It.Is<IEnumerable<Expression<Func<ResultProjection, bool>>>>(enumerable =>
+						It.Is<IEnumerable<Expression<Func<ResultModel, bool>>>>(enumerable =>
 							enumerable.Any(x => x.Body.ToString().Contains(stringToCheck))), true,
 						default))
 				.ReturnsAsync(() => new PagedQueryResult<ResultPreviewModel>(totalCount, new List<ResultPreviewModel>
 				{
-					Generators.CreateResultPreviewModel(Guid.NewGuid().ToString("N"))
+					Generators.CreateResultPreviewModel(44466)
 				}))
 				.Verifiable();
 
@@ -517,14 +563,14 @@ namespace Elpida.Backend.Services.Tests
 					It.Is<int>(i => i == page.Next),
 					It.Is<int>(i => i == page.Count),
 					false,
-					(Expression<Func<ResultProjection, object>>) null,
-					It.Is<IEnumerable<Expression<Func<ResultProjection, bool>>>>(enumerable =>
+					(Expression<Func<ResultModel, object>>) null,
+					It.Is<IEnumerable<Expression<Func<ResultModel, bool>>>>(enumerable =>
 						enumerable.Any(x => x.Body.ToString().Contains("=="))),
 					true,
 					default))
 				.ReturnsAsync(() => new PagedQueryResult<ResultPreviewModel>(totalCount, new List<ResultPreviewModel>
 				{
-					Generators.CreateResultPreviewModel(Guid.NewGuid().ToString("N"))
+					Generators.CreateResultPreviewModel(46464)
 				}))
 				.Verifiable();
 
@@ -550,39 +596,12 @@ namespace Elpida.Backend.Services.Tests
 		}
 
 		[Test]
-		[TestCase(null)]
-		[TestCase("")]
-		[TestCase("  \t \n")]
-		public void GetSingleAsync_InvalidId_ThrowsArgumentException(string id)
-		{
-			var service = GetService();
-
-			Assert.ThrowsAsync<ArgumentException>(async () => await service.GetSingleAsync(id, default));
-
-			VerifyMocks();
-		}
-
-		[Test]
-		public async Task DeleteAllAsync_Success()
-		{
-			_repoMock.Setup(r => r.DeleteAllAsync(default))
-				.Returns(Task.CompletedTask)
-				.Verifiable();
-
-			var service = GetService();
-
-			await service.ClearResultsAsync(default);
-
-			VerifyMocks();
-		}
-
-		[Test]
 		public void GetSingleAsync_NonExistent_ThrowsNotFoundException()
 		{
-			var id = Guid.NewGuid().ToString("N");
+			var id = 65465;
 
 			_repoMock.Setup(r =>
-					r.GetProjectionAsync(It.Is<string>(i => i == id), It.IsAny<CancellationToken>()))
+					r.GetSingleAsync(It.Is<long>(i => i == id), It.IsAny<CancellationToken>()))
 				.ReturnsAsync(() => null)
 				.Verifiable();
 

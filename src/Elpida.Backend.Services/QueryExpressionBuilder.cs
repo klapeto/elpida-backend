@@ -31,8 +31,7 @@ namespace Elpida.Backend.Services
 
 		public QueryExpressionBuilder(IReadOnlyDictionary<string, LambdaExpression> availableExpressions)
 		{
-			_availableExpressions =
-				availableExpressions ?? throw new ArgumentNullException(nameof(availableExpressions));
+			_availableExpressions = availableExpressions;
 		}
 
 		public IEnumerable<Expression<Func<T, bool>>> Build<T>(IEnumerable<QueryInstance>? queryInstances)
@@ -77,7 +76,7 @@ namespace Elpida.Backend.Services
 
 		public Expression<Func<T, object>> GetOrderBy<T>(QueryRequest queryRequest)
 		{
-			if (queryRequest.OrderBy == null)
+			if (string.IsNullOrWhiteSpace(queryRequest.OrderBy))
 			{
 				return null;
 			}
@@ -91,7 +90,7 @@ namespace Elpida.Backend.Services
 			}
 
 			throw new ArgumentException(
-				$"OrderBy is not a valid order field. Can be: {string.Join(',', _availableExpressions.Keys)}");
+				$"'{queryRequest.OrderBy}' OrderBy is not a valid order field. Can be: {string.Join(',', _availableExpressions.Keys)}");
 		}
 
 		private Expression<Func<T, bool>> GetFilter<T>(QueryInstance instance, LambdaExpression fieldPart)
