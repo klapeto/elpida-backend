@@ -35,7 +35,7 @@ namespace Elpida.Backend.Services.Extensions.Result
 	{
 		private static DataSpecificationDto? CreateInputSpecDto(this TaskModel model)
 		{
-			if (model.InputName == null) return null;
+			if (string.IsNullOrWhiteSpace(model.InputName)) return null;
 
 			return new DataSpecificationDto
 			{
@@ -48,7 +48,7 @@ namespace Elpida.Backend.Services.Extensions.Result
 
 		private static DataSpecificationDto? CreateOutputSpecDto(this TaskModel model)
 		{
-			if (model.OutputName == null) return null;
+			if (string.IsNullOrWhiteSpace(model.OutputName)) return null;
 
 			return new DataSpecificationDto
 			{
