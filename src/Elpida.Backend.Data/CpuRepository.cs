@@ -17,8 +17,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System.Linq;
 using Elpida.Backend.Data.Abstractions.Models.Cpu;
 using Elpida.Backend.Data.Abstractions.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Elpida.Backend.Data
 {
@@ -27,6 +29,13 @@ namespace Elpida.Backend.Data
 		public CpuRepository(ElpidaContext elpidaContext)
 			: base(elpidaContext, elpidaContext.Cpus)
 		{
+		}
+		
+		protected override IQueryable<CpuModel> ProcessGetSingle(IQueryable<CpuModel> queryable)
+		{
+			return queryable
+				.Include(m => m.TaskStatistics)
+				.ThenInclude(m => m.Task);
 		}
 	}
 }

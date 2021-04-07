@@ -17,29 +17,41 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using Elpida.Backend.Data.Abstractions.Interfaces;
 using Elpida.Backend.Data.Abstractions.Models.Cpu;
 using Elpida.Backend.Data.Abstractions.Models.Topology;
 using Elpida.Backend.Services.Abstractions.Dtos.Topology;
+using Newtonsoft.Json;
 
 namespace Elpida.Backend.Services.Extensions.Topology
 {
 	public static class TopologyDataExtensions
 	{
-		public static TopologyModel ToModel(this TopologyDto topologyDto,
-			CpuModel cpu,
-			string topologyRoot,
-			string topologyHash,
-			long id)
+		public static TopologyModel ToModel(this TopologyDto topologyDto)
 		{
+			var topologyRoot = JsonConvert.SerializeObject(topologyDto.Root);
 			return new TopologyModel
 			{
-				Id = id,
-				Cpu = cpu,
-				TopologyHash = topologyHash,
+				Id = topologyDto.Id,
+				TopologyHash = topologyRoot.ToHashString(),
 				TotalDepth = topologyDto.TotalDepth,
 				TotalLogicalCores = topologyDto.TotalLogicalCores,
 				TotalPhysicalCores = topologyDto.TotalLogicalCores,
 				Root = topologyRoot
+			};
+		}
+		
+		
+		public static TopologyDto ToDto(this TopologyModel topologyModel)
+		{
+			return new TopologyDto
+			{
+				Id = topologyModel.Id,
+				CpuId = topologyModel.CpuId,
+				TotalDepth = topologyModel.TotalDepth,
+				TotalLogicalCores = topologyModel.TotalLogicalCores,
+				TotalPhysicalCores = topologyModel.TotalLogicalCores,
+				Root = JsonConvert.DeserializeObject<CpuNodeDto>(topologyModel.Root)
 			};
 		}
 	}

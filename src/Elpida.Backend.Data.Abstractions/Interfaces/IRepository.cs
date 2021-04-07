@@ -22,14 +22,15 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Elpida.Backend.Data.Abstractions.Models;
 
 namespace Elpida.Backend.Data.Abstractions.Interfaces
 {
 	public interface IRepository<TEntity> where TEntity : Entity
 	{
-		Task<TEntity> GetSingleAsync(long id, CancellationToken cancellationToken = default);
+		Task<TEntity?> GetSingleAsync(long id, CancellationToken cancellationToken = default);
 
-		Task<TEntity> GetSingleAsync(Expression<Func<TEntity, bool>> filters,
+		Task<TEntity?> GetSingleAsync(Expression<Func<TEntity, bool>> filters,
 			CancellationToken cancellationToken = default);
 
 		Task<TEntity> CreateAsync(TEntity entity, CancellationToken cancellationToken = default);

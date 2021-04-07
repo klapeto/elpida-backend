@@ -79,9 +79,9 @@ namespace Elpida.Backend.Services.Tests
 			};
 		}
 
-		public static ResultModel CreateNewResultModel(long id)
+		public static BenchmarkResultModel CreateNewResultModel(long id)
 		{
-			return new ResultModel
+			return new BenchmarkResultModel
 			{
 				Id = id,
 				TimeStamp = DateTime.UtcNow,

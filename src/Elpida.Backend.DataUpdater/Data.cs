@@ -23,17 +23,9 @@ using Elpida.Backend.Services.Abstractions.Dtos;
 
 namespace Elpida.Backend.DataUpdater
 {
-	internal class BenchmarkData
-	{
-		public Guid Uuid { get; set; }
-		public string Name { get; set; } = string.Empty;
-
-		public IReadOnlyList<Guid> TaskSpecifications { get; set; } = Array.Empty<Guid>();
-	}
-
 	internal class Data
 	{
-		public IReadOnlyList<BenchmarkData> Benchmarks { get; set; } = Array.Empty<BenchmarkData>();
-		public IReadOnlyList<TaskDto> Tasks { get; set; } = Array.Empty<TaskDto>();
+		public IReadOnlyList<BenchmarkDto> Benchmarks { get; set; } = Array.Empty<BenchmarkDto>();
+		
 	}
 }

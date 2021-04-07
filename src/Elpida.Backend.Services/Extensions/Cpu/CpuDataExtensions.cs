@@ -19,6 +19,7 @@
 
 using System.Collections.Generic;
 using Elpida.Backend.Data.Abstractions.Models.Cpu;
+using Elpida.Backend.Data.Abstractions.Models.Statistics;
 using Elpida.Backend.Services.Abstractions.Dtos.Cpu;
 using Newtonsoft.Json;
 
@@ -30,6 +31,7 @@ namespace Elpida.Backend.Services.Extensions.Cpu
 		{
 			return new CpuDto
 			{
+				Id = model.Id,
 				Brand = model.Brand,
 				Caches = JsonConvert.DeserializeObject<List<CpuCacheDto>>(model.Caches),
 				Features = JsonConvert.DeserializeObject<List<string>>(model.Features),
@@ -40,11 +42,11 @@ namespace Elpida.Backend.Services.Extensions.Cpu
 			};
 		}
 
-		public static CpuModel ToModel(this CpuDto cpuDto, int id)
+		public static CpuModel ToModel(this CpuDto cpuDto)
 		{
 			return new CpuModel
 			{
-				Id = id,
+				Id = cpuDto.Id,
 				Brand = cpuDto.Brand,
 				Caches = JsonConvert.SerializeObject(cpuDto.Caches),
 				Features = JsonConvert.SerializeObject(cpuDto.Features),

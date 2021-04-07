@@ -1,329 +1,619 @@
 {
   "benchmarks": [
     {
-      "uuid": "9B198C61-5907-481F-8E67-A59EA885CA0A",
       "name": "Memory Read Bandwidth",
       "taskSpecifications": [
-        "A5FAC385-C58B-44EA-AC3C-2A15447698D0"
-      ]
+        {
+          "description": "Reads continuously a memory region to determine Memory Read Bandwidth",
+          "name": "Memory Read Bandwidth",
+          "result": {
+            "aggregation": 0,
+            "description": "",
+            "name": "Read Rate",
+            "type": 0,
+            "unit": "B"
+          },
+          "uuid": "A5FAC385-C58B-44EA-AC3C-2A15447698D0"
+        }
+      ],
+      "uuid": "9B198C61-5907-481F-8E67-A59EA885CA0A"
     },
     {
-      "uuid": "B635458F-018C-4291-AF82-94ABB40EC6DD",
       "name": "Memory Read Latency (Slow)",
       "taskSpecifications": [
-        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
-        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
-        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
-        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
-        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
-        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
-        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
-        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
-        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
-        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
-        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
-        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
-        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
-        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
-        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
-        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
-        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
-        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
-        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8"
-      ]
+        {
+          "description": "Reads continuously a memory region to determine memory read latency",
+          "name": "Memory Latency [512.00 B]",
+          "result": {
+            "aggregation": 1,
+            "description": "",
+            "name": "Access time",
+            "type": 1,
+            "unit": "s"
+          },
+          "uuid": "5e8d84fe-9925-4798-84e0-573fcb2e305c"
+        },
+        {
+          "description": "Reads continuously a memory region to determine memory read latency",
+          "name": "Memory Latency [2.00 KiB]",
+          "result": {
+            "aggregation": 1,
+            "description": "",
+            "name": "Access time",
+            "type": 1,
+            "unit": "s"
+          },
+          "uuid": "9518c817-c566-4bac-bf95-7c18d88454c2"
+        },
+        {
+          "description": "Reads continuously a memory region to determine memory read latency",
+          "name": "Memory Latency [4.00 KiB]",
+          "result": {
+            "aggregation": 1,
+            "description": "",
+            "name": "Access time",
+            "type": 1,
+            "unit": "s"
+          },
+          "uuid": "bcba5680-b088-43b7-8182-1216a8d13564"
+        },
+        {
+          "description": "Reads continuously a memory region to determine memory read latency",
+          "name": "Memory Latency [8.00 KiB]",
+          "result": {
+            "aggregation": 1,
+            "description": "",
+            "name": "Access time",
+            "type": 1,
+            "unit": "s"
+          },
+          "uuid": "83fa1ecb-23a7-4d73-9e81-f804624fbb34"
+        },
+        {
+          "description": "Reads continuously a memory region to determine memory read latency",
+          "name": "Memory Latency [16.00 KiB]",
+          "result": {
+            "aggregation": 1,
+            "description": "",
+            "name": "Access time",
+            "type": 1,
+            "unit": "s"
+          },
+          "uuid": "3acd97fa-480a-49e1-aca8-599bc0e98727"
+        },
+        {
+          "description": "Reads continuously a memory region to determine memory read latency",
+          "name": "Memory Latency [32.00 KiB]",
+          "result": {
+            "aggregation": 1,
+            "description": "",
+            "name": "Access time",
+            "type": 1,
+            "unit": "s"
+          },
+          "uuid": "abbe14cf-1046-4845-9f8c-4de4b0f75e7a"
+        },
+        {
+          "description": "Reads continuously a memory region to determine memory read latency",
+          "name": "Memory Latency [64.00 KiB]",
+          "result": {
+            "aggregation": 1,
+            "description": "",
+            "name": "Access time",
+            "type": 1,
+            "unit": "s"
+          },
+          "uuid": "12109f85-0f20-49eb-b123-9f1ee0e9c475"
+        },
+        {
+          "description": "Reads continuously a memory region to determine memory read latency",
+          "name": "Memory Latency [128.00 KiB]",
+          "result": {
+            "aggregation": 1,
+            "description": "",
+            "name": "Access time",
+            "type": 1,
+            "unit": "s"
+          },
+          "uuid": "14d63060-c8ea-4d8c-94ae-032d0eb3bed7"
+        },
+        {
+          "description": "Reads continuously a memory region to determine memory read latency",
+          "name": "Memory Latency [256.00 KiB]",
+          "result": {
+            "aggregation": 1,
+            "description": "",
+            "name": "Access time",
+            "type": 1,
+            "unit": "s"
+          },
+          "uuid": "f5c98fba-44f8-43ea-b080-6386c5cf1c4a"
+        },
+        {
+          "description": "Reads continuously a memory region to determine memory read latency",
+          "name": "Memory Latency [512.00 KiB]",
+          "result": {
+            "aggregation": 1,
+            "description": "",
+            "name": "Access time",
+            "type": 1,
+            "unit": "s"
+          },
+          "uuid": "5939c23a-f2a9-46f8-a6a7-e180f7697187"
+        },
+        {
+          "description": "Reads continuously a memory region to determine memory read latency",
+          "name": "Memory Latency [2.00 MiB]",
+          "result": {
+            "aggregation": 1,
+            "description": "",
+            "name": "Access time",
+            "type": 1,
+            "unit": "s"
+          },
+          "uuid": "2e6e09e5-7767-4caf-9756-3dfc6ec7479b"
+        },
+        {
+          "description": "Reads continuously a memory region to determine memory read latency",
+          "name": "Memory Latency [4.00 MiB]",
+          "result": {
+            "aggregation": 1,
+            "description": "",
+            "name": "Access time",
+            "type": 1,
+            "unit": "s"
+          },
+          "uuid": "fa92a536-3649-42cf-adfa-9b429ae0520d"
+        },
+        {
+          "description": "Reads continuously a memory region to determine memory read latency",
+          "name": "Memory Latency [8.00 MiB]",
+          "result": {
+            "aggregation": 1,
+            "description": "",
+            "name": "Access time",
+            "type": 1,
+            "unit": "s"
+          },
+          "uuid": "dd6765b5-a467-4ca4-afb4-9157a8d7b5ff"
+        },
+        {
+          "description": "Reads continuously a memory region to determine memory read latency",
+          "name": "Memory Latency [16.00 MiB]",
+          "result": {
+            "aggregation": 1,
+            "description": "",
+            "name": "Access time",
+            "type": 1,
+            "unit": "s"
+          },
+          "uuid": "193ae1da-1a83-4a2b-af02-557e91db78d9"
+        },
+        {
+          "description": "Reads continuously a memory region to determine memory read latency",
+          "name": "Memory Latency [32.00 MiB]",
+          "result": {
+            "aggregation": 1,
+            "description": "",
+            "name": "Access time",
+            "type": 1,
+            "unit": "s"
+          },
+          "uuid": "0b76c53a-c169-4950-ba00-811897e8df6c"
+        },
+        {
+          "description": "Reads continuously a memory region to determine memory read latency",
+          "name": "Memory Latency [64.00 MiB]",
+          "result": {
+            "aggregation": 1,
+            "description": "",
+            "name": "Access time",
+            "type": 1,
+            "unit": "s"
+          },
+          "uuid": "2af7b5b7-7da6-424f-90f5-7520b01ecb78"
+        },
+        {
+          "description": "Reads continuously a memory region to determine memory read latency",
+          "name": "Memory Latency [128.00 MiB]",
+          "result": {
+            "aggregation": 1,
+            "description": "",
+            "name": "Access time",
+            "type": 1,
+            "unit": "s"
+          },
+          "uuid": "f9c5e17d-e58c-4811-b465-5cce62b74e01"
+        },
+        {
+          "description": "Reads continuously a memory region to determine memory read latency",
+          "name": "Memory Latency [256.00 MiB]",
+          "result": {
+            "aggregation": 1,
+            "description": "",
+            "name": "Access time",
+            "type": 1,
+            "unit": "s"
+          },
+          "uuid": "1c1e2b44-65b4-4fac-b023-31f269a72001"
+        },
+        {
+          "description": "Reads continuously a memory region to determine memory read latency",
+          "name": "Memory Latency [512.00 MiB]",
+          "result": {
+            "aggregation": 1,
+            "description": "",
+            "name": "Access time",
+            "type": 1,
+            "unit": "s"
+          },
+          "uuid": "b9f3341e-2f67-4eb9-ac9c-57a7fc31caaf"
+        }
+      ],
+      "uuid": "B635458F-018C-4291-AF82-94ABB40EC6DD"
     },
     {
-      "uuid": "AB56495E-F6CF-4EB3-A8A9-2550C2C9A735",
       "name": "Memory Read Latency (Fast)",
       "taskSpecifications": [
-        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
-        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
-        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
-        "BA3C55AB-3927-4191-A348-3D39E6D4FDD8"
-      ]
+        {
+          "description": "Reads continuously a memory region to determine memory read latency",
+          "name": "L1D Cache Latency",
+          "result": {
+            "aggregation": 1,
+            "description": "",
+            "name": "Access time",
+            "type": 1,
+            "unit": "s"
+          },
+          "uuid": "BA3C55AB-3927-4191-A348-3D39E6D4FDD8"
+        },
+        {
+          "description": "Reads continuously a memory region to determine memory read latency",
+          "name": "L2D Cache Latency",
+          "result": {
+            "aggregation": 1,
+            "description": "",
+            "name": "Access time",
+            "type": 1,
+            "unit": "s"
+          },
+          "uuid": "88226846-7DE3-4AC3-8A1A-BA83460D4987"
+        },
+        {
+          "description": "Reads continuously a memory region to determine memory read latency",
+          "name": "L3D Cache Latency",
+          "result": {
+            "aggregation": 1,
+            "description": "",
+            "name": "Access time",
+            "type": 1,
+            "unit": "s"
+          },
+          "uuid": "10655876-F51F-44FB-AEE7-04072566DEC3"
+        },
+        {
+          "description": "Reads continuously a memory region to determine memory read latency",
+          "name": "DRAM Latency",
+          "result": {
+            "aggregation": 1,
+            "description": "",
+            "name": "Access time",
+            "type": 1,
+            "unit": "s"
+          },
+          "uuid": "AF8A14AC-D930-493E-846B-A6659DADABF5"
+        }
+      ],
+      "uuid": "AB56495E-F6CF-4EB3-A8A9-2550C2C9A735"
     },
     {
-      "uuid": "551735e9-e789-46af-89cd-0f2f54665a88",
       "name": "Test Benchmark",
       "taskSpecifications": [
-        "BE159A99-83C7-4699-9F0C-28851CFA5DDA",
-        "F52DD25E-B626-4655-8165-6BC0D81C140F"
-      ]
+        {
+          "description": "Reads a file from disk to memory",
+          "name": "Read File to Memory",
+          "output": {
+            "description": "File contents in bytes",
+            "name": "File contents",
+            "unit": "B"
+          },
+          "result": {
+            "aggregation": 0,
+            "description": "",
+            "name": "Read Rate",
+            "type": 0,
+            "unit": "B"
+          },
+          "uuid": "BE159A99-83C7-4699-9F0C-28851CFA5DDA"
+        },
+        {
+          "description": "Writes data received from other tasks to file on disk",
+          "input": {
+            "description": "The bytes to write to file",
+            "name": "Data to write",
+            "unit": "B"
+          },
+          "name": "Write from memory to file",
+          "result": {
+            "aggregation": 0,
+            "description": "",
+            "name": "Write Rate",
+            "type": 0,
+            "unit": "B"
+          },
+          "uuid": "F52DD25E-B626-4655-8165-6BC0D81C140F"
+        }
+      ],
+      "uuid": "15136160-244e-4c52-bdec-4fd2f8750f4a"
     },
     {
-      "uuid": "98D86779-62F1-4F75-9262-0A65705DFCA3",
       "name": "Floyd Steinberg Dithering",
       "taskSpecifications": [
-        "BE159A99-83C7-4699-9F0C-28851CFA5DDA",
-        "B0B5E44D-04B1-44AE-9C1D-757B0E97A652",
-        "0E442DBF-5E96-4190-81B8-1435765546E0",
-        "BA657EF0-80EE-45B6-AABA-306435774F75",
-        "51CEE7BF-1E78-4647-BA01-1DC95EF3DCB1",
-        "050B949C-D4A7-4AC2-8F86-7E659EA2FAB3",
-        "30948762-9B7B-4CEA-8D9B-6913F3DA2097",
-        "F52DD25E-B626-4655-8165-6BC0D81C140F"
-      ]
+        {
+          "description": "Reads a file from disk to memory",
+          "name": "Read File to Memory",
+          "output": {
+            "description": "File contents in bytes",
+            "name": "File contents",
+            "unit": "B"
+          },
+          "result": {
+            "aggregation": 0,
+            "description": "",
+            "name": "Read Rate",
+            "type": 0,
+            "unit": "B"
+          },
+          "uuid": "BE159A99-83C7-4699-9F0C-28851CFA5DDA"
+        },
+        {
+          "description": "Decodes raw Png data to RGBA pixel array",
+          "input": {
+            "description": "The raw png file data",
+            "name": "Input file data",
+            "unit": "B"
+          },
+          "name": "Png Decoding",
+          "output": {
+            "description": "The image data in RGBA pixel array",
+            "name": "Output image data",
+            "unit": "Pixels"
+          },
+          "result": {
+            "aggregation": 0,
+            "description": "",
+            "name": "Decode Rate",
+            "type": 0,
+            "unit": "B"
+          },
+          "uuid": "B0B5E44D-04B1-44AE-9C1D-757B0E97A652"
+        },
+        {
+          "description": "Converts an Image with integer values to float values between 0.0 and 1.0",
+          "input": {
+            "description": "Input image in RGBA and integer values (0-255)",
+            "name": "Input image",
+            "requiredProperties": [
+              "width",
+              "height",
+              "stride"
+            ],
+            "unit": "Pixels"
+          },
+          "name": "Convert To Float",
+          "output": {
+            "description": "Output image in RGBA and float values (0.0-1.0)",
+            "name": "Output image",
+            "unit": "Pixels"
+          },
+          "result": {
+            "aggregation": 0,
+            "description": "",
+            "name": "Convert Rate",
+            "type": 0,
+            "unit": "Pixels"
+          },
+          "uuid": "0E442DBF-5E96-4190-81B8-1435765546E0"
+        },
+        {
+          "description": "Converts image data to Gray scale using the average of pixels",
+          "input": {
+            "description": "The image to convert to grayscale in float pixels",
+            "name": "Input Image data",
+            "requiredProperties": [
+              "width",
+              "height",
+              "stride"
+            ],
+            "unit": "Pixels"
+          },
+          "name": "Convert to Gray Scale (Average)",
+          "output": {
+            "description": "The converted image in float pixels",
+            "name": "Output Image data",
+            "unit": "Pixels"
+          },
+          "result": {
+            "aggregation": 0,
+            "description": "Pixel conversion rate",
+            "name": "Conversion Rate",
+            "type": 0,
+            "unit": "Pixels"
+          },
+          "uuid": "BA657EF0-80EE-45B6-AABA-306435774F75"
+        },
+        {
+          "description": "Converts an Gray Scale image to Black-White dithered with Floyd Steinbergs algorithm",
+          "input": {
+            "description": "Input image data in Grayscale and RGBA float pixels",
+            "name": "Input Image Data",
+            "requiredProperties": [
+              "width",
+              "height",
+              "stride"
+            ],
+            "unit": "Pixels"
+          },
+          "name": "Floyd-Steinberg Dithering",
+          "output": {
+            "description": "Output image data in Black-White dithered and RGBA float pixels",
+            "name": "Output Image Data",
+            "unit": "Pixels"
+          },
+          "result": {
+            "aggregation": 0,
+            "description": "",
+            "name": "Conversion Rate",
+            "type": 0,
+            "unit": "Pixels"
+          },
+          "uuid": "51CEE7BF-1E78-4647-BA01-1DC95EF3DCB1"
+        },
+        {
+          "description": "Converts the image data from float to integer",
+          "input": {
+            "description": "The input image data to convert to integer",
+            "name": "Input image data",
+            "requiredProperties": [
+              "width",
+              "height",
+              "stride"
+            ],
+            "unit": "Pixels"
+          },
+          "name": "Convert to UInt8",
+          "output": {
+            "description": "The output image data that were converted to integer",
+            "name": "Output image data",
+            "unit": "Pixels"
+          },
+          "result": {
+            "aggregation": 0,
+            "description": "The rate the pixels are converted from float to int",
+            "name": "Conversion Rate",
+            "type": 0,
+            "unit": "Pixels"
+          },
+          "uuid": "050B949C-D4A7-4AC2-8F86-7E659EA2FAB3"
+        },
+        {
+          "description": "Encodes the image data to PNG Format",
+          "input": {
+            "description": "The input image data in UInt8 to encode into PNG",
+            "name": "Input image data",
+            "requiredProperties": [
+              "width",
+              "height",
+              "stride"
+            ],
+            "unit": "Pixels"
+          },
+          "name": "Encode to PNG",
+          "output": {
+            "description": "The image encoded to PNG format",
+            "name": "PNG data",
+            "unit": "B"
+          },
+          "result": {
+            "aggregation": 0,
+            "description": "The rate that pixels are encoded into PNG format",
+            "name": "Encode rate",
+            "type": 0,
+            "unit": "Pixels"
+          },
+          "uuid": "30948762-9B7B-4CEA-8D9B-6913F3DA2097"
+        },
+        {
+          "description": "Writes data received from other tasks to file on disk",
+          "input": {
+            "description": "The bytes to write to file",
+            "name": "Data to write",
+            "unit": "B"
+          },
+          "name": "Write from memory to file",
+          "result": {
+            "aggregation": 0,
+            "description": "",
+            "name": "Write Rate",
+            "type": 0,
+            "unit": "B"
+          },
+          "uuid": "F52DD25E-B626-4655-8165-6BC0D81C140F"
+        }
+      ],
+      "uuid": "98D86779-62F1-4F75-9262-0A65705DFCA3"
     },
     {
-      "uuid": "FE6B2282-34FF-4AA1-BBA9-CA0DE7BAF086",
       "name": "Png Encoding/Decoding",
       "taskSpecifications": [
-        "BE159A99-83C7-4699-9F0C-28851CFA5DDA",
-        "B0B5E44D-04B1-44AE-9C1D-757B0E97A652",
-        "30948762-9B7B-4CEA-8D9B-6913F3DA2097"
-      ]
-    }
-  ],
-  "tasks": [
-    {
-      "description": "Encodes the image data to PNG Format",
-      "uuid": "30948762-9B7B-4CEA-8D9B-6913F3DA2097",
-      "input": {
-        "description": "The input image data in UInt8 to encode into PNG",
-        "name": "Input image data",
-        "requiredProperties": [
-          "width",
-          "height",
-          "stride"
-        ],
-        "unit": "Pixels"
-      },
-      "name": "Encode to PNG",
-      "output": {
-        "description": "The image encoded to PNG format",
-        "name": "PNG data",
-        "unit": "B"
-      },
-      "result": {
-        "aggregation": 0,
-        "description": "The rate that pixels are encoded into PNG format",
-        "name": "Encode rate",
-        "type": 0,
-        "unit": "Pixels"
-      }
-    },
-    {
-      "description": "Converts the image data from float to integer",
-      "uuid": "050B949C-D4A7-4AC2-8F86-7E659EA2FAB3",
-      "input": {
-        "description": "The input image data to convert to integer",
-        "name": "Input image data",
-        "requiredProperties": [
-          "width",
-          "height",
-          "stride"
-        ],
-        "unit": "Pixels"
-      },
-      "name": "Convert to UInt8",
-      "output": {
-        "description": "The output image data that were converted to integer",
-        "name": "Output image data",
-        "unit": "Pixels"
-      },
-      "result": {
-        "aggregation": 0,
-        "description": "The rate the pixels are converted from float to int",
-        "name": "Conversion Rate",
-        "type": 0,
-        "unit": "Pixels"
-      }
-    },
-    {
-      "description": "Converts image data to Gray scale using the average of pixels",
-      "uuid": "BA657EF0-80EE-45B6-AABA-306435774F75",
-      "input": {
-        "description": "The image to convert to grayscale in float pixels",
-        "name": "Input Image data",
-        "requiredProperties": [
-          "width",
-          "height",
-          "stride"
-        ],
-        "unit": "Pixels"
-      },
-      "name": "Convert to Gray Scale (Average)",
-      "output": {
-        "description": "The converted image in float pixels",
-        "name": "Output Image data",
-        "unit": "Pixels"
-      },
-      "result": {
-        "aggregation": 0,
-        "description": "Pixel conversion rate",
-        "name": "Conversion Rate",
-        "type": 0,
-        "unit": "Pixels"
-      }
-    },
-    {
-      "description": "Converts an Image with integer values to float values between 0.0 and 1.0",
-      "uuid": "0E442DBF-5E96-4190-81B8-1435765546E0",
-      "input": {
-        "description": "Input image in RGBA and integer values (0-255)",
-        "name": "Input image",
-        "requiredProperties": [
-          "width",
-          "height",
-          "stride"
-        ],
-        "unit": "Pixels"
-      },
-      "name": "Convert To Float",
-      "output": {
-        "description": "Output image in RGBA and float values (0.0-1.0)",
-        "name": "Output image",
-        "unit": "Pixels"
-      },
-      "result": {
-        "aggregation": 0,
-        "description": "",
-        "name": "Convert Rate",
-        "type": 0,
-        "unit": "Pixels"
-      }
-    },
-    {
-      "description": "Decodes raw Png data to RGBA pixel array",
-      "uuid": "B0B5E44D-04B1-44AE-9C1D-757B0E97A652",
-      "input": {
-        "description": "The raw png file data",
-        "name": "Input file data",
-        "requiredProperties": [],
-        "unit": "B"
-      },
-      "name": "Png Decoding",
-      "output": {
-        "description": "The image data in RGBA pixel array",
-        "name": "Output image data",
-        "unit": "Pixels"
-      },
-      "result": {
-        "aggregation": 0,
-        "description": "",
-        "name": "Decode Rate",
-        "type": 0,
-        "unit": "B"
-      }
-    },
-    {
-      "description": "Converts an Gray Scale image to Black-White dithered with Floyd Steinbergs algorithm",
-      "uuid": "51CEE7BF-1E78-4647-BA01-1DC95EF3DCB1",
-      "input": {
-        "description": "Input image data in Grayscale and RGBA float pixels",
-        "name": "Input Image Data",
-        "requiredProperties": [
-          "width",
-          "height",
-          "stride"
-        ],
-        "unit": "Pixels"
-      },
-      "name": "Floyd-Steinberg Dithering",
-      "output": {
-        "description": "Output image data in Black-White dithered and RGBA float pixels",
-        "name": "Output Image Data",
-        "unit": "Pixels"
-      },
-      "result": {
-        "aggregation": 0,
-        "description": "",
-        "name": "Conversion Rate",
-        "type": 0,
-        "unit": "Pixels"
-      }
-    },
-    {
-      "description": "Writes data received from other tasks to file on disk",
-      "uuid": "F52DD25E-B626-4655-8165-6BC0D81C140F",
-      "input": {
-        "description": "The bytes to write to file",
-        "name": "Data to write",
-        "requiredProperties": [],
-        "unit": "B"
-      },
-      "name": "Write from memory to file",
-      "output": {
-        "description": "",
-        "name": "",
-        "unit": ""
-      },
-      "result": {
-        "aggregation": 0,
-        "description": "",
-        "name": "Write Rate",
-        "type": 0,
-        "unit": "B"
-      }
-    },
-    {
-      "description": "Reads a file from disk to memory",
-      "uuid": "BE159A99-83C7-4699-9F0C-28851CFA5DDA",
-      "input": {
-        "description": "",
-        "name": "",
-        "requiredProperties": [],
-        "unit": ""
-      },
-      "name": "Read File to Memory",
-      "output": {
-        "description": "File contents in bytes",
-        "name": "File contents",
-        "unit": "B"
-      },
-      "result": {
-        "aggregation": 0,
-        "description": "",
-        "name": "Read Rate",
-        "type": 0,
-        "unit": "B"
-      }
-    },
-    {
-      "description": "Reads continuously a memory region to determine memory read latency",
-      "uuid": "BA3C55AB-3927-4191-A348-3D39E6D4FDD8",
-      "input": {
-        "description": "",
-        "name": "",
-        "requiredProperties": [],
-        "unit": ""
-      },
-      "name": "Memory Latency",
-      "output": {
-        "description": "",
-        "name": "",
-        "unit": ""
-      },
-      "result": {
-        "aggregation": 1,
-        "description": "",
-        "name": "Access time",
-        "type": 1,
-        "unit": "s"
-      }
-    },
-    {
-      "description": "Reads continuously a memory region to determine Memory Read Bandwidth",
-      "uuid": "A5FAC385-C58B-44EA-AC3C-2A15447698D0",
-      "input": {
-        "description": "",
-        "name": "",
-        "requiredProperties": [],
-        "unit": ""
-      },
-      "name": "Memory Read Bandwidth",
-      "output": {
-        "description": "",
-        "name": "",
-        "unit": ""
-      },
-      "result": {
-        "aggregation": 0,
-        "description": "",
-        "name": "Read Rate",
-        "type": 0,
-        "unit": "B"
-      }
+        {
+          "description": "Reads a file from disk to memory",
+          "name": "Read File to Memory",
+          "output": {
+            "description": "File contents in bytes",
+            "name": "File contents",
+            "unit": "B"
+          },
+          "result": {
+            "aggregation": 0,
+            "description": "",
+            "name": "Read Rate",
+            "type": 0,
+            "unit": "B"
+          },
+          "uuid": "BE159A99-83C7-4699-9F0C-28851CFA5DDA"
+        },
+        {
+          "description": "Decodes raw Png data to RGBA pixel array",
+          "input": {
+            "description": "The raw png file data",
+            "name": "Input file data",
+            "unit": "B"
+          },
+          "name": "Png Decoding",
+          "output": {
+            "description": "The image data in RGBA pixel array",
+            "name": "Output image data",
+            "unit": "Pixels"
+          },
+          "result": {
+            "aggregation": 0,
+            "description": "",
+            "name": "Decode Rate",
+            "type": 0,
+            "unit": "B"
+          },
+          "uuid": "B0B5E44D-04B1-44AE-9C1D-757B0E97A652"
+        },
+        {
+          "description": "Encodes the image data to PNG Format",
+          "input": {
+            "description": "The input image data in UInt8 to encode into PNG",
+            "name": "Input image data",
+            "requiredProperties": [
+              "width",
+              "height",
+              "stride"
+            ],
+            "unit": "Pixels"
+          },
+          "name": "Encode to PNG",
+          "output": {
+            "description": "The image encoded to PNG format",
+            "name": "PNG data",
+            "unit": "B"
+          },
+          "result": {
+            "aggregation": 0,
+            "description": "The rate that pixels are encoded into PNG format",
+            "name": "Encode rate",
+            "type": 0,
+            "unit": "Pixels"
+          },
+          "uuid": "30948762-9B7B-4CEA-8D9B-6913F3DA2097"
+        }
+      ],
+      "uuid": "FE6B2282-34FF-4AA1-BBA9-CA0DE7BAF086"
     }
   ]
 }

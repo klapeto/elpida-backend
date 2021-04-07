@@ -27,14 +27,14 @@ using Elpida.Backend.Data.Abstractions.Models.Result;
 
 namespace Elpida.Backend.Data.Abstractions.Repositories
 {
-	public interface IResultsRepository : IRepository<ResultModel>
+	public interface IBenchmarkResultsRepository : IRepository<BenchmarkResultModel>
 	{
 		Task<PagedQueryResult<ResultPreviewModel>> GetPagedPreviewsAsync<TOrderKey>(
 			int from,
 			int count,
 			bool descending,
-			Expression<Func<ResultModel, TOrderKey>> orderBy,
-			IEnumerable<Expression<Func<ResultModel, bool>>> filters,
+			Expression<Func<BenchmarkResultModel, TOrderKey>> orderBy,
+			IEnumerable<Expression<Func<BenchmarkResultModel, bool>>> filters,
 			bool calculateTotalCount,
 			CancellationToken cancellationToken = default);
 	}

@@ -27,7 +27,12 @@ namespace Elpida.Backend.DataUpdater
 	{
 		private readonly string _connectionString;
 		private readonly ILoggerFactory _loggerFactory;
-
+		
+		public UpdateElpidaDbContext()
+			:base(new DbContextOptions<ElpidaContext>())
+		{
+			
+		}
 		public UpdateElpidaDbContext(string connectionString, ILoggerFactory loggerFactory)
 			: base(new DbContextOptions<ElpidaContext>())
 		{
@@ -37,8 +42,9 @@ namespace Elpida.Backend.DataUpdater
 
 		protected override void OnConfiguring(DbContextOptionsBuilder options)
 		{
+			options.UseSqlite("Data Source=../../../../Elpida.Backend/results.db");
 			options.UseLoggerFactory(_loggerFactory);
-			options.UseSqlite(_connectionString);
+			//options.UseSqlite(_connectionString);
 		}
 	}
 }

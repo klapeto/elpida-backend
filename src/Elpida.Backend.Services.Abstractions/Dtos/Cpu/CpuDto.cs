@@ -25,6 +25,7 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Cpu
 	[Serializable]
 	public class CpuDto
 	{
+		public long Id { get; set; }
 		public string Vendor { get; set; } = string.Empty;
 		public string Brand { get; set; } = string.Empty;
 		public long Frequency { get; set; }

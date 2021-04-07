@@ -30,10 +30,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Elpida.Backend.Data
 {
-	public class ResultsRepository : EntityRepository<ResultModel>, IResultsRepository
+	public class BenchmarkResultsRepository : EntityRepository<BenchmarkResultModel>, IBenchmarkResultsRepository
 	{
-		public ResultsRepository(ElpidaContext elpidaContext)
-			: base(elpidaContext, elpidaContext.Results)
+		public BenchmarkResultsRepository(ElpidaContext elpidaContext)
+			: base(elpidaContext, elpidaContext.BenchmarkResults)
 		{
 		}
 
@@ -43,8 +43,8 @@ namespace Elpida.Backend.Data
 			int from,
 			int count,
 			bool descending,
-			Expression<Func<ResultModel, TOrderKey>> orderBy,
-			IEnumerable<Expression<Func<ResultModel, bool>>> filters,
+			Expression<Func<BenchmarkResultModel, TOrderKey>> orderBy,
+			IEnumerable<Expression<Func<BenchmarkResultModel, bool>>> filters,
 			bool calculateTotalCount,
 			CancellationToken cancellationToken = default)
 		{
@@ -78,6 +78,8 @@ namespace Elpida.Backend.Data
 				.Skip(from)
 				.Take(count)
 				.Include(model => model.Benchmark)
+				.Include(model => model.Elpida)
+				.Include(model => model.Os)
 				.Include(model => model.Topology)
 				.ThenInclude(model => model.Cpu)
 				.Select(m => new ResultPreviewModel
@@ -87,13 +89,13 @@ namespace Elpida.Backend.Data
 					CpuBrand = m.Topology.Cpu.Brand,
 					CpuCores = m.Topology.TotalPhysicalCores,
 					CpuFrequency = m.Topology.Cpu.Frequency,
-					ElpidaVersionMajor = m.ElpidaVersionMajor,
-					ElpidaVersionMinor = m.ElpidaVersionMinor,
-					ElpidaVersionRevision = m.ElpidaVersionRevision,
-					ElpidaVersionBuild = m.ElpidaVersionBuild,
+					ElpidaVersionMajor = m.Elpida.VersionMajor,
+					ElpidaVersionMinor = m.Elpida.VersionMinor,
+					ElpidaVersionRevision = m.Elpida.VersionRevision,
+					ElpidaVersionBuild = m.Elpida.VersionBuild,
 					MemorySize = m.MemorySize,
-					OsName = m.OsName,
-					OsVersion = m.OsVersion,
+					OsName = m.Os.Name,
+					OsVersion = m.Os.Version,
 					TimeStamp = m.TimeStamp,
 					CpuLogicalCores = m.Topology.TotalLogicalCores
 				})
@@ -104,21 +106,23 @@ namespace Elpida.Backend.Data
 
 		#endregion
 
-		protected override IQueryable<ResultModel> ProcessGetMultiple(IQueryable<ResultModel> queryable)
+		protected override IQueryable<BenchmarkResultModel> ProcessGetMultiple(IQueryable<BenchmarkResultModel> queryable)
 		{
 			return ProcessGetSingle(queryable);
 		}
 
-		protected override IQueryable<ResultModel> ProcessGetMultiplePaged(IQueryable<ResultModel> queryable)
+		protected override IQueryable<BenchmarkResultModel> ProcessGetMultiplePaged(IQueryable<BenchmarkResultModel> queryable)
 		{
 			return ProcessGetSingle(queryable);
 		}
 
-		protected override IQueryable<ResultModel> ProcessGetSingle(IQueryable<ResultModel> queryable)
+		protected override IQueryable<BenchmarkResultModel> ProcessGetSingle(IQueryable<BenchmarkResultModel> queryable)
 		{
 			return queryable
 				.AsNoTracking()
 				.Include(model => model.Benchmark)
+				.Include(model => model.Os)
+				.Include(model => model.Elpida)
 				.Include(model => model.TaskResults)
 				.ThenInclude(model => model.Task)
 				.Include(model => model.Topology)

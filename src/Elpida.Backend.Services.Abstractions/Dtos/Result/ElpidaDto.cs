@@ -21,6 +21,7 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 {
 	public class ElpidaDto
 	{
+		public long Id { get; set; }
 		public VersionDto Version { get; set; } = new VersionDto();
 		public CompilerDto Compiler { get; set; } = new CompilerDto();
 	}

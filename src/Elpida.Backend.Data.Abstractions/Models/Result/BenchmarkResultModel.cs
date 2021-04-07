@@ -19,33 +19,28 @@
 
 using System;
 using System.Collections.Generic;
-using Elpida.Backend.Data.Abstractions.Interfaces;
 using Elpida.Backend.Data.Abstractions.Models.Topology;
 
 namespace Elpida.Backend.Data.Abstractions.Models.Result
 {
-	public class ResultModel : Entity
+	public class BenchmarkResultModel : Entity
 	{
+		public long ElpidaId { get; set; }
+		public ElpidaModel Elpida { get; set; } = default!;
+		
+		public long OsId { get; set; }
+		public OsModel Os { get; set; } = default!;
+		
+		public long TopologyId { get; set; }
+		public TopologyModel Topology { get; set; } = null!;
+		
+		public long BenchmarkId { get; set; }
+		public BenchmarkModel Benchmark { get; set; } = null!;
+		
 		public DateTime TimeStamp { get; set; }
 		public string Affinity { get; set; } = default!;
-
-		public int ElpidaVersionMajor { get; set; }
-		public int ElpidaVersionMinor { get; set; }
-		public int ElpidaVersionRevision { get; set; }
-		public int ElpidaVersionBuild { get; set; }
-
-		public string CompilerVersion { get; set; } = default!;
-		public string CompilerName { get; set; } = default!;
-
-		public string OsCategory { get; set; } = default!;
-		public string OsName { get; set; } = default!;
-		public string OsVersion { get; set; } = default!;
-
 		public long MemorySize { get; set; }
 		public long PageSize { get; set; }
-
-		public TopologyModel Topology { get; set; } = null!;
-
 		public double NotifyOverhead { get; set; }
 		public double WakeupOverhead { get; set; }
 		public double SleepOverhead { get; set; }
@@ -55,7 +50,6 @@ namespace Elpida.Backend.Data.Abstractions.Models.Result
 		public double JoinOverhead { get; set; }
 		public double TargetTime { get; set; }
 
-		public BenchmarkModel Benchmark { get; set; } = null!;
 		public ICollection<TaskResultModel> TaskResults { get; set; } = null!;
 	}
 }

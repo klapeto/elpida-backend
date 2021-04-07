@@ -23,7 +23,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Elpida.Backend.Services.Abstractions;
 
-namespace Elpida.Backend.Services
+namespace Elpida.Backend.Services.Utilities
 {
 	public static class ComparisonExpressions
 	{

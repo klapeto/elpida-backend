@@ -35,11 +35,11 @@ namespace Elpida.Backend.Controllers
 	[Route("api/v{version:apiVersion}/[controller]")]
 	public class ResultController : ControllerBase
 	{
-		private readonly IResultsService _resultsService;
+		private readonly IBenchmarkResultsService _benchmarkResultsService;
 
-		public ResultController(IResultsService resultsService)
+		public ResultController(IBenchmarkResultsService benchmarkResultsService)
 		{
-			_resultsService = resultsService;
+			_benchmarkResultsService = benchmarkResultsService;
 		}
 
 		[HttpPost]
@@ -49,8 +49,8 @@ namespace Elpida.Backend.Controllers
 		public async Task<IActionResult> PostNewResult([FromBody] ResultDto resultDto, ApiVersion apiVersion,
 			CancellationToken cancellationToken)
 		{
-			var cid = await _resultsService.CreateAsync(resultDto, cancellationToken);
-			return CreatedAtRoute(nameof(GetSingle), new {id = cid, version = $"{apiVersion}"}, null);
+			var resultId = await _benchmarkResultsService.CreateAsync(resultDto, cancellationToken);
+			return CreatedAtRoute(nameof(GetSingle), new {id = resultId, version = $"{apiVersion}"}, null);
 		}
 
 		[HttpGet("{id}", Name = nameof(GetSingle))]
@@ -60,7 +60,7 @@ namespace Elpida.Backend.Controllers
 		{
 			if (long.TryParse(id, out var lid))
 			{
-				return Ok(await _resultsService.GetSingleAsync(lid, cancellationToken));
+				return Ok(await _benchmarkResultsService.GetSingleAsync(lid, cancellationToken));
 			}
 
 			return BadRequest("Id must be an Integer number");
@@ -75,7 +75,7 @@ namespace Elpida.Backend.Controllers
 		public async Task<IActionResult> GetPaged([FromQuery] PageRequest pageRequest,
 			CancellationToken cancellationToken)
 		{
-			return Ok(await _resultsService.GetPagedAsync(new QueryRequest {PageRequest = pageRequest},
+			return Ok(await _benchmarkResultsService.GetPagedAsync(new QueryRequest {PageRequest = pageRequest},
 				cancellationToken));
 		}
 
@@ -96,7 +96,7 @@ namespace Elpida.Backend.Controllers
 				}
 			}
 
-			return Ok(await _resultsService.GetPagedAsync(queryRequest, cancellationToken));
+			return Ok(await _benchmarkResultsService.GetPagedAsync(queryRequest, cancellationToken));
 		}
 
 		private static void ConvertValues(QueryInstance instance)

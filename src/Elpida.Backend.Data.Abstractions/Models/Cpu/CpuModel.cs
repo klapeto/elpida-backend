@@ -17,7 +17,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System.Collections.Generic;
 using Elpida.Backend.Data.Abstractions.Interfaces;
+using Elpida.Backend.Data.Abstractions.Models.Statistics;
 
 namespace Elpida.Backend.Data.Abstractions.Models.Cpu
 {
@@ -30,5 +32,7 @@ namespace Elpida.Backend.Data.Abstractions.Models.Cpu
 		public string AdditionalInfo { get; set; } = default!;
 		public string Caches { get; set; } = default!;
 		public string Features { get; set; } = default!;
+		
+		public ICollection<TaskStatisticsModel> TaskStatistics { get; set; } = default!;
 	}
 }

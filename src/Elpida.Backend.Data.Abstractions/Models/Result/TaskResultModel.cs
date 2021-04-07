@@ -18,13 +18,24 @@
  */
 
 using Elpida.Backend.Data.Abstractions.Interfaces;
+using Elpida.Backend.Data.Abstractions.Models.Cpu;
 using Elpida.Backend.Data.Abstractions.Models.Task;
+using Elpida.Backend.Data.Abstractions.Models.Topology;
 
 namespace Elpida.Backend.Data.Abstractions.Models.Result
 {
 	public class TaskResultModel : Entity
 	{
-		public ResultModel Result { get; set; } = default!;
+		public long TopologyId { get; set; }
+		public TopologyModel Topology { get; set; } = default!;
+		
+		public long CpuId { get; set; }
+		public CpuModel Cpu { get; set; } = default!;
+		
+		public long BenchmarkResultId { get; set; }
+		public BenchmarkResultModel BenchmarkResult { get; set; } = default!;
+		
+		public long TaskId { get; set; }
 		public TaskModel Task { get; set; } = default!;
 		public double Value { get; set; }
 		public double Time { get; set; }

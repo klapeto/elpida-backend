@@ -23,7 +23,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using Elpida.Backend.Services.Abstractions;
 
-namespace Elpida.Backend.Services
+namespace Elpida.Backend.Services.Utilities
 {
 	public class QueryExpressionBuilder
 	{

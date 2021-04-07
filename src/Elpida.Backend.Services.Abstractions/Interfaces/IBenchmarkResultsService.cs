@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2021  Ioannis Panagiotopoulos
+ * Copyright (C) 2020  Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,10 +17,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-namespace Elpida.Backend.Data.Abstractions.Interfaces
+using System.Threading;
+using System.Threading.Tasks;
+using Elpida.Backend.Services.Abstractions.Dtos.Result;
+
+namespace Elpida.Backend.Services.Abstractions.Interfaces
 {
-	public class Entity
+	public interface IBenchmarkResultsService
 	{
-		public long Id { get; set; }
+		Task<long> CreateAsync(ResultDto resultDto, CancellationToken cancellationToken = default);
+
+		Task<ResultDto> GetSingleAsync(long id, CancellationToken cancellationToken = default);
+
+		Task<PagedResult<ResultPreviewDto>> GetPagedAsync(QueryRequest queryRequest,
+			CancellationToken cancellationToken = default);
 	}
 }

@@ -20,6 +20,7 @@
 using Elpida.Backend.Data.Abstractions.Models;
 using Elpida.Backend.Data.Abstractions.Models.Cpu;
 using Elpida.Backend.Data.Abstractions.Models.Result;
+using Elpida.Backend.Data.Abstractions.Models.Statistics;
 using Elpida.Backend.Data.Abstractions.Models.Task;
 using Elpida.Backend.Data.Abstractions.Models.Topology;
 using Microsoft.EntityFrameworkCore;
@@ -28,7 +29,7 @@ namespace Elpida.Backend.Data
 {
 	public class ElpidaContext : DbContext
 	{
-		public ElpidaContext(DbContextOptions<ElpidaContext> contextOptions)
+		public ElpidaContext(DbContextOptions contextOptions)
 			: base(contextOptions)
 		{
 		}
@@ -37,7 +38,13 @@ namespace Elpida.Backend.Data
 		public DbSet<TaskModel> Tasks { get; set; } = default!;
 		public DbSet<CpuModel> Cpus { get; set; } = default!;
 		public DbSet<TopologyModel> Topologies { get; set; } = default!;
-		public DbSet<ResultModel> Results { get; set; } = default!;
+		public DbSet<BenchmarkResultModel> BenchmarkResults { get; set; } = default!;
+		
+		public DbSet<TaskResultModel> TaskResults { get; set; } = default!;
+		
+		public DbSet<ElpidaModel> Elpidas { get; set; } = default!;
+		
+		public DbSet<OsModel> Oses { get; set; } = default!;
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
@@ -47,17 +54,33 @@ namespace Elpida.Backend.Data
 
 			modelBuilder.Entity<TaskResultModel>()
 				.HasOne(m => m.Task);
+			
+			modelBuilder.Entity<TaskResultModel>()
+				.HasOne(m => m.Topology);
+			
+			modelBuilder.Entity<TaskResultModel>()
+				.HasOne(m => m.Cpu);
 
-			modelBuilder.Entity<ResultModel>()
+			modelBuilder.Entity<BenchmarkResultModel>()
 				.HasMany(m => m.TaskResults)
-				.WithOne(m => m.Result)
+				.WithOne(m => m.BenchmarkResult)
 				.OnDelete(DeleteBehavior.Cascade);
 
-			modelBuilder.Entity<ResultModel>()
+			modelBuilder.Entity<BenchmarkResultModel>()
 				.HasOne(m => m.Topology);
 
-			modelBuilder.Entity<ResultModel>()
+			modelBuilder.Entity<BenchmarkResultModel>()
 				.HasOne(m => m.Benchmark);
+
+			modelBuilder.Entity<CpuModel>()
+				.HasMany(m => m.TaskStatistics)
+				.WithOne(m => m.Cpu);
+
+			modelBuilder.Entity<TaskStatisticsModel>()
+				.HasOne(m => m.Cpu);
+			
+			modelBuilder.Entity<TaskStatisticsModel>()
+				.HasOne(m => m.Task);
 		}
 	}
 }

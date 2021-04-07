@@ -59,9 +59,9 @@ namespace Elpida.Backend.Services.Tests
 			_benchmarkMock = new Mock<IBenchmarkRepository>(MockBehavior.Strict);
 		}
 
-		private ResultService GetService()
+		private BenchmarkResultService GetService()
 		{
-			return new ResultService(_repoMock.Object, _cpuMock.Object, _topologyMock.Object, _benchmarkMock.Object);
+			return new BenchmarkResultService(_repoMock.Object, _cpuMock.Object, _topologyMock.Object, _benchmarkMock.Object);
 		}
 
 		private void VerifyMocks()
@@ -86,8 +86,8 @@ namespace Elpida.Backend.Services.Tests
 			var cpu = topology.Cpu;
 
 			_repoMock.Setup(r =>
-					r.CreateAsync(It.Is<ResultModel>(m => m.TimeStamp != default), It.IsAny<CancellationToken>()))
-				.ReturnsAsync(new ResultModel
+					r.CreateAsync(It.Is<BenchmarkResultModel>(m => m.TimeStamp != default), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new BenchmarkResultModel
 				{
 					Id = resultId
 				})
@@ -160,8 +160,8 @@ namespace Elpida.Backend.Services.Tests
 			var cpu = topology.Cpu;
 			
 			_repoMock.Setup(r =>
-					r.CreateAsync(It.Is<ResultModel>(m => m.TimeStamp != default), It.IsAny<CancellationToken>()))
-				.ReturnsAsync(new ResultModel
+					r.CreateAsync(It.Is<BenchmarkResultModel>(m => m.TimeStamp != default), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new BenchmarkResultModel
 				{
 					Id = resultId
 				})
@@ -235,8 +235,8 @@ namespace Elpida.Backend.Services.Tests
 			var cpu = topology.Cpu;
 			
 			_repoMock.Setup(r =>
-					r.CreateAsync(It.Is<ResultModel>(m => m.TimeStamp != default), It.IsAny<CancellationToken>()))
-				.ReturnsAsync(new ResultModel
+					r.CreateAsync(It.Is<BenchmarkResultModel>(m => m.TimeStamp != default), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new BenchmarkResultModel
 				{
 					Id = resultId
 				})
@@ -343,7 +343,7 @@ namespace Elpida.Backend.Services.Tests
 						It.Is<int>(i => i == page.Count),
 						false,
 						null,
-						It.Is<IEnumerable<Expression<Func<ResultModel, bool>>>>(e => !e.Any()),
+						It.Is<IEnumerable<Expression<Func<BenchmarkResultModel, bool>>>>(e => !e.Any()),
 						false,
 						default))
 				.ReturnsAsync(() => new PagedQueryResult<ResultPreviewModel>(0, new List<ResultPreviewModel>
@@ -380,7 +380,7 @@ namespace Elpida.Backend.Services.Tests
 						It.Is<int>(i => i == page.Count),
 						false,
 						null,
-						It.Is<IEnumerable<Expression<Func<ResultModel, bool>>>>(e => !e.Any()),
+						It.Is<IEnumerable<Expression<Func<BenchmarkResultModel, bool>>>>(e => !e.Any()),
 						true,
 						default))
 				.ReturnsAsync(() => new PagedQueryResult<ResultPreviewModel>(totalCount, new List<ResultPreviewModel>
@@ -418,7 +418,7 @@ namespace Elpida.Backend.Services.Tests
 						It.Is<int>(i => i == page.Count),
 						false,
 						null,
-						It.Is<IEnumerable<Expression<Func<ResultModel, bool>>>>(enumerable =>
+						It.Is<IEnumerable<Expression<Func<BenchmarkResultModel, bool>>>>(enumerable =>
 							enumerable.Any(x => x.Body.ToString().Contains(filterValue))),
 						true,
 						default))
@@ -466,7 +466,7 @@ namespace Elpida.Backend.Services.Tests
 						It.Is<int>(i => i == page.Count),
 						false,
 						null,
-						It.Is<IEnumerable<Expression<Func<ResultModel, bool>>>>(enumerable =>
+						It.Is<IEnumerable<Expression<Func<BenchmarkResultModel, bool>>>>(enumerable =>
 							enumerable.Any(x => x.Body.ToString().Contains(filterValue))),
 						true,
 						default))
@@ -518,7 +518,7 @@ namespace Elpida.Backend.Services.Tests
 						It.Is<int>(i => i == page.Count),
 						false,
 						null,
-						It.Is<IEnumerable<Expression<Func<ResultModel, bool>>>>(enumerable =>
+						It.Is<IEnumerable<Expression<Func<BenchmarkResultModel, bool>>>>(enumerable =>
 							enumerable.Any(x => x.Body.ToString().Contains(stringToCheck))), true,
 						default))
 				.ReturnsAsync(() => new PagedQueryResult<ResultPreviewModel>(totalCount, new List<ResultPreviewModel>
@@ -563,8 +563,8 @@ namespace Elpida.Backend.Services.Tests
 					It.Is<int>(i => i == page.Next),
 					It.Is<int>(i => i == page.Count),
 					false,
-					(Expression<Func<ResultModel, object>>) null,
-					It.Is<IEnumerable<Expression<Func<ResultModel, bool>>>>(enumerable =>
+					(Expression<Func<BenchmarkResultModel, object>>) null,
+					It.Is<IEnumerable<Expression<Func<BenchmarkResultModel, bool>>>>(enumerable =>
 						enumerable.Any(x => x.Body.ToString().Contains("=="))),
 					true,
 					default))

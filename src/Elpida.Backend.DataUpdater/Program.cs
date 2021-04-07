@@ -23,8 +23,10 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Elpida.Backend.Data.Abstractions.Models;
+using Elpida.Backend.Data.Abstractions.Models.Cpu;
 using Elpida.Backend.Data.Abstractions.Models.Task;
 using Elpida.Backend.Services.Abstractions.Dtos;
+using Elpida.Backend.Services.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -32,145 +34,152 @@ using Newtonsoft.Json;
 
 namespace Elpida.Backend.DataUpdater
 {
-	internal static class Program
-	{
-		private static void Update(this TaskModel model, TaskModel other)
-		{
-			model.Uuid = other.Uuid;
-			model.Name = other.Name;
-			model.Description = other.Description;
+    internal static class Program
+    {
+        private static void Update(this TaskModel model, TaskModel other)
+        {
+            model.Uuid = other.Uuid;
+            model.Name = other.Name;
+            model.Description = other.Description;
 
-			model.InputName = other.InputName;
-			model.InputDescription = other.InputDescription;
-			model.InputUnit = other.InputUnit;
-			model.InputProperties = JsonConvert.SerializeObject(other.InputProperties);
+            model.InputName = other.InputName;
+            model.InputDescription = other.InputDescription;
+            model.InputUnit = other.InputUnit;
+            model.InputProperties = JsonConvert.SerializeObject(other.InputProperties);
 
-			model.OutputName = other.OutputName;
-			model.OutputDescription = other.OutputDescription;
-			model.OutputUnit = other.OutputUnit;
-			model.OutputProperties = JsonConvert.SerializeObject(other.OutputProperties);
+            model.OutputName = other.OutputName;
+            model.OutputDescription = other.OutputDescription;
+            model.OutputUnit = other.OutputUnit;
+            model.OutputProperties = JsonConvert.SerializeObject(other.OutputProperties);
 
-			model.ResultName = other.ResultName;
-			model.ResultDescription = other.Description;
-			model.ResultAggregation = other.ResultAggregation;
-			model.ResultType = other.ResultType;
-			model.ResultUnit = other.ResultUnit;
-		}
+            model.ResultName = other.ResultName;
+            model.ResultDescription = other.Description;
+            model.ResultAggregation = other.ResultAggregation;
+            model.ResultType = other.ResultType;
+            model.ResultUnit = other.ResultUnit;
+        }
 
-		private static TaskModel ToModel(this TaskDto dto)
-		{
-			return new TaskModel
-			{
-				Id = dto.Id,
-				Uuid = dto.Uuid,
-				Name = dto.Name,
-				Description = dto.Description,
+        private static TaskModel ToModel(this TaskDto dto)
+        {
+            return new TaskModel
+            {
+                Id = dto.Id,
+                Uuid = dto.Uuid,
+                Name = dto.Name,
+                Description = dto.Description,
 
-				InputName = dto.Input?.Name,
-				InputDescription = dto.Input?.Description,
-				InputUnit = dto.Input?.Unit,
-				InputProperties = JsonConvert.SerializeObject(dto.Input?.RequiredProperties),
+                InputName = dto.Input?.Name,
+                InputDescription = dto.Input?.Description,
+                InputUnit = dto.Input?.Unit,
+                InputProperties = JsonConvert.SerializeObject(dto.Input?.RequiredProperties),
 
-				OutputName = dto.Output?.Name,
-				OutputDescription = dto.Output?.Description,
-				OutputUnit = dto.Output?.Unit,
-				OutputProperties = JsonConvert.SerializeObject(dto.Output?.RequiredProperties),
+                OutputName = dto.Output?.Name,
+                OutputDescription = dto.Output?.Description,
+                OutputUnit = dto.Output?.Unit,
+                OutputProperties = JsonConvert.SerializeObject(dto.Output?.RequiredProperties),
 
-				ResultName = dto.Result.Name,
-				ResultDescription = dto.Description,
-				ResultAggregation = dto.Result.Aggregation,
-				ResultType = dto.Result.Type,
-				ResultUnit = dto.Result.Unit
-			};
-		}
-		
-		private static async Task Main(string[] args)
-		{
-			var config = new ConfigurationBuilder()
-				.AddJsonFile("appsettings.json", false, true)
-				.AddCommandLine(args)
-				.Build();
+                ResultName = dto.Result.Name,
+                ResultDescription = dto.Description,
+                ResultAggregation = dto.Result.Aggregation,
+                ResultType = dto.Result.Type,
+                ResultUnit = dto.Result.Unit
+            };
+        }
 
-			var connectionString = config.GetConnectionString("Results");
+        private static async Task Main(string[] args)
+        {
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", false, true)
+                .AddCommandLine(args)
+                .Build();
 
-			using var loggerFactory = LoggerFactory.Create(builder =>
-			{
-				builder.AddConsole();
-				builder.AddConfiguration(config);
-			});
+            var connectionString = config.GetConnectionString("Results");
 
-			var baseLogger = loggerFactory.CreateLogger("Main");
+            using var loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder.AddConsole();
+                builder.AddConfiguration(config);
+            });
 
-			baseLogger.LogInformation("Reading data");
-			try
-			{
-				var data = JsonConvert.DeserializeObject<Data>(await File.ReadAllTextAsync("data.json"));
+            var baseLogger = loggerFactory.CreateLogger("Main");
 
-				using (baseLogger.BeginScope("Database update"))
-				{
-					using (var context = new UpdateElpidaDbContext(connectionString, loggerFactory))
-					{
-						await context.Database.EnsureCreatedAsync();
+            baseLogger.LogInformation("Reading data");
+            try
+            {
+                var data = JsonConvert.DeserializeObject<Data>(await File.ReadAllTextAsync("data.json"));
 
-						var addedTasks = new List<TaskModel>();
-						foreach (var task in data.Tasks
-							.Select(t => t.ToModel())
-							.ToList())
-						{
-							var updatedTask = await context.Tasks.FirstOrDefaultAsync(t => t.Uuid == task.Uuid);
-							if (updatedTask == null)
-							{
-								updatedTask = (await context.Tasks.AddAsync(task)).Entity;
-							}
-							else
-							{
-								updatedTask.Update(task);
-							}
+                var benchmarks = data.Benchmarks;
+                var tasks = data.Benchmarks
+                    .SelectMany(b => b.TaskSpecifications)
+                    .DistinctBy(dto => dto.Uuid)
+                    .ToList();
 
-							addedTasks.Add(updatedTask);
-						}
+                using (baseLogger.BeginScope("Database update"))
+                {
+                    using (var context = new UpdateElpidaDbContext(connectionString, loggerFactory))
+                    {
+                        await context.Database.EnsureDeletedAsync();
+                        await context.Database.EnsureCreatedAsync();
+                    
+                        var addedTasks = new List<TaskModel>();
+                        foreach (var task in tasks
+                            .Select(t => t.ToModel())
+                            .ToList())
+                        {
+                            var updatedTask = await context.Tasks.FirstOrDefaultAsync(t => t.Uuid == task.Uuid);
+                            if (updatedTask == null)
+                            {
+                                updatedTask = (await context.Tasks.AddAsync(task)).Entity;
+                            }
+                            else
+                            {
+                                updatedTask.Update(task);
+                            }
+                    
+                            addedTasks.Add(updatedTask);
+                        }
+                    
+                        await context.SaveChangesAsync();
+                    
+                        foreach (var benchmark in data.Benchmarks)
+                        {
+                            var updatedBenchmark =
+                                await context.Benchmarks
+                                    .Include(m => m.Tasks)
+                                    .FirstOrDefaultAsync(t => t.Uuid == benchmark.Uuid);
+                    
+                            if (updatedBenchmark == null)
+                            {
+                                await context.Benchmarks.AddAsync(new BenchmarkModel
+                                {
+                                    Name = benchmark.Name,
+                                    Uuid = benchmark.Uuid,
+                                    Tasks = benchmark.TaskSpecifications
+                                        .Select(t => addedTasks.First(a => a.Uuid == t.Uuid))
+                                        .ToList()
+                                });
+                            }
+                            else
+                            {
+                                updatedBenchmark.Name = benchmark.Name;
+                                updatedBenchmark.Uuid = benchmark.Uuid;
+                                updatedBenchmark.Tasks = benchmark.TaskSpecifications
+                                    .Select(t => addedTasks.First(a => a.Uuid == t.Uuid))
+                                    .ToList();
+                            }
+                        }
+                    
+                        await context.SaveChangesAsync();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                baseLogger.LogCritical(ex, "Failed to update:");
+                return;
+            }
 
-						await context.SaveChangesAsync();
-
-						foreach (var benchmark in data.Benchmarks)
-						{
-							var updatedBenchmark =
-								await context.Benchmarks
-									.Include(m => m.Tasks)
-									.FirstOrDefaultAsync(t => t.Uuid == benchmark.Uuid);
-
-							if (updatedBenchmark == null)
-							{
-								await context.Benchmarks.AddAsync(new BenchmarkModel
-								{
-									Name = benchmark.Name,
-									Uuid = benchmark.Uuid,
-									Tasks = benchmark.TaskSpecifications
-										.Select(t => addedTasks.First(a => a.Uuid == t))
-										.ToList()
-								});
-							}
-							else
-							{
-								updatedBenchmark.Name = benchmark.Name;
-								updatedBenchmark.Uuid = benchmark.Uuid;
-								updatedBenchmark.Tasks = benchmark.TaskSpecifications
-									.Select(t => addedTasks.First(a => a.Uuid == t))
-									.ToList();
-							}
-						}
-
-						await context.SaveChangesAsync();
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				baseLogger.LogCritical(ex, "Failed to update:");
-				return;
-			}
-
-			baseLogger.LogInformation("Success");
-		}
-	}
+            baseLogger.LogInformation("Success");
+        }
+    }
 }

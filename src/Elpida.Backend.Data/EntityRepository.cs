@@ -25,6 +25,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Data.Abstractions;
 using Elpida.Backend.Data.Abstractions.Interfaces;
+using Elpida.Backend.Data.Abstractions.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Elpida.Backend.Data
@@ -42,16 +43,16 @@ namespace Elpida.Backend.Data
 
 		#region IRepository<TEntity> Members
 
-		public Task<TEntity> GetSingleAsync(long id, CancellationToken cancellationToken = default)
+		public async Task<TEntity?> GetSingleAsync(long id, CancellationToken cancellationToken = default)
 		{
-			return ProcessGetSingle(Collection.AsQueryable())
-				.FirstAsync(e => e.Id == id, cancellationToken);
+			return await ProcessGetSingle(Collection.AsQueryable())
+				.FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
 		}
 
-		public Task<TEntity> GetSingleAsync(Expression<Func<TEntity, bool>> filters,
+		public async Task<TEntity?> GetSingleAsync(Expression<Func<TEntity, bool>> filters,
 			CancellationToken cancellationToken = default)
 		{
-			return ProcessGetSingle(Collection.AsQueryable())
+			return await ProcessGetSingle(Collection.AsQueryable())
 				.FirstOrDefaultAsync(filters, cancellationToken);
 		}
 

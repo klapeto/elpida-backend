@@ -33,7 +33,19 @@ namespace Elpida.Backend.Services.Abstractions.Exceptions
 		{
 			Id = id;
 		}
+		
+		public NotFoundException(string message, long id)
+			: base(message)
+		{
+			Id = id.ToString();
+		}
 
+		public NotFoundException(string message, Guid id)
+			: base(message)
+		{
+			Id = id.ToString();
+		}
+		
 		public string Id { get; }
 	}
 }

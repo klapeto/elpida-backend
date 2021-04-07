@@ -59,13 +59,23 @@ namespace Elpida.Backend
 					configuration.RegisterValidatorsFromAssemblyContaining<ResultValidator>();
 				});
 
-			services.AddScoped<IResultsService, ResultService>();
+			services.AddScoped<IBenchmarkResultsService, BenchmarkResultService>();
+			services.AddScoped<IBenchmarkService, BenchmarkService>();
+			services.AddScoped<ICpuService, CpuService>();
+			services.AddScoped<IElpidaService, ElpidaService>();
+			services.AddScoped<IOsService, OsService>();
+			services.AddScoped<IStatisticsService, StatisticsService>();
+			services.AddScoped<ITaskService, TaskService>();
+			services.AddScoped<ITopologyService, TopologyService>();
+			
 
-			services.AddTransient<IResultsRepository, ResultsRepository>();
+			services.AddTransient<IBenchmarkResultsRepository, BenchmarkResultsRepository>();
 			services.AddTransient<ICpuRepository, CpuRepository>();
 			services.AddTransient<ITopologyRepository, TopologyRepository>();
 			services.AddTransient<IBenchmarkRepository, BenchmarkRepository>();
 			services.AddTransient<ITaskRepository, TaskRepository>();
+			services.AddTransient<IElpidaRepository, ElpidaRepository>();
+			services.AddTransient<IOsRepository, OsRepository>();
 
 			services.AddDbContext<ElpidaContext>(builder =>
 			{
