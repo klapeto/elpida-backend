@@ -61,7 +61,58 @@ namespace Elpida.Backend.Data
 			var addedEntity = await Collection.AddAsync(entity, cancellationToken);
 			return addedEntity.Entity;
 		}
-		
+
+		public async Task<PagedQueryResult<TEntity>> GetMultiplePagedAsync<TOrderKey>(
+			int from,
+			int count,
+			bool descending,
+			bool calculateTotalCount,
+			Expression<Func<TEntity, TOrderKey>>? orderBy,
+			IEnumerable<Expression<Func<TEntity, bool>>>? filters,
+			CancellationToken cancellationToken = default)
+		{
+			var query = ProcessGetMultiplePaged(Collection.AsQueryable());
+			if (from < 0)
+			{
+				throw new ArgumentException("'from' must be positive or 0", nameof(from));
+			}
+
+			if (count <= 0)
+			{
+				throw new ArgumentException("'count' must be positive", nameof(count));
+			}
+
+			var result = query.AsNoTracking();
+
+			if (filters != null)
+			{
+				result = filters.Aggregate(result, (current, filter) => current.Where(filter));
+			}
+
+			if (orderBy != null)
+			{
+				result = descending ? result.OrderByDescending(orderBy) : result.OrderBy(orderBy);
+			}
+
+			var totalCount = calculateTotalCount ? await result.CountAsync(cancellationToken) : 0;
+
+			var results = await result
+				.Skip(from)
+				.Take(count)
+				.ToListAsync(cancellationToken: cancellationToken);
+			
+			return new PagedQueryResult<TEntity>(totalCount, results);
+		}
+
+		public Task<List<TEntity>> GetMultipleAsync(IEnumerable<Expression<Func<TEntity, bool>>> filters, CancellationToken cancellationToken = default)
+		{
+			var result = ProcessGetMultiplePaged(Collection.AsQueryable())
+				.AsNoTracking();
+			result = filters.Aggregate(result, (current, filter) => current.Where(filter));
+
+			return result.ToListAsync(cancellationToken: cancellationToken);
+		}
+
 		public Task SaveChangesAsync(CancellationToken cancellationToken = default)
 		{
 			return Context.SaveChangesAsync(cancellationToken);

@@ -1,48 +1,50 @@
-using System.Threading;
-using System.Threading.Tasks;
+using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using Elpida.Backend.Data.Abstractions.Models;
 using Elpida.Backend.Data.Abstractions.Repositories;
+using Elpida.Backend.Services.Abstractions;
 using Elpida.Backend.Services.Abstractions.Dtos.Result;
-using Elpida.Backend.Services.Abstractions.Exceptions;
 using Elpida.Backend.Services.Abstractions.Interfaces;
 using Elpida.Backend.Services.Extensions;
 
 namespace Elpida.Backend.Services
 {
-    public class OsService : IOsService
+    public class OsService : Service<OsDto, OsModel>, IOsService
     {
-        private readonly IOsRepository _osRepository;
+        private static readonly IEnumerable<FilterExpression> OsFilters = new List<FilterExpression>
+        {
+            CreateFilter("osCategory", model => model.Category),
+            CreateFilter("osName", model => model.Name),
+            CreateFilter("osVersion", model => model.Version)
+        };
 
         public OsService(IOsRepository osRepository)
+            : base(osRepository)
         {
-            _osRepository = osRepository;
         }
 
-        public async Task<long> GetOrAddOsAsync(OsDto osDto, CancellationToken cancellationToken)
+        protected override IEnumerable<FilterExpression> GetFilterExpressions()
         {
-            var osModel = await _osRepository.GetSingleAsync(o =>
-                o.Category == osDto.Category
-                && o.Name == osDto.Name
-                && o.Version == osDto.Version, cancellationToken);
-
-            if (osModel != null) return osModel.Id;
-
-            osDto.Id = 0;
-            osModel = osDto.ToModel();
-
-            osModel = await _osRepository.CreateAsync(osModel, cancellationToken);
-
-            await _osRepository.SaveChangesAsync(cancellationToken);
-
-            return osModel.Id;
+            return OsFilters;
         }
 
-        public async Task<OsDto> GetSingleAsync(long osId, CancellationToken cancellationToken = default)
+        protected override OsDto ToDto(OsModel model)
         {
-            var osModel = await _osRepository.GetSingleAsync(osId, cancellationToken);
+            return model.ToDto();
+        }
 
-            if (osModel == null) throw new NotFoundException("Os was not found.", osId);
+        protected override OsModel ToModel(OsDto dto)
+        {
+            return dto.ToModel();
+        }
 
-            return osModel.ToDto();
+        protected override Expression<Func<OsModel, bool>> GetCreationBypassCheckExpression(OsDto dto)
+        {
+            return o =>
+                o.Category == dto.Category
+                && o.Name == dto.Name
+                && o.Version == dto.Version;
         }
     }
 }

@@ -49,8 +49,8 @@ namespace Elpida.Backend.Controllers
 		public async Task<IActionResult> PostNewResult([FromBody] ResultDto resultDto, ApiVersion apiVersion,
 			CancellationToken cancellationToken)
 		{
-			var resultId = await _benchmarkResultsService.CreateAsync(resultDto, cancellationToken);
-			return CreatedAtRoute(nameof(GetSingle), new {id = resultId, version = $"{apiVersion}"}, null);
+			var result = await _benchmarkResultsService.GetOrAddAsync(resultDto, cancellationToken);
+			return CreatedAtRoute(nameof(GetSingle), new {id = result.Id, version = $"{apiVersion}"}, null);
 		}
 
 		[HttpGet("{id}", Name = nameof(GetSingle))]

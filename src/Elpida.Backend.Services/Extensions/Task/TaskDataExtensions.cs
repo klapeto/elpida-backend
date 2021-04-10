@@ -33,6 +33,33 @@ namespace Elpida.Backend.Services.Extensions.Task
             };
         }
 
+        public static TaskModel ToModel(this TaskDto taskDto)
+        {
+            return new TaskModel
+            {
+                Id = taskDto.Id,
+                Uuid = taskDto.Uuid,
+                Name = taskDto.Name,
+                Description = taskDto.Description,
+                
+                InputName = taskDto.Input?.Name,
+                InputDescription = taskDto.Input?.Description,
+                InputUnit = taskDto.Input?.Unit,
+                InputProperties = JsonConvert.SerializeObject(taskDto.Input?.RequiredProperties),
+
+                OutputName = taskDto.Output?.Name,
+                OutputDescription = taskDto.Output?.Description,
+                OutputUnit = taskDto.Output?.Unit,
+                OutputProperties = JsonConvert.SerializeObject(taskDto.Output?.RequiredProperties),
+                
+                ResultName = taskDto.Result.Name,
+                ResultDescription = taskDto.Result.Description,
+                ResultType = taskDto.Result.Type,
+                ResultAggregation = taskDto.Result.Aggregation,
+                ResultUnit = taskDto.Result.Unit
+            };
+        }
+        
         public static TaskDto ToDto(this TaskModel taskModel)
         {
             return new TaskDto

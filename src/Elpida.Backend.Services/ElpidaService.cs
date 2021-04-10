@@ -1,51 +1,39 @@
-using System.Threading;
-using System.Threading.Tasks;
+using System;
+using System.Linq.Expressions;
+using Elpida.Backend.Data.Abstractions.Models;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services.Abstractions.Dtos.Result;
-using Elpida.Backend.Services.Abstractions.Exceptions;
 using Elpida.Backend.Services.Abstractions.Interfaces;
 using Elpida.Backend.Services.Extensions;
 
 namespace Elpida.Backend.Services
 {
-    public class ElpidaService: IElpidaService
+    public class ElpidaService : Service<ElpidaDto, ElpidaModel>, IElpidaService
     {
-        private readonly IElpidaRepository _elpidaRepository;
-
         public ElpidaService(IElpidaRepository elpidaRepository)
+            : base(elpidaRepository)
         {
-            _elpidaRepository = elpidaRepository;
+        }
+        
+        protected override ElpidaDto ToDto(ElpidaModel model)
+        {
+            return model.ToDto();
         }
 
-        public async Task<long> GetOrAddElpidaAsync(ElpidaDto elpidaDto, CancellationToken cancellationToken = default)
+        protected override ElpidaModel ToModel(ElpidaDto dto)
         {
-            var elpidaModel = await _elpidaRepository.GetSingleAsync(e =>
-                e.VersionMajor == elpidaDto.Version.Major
-                && e.VersionMinor == elpidaDto.Version.Minor
-                && e.VersionRevision == elpidaDto.Version.Revision
-                && e.VersionBuild == elpidaDto.Version.Build
-                && e.CompilerName == elpidaDto.Compiler.Name
-                && e.CompilerVersion == elpidaDto.Compiler.Version, 
-                cancellationToken);
-
-            if (elpidaModel != null) return elpidaModel.Id;
-
-            elpidaModel = elpidaDto.ToModel();
-
-            elpidaModel = await _elpidaRepository.CreateAsync(elpidaModel, cancellationToken);
-
-            await _elpidaRepository.SaveChangesAsync(cancellationToken);
-
-            return elpidaModel.Id;
+            return dto.ToModel();
         }
 
-        public async Task<ElpidaDto> GetSingleAsync(long elpidaId, CancellationToken cancellationToken = default)
+        protected override Expression<Func<ElpidaModel, bool>> GetCreationBypassCheckExpression(ElpidaDto dto)
         {
-            var elpidaModel = await _elpidaRepository.GetSingleAsync(elpidaId, cancellationToken);
-
-            if (elpidaModel == null) throw new NotFoundException("Elpida was not found.", elpidaId);
-
-            return elpidaModel.ToDto();
+            return e =>
+                e.VersionMajor == dto.Version.Major
+                && e.VersionMinor == dto.Version.Minor
+                && e.VersionRevision == dto.Version.Revision
+                && e.VersionBuild == dto.Version.Build
+                && e.CompilerName == dto.Compiler.Name
+                && e.CompilerVersion == dto.Compiler.Version;
         }
     }
 }

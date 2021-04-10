@@ -20,147 +20,107 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Elpida.Backend.Data.Abstractions.Models;
+using Elpida.Backend.Data.Abstractions.Models.Cpu;
 using Elpida.Backend.Data.Abstractions.Models.Result;
+using Elpida.Backend.Data.Abstractions.Models.Topology;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services.Abstractions;
 using Elpida.Backend.Services.Abstractions.Dtos.Result;
-using Elpida.Backend.Services.Abstractions.Exceptions;
 using Elpida.Backend.Services.Abstractions.Interfaces;
 using Elpida.Backend.Services.Extensions.Result;
-using Elpida.Backend.Services.Utilities;
 
 namespace Elpida.Backend.Services
 {
-    public class BenchmarkResultService : IBenchmarkResultsService
+    public class BenchmarkResultService : Service<ResultDto, BenchmarkResultModel>, IBenchmarkResultsService
     {
-        private readonly IBenchmarkResultsRepository _benchmarkResultsRepository;
-        private readonly ICpuService _cpuService;
         private readonly IBenchmarkService _benchmarkService;
+        private readonly ICpuService _cpuService;
         private readonly IElpidaService _elpidaService;
         private readonly IOsService _osService;
+        private readonly IStatisticsService _statisticsService;
         private readonly ITaskService _taskService;
         private readonly ITopologyService _topologyService;
-        private readonly IStatisticsService _statisticsService;
 
-        private static IReadOnlyDictionary<string, LambdaExpression> CpuExpressions { get; } =
-            new Dictionary<string, LambdaExpression>
-            {
-                [FilterHelpers.TypeMap[FilterHelpers.Type.CpuBrand]] =
-                    GetResultExpression(model => model.Topology.Cpu.Brand),
-                [FilterHelpers.TypeMap[FilterHelpers.Type.CpuVendor]] =
-                    GetResultExpression(model => model.Topology.Cpu.Vendor),
-                [FilterHelpers.TypeMap[FilterHelpers.Type.CpuFrequency]] =
-                    GetResultExpression(model => model.Topology.Cpu.Frequency)
-            };
-
-        private static IReadOnlyDictionary<string, LambdaExpression> TopologyExpressions { get; } =
-            new Dictionary<string, LambdaExpression>
-            {
-                [FilterHelpers.TypeMap[FilterHelpers.Type.CpuCores]] =
-                    GetResultExpression(model => model.Topology.TotalPhysicalCores),
-                [FilterHelpers.TypeMap[FilterHelpers.Type.CpuLogicalCores]] =
-                    GetResultExpression(model => model.Topology.TotalLogicalCores)
-            };
-
-        private static IReadOnlyDictionary<string, LambdaExpression> ResultExpressions { get; } =
-            new Dictionary<string, LambdaExpression>
-            {
-                [FilterHelpers.TypeMap[FilterHelpers.Type.MemorySize]] = GetResultExpression(model => model.MemorySize),
-                [FilterHelpers.TypeMap[FilterHelpers.Type.Timestamp]] = GetResultExpression(model => model.TimeStamp),
-                ["startTime".ToLowerInvariant()] = GetResultExpression(model => model.TimeStamp),
-                ["endTime".ToLowerInvariant()] = GetResultExpression(model => model.TimeStamp),
-                [FilterHelpers.TypeMap[FilterHelpers.Type.Name].ToLowerInvariant()] =
-                    GetResultExpression(model => model.Benchmark.Name),
-                [FilterHelpers.TypeMap[FilterHelpers.Type.OsCategory]] =
-                    GetResultExpression(model => model.Os.Category),
-                [FilterHelpers.TypeMap[FilterHelpers.Type.OsName]] = GetResultExpression(model => model.Os.Name),
-                [FilterHelpers.TypeMap[FilterHelpers.Type.OsVersion]] = GetResultExpression(model => model.Os.Version)
-            };
-
-        private static IReadOnlyDictionary<string, LambdaExpression> ResultProjectionExpressions { get; } =
-            ResultExpressions.Concat(CpuExpressions)
-                .Concat(TopologyExpressions)
-                .ToDictionary(x => x.Key, x => x.Value);
-
-        private static LambdaExpression GetResultExpression<T>(Expression<Func<BenchmarkResultModel, T>> baseExp)
+        private static IEnumerable<FilterExpression> ResultFilters { get; } = new List<FilterExpression>
         {
-            // Dirty hack to prevent boxing of values
-            return baseExp;
-        }
-
+            CreateFilter("memorySize", model => model.MemorySize),
+            CreateFilter("timeStamp", model => model.TimeStamp),
+        };
+        
         #region IResultsService Members
 
-        public BenchmarkResultService(IBenchmarkService benchmarkService, ITopologyService topologyService,
-            IElpidaService elpidaService, ITaskService taskService, IOsService osService,
-            IBenchmarkResultsRepository benchmarkResultsRepository, ICpuService cpuService, IStatisticsService statisticsService)
+        public BenchmarkResultService(IBenchmarkService benchmarkService,
+            ITopologyService topologyService,
+            IElpidaService elpidaService,
+            ITaskService taskService,
+            IOsService osService,
+            IBenchmarkResultsRepository benchmarkResultsRepository,
+            ICpuService cpuService,
+            IStatisticsService statisticsService)
+            : base(benchmarkResultsRepository)
         {
             _benchmarkService = benchmarkService;
             _topologyService = topologyService;
             _elpidaService = elpidaService;
             _taskService = taskService;
             _osService = osService;
-            _benchmarkResultsRepository = benchmarkResultsRepository;
             _cpuService = cpuService;
             _statisticsService = statisticsService;
         }
 
-        public async Task<long> CreateAsync(ResultDto resultDto, CancellationToken cancellationToken)
+        protected override async Task PreProcessDtoForCreationAsync(ResultDto dto, CancellationToken cancellationToken)
         {
-            var benchmark = await _benchmarkService.GetSingleAsync(resultDto.Result.Uuid, cancellationToken);
-            var cpuId = await _cpuService.GetOrAddCpuAsync(resultDto.System.Cpu, cancellationToken);
-            var topologyId = await _topologyService.GetOrAddTopologyAsync(cpuId, resultDto.System.Topology, cancellationToken);
-            var elpidaId = await _elpidaService.GetOrAddElpidaAsync(resultDto.Elpida, cancellationToken);
-            var osId = await _osService.GetOrAddOsAsync(resultDto.System.Os, cancellationToken);
-            
-            var taskResults = new List<TaskResultModel>();
-            foreach (var taskResult in resultDto.Result.TaskResults)
+            var benchmark = await _benchmarkService.GetSingleAsync(dto.Result.Uuid, cancellationToken);
+            var cpu = await _cpuService.GetOrAddAsync(dto.System.Cpu, cancellationToken);
+            var topology = await _topologyService.GetOrAddAsync(dto.System.Topology, cancellationToken);
+            var elpida = await _elpidaService.GetOrAddAsync(dto.Elpida, cancellationToken);
+            var os = await _osService.GetOrAddAsync(dto.System.Os, cancellationToken);
+
+            dto.TimeStamp = DateTime.UtcNow;
+
+            foreach (var taskResult in dto.Result.TaskResults)
             {
                 var task = await _taskService.GetSingleAsync(taskResult.Uuid, cancellationToken);
-                taskResults.Add(taskResult.ToModel(task.Id, topologyId, cpuId));
+                taskResult.Id = 0;
+                taskResult.TaskId = task.Id;
+                taskResult.TopologyId = topology.Id;
+                taskResult.CpuId = cpu.Id;
             }
 
-            var resultModel = resultDto.ToModel(benchmark.Id, topologyId, osId, elpidaId, taskResults);
-
-            var result = await _benchmarkResultsRepository.CreateAsync(resultModel, cancellationToken);
-
-            resultDto.System.Cpu.Id = cpuId;
-            await _statisticsService.AddBenchmarkResultAsync(resultDto, cancellationToken);
-            
-            await _benchmarkResultsRepository.SaveChangesAsync(cancellationToken);
-
-            return result.Id;
+            dto.Elpida = elpida;
+            dto.System.Cpu = cpu;
+            dto.System.Topology = topology;
+            dto.Result.Id = benchmark.Id;
+            dto.System.Os = os;
         }
-
-        public async Task<ResultDto> GetSingleAsync(long id, CancellationToken cancellationToken)
+        
+        protected override IEnumerable<FilterExpression> GetFilterExpressions()
         {
-            var resultModel = await _benchmarkResultsRepository.GetSingleAsync(id, cancellationToken);
-
-            if (resultModel == null) throw new NotFoundException(id.ToString());
-
-            return resultModel.ToDto();
+            return ResultFilters
+                .Concat(_cpuService.GetFilters<BenchmarkResultModel, CpuModel>(m => m.Topology.Cpu))
+                .Concat(_topologyService.GetFilters<BenchmarkResultModel, TopologyModel>(m => m.Topology))
+                .Concat(_elpidaService.GetFilters<BenchmarkResultModel, ElpidaModel>(m => m.Elpida))
+                .Concat(_osService.GetFilters<BenchmarkResultModel, OsModel>(m => m.Os))
+                .Concat(_benchmarkService.GetFilters<BenchmarkResultModel, BenchmarkModel>(m => m.Benchmark));
         }
 
-        public async Task<PagedResult<ResultPreviewDto>> GetPagedAsync(QueryRequest queryRequest,
+        protected override ResultDto ToDto(BenchmarkResultModel model)
+        {
+            return model.ToDto();
+        }
+
+        protected override BenchmarkResultModel ToModel(ResultDto dto)
+        {
+            return dto.ToModel();
+        }
+
+        protected override Task OnEntityCreatedAsync(ResultDto dto, BenchmarkResultModel entity,
             CancellationToken cancellationToken)
         {
-            var expressionBuilder = new QueryExpressionBuilder(ResultProjectionExpressions);
-
-            var result = await _benchmarkResultsRepository.GetPagedPreviewsAsync(
-                queryRequest.PageRequest.Next,
-                queryRequest.PageRequest.Count,
-                queryRequest.Descending,
-                expressionBuilder.GetOrderBy<BenchmarkResultModel>(queryRequest),
-                expressionBuilder.Build<BenchmarkResultModel>(queryRequest.Filters),
-                queryRequest.PageRequest.TotalCount == 0,
-                cancellationToken);
-
-            queryRequest.PageRequest.TotalCount = result.TotalCount;
-
-            return new PagedResult<ResultPreviewDto>(result.Items.Select(m => m.ToDto()).ToList(),
-                queryRequest.PageRequest);
+            return _statisticsService.AddBenchmarkResultAsync(dto, cancellationToken);
         }
 
         #endregion

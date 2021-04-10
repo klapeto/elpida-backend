@@ -23,13 +23,9 @@ using Elpida.Backend.Services.Abstractions.Dtos.Result;
 
 namespace Elpida.Backend.Services.Abstractions.Interfaces
 {
-	public interface IBenchmarkResultsService
+	public interface IBenchmarkResultsService : IService<ResultDto>
 	{
-		Task<long> CreateAsync(ResultDto resultDto, CancellationToken cancellationToken = default);
-
-		Task<ResultDto> GetSingleAsync(long id, CancellationToken cancellationToken = default);
-
-		Task<PagedResult<ResultPreviewDto>> GetPagedAsync(QueryRequest queryRequest,
-			CancellationToken cancellationToken = default);
+		// Task<PagedResult<ResultPreviewDto>> GetPagedAsync(QueryRequest queryRequest,
+		// 	CancellationToken cancellationToken = default);
 	}
 }

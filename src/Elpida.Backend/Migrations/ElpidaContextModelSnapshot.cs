@@ -86,7 +86,7 @@ namespace Elpida.Backend.Migrations
                     b.ToTable("Cpus");
                 });
 
-            modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Result.ResultModel", b =>
+            modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Result.BenchmarkResultModel", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -182,6 +182,9 @@ namespace Elpida.Backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<long>("BenchmarkResultId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<long>("InputSize")
                         .HasColumnType("INTEGER");
 
@@ -196,9 +199,6 @@ namespace Elpida.Backend.Migrations
 
                     b.Property<double>("Min")
                         .HasColumnType("REAL");
-
-                    b.Property<long>("ResultId")
-                        .HasColumnType("INTEGER");
 
                     b.Property<long>("SampleSize")
                         .HasColumnType("INTEGER");
@@ -220,11 +220,62 @@ namespace Elpida.Backend.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ResultId");
+                    b.HasIndex("BenchmarkResultId");
 
                     b.HasIndex("TaskId");
 
                     b.ToTable("TaskResultModel");
+                });
+
+            modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Statistics.TaskStatisticsModel", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("CpuId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("InputSize")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("MarginOfError")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("Max")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("Mean")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("Min")
+                        .HasColumnType("REAL");
+
+                    b.Property<long>("SampleSize")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("StandardDeviation")
+                        .HasColumnType("REAL");
+
+                    b.Property<long?>("TaskId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("Tau")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("Time")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("Value")
+                        .HasColumnType("REAL");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CpuId");
+
+                    b.HasIndex("TaskId");
+
+                    b.ToTable("TaskStatisticsModel");
                 });
 
             modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Task.TaskModel", b =>
@@ -339,7 +390,7 @@ namespace Elpida.Backend.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Result.ResultModel", b =>
+            modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Result.BenchmarkResultModel", b =>
                 {
                     b.HasOne("Elpida.Backend.Data.Abstractions.Models.BenchmarkModel", "Benchmark")
                         .WithMany()
@@ -356,9 +407,9 @@ namespace Elpida.Backend.Migrations
 
             modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Result.TaskResultModel", b =>
                 {
-                    b.HasOne("Elpida.Backend.Data.Abstractions.Models.Result.ResultModel", "Result")
+                    b.HasOne("Elpida.Backend.Data.Abstractions.Models.Result.BenchmarkResultModel", "BenchmarkResult")
                         .WithMany("TaskResults")
-                        .HasForeignKey("ResultId")
+                        .HasForeignKey("BenchmarkResultId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -366,7 +417,24 @@ namespace Elpida.Backend.Migrations
                         .WithMany()
                         .HasForeignKey("TaskId");
 
-                    b.Navigation("Result");
+                    b.Navigation("BenchmarkResult");
+
+                    b.Navigation("Task");
+                });
+
+            modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Statistics.TaskStatisticsModel", b =>
+                {
+                    b.HasOne("Elpida.Backend.Data.Abstractions.Models.Cpu.CpuModel", "Cpu")
+                        .WithMany("TaskStatistics")
+                        .HasForeignKey("CpuId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Elpida.Backend.Data.Abstractions.Models.Task.TaskModel", "Task")
+                        .WithMany()
+                        .HasForeignKey("TaskId");
+
+                    b.Navigation("Cpu");
 
                     b.Navigation("Task");
                 });
@@ -382,7 +450,12 @@ namespace Elpida.Backend.Migrations
                     b.Navigation("Cpu");
                 });
 
-            modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Result.ResultModel", b =>
+            modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Cpu.CpuModel", b =>
+                {
+                    b.Navigation("TaskStatistics");
+                });
+
+            modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Result.BenchmarkResultModel", b =>
                 {
                     b.Navigation("TaskResults");
                 });

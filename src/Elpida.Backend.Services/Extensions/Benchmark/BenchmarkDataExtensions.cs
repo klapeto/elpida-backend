@@ -19,5 +19,16 @@ namespace Elpida.Backend.Services.Extensions.Benchmark
                     .ToList()
             };
         }
+        
+        public static BenchmarkModel ToDto(this BenchmarkDto benchmarkDto)
+        {
+            return new BenchmarkModel
+            {
+                Id = benchmarkDto.Id,
+                Uuid = benchmarkDto.Uuid,
+                Name = benchmarkDto.Name,
+                Tasks = benchmarkDto.TaskSpecifications.Select(t => t.ToModel()).ToList()
+            };
+        }
     }
 }

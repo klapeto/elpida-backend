@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Elpida.Backend.Data.Abstractions.Models.Cpu;
 using Elpida.Backend.Data.Abstractions.Models.Statistics;
-using Elpida.Backend.Data.Abstractions.Models.Task;
 using Elpida.Backend.Data.Abstractions.Repositories;
+using Elpida.Backend.Services.Abstractions;
 using Elpida.Backend.Services.Abstractions.Dtos.Cpu;
 using Elpida.Backend.Services.Abstractions.Dtos.Result;
 using Elpida.Backend.Services.Abstractions.Exceptions;
@@ -16,52 +18,37 @@ using Elpida.Backend.Services.Utilities;
 
 namespace Elpida.Backend.Services
 {
-    public class CpuService : ICpuService
+    public class CpuService : Service<CpuDto, CpuModel>, ICpuService
     {
         private readonly ICpuRepository _cpuRepository;
         private readonly ITaskService _taskService;
 
         public CpuService(ICpuRepository cpuRepository, ITaskService taskService)
+            : base(cpuRepository)
         {
             _cpuRepository = cpuRepository;
             _taskService = taskService;
         }
 
-        public async Task<long> GetOrAddCpuAsync(CpuDto cpu, CancellationToken cancellationToken)
+        private static IEnumerable<FilterExpression> CpuExpressions { get; } = new List<FilterExpression>
         {
-            var additionalInfo = cpu.ToModel().AdditionalInfo;
+            CreateFilter("cpuBrand", model => model.Brand),
+            CreateFilter("cpuVendor", model => model.Vendor),
+            CreateFilter("cpuFrequency", model => model.Frequency),
+        };
 
-            var cpuModel = await _cpuRepository.GetSingleAsync(model =>
-                model.Vendor == cpu.Vendor
-                && model.Brand == cpu.Brand
-                && model.AdditionalInfo == additionalInfo, cancellationToken);
-
-            if (cpuModel != null) return cpuModel.Id;
-
-            cpu.Id = 0;
-            cpuModel = cpu.ToModel();
-            cpuModel = await _cpuRepository.CreateAsync(cpuModel, cancellationToken);
-            
-            await _cpuRepository.SaveChangesAsync(cancellationToken);
-
-            return cpuModel.Id;
+        protected override IEnumerable<FilterExpression> GetFilterExpressions()
+        {
+            return CpuExpressions;
         }
 
-        public async Task<CpuDto> GetSingleAsync(long cpuId, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<TaskStatisticsDto>> GetStatisticsAsync(long cpuId,
+            CancellationToken cancellationToken = default)
         {
             var cpuModel = await _cpuRepository.GetSingleAsync(cpuId, cancellationToken);
 
             if (cpuModel == null) throw new NotFoundException("Cpu was not found.", cpuId);
 
-            return cpuModel.ToDto();
-        }
-
-        public async Task<IEnumerable<TaskStatisticsDto>> GetStatisticsAsync(long cpuId, CancellationToken cancellationToken = default)
-        {
-            var cpuModel = await _cpuRepository.GetSingleAsync(cpuId, cancellationToken);
-
-            if (cpuModel == null) throw new NotFoundException("Cpu was not found.", cpuId);
-            
             return cpuModel.TaskStatistics.Select(s => s.ToDto());
         }
 
@@ -71,7 +58,7 @@ namespace Elpida.Backend.Services
             var cpuModel = await _cpuRepository.GetSingleAsync(cpuId, cancellationToken);
 
             if (cpuModel == null) throw new NotFoundException("Cpu was not found.", cpuId);
-            
+
             foreach (var taskResult in benchmarkResult.TaskResults)
             {
                 var task = await _taskService.GetSingleAsync(taskResult.Uuid, cancellationToken);
@@ -90,7 +77,7 @@ namespace Elpida.Backend.Services
                         TotalValue = taskResult.Value,
                         Tau = StatisticsHelpers.CalculateTau(1),
                         StandardDeviation = 0,
-                        MarginOfError = 0,
+                        MarginOfError = 0
                     };
                     cpuModel.TaskStatistics.Add(stats);
                 }
@@ -109,6 +96,25 @@ namespace Elpida.Backend.Services
             }
 
             await _cpuRepository.SaveChangesAsync(cancellationToken);
+        }
+
+        protected override CpuDto ToDto(CpuModel model)
+        {
+            return model.ToDto();
+        }
+
+        protected override CpuModel ToModel(CpuDto dto)
+        {
+            return dto.ToModel();
+        }
+
+        protected override Expression<Func<CpuModel, bool>> GetCreationBypassCheckExpression(CpuDto dto)
+        {
+            var additionalInfo = dto.ToModel().AdditionalInfo;
+            return model =>
+                model.Vendor == dto.Vendor
+                && model.Brand == dto.Brand
+                && model.AdditionalInfo == additionalInfo;
         }
     }
 }

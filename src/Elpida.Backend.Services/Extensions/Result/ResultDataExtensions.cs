@@ -29,6 +29,7 @@ using Elpida.Backend.Services.Abstractions.Dtos;
 using Elpida.Backend.Services.Abstractions.Dtos.Result;
 using Elpida.Backend.Services.Abstractions.Dtos.Topology;
 using Elpida.Backend.Services.Extensions.Cpu;
+using Elpida.Backend.Services.Extensions.Task;
 using Newtonsoft.Json;
 
 namespace Elpida.Backend.Services.Extensions.Result
@@ -155,20 +156,15 @@ namespace Elpida.Backend.Services.Extensions.Result
             };
         }
 
-        public static BenchmarkResultModel ToModel(this ResultDto resultDto,
-            long benchmarkId,
-            long topologyId,
-            long osId,
-            long elpidaId,
-            ICollection<TaskResultModel> resultModels)
+        public static BenchmarkResultModel ToModel(this ResultDto resultDto)
         {
             return new BenchmarkResultModel
             {
                 Affinity = JsonConvert.SerializeObject(resultDto.Affinity),
-                BenchmarkId = benchmarkId,
-                TopologyId = topologyId,
-                OsId = osId,
-                ElpidaId = elpidaId,
+                BenchmarkId = resultDto.Result.Id,
+                TopologyId = resultDto.System.Topology.Id,
+                OsId = resultDto.System.Os.Id,
+                ElpidaId = resultDto.Elpida.Id,
                 JoinOverhead = resultDto.System.Timing.JoinOverhead,
                 LockOverhead = resultDto.System.Timing.LockOverhead,
                 LoopOverhead = resultDto.System.Timing.LoopOverhead,
@@ -179,7 +175,7 @@ namespace Elpida.Backend.Services.Extensions.Result
                 WakeupOverhead = resultDto.System.Timing.WakeupOverhead,
                 MemorySize = resultDto.System.Memory.TotalSize,
                 PageSize = resultDto.System.Memory.PageSize,
-                TaskResults = resultModels,
+                TaskResults = resultDto.Result.TaskResults.Select(t => t.ToModel()).ToList(),
                 TimeStamp = resultDto.TimeStamp
             };
         }

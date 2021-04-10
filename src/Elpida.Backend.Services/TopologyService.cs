@@ -1,56 +1,49 @@
-using System.Threading;
-using System.Threading.Tasks;
+using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using Elpida.Backend.Data.Abstractions.Models.Topology;
 using Elpida.Backend.Data.Abstractions.Repositories;
+using Elpida.Backend.Services.Abstractions;
 using Elpida.Backend.Services.Abstractions.Dtos.Topology;
-using Elpida.Backend.Services.Abstractions.Exceptions;
 using Elpida.Backend.Services.Abstractions.Interfaces;
-using Elpida.Backend.Services.Extensions;
 using Elpida.Backend.Services.Extensions.Topology;
-using Newtonsoft.Json;
 
 namespace Elpida.Backend.Services
 {
-    public class TopologyService: ITopologyService
+    public class TopologyService : Service<TopologyDto, TopologyModel>, ITopologyService
     {
-        private readonly ICpuService _cpuService;
-        private readonly ITopologyRepository _topologyRepository;
-
-        public TopologyService(ITopologyRepository topologyRepository, ICpuService cpuService)
+        public TopologyService(ITopologyRepository topologyRepository)
+            : base(topologyRepository)
         {
-            _topologyRepository = topologyRepository;
-            _cpuService = cpuService;
         }
 
-        public async Task<long> GetOrAddTopologyAsync(long cpuId, TopologyDto topologyDto, CancellationToken cancellationToken)
+        private static IEnumerable<FilterExpression> FilterExpressions { get; } = new List<FilterExpression>
         {
-            var cpu = await _cpuService.GetSingleAsync(cpuId, cancellationToken);
-            
-            var topologyModel = topologyDto.ToModel();
+            CreateFilter("cpuCores", model => model.TotalPhysicalCores),
+            CreateFilter("cpuLogicalCores", model => model.TotalLogicalCores)
+        };
 
-            topologyModel = await _topologyRepository.GetSingleAsync(t =>
-                    t.CpuId == cpu.Id
-                    && t.TopologyHash == topologyModel.TopologyHash,
-                cancellationToken);
-
-            if (topologyModel != null) return topologyModel.Id;
-            
-            topologyModel = topologyDto.ToModel();
-            topologyModel.CpuId = cpuId;
-            
-            topologyModel = await _topologyRepository.CreateAsync(topologyModel, cancellationToken);
-
-            await _topologyRepository.SaveChangesAsync(cancellationToken);
-
-            return topologyModel.Id;
+        protected override IEnumerable<FilterExpression> GetFilterExpressions()
+        {
+            return FilterExpressions;
         }
 
-        public async Task<TopologyDto> GetSingleAsync(long topologyId, CancellationToken cancellationToken = default)
+        protected override TopologyDto ToDto(TopologyModel model)
         {
-            var topologyModel = await _topologyRepository.GetSingleAsync(topologyId, cancellationToken);
+            return model.ToDto();
+        }
 
-            if (topologyModel == null) throw new NotFoundException("Topology was not found.", topologyId);
+        protected override TopologyModel ToModel(TopologyDto dto)
+        {
+            return dto.ToModel();
+        }
 
-            return topologyModel.ToDto();
+        protected override Expression<Func<TopologyModel, bool>> GetCreationBypassCheckExpression(TopologyDto dto)
+        {
+            var topologyHash = dto.ToModel().TopologyHash;
+            return t =>
+                t.CpuId == dto.CpuId
+                && t.TopologyHash == topologyHash;
         }
     }
 }

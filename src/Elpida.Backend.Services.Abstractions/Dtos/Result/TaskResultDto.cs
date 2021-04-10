@@ -21,6 +21,10 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 {
 	public class TaskResultDto : TaskDto
 	{
+		public long TaskId { get; set; }
+		public long BenchmarkResultId { get; set; }
+		public long CpuId { get; set; }
+		public long TopologyId { get; set; }
 		public double Value { get; set; }
 		public double Time { get; set; }
 		public long InputSize { get; set; }

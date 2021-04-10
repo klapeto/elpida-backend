@@ -37,40 +37,6 @@ namespace Elpida.Backend.Services.Abstractions
 
 		#endregion
 
-		#region Type enum
-
-		public enum Type
-		{
-			Timestamp,
-			CpuCores,
-			CpuLogicalCores,
-			CpuFrequency,
-			MemorySize,
-			Name,
-			CpuBrand,
-			CpuVendor,
-			OsCategory,
-			OsName,
-			OsVersion
-		}
-
-		#endregion
-
-		public static IReadOnlyDictionary<Type, string> TypeMap { get; } = new Dictionary<Type, string>
-		{
-			[Type.Timestamp] = "timeStamp".ToLowerInvariant(),
-			[Type.CpuCores] = "cpuCores".ToLowerInvariant(),
-			[Type.CpuLogicalCores] = "cpuLogicalCores".ToLowerInvariant(),
-			[Type.CpuFrequency] = "cpuFrequency".ToLowerInvariant(),
-			[Type.MemorySize] = "memorySize".ToLowerInvariant(),
-			[Type.Name] = "name".ToLowerInvariant(),
-			[Type.CpuBrand] = "cpuBrand".ToLowerInvariant(),
-			[Type.CpuVendor] = "cpuVendor".ToLowerInvariant(),
-			[Type.OsCategory] = "osCategory".ToLowerInvariant(),
-			[Type.OsName] = "osName".ToLowerInvariant(),
-			[Type.OsVersion] = "osVersion".ToLowerInvariant()
-		};
-
 		public static IReadOnlyDictionary<Comparison, string> ComparisonMap { get; } =
 			new Dictionary<Comparison, string>
 			{

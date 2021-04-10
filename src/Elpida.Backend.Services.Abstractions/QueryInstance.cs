@@ -23,6 +23,6 @@ namespace Elpida.Backend.Services.Abstractions
 	{
 		public string Name { get; set; } = string.Empty;
 		public object? Value { get; set; }
-		public string Comp { get; set; } = string.Empty;
+		public string? Comp { get; set; } = string.Empty;
 	}
 }

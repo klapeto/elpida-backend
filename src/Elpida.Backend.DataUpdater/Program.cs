@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Elpida.Backend.Data.Abstractions.Models;
 using Elpida.Backend.Data.Abstractions.Models.Cpu;
@@ -86,8 +87,20 @@ namespace Elpida.Backend.DataUpdater
             };
         }
 
+        static void foo(IReadOnlyDictionary<string, LambdaExpression> expressions)
+        {
+            
+        }
+        
         private static async Task Main(string[] args)
         {
+
+            var x = new Dictionary<string, Expression<Func<string, bool>>>();
+            
+            foo(x.ToDictionary(k => k.Key, v => (LambdaExpression)v.Value));
+            
+
+            return;
             var config = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", false, true)
                 .AddCommandLine(args)

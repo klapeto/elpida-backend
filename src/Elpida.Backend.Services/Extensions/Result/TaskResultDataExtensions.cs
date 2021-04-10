@@ -17,24 +17,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using Elpida.Backend.Data.Abstractions.Models.Cpu;
 using Elpida.Backend.Data.Abstractions.Models.Result;
-using Elpida.Backend.Data.Abstractions.Models.Task;
-using Elpida.Backend.Data.Abstractions.Models.Topology;
 using Elpida.Backend.Services.Abstractions.Dtos.Result;
 
 namespace Elpida.Backend.Services.Extensions.Result
 {
     public static class TaskResultDataExtensions
     {
-        public static TaskResultModel ToModel(this TaskResultDto taskResultDto, long taskId, long topologyId,
-            long cpuId)
+        public static TaskResultModel ToModel(this TaskResultDto taskResultDto)
         {
             return new TaskResultModel
             {
-                TaskId = taskId,
-                CpuId = cpuId,
-                TopologyId = topologyId,
+                Id = taskResultDto.Id,
+                TaskId = taskResultDto.TaskId,
+                BenchmarkResultId = taskResultDto.BenchmarkResultId,
+                CpuId = taskResultDto.CpuId,
+                TopologyId = taskResultDto.TopologyId,
                 Time = taskResultDto.Time,
                 Value = taskResultDto.Value,
                 InputSize = taskResultDto.InputSize,

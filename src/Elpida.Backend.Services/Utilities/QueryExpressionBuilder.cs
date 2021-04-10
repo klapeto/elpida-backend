@@ -45,7 +45,8 @@ namespace Elpida.Backend.Services.Utilities
 			{
 				if (_availableExpressions.TryGetValue(queryInstance.Name.ToLowerInvariant(), out var expression))
 				{
-					yield return GetFilter<T>(queryInstance, expression);
+					var filter =  GetFilter<T>(queryInstance, expression);
+					if (filter != null) yield return filter;
 				}
 			}
 		}
@@ -74,7 +75,7 @@ namespace Elpida.Backend.Services.Utilities
 		}
 #endif
 
-		public Expression<Func<T, object>> GetOrderBy<T>(QueryRequest queryRequest)
+		public Expression<Func<T, object>>? GetOrderBy<T>(QueryRequest queryRequest)
 		{
 			if (string.IsNullOrWhiteSpace(queryRequest.OrderBy))
 			{
@@ -93,7 +94,7 @@ namespace Elpida.Backend.Services.Utilities
 				$"'{queryRequest.OrderBy}' OrderBy is not a valid order field. Can be: {string.Join(',', _availableExpressions.Keys)}");
 		}
 
-		private Expression<Func<T, bool>> GetFilter<T>(QueryInstance instance, LambdaExpression fieldPart)
+		private Expression<Func<T, bool>>? GetFilter<T>(QueryInstance? instance, LambdaExpression fieldPart)
 		{
 			if (instance == null)
 			{

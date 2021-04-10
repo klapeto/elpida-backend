@@ -19,7 +19,7 @@ namespace Elpida.Backend.Controllers
             _statisticsService = statisticsService;
         }
 
-        [HttpGet]
+        [HttpGet("cpu")]
         [Produces("application/json")]
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -31,7 +31,7 @@ namespace Elpida.Backend.Controllers
 
           //  await _benchmarkResultsService.GetPagedAsync(new QueryRequest {PageRequest = pageRequest},
            //     cancellationToken);
-            return Ok();
+            return Ok("LOL");
         }
     }
 }
