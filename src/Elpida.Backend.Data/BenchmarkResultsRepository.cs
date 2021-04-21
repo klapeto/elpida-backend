@@ -30,7 +30,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Elpida.Backend.Data
 {
-	public class BenchmarkResultsRepository : EntityRepository<BenchmarkResultModel>, IBenchmarkResultsRepository
+	public class BenchmarkResultsRepository : EntityRepositoryWithPreviews<BenchmarkResultModel, ResultPreviewModel>, IBenchmarkResultsRepository
 	{
 		public BenchmarkResultsRepository(ElpidaContext elpidaContext)
 			: base(elpidaContext, elpidaContext.BenchmarkResults)
@@ -39,69 +39,25 @@ namespace Elpida.Backend.Data
 
 		#region IResultsRepository Members
 
-		public async Task<PagedQueryResult<ResultPreviewModel>> GetPagedPreviewsAsync<TOrderKey>(
-			int from,
-			int count,
-			bool descending,
-			Expression<Func<BenchmarkResultModel, TOrderKey>> orderBy,
-			IEnumerable<Expression<Func<BenchmarkResultModel, bool>>> filters,
-			bool calculateTotalCount,
-			CancellationToken cancellationToken = default)
+		protected override Expression<Func<BenchmarkResultModel, ResultPreviewModel>> GetPreviewConstructionExpresion()
 		{
-			if (from < 0)
+			return m => new ResultPreviewModel
 			{
-				throw new ArgumentException("'from' must be positive or 0", nameof(from));
-			}
-
-			if (count <= 0)
-			{
-				throw new ArgumentException("'count' must be positive", nameof(count));
-			}
-
-			var result = Collection
-				.AsQueryable()
-				.AsNoTracking();
-
-			if (filters != null)
-			{
-				result = filters.Aggregate(result, (current, filter) => current.Where(filter));
-			}
-
-			if (orderBy != null)
-			{
-				result = descending ? result.OrderByDescending(orderBy) : result.OrderBy(orderBy);
-			}
-
-			var totalCount = calculateTotalCount ? await result.CountAsync(cancellationToken) : 0;
-
-			var results = await result
-				.Skip(from)
-				.Take(count)
-				.Include(model => model.Benchmark)
-				.Include(model => model.Elpida)
-				.Include(model => model.Os)
-				.Include(model => model.Topology)
-				.ThenInclude(model => model.Cpu)
-				.Select(m => new ResultPreviewModel
-				{
-					Id = m.Id,
-					Name = m.Benchmark.Name,
-					CpuBrand = m.Topology.Cpu.Brand,
-					CpuCores = m.Topology.TotalPhysicalCores,
-					CpuFrequency = m.Topology.Cpu.Frequency,
-					ElpidaVersionMajor = m.Elpida.VersionMajor,
-					ElpidaVersionMinor = m.Elpida.VersionMinor,
-					ElpidaVersionRevision = m.Elpida.VersionRevision,
-					ElpidaVersionBuild = m.Elpida.VersionBuild,
-					MemorySize = m.MemorySize,
-					OsName = m.Os.Name,
-					OsVersion = m.Os.Version,
-					TimeStamp = m.TimeStamp,
-					CpuLogicalCores = m.Topology.TotalLogicalCores
-				})
-				.ToListAsync(cancellationToken);
-
-			return new PagedQueryResult<ResultPreviewModel>(totalCount, results);
+				Id = m.Id,
+				Name = m.Benchmark.Name,
+				CpuBrand = m.Topology.Cpu.Brand,
+				CpuCores = m.Topology.TotalPhysicalCores,
+				CpuFrequency = m.Topology.Cpu.Frequency,
+				ElpidaVersionMajor = m.Elpida.VersionMajor,
+				ElpidaVersionMinor = m.Elpida.VersionMinor,
+				ElpidaVersionRevision = m.Elpida.VersionRevision,
+				ElpidaVersionBuild = m.Elpida.VersionBuild,
+				MemorySize = m.MemorySize,
+				OsName = m.Os.Name,
+				OsVersion = m.Os.Version,
+				TimeStamp = m.TimeStamp,
+				CpuLogicalCores = m.Topology.TotalLogicalCores
+			};
 		}
 
 		#endregion

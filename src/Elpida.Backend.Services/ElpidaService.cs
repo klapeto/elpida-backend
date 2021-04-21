@@ -8,7 +8,7 @@ using Elpida.Backend.Services.Extensions;
 
 namespace Elpida.Backend.Services
 {
-    public class ElpidaService : Service<ElpidaDto, ElpidaModel>, IElpidaService
+    public class ElpidaService : Service<ElpidaDto, ElpidaModel, IElpidaRepository>, IElpidaService
     {
         public ElpidaService(IElpidaRepository elpidaRepository)
             : base(elpidaRepository)

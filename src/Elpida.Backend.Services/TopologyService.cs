@@ -10,7 +10,7 @@ using Elpida.Backend.Services.Extensions.Topology;
 
 namespace Elpida.Backend.Services
 {
-    public class TopologyService : Service<TopologyDto, TopologyModel>, ITopologyService
+    public class TopologyService : Service<TopologyDto, TopologyModel, ITopologyRepository>, ITopologyService
     {
         public TopologyService(ITopologyRepository topologyRepository)
             : base(topologyRepository)

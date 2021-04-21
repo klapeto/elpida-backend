@@ -17,25 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Threading;
-using System.Threading.Tasks;
 using Elpida.Backend.Data.Abstractions.Interfaces;
 using Elpida.Backend.Data.Abstractions.Models.Result;
 
 namespace Elpida.Backend.Data.Abstractions.Repositories
 {
-	public interface IBenchmarkResultsRepository : IRepository<BenchmarkResultModel>
-	{
-		Task<PagedQueryResult<ResultPreviewModel>> GetPagedPreviewsAsync<TOrderKey>(
-			int from,
-			int count,
-			bool descending,
-			Expression<Func<BenchmarkResultModel, TOrderKey>> orderBy,
-			IEnumerable<Expression<Func<BenchmarkResultModel, bool>>> filters,
-			bool calculateTotalCount,
-			CancellationToken cancellationToken = default);
-	}
+    public interface IBenchmarkResultsRepository : IRepositoryWithPreviews<BenchmarkResultModel, ResultPreviewModel>
+    {
+    }
 }

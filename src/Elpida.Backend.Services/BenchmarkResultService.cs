@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Elpida.Backend.Data.Abstractions.Interfaces;
 using Elpida.Backend.Data.Abstractions.Models;
 using Elpida.Backend.Data.Abstractions.Models.Cpu;
 using Elpida.Backend.Data.Abstractions.Models.Result;
@@ -34,7 +35,7 @@ using Elpida.Backend.Services.Extensions.Result;
 
 namespace Elpida.Backend.Services
 {
-    public class BenchmarkResultService : Service<ResultDto, BenchmarkResultModel>, IBenchmarkResultsService
+    public class BenchmarkResultService : ServiceWithPreviews<ResultDto, BenchmarkResultModel, ResultPreviewDto, ResultPreviewModel>, IBenchmarkResultsService
     {
         private readonly IBenchmarkService _benchmarkService;
         private readonly ICpuService _cpuService;
@@ -75,6 +76,9 @@ namespace Elpida.Backend.Services
         {
             var benchmark = await _benchmarkService.GetSingleAsync(dto.Result.Uuid, cancellationToken);
             var cpu = await _cpuService.GetOrAddAsync(dto.System.Cpu, cancellationToken);
+            
+            dto.System.Topology.CpuId = cpu.Id;
+            
             var topology = await _topologyService.GetOrAddAsync(dto.System.Topology, cancellationToken);
             var elpida = await _elpidaService.GetOrAddAsync(dto.Elpida, cancellationToken);
             var os = await _osService.GetOrAddAsync(dto.System.Os, cancellationToken);
@@ -124,5 +128,26 @@ namespace Elpida.Backend.Services
         }
 
         #endregion
+
+        protected override ResultPreviewDto ToPreviewDto(ResultPreviewModel model)
+        {
+            return new ResultPreviewDto
+            {
+                Id = model.Id,
+                TimeStamp = model.TimeStamp,
+                Name = model.Name,
+                CpuBrand = model.CpuBrand,
+                CpuCores = model.CpuCores,
+                CpuLogicalCores = model.CpuLogicalCores,
+                CpuFrequency = model.CpuFrequency,
+                MemorySize = model.MemorySize,
+                OsName = model.OsName,
+                OsVersion = model.OsVersion,
+                ElpidaVersionBuild = model.ElpidaVersionBuild,
+                ElpidaVersionMajor = model.ElpidaVersionMajor,
+                ElpidaVersionMinor = model.ElpidaVersionMinor,
+                ElpidaVersionRevision = model.ElpidaVersionRevision,
+            };
+        }
     }
 }

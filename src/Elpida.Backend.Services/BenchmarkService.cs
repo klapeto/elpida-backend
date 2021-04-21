@@ -13,7 +13,7 @@ using Elpida.Backend.Services.Extensions.Benchmark;
 
 namespace Elpida.Backend.Services
 {
-    public class BenchmarkService : Service<BenchmarkDto, BenchmarkModel>, IBenchmarkService
+    public class BenchmarkService : Service<BenchmarkDto, BenchmarkModel, IBenchmarkRepository>, IBenchmarkService
     {
         public BenchmarkService(IBenchmarkRepository benchmarkRepository)
             : base(benchmarkRepository)

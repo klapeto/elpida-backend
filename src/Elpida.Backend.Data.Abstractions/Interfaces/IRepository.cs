@@ -47,26 +47,6 @@ namespace Elpida.Backend.Data.Abstractions.Interfaces
 		Task<List<TEntity>> GetMultipleAsync(IEnumerable<Expression<Func<TEntity, bool>>> filters,
 			CancellationToken cancellationToken = default);
 
-#if false
-		Task UpdateAsync(TEntity entity, CancellationToken cancellationToken = default);
-
-		Task<long> GetTotalCountAsync(CancellationToken cancellationToken = default);
-
-		Task<PagedQueryResult<TEntity>> GetMultiplePagedAsync<TOrderKey>(
-			int from,
-			int count,
-			bool descending,
-			Expression<Func<TEntity, TOrderKey>> orderBy,
-			IEnumerable<Expression<Func<TEntity, bool>>> filters,
-			bool calculateTotalCount,
-			CancellationToken cancellationToken = default);
-
-		Task<List<TEntity>> GetMultipleAsync(IEnumerable<Expression<Func<TEntity, bool>>> filters,
-			CancellationToken cancellationToken = default);
-
-		Task DeleteAsync(TEntity entity, CancellationToken cancellationToken = default);
-#endif
-
 		Task SaveChangesAsync(CancellationToken cancellationToken = default);
 	}
 }

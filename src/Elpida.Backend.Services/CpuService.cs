@@ -18,7 +18,7 @@ using Elpida.Backend.Services.Utilities;
 
 namespace Elpida.Backend.Services
 {
-    public class CpuService : Service<CpuDto, CpuModel>, ICpuService
+    public class CpuService : Service<CpuDto, CpuModel, ICpuRepository>, ICpuService
     {
         private readonly ICpuRepository _cpuRepository;
         private readonly ITaskService _taskService;

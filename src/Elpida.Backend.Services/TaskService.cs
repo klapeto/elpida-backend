@@ -11,7 +11,7 @@ using Elpida.Backend.Services.Extensions.Task;
 
 namespace Elpida.Backend.Services
 {
-    public class TaskService : Service<TaskDto, TaskModel>, ITaskService
+    public class TaskService : Service<TaskDto, TaskModel, ITaskRepository>, ITaskService
     {
         public TaskService(ITaskRepository taskRepository)
             : base(taskRepository)

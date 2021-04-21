@@ -10,7 +10,7 @@ using Elpida.Backend.Services.Extensions;
 
 namespace Elpida.Backend.Services
 {
-    public class OsService : Service<OsDto, OsModel>, IOsService
+    public class OsService : Service<OsDto, OsModel, IOsRepository>, IOsService
     {
         private static readonly IEnumerable<FilterExpression> OsFilters = new List<FilterExpression>
         {

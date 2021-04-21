@@ -75,7 +75,7 @@ namespace Elpida.Backend.Controllers
 		public async Task<IActionResult> GetPaged([FromQuery] PageRequest pageRequest,
 			CancellationToken cancellationToken)
 		{
-			return Ok(await _benchmarkResultsService.GetPagedAsync(new QueryRequest {PageRequest = pageRequest},
+			return Ok(await _benchmarkResultsService.GetPagedPreviewsAsync(new QueryRequest {PageRequest = pageRequest},
 				cancellationToken));
 		}
 
@@ -96,7 +96,7 @@ namespace Elpida.Backend.Controllers
 				}
 			}
 
-			return Ok(await _benchmarkResultsService.GetPagedAsync(queryRequest, cancellationToken));
+			return Ok(await _benchmarkResultsService.GetPagedPreviewsAsync(queryRequest, cancellationToken));
 		}
 
 		private static void ConvertValues(QueryInstance instance)

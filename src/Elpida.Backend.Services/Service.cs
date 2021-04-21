@@ -13,14 +13,15 @@ using Elpida.Backend.Services.Utilities;
 
 namespace Elpida.Backend.Services
 {
-    public abstract class Service<TDto, TModel> : IService<TDto> where TModel : Entity
+    public abstract class Service<TDto, TModel, TRepository> : IService<TDto>
+        where TModel : Entity where TRepository : IRepository<TModel>
     {
-        protected Service(IRepository<TModel> repository)
+        protected Service(TRepository repository)
         {
             Repository = repository;
         }
 
-        protected IRepository<TModel> Repository { get; }
+        protected TRepository Repository { get; }
 
         public async Task<TDto> GetSingleAsync(long id, CancellationToken cancellationToken = default)
         {
@@ -89,7 +90,7 @@ namespace Elpida.Backend.Services
             return new FilterExpression(name.ToLowerInvariant(), (MemberExpression) expression.Body);
         }
 
-        private IReadOnlyDictionary<string, LambdaExpression> GetLambdaFilters()
+        protected IReadOnlyDictionary<string, LambdaExpression> GetLambdaFilters()
         {
             return GetFilterExpressions()
                 .ToDictionary(p => p.Name,

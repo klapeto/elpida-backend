@@ -87,20 +87,8 @@ namespace Elpida.Backend.DataUpdater
             };
         }
 
-        static void foo(IReadOnlyDictionary<string, LambdaExpression> expressions)
-        {
-            
-        }
-        
         private static async Task Main(string[] args)
         {
-
-            var x = new Dictionary<string, Expression<Func<string, bool>>>();
-            
-            foo(x.ToDictionary(k => k.Key, v => (LambdaExpression)v.Value));
-            
-
-            return;
             var config = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", false, true)
                 .AddCommandLine(args)
