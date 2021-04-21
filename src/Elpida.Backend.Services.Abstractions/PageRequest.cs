@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2020  Ioannis Panagiotopoulos
+ * Copyright (C) 2020 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -19,14 +19,14 @@
 
 namespace Elpida.Backend.Services.Abstractions
 {
-	public class PageRequest
-	{
-		public const int MaxCount = 500;
+    public class PageRequest
+    {
+        public const int MaxCount = 500;
 
-		public int Next { get; set; }
+        public int Next { get; set; }
 
-		public int Count { get; set; } = 10;
+        public int Count { get; set; } = 10;
 
-		public long TotalCount { get; set; }
-	}
+        public long TotalCount { get; set; }
+    }
 }

@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2020  Ioannis Panagiotopoulos
+ * Copyright (C) 2020 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -21,14 +21,14 @@ using System;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Topology
 {
-	[Serializable]
-	public class TopologyDto
-	{
-		public long Id { get; set; }
-		public long CpuId { get; set; }
-		public int TotalLogicalCores { get; set; }
-		public int TotalPhysicalCores { get; set; }
-		public int TotalDepth { get; set; }
-		public CpuNodeDto Root { get; set; } = new CpuNodeDto();
-	}
+    [Serializable]
+    public class TopologyDto
+    {
+        public long Id { get; set; }
+        public long CpuId { get; set; }
+        public int TotalLogicalCores { get; set; }
+        public int TotalPhysicalCores { get; set; }
+        public int TotalDepth { get; set; }
+        public CpuNodeDto Root { get; set; } = new CpuNodeDto();
+    }
 }

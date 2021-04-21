@@ -1,7 +1,7 @@
 ﻿/*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2020  Ioannis Panagiotopoulos
+ * Copyright (C) 2020 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Elpida.Backend.Data.Abstractions.Interfaces;
 using Elpida.Backend.Data.Abstractions.Models;
 using Elpida.Backend.Data.Abstractions.Models.Cpu;
 using Elpida.Backend.Data.Abstractions.Models.Result;
@@ -35,7 +34,9 @@ using Elpida.Backend.Services.Extensions.Result;
 
 namespace Elpida.Backend.Services
 {
-    public class BenchmarkResultService : ServiceWithPreviews<ResultDto, BenchmarkResultModel, ResultPreviewDto, ResultPreviewModel>, IBenchmarkResultsService
+    public class BenchmarkResultService :
+        ServiceWithPreviews<ResultDto, BenchmarkResultModel, ResultPreviewDto, BenchmarkResultPreviewModel>,
+        IBenchmarkResultsService
     {
         private readonly IBenchmarkService _benchmarkService;
         private readonly ICpuService _cpuService;
@@ -48,9 +49,30 @@ namespace Elpida.Backend.Services
         private static IEnumerable<FilterExpression> ResultFilters { get; } = new List<FilterExpression>
         {
             CreateFilter("memorySize", model => model.MemorySize),
-            CreateFilter("timeStamp", model => model.TimeStamp),
+            CreateFilter("timeStamp", model => model.TimeStamp)
         };
-        
+
+        protected override ResultPreviewDto ToPreviewDto(BenchmarkResultPreviewModel model)
+        {
+            return new ResultPreviewDto
+            {
+                Id = model.Id,
+                TimeStamp = model.TimeStamp,
+                Name = model.Name,
+                CpuBrand = model.CpuBrand,
+                CpuCores = model.CpuCores,
+                CpuLogicalCores = model.CpuLogicalCores,
+                CpuFrequency = model.CpuFrequency,
+                MemorySize = model.MemorySize,
+                OsName = model.OsName,
+                OsVersion = model.OsVersion,
+                ElpidaVersionBuild = model.ElpidaVersionBuild,
+                ElpidaVersionMajor = model.ElpidaVersionMajor,
+                ElpidaVersionMinor = model.ElpidaVersionMinor,
+                ElpidaVersionRevision = model.ElpidaVersionRevision
+            };
+        }
+
         #region IResultsService Members
 
         public BenchmarkResultService(IBenchmarkService benchmarkService,
@@ -76,9 +98,9 @@ namespace Elpida.Backend.Services
         {
             var benchmark = await _benchmarkService.GetSingleAsync(dto.Result.Uuid, cancellationToken);
             var cpu = await _cpuService.GetOrAddAsync(dto.System.Cpu, cancellationToken);
-            
+
             dto.System.Topology.CpuId = cpu.Id;
-            
+
             var topology = await _topologyService.GetOrAddAsync(dto.System.Topology, cancellationToken);
             var elpida = await _elpidaService.GetOrAddAsync(dto.Elpida, cancellationToken);
             var os = await _osService.GetOrAddAsync(dto.System.Os, cancellationToken);
@@ -100,7 +122,7 @@ namespace Elpida.Backend.Services
             dto.Result.Id = benchmark.Id;
             dto.System.Os = os;
         }
-        
+
         protected override IEnumerable<FilterExpression> GetFilterExpressions()
         {
             return ResultFilters
@@ -128,26 +150,5 @@ namespace Elpida.Backend.Services
         }
 
         #endregion
-
-        protected override ResultPreviewDto ToPreviewDto(ResultPreviewModel model)
-        {
-            return new ResultPreviewDto
-            {
-                Id = model.Id,
-                TimeStamp = model.TimeStamp,
-                Name = model.Name,
-                CpuBrand = model.CpuBrand,
-                CpuCores = model.CpuCores,
-                CpuLogicalCores = model.CpuLogicalCores,
-                CpuFrequency = model.CpuFrequency,
-                MemorySize = model.MemorySize,
-                OsName = model.OsName,
-                OsVersion = model.OsVersion,
-                ElpidaVersionBuild = model.ElpidaVersionBuild,
-                ElpidaVersionMajor = model.ElpidaVersionMajor,
-                ElpidaVersionMinor = model.ElpidaVersionMinor,
-                ElpidaVersionRevision = model.ElpidaVersionRevision,
-            };
-        }
     }
 }

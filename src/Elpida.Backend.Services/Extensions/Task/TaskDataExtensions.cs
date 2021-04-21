@@ -1,3 +1,22 @@
+/*
+ * Elpida HTTP Rest API
+ *   
+ * Copyright (C) 2021 Ioannis Panagiotopoulos
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 using System.Collections.Generic;
 using Elpida.Backend.Data.Abstractions.Models.Task;
 using Elpida.Backend.Services.Abstractions.Dtos;
@@ -41,7 +60,7 @@ namespace Elpida.Backend.Services.Extensions.Task
                 Uuid = taskDto.Uuid,
                 Name = taskDto.Name,
                 Description = taskDto.Description,
-                
+
                 InputName = taskDto.Input?.Name,
                 InputDescription = taskDto.Input?.Description,
                 InputUnit = taskDto.Input?.Unit,
@@ -51,7 +70,7 @@ namespace Elpida.Backend.Services.Extensions.Task
                 OutputDescription = taskDto.Output?.Description,
                 OutputUnit = taskDto.Output?.Unit,
                 OutputProperties = JsonConvert.SerializeObject(taskDto.Output?.RequiredProperties),
-                
+
                 ResultName = taskDto.Result.Name,
                 ResultDescription = taskDto.Result.Description,
                 ResultType = taskDto.Result.Type,
@@ -59,7 +78,7 @@ namespace Elpida.Backend.Services.Extensions.Task
                 ResultUnit = taskDto.Result.Unit
             };
         }
-        
+
         public static TaskDto ToDto(this TaskModel taskModel)
         {
             return new TaskDto

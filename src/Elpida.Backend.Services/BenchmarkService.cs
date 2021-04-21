@@ -1,3 +1,22 @@
+/*
+ * Elpida HTTP Rest API
+ *   
+ * Copyright (C) 2021 Ioannis Panagiotopoulos
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -25,6 +44,15 @@ namespace Elpida.Backend.Services
             CreateFilter("benchmarkName", model => model.Name)
         };
 
+        public async Task<BenchmarkDto> GetSingleAsync(Guid uuid, CancellationToken cancellationToken = default)
+        {
+            var model = await Repository.GetSingleAsync(b => b.Uuid == uuid, cancellationToken);
+
+            if (model == null) throw new NotFoundException("Benchmark was not found.", uuid);
+
+            return model.ToDto();
+        }
+
         protected override IEnumerable<FilterExpression> GetFilterExpressions()
         {
             return BenchmarkExpressions;
@@ -43,15 +71,6 @@ namespace Elpida.Backend.Services
         protected override Expression<Func<BenchmarkModel, bool>> GetCreationBypassCheckExpression(BenchmarkDto dto)
         {
             return model => model.Uuid == dto.Uuid;
-        }
-
-        public async Task<BenchmarkDto> GetSingleAsync(Guid uuid, CancellationToken cancellationToken = default)
-        {
-            var model = await Repository.GetSingleAsync(b => b.Uuid == uuid, cancellationToken);
-
-            if (model == null) throw new NotFoundException("Benchmark was not found.", uuid);
-
-            return model.ToDto();
         }
     }
 }

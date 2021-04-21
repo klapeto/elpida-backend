@@ -18,17 +18,24 @@
  */
 
 using System;
-using System.Collections.Generic;
 
-namespace Elpida.Backend.Services.Abstractions.Dtos.Result
+namespace Elpida.Backend.Data.Abstractions.Models.Result
 {
-    public class ResultDto
+    public class BenchmarkResultPreviewModel
     {
-        public long? Id { get; set; }
+        public long Id { get; set; }
+        public string Name { get; set; } = default!;
         public DateTime TimeStamp { get; set; }
-        public IList<long> Affinity { get; set; } = new List<long>();
-        public ElpidaDto Elpida { get; set; } = new ElpidaDto();
-        public SystemDto System { get; set; } = new SystemDto();
-        public BenchmarkResultDto Result { get; set; } = new BenchmarkResultDto();
+        public int ElpidaVersionMajor { get; set; }
+        public int ElpidaVersionMinor { get; set; }
+        public int ElpidaVersionRevision { get; set; }
+        public int ElpidaVersionBuild { get; set; }
+        public string OsName { get; set; } = default!;
+        public string OsVersion { get; set; } = default!;
+        public string CpuBrand { get; set; } = default!;
+        public long CpuFrequency { get; set; }
+        public int CpuCores { get; set; }
+        public int CpuLogicalCores { get; set; }
+        public long MemorySize { get; set; }
     }
 }

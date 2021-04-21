@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2020  Ioannis Panagiotopoulos
+ * Copyright (C) 2020 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,27 +17,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using Elpida.Backend.Services.Abstractions.Dtos.Result;
 using Elpida.Backend.Services.Abstractions.Dtos.Topology;
 using FluentValidation;
 
 namespace Elpida.Backend.Validators
 {
-	public class TopologyValidator: AbstractValidator<TopologyDto>
-	{
-		public TopologyValidator()
-		{
-			RuleFor(dto => dto.Root)
-				.NotNull();
-			
-			RuleFor(dto => dto.TotalDepth)
-				.GreaterThanOrEqualTo(0);
-			
-			RuleFor(dto => dto.TotalPhysicalCores)
-				.GreaterThanOrEqualTo(0);
-						
-			RuleFor(dto => dto.TotalLogicalCores)
-				.GreaterThanOrEqualTo(0);
-		}
-	}
+    public class TopologyValidator : AbstractValidator<TopologyDto>
+    {
+        public TopologyValidator()
+        {
+            RuleFor(dto => dto.Root)
+                .NotNull();
+
+            RuleFor(dto => dto.TotalDepth)
+                .GreaterThanOrEqualTo(0);
+
+            RuleFor(dto => dto.TotalPhysicalCores)
+                .GreaterThanOrEqualTo(0);
+
+            RuleFor(dto => dto.TotalLogicalCores)
+                .GreaterThanOrEqualTo(0);
+        }
+    }
 }

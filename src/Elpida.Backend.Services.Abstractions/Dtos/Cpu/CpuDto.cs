@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2020  Ioannis Panagiotopoulos
+ * Copyright (C) 2020 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -22,16 +22,16 @@ using System.Collections.Generic;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Cpu
 {
-	[Serializable]
-	public class CpuDto
-	{
-		public long Id { get; set; }
-		public string Vendor { get; set; } = string.Empty;
-		public string Brand { get; set; } = string.Empty;
-		public long Frequency { get; set; }
-		public bool Smt { get; set; }
-		public IDictionary<string, string> AdditionalInfo { get; set; } = new Dictionary<string, string>();
-		public IList<CpuCacheDto> Caches { get; set; } = new List<CpuCacheDto>();
-		public IList<string> Features { get; set; } = new List<string>();
-	}
+    [Serializable]
+    public class CpuDto
+    {
+        public long Id { get; set; }
+        public string Vendor { get; set; } = string.Empty;
+        public string Brand { get; set; } = string.Empty;
+        public long Frequency { get; set; }
+        public bool Smt { get; set; }
+        public IDictionary<string, string> AdditionalInfo { get; set; } = new Dictionary<string, string>();
+        public IList<CpuCacheDto> Caches { get; set; } = new List<CpuCacheDto>();
+        public IList<string> Features { get; set; } = new List<string>();
+    }
 }

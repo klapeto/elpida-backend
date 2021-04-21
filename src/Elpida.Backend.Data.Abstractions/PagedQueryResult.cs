@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2021  Ioannis Panagiotopoulos
+ * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -21,16 +21,16 @@ using System.Collections.Generic;
 
 namespace Elpida.Backend.Data.Abstractions
 {
-	public class PagedQueryResult<T>
-	{
-		public PagedQueryResult(long totalCount, List<T> items)
-		{
-			TotalCount = totalCount;
-			Items = items;
-		}
+    public class PagedQueryResult<T>
+    {
+        public PagedQueryResult(long totalCount, List<T> items)
+        {
+            TotalCount = totalCount;
+            Items = items;
+        }
 
-		public long TotalCount { get; }
+        public long TotalCount { get; }
 
-		public List<T> Items { get; }
-	}
+        public List<T> Items { get; }
+    }
 }

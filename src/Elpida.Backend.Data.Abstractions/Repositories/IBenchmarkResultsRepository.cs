@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2020  Ioannis Panagiotopoulos
+ * Copyright (C) 2020 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -22,7 +22,8 @@ using Elpida.Backend.Data.Abstractions.Models.Result;
 
 namespace Elpida.Backend.Data.Abstractions.Repositories
 {
-    public interface IBenchmarkResultsRepository : IRepositoryWithPreviews<BenchmarkResultModel, ResultPreviewModel>
+    public interface IBenchmarkResultsRepository :
+        IRepositoryWithPreviews<BenchmarkResultModel, BenchmarkResultPreviewModel>
     {
     }
 }

@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2020  Ioannis Panagiotopoulos
+ * Copyright (C) 2020 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,26 +17,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System.Linq;
 using Elpida.Backend.Services.Abstractions.Dtos.Cpu;
-using Elpida.Backend.Services.Abstractions.Dtos.Result;
 using FluentValidation;
 
 namespace Elpida.Backend.Validators
 {
-	public class CpuValidator : AbstractValidator<CpuDto>
-	{
-		public CpuValidator()
-		{
-			RuleFor(dto => dto.Vendor)
-				.NotEmpty()
-				.MaximumLength(50);
-			
-			RuleFor(dto => dto.Brand)
-				.MaximumLength(50);
+    public class CpuValidator : AbstractValidator<CpuDto>
+    {
+        public CpuValidator()
+        {
+            RuleFor(dto => dto.Vendor)
+                .NotEmpty()
+                .MaximumLength(50);
 
-			RuleFor(dto => dto.Frequency)
-				.GreaterThanOrEqualTo(0);
-		}
-	}
+            RuleFor(dto => dto.Brand)
+                .MaximumLength(50);
+
+            RuleFor(dto => dto.Frequency)
+                .GreaterThanOrEqualTo(0);
+        }
+    }
 }

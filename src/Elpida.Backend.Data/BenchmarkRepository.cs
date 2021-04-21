@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2021  Ioannis Panagiotopoulos
+ * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -24,27 +24,22 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Elpida.Backend.Data
 {
-	public class BenchmarkRepository : EntityRepository<BenchmarkModel>, IBenchmarkRepository
-	{
-		public BenchmarkRepository(ElpidaContext elpidaContext)
-			: base(elpidaContext, elpidaContext.Benchmarks)
-		{
-		}
+    public class BenchmarkRepository : EntityRepository<BenchmarkModel>, IBenchmarkRepository
+    {
+        public BenchmarkRepository(ElpidaContext elpidaContext)
+            : base(elpidaContext, elpidaContext.Benchmarks)
+        {
+        }
 
-		protected override IQueryable<BenchmarkModel> ProcessGetSingle(IQueryable<BenchmarkModel> queryable)
-		{
-			return queryable
-				.Include(model => model.Tasks);
-		}
+        protected override IQueryable<BenchmarkModel> ProcessGetSingle(IQueryable<BenchmarkModel> queryable)
+        {
+            return queryable
+                .Include(model => model.Tasks);
+        }
 
-		protected override IQueryable<BenchmarkModel> ProcessGetMultiple(IQueryable<BenchmarkModel> queryable)
-		{
-			return ProcessGetSingle(queryable);
-		}
-
-		protected override IQueryable<BenchmarkModel> ProcessGetMultiplePaged(IQueryable<BenchmarkModel> queryable)
-		{
-			return ProcessGetSingle(queryable);
-		}
-	}
+        protected override IQueryable<BenchmarkModel> ProcessGetMultiplePaged(IQueryable<BenchmarkModel> queryable)
+        {
+            return ProcessGetSingle(queryable);
+        }
+    }
 }

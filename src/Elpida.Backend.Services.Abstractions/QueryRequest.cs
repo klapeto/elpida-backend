@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2020  Ioannis Panagiotopoulos
+ * Copyright (C) 2020 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -19,14 +19,14 @@
 
 namespace Elpida.Backend.Services.Abstractions
 {
-	public class QueryRequest
-	{
-		public bool Descending { get; set; }
+    public class QueryRequest
+    {
+        public bool Descending { get; set; }
 
-		public string OrderBy { get; set; } = string.Empty;
+        public string OrderBy { get; set; } = string.Empty;
 
-		public PageRequest PageRequest { get; set; } = new PageRequest();
+        public PageRequest PageRequest { get; set; } = new PageRequest();
 
-		public QueryInstance[]? Filters { get; set; }
-	}
+        public QueryInstance[]? Filters { get; set; }
+    }
 }

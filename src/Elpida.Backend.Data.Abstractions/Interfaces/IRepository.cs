@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2021  Ioannis Panagiotopoulos
+ * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -26,27 +26,27 @@ using Elpida.Backend.Data.Abstractions.Models;
 
 namespace Elpida.Backend.Data.Abstractions.Interfaces
 {
-	public interface IRepository<TEntity> where TEntity : Entity
-	{
-		Task<TEntity?> GetSingleAsync(long id, CancellationToken cancellationToken = default);
+    public interface IRepository<TEntity> where TEntity : Entity
+    {
+        Task<TEntity?> GetSingleAsync(long id, CancellationToken cancellationToken = default);
 
-		Task<TEntity?> GetSingleAsync(Expression<Func<TEntity, bool>> filters,
-			CancellationToken cancellationToken = default);
+        Task<TEntity?> GetSingleAsync(Expression<Func<TEntity, bool>> filters,
+            CancellationToken cancellationToken = default);
 
-		Task<TEntity> CreateAsync(TEntity entity, CancellationToken cancellationToken = default);
-		
-		Task<PagedQueryResult<TEntity>> GetMultiplePagedAsync<TOrderKey>(
-			int from,
-			int count,
-			bool descending = false,
-			bool calculateTotalCount = false,
-			Expression<Func<TEntity, TOrderKey>>? orderBy = null,
-			IEnumerable<Expression<Func<TEntity, bool>>>? filters = null,
-			CancellationToken cancellationToken = default);
+        Task<TEntity> CreateAsync(TEntity entity, CancellationToken cancellationToken = default);
 
-		Task<List<TEntity>> GetMultipleAsync(IEnumerable<Expression<Func<TEntity, bool>>> filters,
-			CancellationToken cancellationToken = default);
+        Task<PagedQueryResult<TEntity>> GetMultiplePagedAsync<TOrderKey>(
+            int from,
+            int count,
+            bool descending = false,
+            bool calculateTotalCount = false,
+            Expression<Func<TEntity, TOrderKey>>? orderBy = null,
+            IEnumerable<Expression<Func<TEntity, bool>>>? filters = null,
+            CancellationToken cancellationToken = default);
 
-		Task SaveChangesAsync(CancellationToken cancellationToken = default);
-	}
+        Task<List<TEntity>> GetMultipleAsync(IEnumerable<Expression<Func<TEntity, bool>>> filters,
+            CancellationToken cancellationToken = default);
+
+        Task SaveChangesAsync(CancellationToken cancellationToken = default);
+    }
 }

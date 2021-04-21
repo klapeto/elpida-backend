@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2020  Ioannis Panagiotopoulos
+ * Copyright (C) 2020 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -21,46 +21,46 @@ using System.Collections.Generic;
 
 namespace Elpida.Backend.Services.Abstractions
 {
-	public static class FilterHelpers
-	{
-		#region Comparison enum
+    public static class FilterHelpers
+    {
+        #region Comparison enum
 
-		public enum Comparison
-		{
-			Equal,
-			Contains,
-			GreaterEqual,
-			Greater,
-			LessEqual,
-			Less
-		}
+        public enum Comparison
+        {
+            Equal,
+            Contains,
+            GreaterEqual,
+            Greater,
+            LessEqual,
+            Less
+        }
 
-		#endregion
+        #endregion
 
-		public static IReadOnlyDictionary<Comparison, string> ComparisonMap { get; } =
-			new Dictionary<Comparison, string>
-			{
-				[Comparison.Equal] = "eq",
-				[Comparison.Contains] = "c",
-				[Comparison.GreaterEqual] = "ge",
-				[Comparison.Greater] = "g",
-				[Comparison.LessEqual] = "le",
-				[Comparison.Less] = "l"
-			};
+        public static IReadOnlyDictionary<Comparison, string> ComparisonMap { get; } =
+            new Dictionary<Comparison, string>
+            {
+                [Comparison.Equal] = "eq",
+                [Comparison.Contains] = "c",
+                [Comparison.GreaterEqual] = "ge",
+                [Comparison.Greater] = "g",
+                [Comparison.LessEqual] = "le",
+                [Comparison.Less] = "l"
+            };
 
-		public static HashSet<string> NumberComparisons { get; } = new HashSet<string>
-		{
-			ComparisonMap[Comparison.Equal],
-			ComparisonMap[Comparison.GreaterEqual],
-			ComparisonMap[Comparison.Greater],
-			ComparisonMap[Comparison.LessEqual],
-			ComparisonMap[Comparison.Less]
-		};
+        public static HashSet<string> NumberComparisons { get; } = new HashSet<string>
+        {
+            ComparisonMap[Comparison.Equal],
+            ComparisonMap[Comparison.GreaterEqual],
+            ComparisonMap[Comparison.Greater],
+            ComparisonMap[Comparison.LessEqual],
+            ComparisonMap[Comparison.Less]
+        };
 
-		public static HashSet<string> StringComparisons { get; } = new HashSet<string>
-		{
-			ComparisonMap[Comparison.Equal],
-			ComparisonMap[Comparison.Contains]
-		};
-	}
+        public static HashSet<string> StringComparisons { get; } = new HashSet<string>
+        {
+            ComparisonMap[Comparison.Equal],
+            ComparisonMap[Comparison.Contains]
+        };
+    }
 }

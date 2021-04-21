@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2021  Ioannis Panagiotopoulos
+ * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -23,28 +23,28 @@ using Microsoft.Extensions.Logging;
 
 namespace Elpida.Backend.DataUpdater
 {
-	public class UpdateElpidaDbContext : ElpidaContext
-	{
-		private readonly string _connectionString;
-		private readonly ILoggerFactory _loggerFactory;
-		
-		public UpdateElpidaDbContext()
-			:base(new DbContextOptions<ElpidaContext>())
-		{
-			
-		}
-		public UpdateElpidaDbContext(string connectionString, ILoggerFactory loggerFactory)
-			: base(new DbContextOptions<ElpidaContext>())
-		{
-			_connectionString = connectionString;
-			_loggerFactory = loggerFactory;
-		}
+    public class UpdateElpidaDbContext : ElpidaContext
+    {
+        private readonly string _connectionString;
+        private readonly ILoggerFactory _loggerFactory;
 
-		protected override void OnConfiguring(DbContextOptionsBuilder options)
-		{
-			options.UseSqlite("Data Source=../../../../Elpida.Backend/results.db");
-			options.UseLoggerFactory(_loggerFactory);
-			//options.UseSqlite(_connectionString);
-		}
-	}
+        public UpdateElpidaDbContext()
+            : base(new DbContextOptions<ElpidaContext>())
+        {
+        }
+
+        public UpdateElpidaDbContext(string connectionString, ILoggerFactory loggerFactory)
+            : base(new DbContextOptions<ElpidaContext>())
+        {
+            _connectionString = connectionString;
+            _loggerFactory = loggerFactory;
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder options)
+        {
+            options.UseSqlite("Data Source=../../../../Elpida.Backend/results.db");
+            options.UseLoggerFactory(_loggerFactory);
+            //options.UseSqlite(_connectionString);
+        }
+    }
 }

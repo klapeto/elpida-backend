@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2021  Ioannis Panagiotopoulos
+ * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -23,9 +23,8 @@ using Elpida.Backend.Services.Abstractions.Dtos;
 
 namespace Elpida.Backend.DataUpdater
 {
-	internal class Data
-	{
-		public IReadOnlyList<BenchmarkDto> Benchmarks { get; set; } = Array.Empty<BenchmarkDto>();
-		
-	}
+    internal class Data
+    {
+        public IReadOnlyList<BenchmarkDto> Benchmarks { get; set; } = Array.Empty<BenchmarkDto>();
+    }
 }

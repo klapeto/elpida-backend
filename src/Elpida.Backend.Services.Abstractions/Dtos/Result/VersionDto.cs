@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2020  Ioannis Panagiotopoulos
+ * Copyright (C) 2020 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -19,11 +19,11 @@
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 {
-	public class VersionDto
-	{
-		public int Major { get; set; }
-		public int Minor { get; set; }
-		public int Revision { get; set; }
-		public int Build { get; set; }
-	}
+    public class VersionDto
+    {
+        public int Major { get; set; }
+        public int Minor { get; set; }
+        public int Revision { get; set; }
+        public int Build { get; set; }
+    }
 }

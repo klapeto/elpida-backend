@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2021  Ioannis Panagiotopoulos
+ * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -21,14 +21,14 @@ using System;
 
 namespace Elpida.Backend.Services.Abstractions.Exceptions
 {
-	public class ConflictException : Exception
-	{
-		public ConflictException(string id, string message)
-			: base(message)
-		{
-			Id = id;
-		}
+    public class ConflictException : Exception
+    {
+        public ConflictException(string id, string message)
+            : base(message)
+        {
+            Id = id;
+        }
 
-		public string Id { get; }
-	}
+        public string Id { get; }
+    }
 }

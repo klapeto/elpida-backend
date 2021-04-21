@@ -1,7 +1,7 @@
 ﻿/*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2021  Ioannis Panagiotopoulos
+ * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -21,10 +21,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Elpida.Backend.Data.Abstractions.Models;
-using Elpida.Backend.Data.Abstractions.Models.Cpu;
 using Elpida.Backend.Data.Abstractions.Models.Task;
 using Elpida.Backend.Services.Abstractions.Dtos;
 using Elpida.Backend.Services.Extensions;
@@ -121,7 +119,7 @@ namespace Elpida.Backend.DataUpdater
                     {
                         await context.Database.EnsureDeletedAsync();
                         await context.Database.EnsureCreatedAsync();
-                    
+
                         var addedTasks = new List<TaskModel>();
                         foreach (var task in tasks
                             .Select(t => t.ToModel())
@@ -129,26 +127,22 @@ namespace Elpida.Backend.DataUpdater
                         {
                             var updatedTask = await context.Tasks.FirstOrDefaultAsync(t => t.Uuid == task.Uuid);
                             if (updatedTask == null)
-                            {
                                 updatedTask = (await context.Tasks.AddAsync(task)).Entity;
-                            }
                             else
-                            {
                                 updatedTask.Update(task);
-                            }
-                    
+
                             addedTasks.Add(updatedTask);
                         }
-                    
+
                         await context.SaveChangesAsync();
-                    
+
                         foreach (var benchmark in data.Benchmarks)
                         {
                             var updatedBenchmark =
                                 await context.Benchmarks
                                     .Include(m => m.Tasks)
                                     .FirstOrDefaultAsync(t => t.Uuid == benchmark.Uuid);
-                    
+
                             if (updatedBenchmark == null)
                             {
                                 await context.Benchmarks.AddAsync(new BenchmarkModel
@@ -169,7 +163,7 @@ namespace Elpida.Backend.DataUpdater
                                     .ToList();
                             }
                         }
-                    
+
                         await context.SaveChangesAsync();
                     }
                 }

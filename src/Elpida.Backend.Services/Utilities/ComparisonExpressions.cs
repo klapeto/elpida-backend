@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2020  Ioannis Panagiotopoulos
+ * Copyright (C) 2020 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -25,21 +25,21 @@ using Elpida.Backend.Services.Abstractions;
 
 namespace Elpida.Backend.Services.Utilities
 {
-	public static class ComparisonExpressions
-	{
-		private static readonly MethodInfo Contains =
-			typeof(string).GetMethod(nameof(string.Contains), new[] {typeof(string)});
+    public static class ComparisonExpressions
+    {
+        private static readonly MethodInfo Contains =
+            typeof(string).GetMethod(nameof(string.Contains), new[] {typeof(string)});
 
-		public static IReadOnlyDictionary<string, Func<Expression, Expression, Expression>>
-			ExpressionFactories { get; } = new Dictionary<string, Func<Expression, Expression, Expression>>
-		{
-			[FilterHelpers.ComparisonMap[FilterHelpers.Comparison.Contains]] =
-				(left, right) => Expression.Call(left, Contains, right),
-			[FilterHelpers.ComparisonMap[FilterHelpers.Comparison.Equal]] = Expression.Equal,
-			[FilterHelpers.ComparisonMap[FilterHelpers.Comparison.Greater]] = Expression.GreaterThan,
-			[FilterHelpers.ComparisonMap[FilterHelpers.Comparison.GreaterEqual]] = Expression.GreaterThanOrEqual,
-			[FilterHelpers.ComparisonMap[FilterHelpers.Comparison.Less]] = Expression.LessThan,
-			[FilterHelpers.ComparisonMap[FilterHelpers.Comparison.LessEqual]] = Expression.LessThanOrEqual
-		};
-	}
+        public static IReadOnlyDictionary<string, Func<Expression, Expression, Expression>>
+            ExpressionFactories { get; } = new Dictionary<string, Func<Expression, Expression, Expression>>
+        {
+            [FilterHelpers.ComparisonMap[FilterHelpers.Comparison.Contains]] =
+                (left, right) => Expression.Call(left, Contains, right),
+            [FilterHelpers.ComparisonMap[FilterHelpers.Comparison.Equal]] = Expression.Equal,
+            [FilterHelpers.ComparisonMap[FilterHelpers.Comparison.Greater]] = Expression.GreaterThan,
+            [FilterHelpers.ComparisonMap[FilterHelpers.Comparison.GreaterEqual]] = Expression.GreaterThanOrEqual,
+            [FilterHelpers.ComparisonMap[FilterHelpers.Comparison.Less]] = Expression.LessThan,
+            [FilterHelpers.ComparisonMap[FilterHelpers.Comparison.LessEqual]] = Expression.LessThanOrEqual
+        };
+    }
 }

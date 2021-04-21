@@ -1,3 +1,22 @@
+/*
+ * Elpida HTTP Rest API
+ *   
+ * Copyright (C) 2021 Ioannis Panagiotopoulos
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,13 +53,8 @@ namespace Elpida.Backend.Services
         {
             CreateFilter("cpuBrand", model => model.Brand),
             CreateFilter("cpuVendor", model => model.Vendor),
-            CreateFilter("cpuFrequency", model => model.Frequency),
+            CreateFilter("cpuFrequency", model => model.Frequency)
         };
-
-        protected override IEnumerable<FilterExpression> GetFilterExpressions()
-        {
-            return CpuExpressions;
-        }
 
         public async Task<IEnumerable<TaskStatisticsDto>> GetStatisticsAsync(long cpuId,
             CancellationToken cancellationToken = default)
@@ -96,6 +110,11 @@ namespace Elpida.Backend.Services
             }
 
             await _cpuRepository.SaveChangesAsync(cancellationToken);
+        }
+
+        protected override IEnumerable<FilterExpression> GetFilterExpressions()
+        {
+            return CpuExpressions;
         }
 
         protected override CpuDto ToDto(CpuModel model)

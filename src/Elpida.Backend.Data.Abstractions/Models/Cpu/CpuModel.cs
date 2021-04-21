@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2020  Ioannis Panagiotopoulos
+ * Copyright (C) 2020 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -18,21 +18,20 @@
  */
 
 using System.Collections.Generic;
-using Elpida.Backend.Data.Abstractions.Interfaces;
 using Elpida.Backend.Data.Abstractions.Models.Statistics;
 
 namespace Elpida.Backend.Data.Abstractions.Models.Cpu
 {
-	public class CpuModel : Entity
-	{
-		public string Vendor { get; set; } = default!;
-		public string Brand { get; set; } = default!;
-		public long Frequency { get; set; }
-		public bool Smt { get; set; }
-		public string AdditionalInfo { get; set; } = default!;
-		public string Caches { get; set; } = default!;
-		public string Features { get; set; } = default!;
-		
-		public ICollection<TaskStatisticsModel> TaskStatistics { get; set; } = default!;
-	}
+    public class CpuModel : Entity
+    {
+        public string Vendor { get; set; } = default!;
+        public string Brand { get; set; } = default!;
+        public long Frequency { get; set; }
+        public bool Smt { get; set; }
+        public string AdditionalInfo { get; set; } = default!;
+        public string Caches { get; set; } = default!;
+        public string Features { get; set; } = default!;
+
+        public ICollection<TaskStatisticsModel> TaskStatistics { get; set; } = default!;
+    }
 }

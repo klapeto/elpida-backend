@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2021  Ioannis Panagiotopoulos
+ * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -22,11 +22,11 @@ using Elpida.Backend.Data.Abstractions.Repositories;
 
 namespace Elpida.Backend.Data
 {
-	public class TopologyRepository : EntityRepository<TopologyModel>, ITopologyRepository
-	{
-		public TopologyRepository(ElpidaContext context)
-			: base(context, context.Topologies)
-		{
-		}
-	}
+    public class TopologyRepository : EntityRepository<TopologyModel>, ITopologyRepository
+    {
+        public TopologyRepository(ElpidaContext context)
+            : base(context, context.Topologies)
+        {
+        }
+    }
 }

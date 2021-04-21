@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2020  Ioannis Panagiotopoulos
+ * Copyright (C) 2020 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -22,27 +22,27 @@ using Elpida.Backend.Services.Abstractions.Dtos.Result;
 
 namespace Elpida.Backend.Services.Extensions.Result
 {
-	public static class ResultPreviewExtensions
-	{
-		public static ResultPreviewDto ToDto(this ResultPreviewModel model)
-		{
-			return new ResultPreviewDto
-			{
-				Name = model.Name,
-				Id = model.Id,
-				OsName = model.OsName,
-				OsVersion = model.OsVersion,
-				ElpidaVersionMajor = model.ElpidaVersionMajor,
-				ElpidaVersionMinor = model.ElpidaVersionMinor,
-				ElpidaVersionRevision = model.ElpidaVersionRevision,
-				ElpidaVersionBuild = model.ElpidaVersionBuild,
-				CpuBrand = model.CpuBrand,
-				CpuCores = model.CpuCores,
-				CpuLogicalCores = model.CpuLogicalCores,
-				CpuFrequency = model.CpuFrequency,
-				MemorySize = model.MemorySize,
-				TimeStamp = model.TimeStamp
-			};
-		}
-	}
+    public static class ResultPreviewExtensions
+    {
+        public static ResultPreviewDto ToDto(this BenchmarkResultPreviewModel model)
+        {
+            return new ResultPreviewDto
+            {
+                Name = model.Name,
+                Id = model.Id,
+                OsName = model.OsName,
+                OsVersion = model.OsVersion,
+                ElpidaVersionMajor = model.ElpidaVersionMajor,
+                ElpidaVersionMinor = model.ElpidaVersionMinor,
+                ElpidaVersionRevision = model.ElpidaVersionRevision,
+                ElpidaVersionBuild = model.ElpidaVersionBuild,
+                CpuBrand = model.CpuBrand,
+                CpuCores = model.CpuCores,
+                CpuLogicalCores = model.CpuLogicalCores,
+                CpuFrequency = model.CpuFrequency,
+                MemorySize = model.MemorySize,
+                TimeStamp = model.TimeStamp
+            };
+        }
+    }
 }
