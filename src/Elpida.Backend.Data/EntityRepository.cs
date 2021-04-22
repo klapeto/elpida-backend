@@ -85,7 +85,7 @@ namespace Elpida.Backend.Data
                 cancellationToken);
         }
 
-        protected async Task<PagedQueryResult<TReturnEntity>> GetPagedProjectionAsync<TOrderKey, TReturnEntity>(
+        public async Task<PagedQueryResult<TReturnEntity>> GetPagedProjectionAsync<TOrderKey, TReturnEntity>(
             int from,
             int count,
             Expression<Func<TEntity, TReturnEntity>> constructionExpression,

@@ -18,11 +18,12 @@
  */
 
 using Elpida.Backend.Data.Abstractions.Interfaces;
+using Elpida.Backend.Data.Abstractions.Models;
 using Elpida.Backend.Data.Abstractions.Models.Statistics;
 
 namespace Elpida.Backend.Data.Abstractions.Repositories
 {
-    public interface ITaskStatisticsRepository : IRepository<TaskStatisticsModel>
+    public interface ITaskStatisticsRepository : IRepositoryWithPreviews<TaskStatisticsModel, TaskStatisticsPreviewModel>
     {
         
     }

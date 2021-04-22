@@ -17,14 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System;
 using System.Linq;
+using System.Linq.Expressions;
+using Elpida.Backend.Data.Abstractions.Models;
 using Elpida.Backend.Data.Abstractions.Models.Statistics;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace Elpida.Backend.Data
 {
-    public class TaskStatisticsRepository : EntityRepository<TaskStatisticsModel>, ITaskStatisticsRepository
+    public class TaskStatisticsRepository : EntityRepositoryWithPreviews<TaskStatisticsModel, TaskStatisticsPreviewModel>, ITaskStatisticsRepository
     {
         public TaskStatisticsRepository(ElpidaContext context)
             : base(context, context.TaskStatistics)
@@ -42,6 +45,22 @@ namespace Elpida.Backend.Data
         protected override IQueryable<TaskStatisticsModel> ProcessGetMultiplePaged(IQueryable<TaskStatisticsModel> queryable)
         {
             return ProcessGetSingle(queryable);
+        }
+
+        protected override Expression<Func<TaskStatisticsModel, TaskStatisticsPreviewModel>> GetPreviewConstructionExpression()
+        {
+            return m => new TaskStatisticsPreviewModel
+            {
+                CpuVendor = m.Cpu.Vendor,
+                CpuBrand = m.Cpu.Brand,
+                CpuCores = m.Topology.TotalPhysicalCores,
+                CpuLogicalCores = m.Topology.TotalLogicalCores,
+                TopologyHash = m.Topology.TopologyHash,
+                TaskName = m.Task.Name,
+                Mean = m.Mean,
+                SampleSize = m.SampleSize,
+                TaskResultUnit = m.Task.ResultUnit
+            };
         }
     }
 }

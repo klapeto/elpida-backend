@@ -25,9 +25,12 @@ using Elpida.Backend.Services.Abstractions.Dtos.Result;
 
 namespace Elpida.Backend.Services.Abstractions.Interfaces
 {
-    public interface IStatisticsService : IService<TaskStatisticsDto>
+    public interface IStatisticsService : IServiceWithPreviews<TaskStatisticsDto, TaskStatisticsPreviewDto>
     {
         Task UpdateTaskStatisticsAsync(IEnumerable<TaskResultDto> taskResults,
+            CancellationToken cancellationToken = default);
+        
+        Task<PagedResult<CpuStatisticsPreviewDto>> GetPagedPreviewsByCpuAsync(QueryRequest queryRequest,
             CancellationToken cancellationToken = default);
     }
 }

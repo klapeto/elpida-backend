@@ -17,12 +17,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using Elpida.Backend.Data.Abstractions.Interfaces;
-using Elpida.Backend.Data.Abstractions.Models.Statistics;
-
-namespace Elpida.Backend.Data.Abstractions.Repositories
+namespace Elpida.Backend.Services.Abstractions.Dtos
 {
-    public interface IStatisticsRepository : IRepository<TaskStatisticsModel>
+    public class TaskStatisticsPreviewDto
     {
+        public string CpuVendor { get; set; } = default!;
+        public string CpuBrand { get; set; } = default!;
+        public string TaskName { get; set; } = default!;
+        public string TaskResultUnit { get; set; } = default!;
+        public int CpuCores { get; set; }
+        public int CpuLogicalCores { get; set; }
+        public string TopologyHash { get; set; } = default!;
+        public double Mean { get; set; }
+        public long SampleSize { get; set; }
     }
 }
