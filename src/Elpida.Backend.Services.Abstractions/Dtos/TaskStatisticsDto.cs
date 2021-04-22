@@ -17,15 +17,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-namespace Elpida.Backend.Services.Abstractions.Dtos.Result
+using Elpida.Backend.Services.Abstractions.Dtos.Cpu;
+using Elpida.Backend.Services.Abstractions.Dtos.Topology;
+
+namespace Elpida.Backend.Services.Abstractions.Dtos
 {
     public class TaskStatisticsDto
     {
+        public long Id { get; set; }
+        public CpuDto Cpu { get; set; } = default!;
+        public TaskDto Task { get; set; } = default!;
+        public TopologyDto Topology { get; set; } = default!;
+        
         public long SampleSize { get; set; }
         public double Max { get; set; }
         public double Min { get; set; }
         public double Mean { get; set; }
-        public double Sd { get; set; }
+        public double StandardDeviation { get; set; }
         public double Tau { get; set; }
         public double MarginOfError { get; set; }
     }

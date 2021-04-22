@@ -28,6 +28,6 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result
         public double Value { get; set; }
         public double Time { get; set; }
         public long InputSize { get; set; }
-        public TaskStatisticsDto Statistics { get; set; } = new TaskStatisticsDto();
+        public TaskRunStatisticsDto Statistics { get; set; } = new TaskRunStatisticsDto();
     }
 }

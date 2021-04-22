@@ -50,13 +50,13 @@ namespace Elpida.Backend.Controllers
 			CancellationToken cancellationToken)
 		{
 			var result = await _benchmarkResultsService.GetOrAddAsync(resultDto, cancellationToken);
-			return CreatedAtRoute(nameof(GetSingle), new {id = result.Id, version = $"{apiVersion}"}, null);
+			return CreatedAtRoute(nameof(GetSingleResult), new {id = result.Id, version = $"{apiVersion}"}, null);
 		}
 
-		[HttpGet("{id}", Name = nameof(GetSingle))]
+		[HttpGet("{id}", Name = nameof(GetSingleResult))]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public async Task<IActionResult> GetSingle([FromRoute] string id, CancellationToken cancellationToken)
+		public async Task<IActionResult> GetSingleResult([FromRoute] string id, CancellationToken cancellationToken)
 		{
 			if (long.TryParse(id, out var lid))
 			{

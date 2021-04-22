@@ -17,34 +17,118 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Elpida.Backend.Services.Abstractions;
+using Elpida.Backend.Data.Abstractions.Models.Statistics;
+using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services.Abstractions.Dtos;
 using Elpida.Backend.Services.Abstractions.Dtos.Result;
 using Elpida.Backend.Services.Abstractions.Interfaces;
+using Elpida.Backend.Services.Extensions.Cpu;
+using Elpida.Backend.Services.Extensions.Task;
+using Elpida.Backend.Services.Extensions.Topology;
+using Elpida.Backend.Services.Utilities;
 
 namespace Elpida.Backend.Services
 {
-    public class StatisticsService : IStatisticsService
+    public class StatisticsService : Service<TaskStatisticsDto, TaskStatisticsModel, ITaskStatisticsRepository>,
+        IStatisticsService
     {
-        private readonly ICpuService _cpuService;
+        private readonly ITaskService _taskService;
+        private readonly ITopologyService _topologyService;
 
-        public StatisticsService(ICpuService cpuService)
+        public StatisticsService(ITaskService taskService, ITopologyService topologyService,
+            ITaskStatisticsRepository taskStatisticsRepository)
+            : base(taskStatisticsRepository)
         {
-            _cpuService = cpuService;
+            _topologyService = topologyService;
+            _taskService = taskService;
         }
 
-        public Task AddBenchmarkResultAsync(ResultDto result, CancellationToken cancellationToken = default)
-        {
-            return _cpuService.UpdateBenchmarkStatisticsAsync(result.System.Cpu.Id, result.Result, cancellationToken);
-        }
 
-        public async Task<CpuStatisticPreviewDto> GetPreviewsByCpuAsync(QueryRequest queryRequest,
+        public async Task UpdateTaskStatisticsAsync(IEnumerable<TaskResultDto> taskResults,
             CancellationToken cancellationToken = default)
         {
-            return new CpuStatisticPreviewDto();
-            // var x = _cpuService
+            foreach (var taskResult in taskResults)
+            {
+                var topology = await _topologyService.GetSingleAsync(taskResult.TopologyId, cancellationToken);
+                var task = await _taskService.GetSingleAsync(taskResult.Uuid, cancellationToken);
+
+                var stats = await Repository.GetSingleAsync(t => t.TaskId == task.Id
+                                                                 && t.TopologyId == topology.Id,
+                    cancellationToken);
+                if (stats == null)
+                {
+                    stats = new TaskStatisticsModel
+                    {
+                        CpuId = topology.CpuId,
+                        Max = taskResult.Value,
+                        Mean = taskResult.Value,
+                        Min = taskResult.Value,
+                        TaskId = task.Id,
+                        TopologyId = topology.Id,
+                        SampleSize = 1,
+                        TotalDeviation = 0,
+                        TotalValue = taskResult.Value,
+                        Tau = StatisticsHelpers.CalculateTau(1),
+                        StandardDeviation = 0,
+                        MarginOfError = 0
+                    };
+                    await Repository.CreateAsync(stats, cancellationToken);
+                }
+                else
+                {
+                    stats.Max = Math.Max(stats.Max, taskResult.Value);
+                    stats.Min = Math.Min(stats.Min, taskResult.Value);
+                    stats.TotalValue += taskResult.Value;
+                    stats.SampleSize++;
+                    stats.Mean = stats.TotalValue / stats.SampleSize;
+                    stats.TotalDeviation += Math.Pow(taskResult.Value - stats.Mean, 2.0);
+                    stats.StandardDeviation = Math.Sqrt(stats.TotalDeviation / stats.SampleSize);
+                    stats.MarginOfError = stats.StandardDeviation / Math.Sqrt(stats.SampleSize);
+                    stats.Tau = StatisticsHelpers.CalculateTau(stats.SampleSize);
+                }
+            }
+
+            await Repository.SaveChangesAsync(cancellationToken);
+        }
+
+        protected override TaskStatisticsDto ToDto(TaskStatisticsModel model)
+        {
+            return new TaskStatisticsDto
+            {
+                Id = model.Id,
+                Cpu = model.Cpu.ToDto(),
+                Task = model.Task.ToDto(),
+                Topology = model.Topology.ToDto(),
+                Max = model.Max,
+                Mean = model.Mean,
+                Min = model.Min,
+                Tau = model.Tau,
+                SampleSize = model.SampleSize,
+                StandardDeviation = model.StandardDeviation,
+                MarginOfError = model.MarginOfError
+            };
+        }
+
+        protected override TaskStatisticsModel ToModel(TaskStatisticsDto dto)
+        {
+            return new TaskStatisticsModel
+            {
+                Id = dto.Id,
+                CpuId = dto.Cpu.Id,
+                TopologyId = dto.Topology.Id,
+                TaskId = dto.Task.Id,
+                Max = dto.Max,
+                Mean = dto.Mean,
+                Min = dto.Min,
+                Tau = dto.Tau,
+                SampleSize = dto.SampleSize,
+                StandardDeviation = dto.StandardDeviation,
+                MarginOfError = dto.MarginOfError
+            };
         }
     }
 }

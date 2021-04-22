@@ -17,20 +17,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using Elpida.Backend.Services.Abstractions.Dtos.Result;
-using FluentValidation;
-
-namespace Elpida.Backend.Validators
+namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 {
-	public class TaskOutlierValidator: AbstractValidator<TaskOutlierDto>
-	{
-		public TaskOutlierValidator()
-		{
-			RuleFor(dto => dto.Time)
-				.GreaterThanOrEqualTo(0.0);
-
-			RuleFor(dto => dto.Value)
-				.GreaterThanOrEqualTo(0.0);
-		}
-	}
+    public class TaskRunStatisticsDto
+    {
+        public long SampleSize { get; set; }
+        public double Max { get; set; }
+        public double Min { get; set; }
+        public double Mean { get; set; }
+        public double Sd { get; set; }
+        public double Tau { get; set; }
+        public double MarginOfError { get; set; }
+    }
 }

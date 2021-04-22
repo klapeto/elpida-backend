@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Services.Abstractions.Dtos;
@@ -24,11 +25,9 @@ using Elpida.Backend.Services.Abstractions.Dtos.Result;
 
 namespace Elpida.Backend.Services.Abstractions.Interfaces
 {
-    public interface IStatisticsService
+    public interface IStatisticsService : IService<TaskStatisticsDto>
     {
-        Task AddBenchmarkResultAsync(ResultDto result, CancellationToken cancellationToken = default);
-
-        Task<CpuStatisticPreviewDto> GetPreviewsByCpuAsync(QueryRequest queryRequest,
+        Task UpdateTaskStatisticsAsync(IEnumerable<TaskResultDto> taskResults,
             CancellationToken cancellationToken = default);
     }
 }

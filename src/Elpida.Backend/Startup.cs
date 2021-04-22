@@ -76,6 +76,7 @@ namespace Elpida.Backend
 			services.AddTransient<ITaskRepository, TaskRepository>();
 			services.AddTransient<IElpidaRepository, ElpidaRepository>();
 			services.AddTransient<IOsRepository, OsRepository>();
+			services.AddTransient<ITaskStatisticsRepository, TaskStatisticsRepository>();
 
 			services.AddDbContext<ElpidaContext>(builder =>
 			{

@@ -146,7 +146,7 @@ namespace Elpida.Backend.Services
         protected override Task OnEntityCreatedAsync(ResultDto dto, BenchmarkResultModel entity,
             CancellationToken cancellationToken)
         {
-            return _statisticsService.AddBenchmarkResultAsync(dto, cancellationToken);
+            return _statisticsService.UpdateTaskStatisticsAsync(dto.Result.TaskResults, cancellationToken);
         }
 
         #endregion

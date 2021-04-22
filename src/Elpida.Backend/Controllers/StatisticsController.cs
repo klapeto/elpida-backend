@@ -18,20 +18,33 @@ namespace Elpida.Backend.Controllers
         {
             _statisticsService = statisticsService;
         }
-
-        [HttpGet("cpu")]
-        [Produces("application/json")]
-        [Consumes("application/json")]
+        
+        [HttpGet("{id}", Name = nameof(GetSingleStatistic))]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetPaged([FromQuery] PageRequest pageRequest,
-            CancellationToken cancellationToken)
+        public async Task<IActionResult> GetSingleStatistic([FromRoute] string id, CancellationToken cancellationToken)
         {
+            if (long.TryParse(id, out var lid))
+            {
+                return Ok(await _statisticsService.GetSingleAsync(lid, cancellationToken));
+            }
 
-          //  await _benchmarkResultsService.GetPagedAsync(new QueryRequest {PageRequest = pageRequest},
-           //     cancellationToken);
-            return Ok("LOL");
+            return BadRequest("Id must be an Integer number");
         }
+
+        // [HttpGet("cpu")]
+        // [Produces("application/json")]
+        // [Consumes("application/json")]
+        // [ProducesResponseType(StatusCodes.Status200OK)]
+        // [ProducesResponseType(StatusCodes.Status404NotFound)]
+        // [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        // public async Task<IActionResult> GetPaged([FromQuery] PageRequest pageRequest,
+        //     CancellationToken cancellationToken)
+        // {
+        //
+        //   //  await _benchmarkResultsService.GetPagedAsync(new QueryRequest {PageRequest = pageRequest},
+        //    //     cancellationToken);
+        //     return Ok("LOL");
+        // }
     }
 }

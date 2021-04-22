@@ -100,7 +100,7 @@ namespace Elpida.Backend.Services.Extensions.Result
                             Type = r.Task.ResultType,
                             Unit = r.Task.ResultUnit
                         },
-                        Statistics = new TaskStatisticsDto
+                        Statistics = new TaskRunStatisticsDto
                         {
                             Max = r.Max,
                             Mean = r.Mean,

@@ -41,12 +41,16 @@ namespace Elpida.Backend.Services
     {
         private readonly ICpuRepository _cpuRepository;
         private readonly ITaskService _taskService;
+        private readonly ITopologyRepository _topologyRepository;
 
-        public CpuService(ICpuRepository cpuRepository, ITaskService taskService)
+        public CpuService(ICpuRepository cpuRepository, 
+            ITaskService taskService, 
+            ITopologyRepository topologyRepository)
             : base(cpuRepository)
         {
             _cpuRepository = cpuRepository;
             _taskService = taskService;
+            _topologyRepository = topologyRepository;
         }
 
         private static IEnumerable<FilterExpression> CpuExpressions { get; } = new List<FilterExpression>
@@ -56,7 +60,7 @@ namespace Elpida.Backend.Services
             CreateFilter("cpuFrequency", model => model.Frequency)
         };
 
-        public async Task<IEnumerable<TaskStatisticsDto>> GetStatisticsAsync(long cpuId,
+        public async Task<IEnumerable<TaskRunStatisticsDto>> GetStatisticsAsync(long cpuId,
             CancellationToken cancellationToken = default)
         {
             var cpuModel = await _cpuRepository.GetSingleAsync(cpuId, cancellationToken);
@@ -66,7 +70,9 @@ namespace Elpida.Backend.Services
             return cpuModel.TaskStatistics.Select(s => s.ToDto());
         }
 
-        public async Task UpdateBenchmarkStatisticsAsync(long cpuId, BenchmarkResultDto benchmarkResult,
+        public async Task UpdateBenchmarkStatisticsAsync(long cpuId,
+            long topologyId,
+            BenchmarkResultDto benchmarkResult,
             CancellationToken cancellationToken = default)
         {
             var cpuModel = await _cpuRepository.GetSingleAsync(cpuId, cancellationToken);
@@ -86,6 +92,7 @@ namespace Elpida.Backend.Services
                         Mean = taskResult.Value,
                         Min = taskResult.Value,
                         TaskId = task.Id,
+                        TopologyId = taskResult.TopologyId,
                         SampleSize = 1,
                         TotalDeviation = 0,
                         TotalValue = taskResult.Value,
