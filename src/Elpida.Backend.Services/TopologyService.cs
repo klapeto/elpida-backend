@@ -20,6 +20,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Threading;
+using System.Threading.Tasks;
+using Elpida.Backend.Data.Abstractions;
 using Elpida.Backend.Data.Abstractions.Models.Topology;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services.Abstractions;
@@ -42,6 +45,11 @@ namespace Elpida.Backend.Services
             CreateFilter("cpuLogicalCores", model => model.TotalLogicalCores)
         };
 
+        protected override Task<TopologyModel> ProcessDtoAndCreateModelAsync(TopologyDto dto, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(dto.ToModel());
+        }
+
         protected override IEnumerable<FilterExpression> GetFilterExpressions()
         {
             return FilterExpressions;
@@ -50,11 +58,6 @@ namespace Elpida.Backend.Services
         protected override TopologyDto ToDto(TopologyModel model)
         {
             return model.ToDto();
-        }
-
-        protected override TopologyModel ToModel(TopologyDto dto)
-        {
-            return dto.ToModel();
         }
 
         protected override Expression<Func<TopologyModel, bool>> GetCreationBypassCheckExpression(TopologyDto dto)

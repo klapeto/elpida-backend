@@ -19,9 +19,8 @@
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 {
-    public class OsDto
+    public class OsDto : FountationDto
     {
-        public long Id { get; set; }
         public string Category { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public string Version { get; set; } = string.Empty;

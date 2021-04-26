@@ -22,9 +22,8 @@ using System.Collections.Generic;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 {
-    public class BenchmarkResultDto
+    public class BenchmarkResultDto : FountationDto
     {
-        public long Id { get; set; }
         public Guid Uuid { get; set; }
         public string Name { get; set; } = string.Empty;
         public IList<TaskResultDto> TaskResults { get; set; } = new List<TaskResultDto>();

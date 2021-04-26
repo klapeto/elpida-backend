@@ -23,8 +23,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Elpida.Backend.Data.Abstractions;
 using Elpida.Backend.Data.Abstractions.Models.Cpu;
-using Elpida.Backend.Data.Abstractions.Models.Statistics;
+using Elpida.Backend.Data.Abstractions.Models.Task;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services.Abstractions;
 using Elpida.Backend.Services.Abstractions.Dtos.Cpu;
@@ -33,7 +34,6 @@ using Elpida.Backend.Services.Abstractions.Exceptions;
 using Elpida.Backend.Services.Abstractions.Interfaces;
 using Elpida.Backend.Services.Extensions;
 using Elpida.Backend.Services.Extensions.Cpu;
-using Elpida.Backend.Services.Utilities;
 
 namespace Elpida.Backend.Services
 {
@@ -43,8 +43,8 @@ namespace Elpida.Backend.Services
         private readonly ITaskService _taskService;
         private readonly ITopologyRepository _topologyRepository;
 
-        public CpuService(ICpuRepository cpuRepository, 
-            ITaskService taskService, 
+        public CpuService(ICpuRepository cpuRepository,
+            ITaskService taskService,
             ITopologyRepository topologyRepository)
             : base(cpuRepository)
         {
@@ -60,6 +60,19 @@ namespace Elpida.Backend.Services
             CreateFilter("cpuFrequency", model => model.Frequency)
         };
 
+        public Task<PagedResult<CpuPreviewDto>> GetPagedPreviewsAsync(QueryRequest queryRequest,
+            CancellationToken cancellationToken = default)
+        {
+            return GetPagedProjectionsAsync(queryRequest, m => new CpuPreviewDto
+            {
+                Id = m.Id,
+                Vendor = m.Vendor,
+                Brand = m.Brand,
+                TopologiesCount = m.Topologies.Count(),
+                TaskStatisticsCount = m.TaskStatistics.Count()
+            }, cancellationToken);
+        }
+
         public async Task<IEnumerable<TaskRunStatisticsDto>> GetStatisticsAsync(long cpuId,
             CancellationToken cancellationToken = default)
         {
@@ -70,53 +83,9 @@ namespace Elpida.Backend.Services
             return cpuModel.TaskStatistics.Select(s => s.ToDto());
         }
 
-        public async Task UpdateBenchmarkStatisticsAsync(long cpuId,
-            long topologyId,
-            BenchmarkResultDto benchmarkResult,
-            CancellationToken cancellationToken = default)
+        protected override Task<CpuModel> ProcessDtoAndCreateModelAsync(CpuDto dto, CancellationToken cancellationToken)
         {
-            var cpuModel = await _cpuRepository.GetSingleAsync(cpuId, cancellationToken);
-
-            if (cpuModel == null) throw new NotFoundException("Cpu was not found.", cpuId);
-
-            foreach (var taskResult in benchmarkResult.TaskResults)
-            {
-                var task = await _taskService.GetSingleAsync(taskResult.Uuid, cancellationToken);
-                var stats = cpuModel.TaskStatistics.FirstOrDefault(t => t.TaskId == task.Id);
-                if (stats == null)
-                {
-                    stats = new TaskStatisticsModel
-                    {
-                        Cpu = cpuModel,
-                        Max = taskResult.Value,
-                        Mean = taskResult.Value,
-                        Min = taskResult.Value,
-                        TaskId = task.Id,
-                        TopologyId = taskResult.TopologyId,
-                        SampleSize = 1,
-                        TotalDeviation = 0,
-                        TotalValue = taskResult.Value,
-                        Tau = StatisticsHelpers.CalculateTau(1),
-                        StandardDeviation = 0,
-                        MarginOfError = 0
-                    };
-                    cpuModel.TaskStatistics.Add(stats);
-                }
-                else
-                {
-                    stats.Max = Math.Max(stats.Max, taskResult.Value);
-                    stats.Min = Math.Min(stats.Min, taskResult.Value);
-                    stats.TotalValue += taskResult.Value;
-                    stats.SampleSize++;
-                    stats.Mean = stats.TotalValue / stats.SampleSize;
-                    stats.TotalDeviation += Math.Pow(taskResult.Value - stats.Mean, 2.0);
-                    stats.StandardDeviation = Math.Sqrt(stats.TotalDeviation / stats.SampleSize);
-                    stats.MarginOfError = stats.StandardDeviation / Math.Sqrt(stats.SampleSize);
-                    stats.Tau = StatisticsHelpers.CalculateTau(stats.SampleSize);
-                }
-            }
-
-            await _cpuRepository.SaveChangesAsync(cancellationToken);
+            return Task.FromResult(dto.ToModel());
         }
 
         protected override IEnumerable<FilterExpression> GetFilterExpressions()
@@ -127,11 +96,6 @@ namespace Elpida.Backend.Services
         protected override CpuDto ToDto(CpuModel model)
         {
             return model.ToDto();
-        }
-
-        protected override CpuModel ToModel(CpuDto dto)
-        {
-            return dto.ToModel();
         }
 
         protected override Expression<Func<CpuModel, bool>> GetCreationBypassCheckExpression(CpuDto dto)

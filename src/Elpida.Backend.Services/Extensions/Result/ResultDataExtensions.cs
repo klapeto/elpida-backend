@@ -84,11 +84,17 @@ namespace Elpida.Backend.Services.Extensions.Result
                     Id = benchmarkResultModel.Benchmark.Id,
                     Uuid = benchmarkResultModel.Benchmark.Uuid,
                     Name = benchmarkResultModel.Benchmark.Name,
-                    TaskResults = benchmarkResultModel.TaskResults.Select(r => new TaskResultDto
+                    TaskResults = benchmarkResultModel.TaskResults
+                        .OrderBy(m => m.Order)
+                        .Select(r => new TaskResultDto
                     {
                         Id = r.Task.Id,
                         Uuid = r.Task.Uuid,
                         Name = r.Task.Name,
+                        CpuId = benchmarkResultModel.Topology.Cpu.Id,
+                        TopologyId = benchmarkResultModel.Topology.Id,
+                        TaskId = r.Task.Id,
+                        BenchmarkResultId = benchmarkResultModel.Id,
                         Description = r.Task.Description,
                         Input = r.Task.CreateInputSpecDto(),
                         Output = r.Task.CreateOutputSpecDto(),

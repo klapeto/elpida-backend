@@ -22,9 +22,8 @@ using System;
 namespace Elpida.Backend.Services.Abstractions.Dtos.Topology
 {
     [Serializable]
-    public class TopologyDto
+    public class TopologyDto : FountationDto
     {
-        public long Id { get; set; }
         public long CpuId { get; set; }
         public int TotalLogicalCores { get; set; }
         public int TotalPhysicalCores { get; set; }

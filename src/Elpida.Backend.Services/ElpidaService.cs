@@ -19,6 +19,8 @@
 
 using System;
 using System.Linq.Expressions;
+using System.Threading;
+using System.Threading.Tasks;
 using Elpida.Backend.Data.Abstractions.Models;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services.Abstractions.Dtos.Result;
@@ -39,9 +41,9 @@ namespace Elpida.Backend.Services
             return model.ToDto();
         }
 
-        protected override ElpidaModel ToModel(ElpidaDto dto)
+        protected override Task<ElpidaModel> ProcessDtoAndCreateModelAsync(ElpidaDto dto, CancellationToken cancellationToken)
         {
-            return dto.ToModel();
+            return Task.FromResult(dto.ToModel());
         }
 
         protected override Expression<Func<ElpidaModel, bool>> GetCreationBypassCheckExpression(ElpidaDto dto)

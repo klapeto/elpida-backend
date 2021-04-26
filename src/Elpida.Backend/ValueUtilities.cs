@@ -4,8 +4,20 @@ using Elpida.Backend.Services.Abstractions;
 
 namespace Elpida.Backend
 {
-    public class ValueUtilities
+    public static class ValueUtilities
     {
+        public static void PreprocessQuery(QueryRequest queryRequest)
+        {
+            if (queryRequest.Filters != null)
+            {
+                foreach (var queryRequestFilter in queryRequest.Filters)
+                {
+                    ConvertValues(queryRequestFilter);
+                }
+            }
+        }
+        
+        
         public static void ConvertValues(QueryInstance instance)
         {
             var element = (JsonElement) instance.Value;

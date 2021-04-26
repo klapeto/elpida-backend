@@ -18,16 +18,20 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using Elpida.Backend.Data.Abstractions.Models;
+using System.Threading;
+using System.Threading.Tasks;
+using Elpida.Backend.Data.Abstractions;
+using Elpida.Backend.Data.Abstractions.Models.Cpu;
 using Elpida.Backend.Data.Abstractions.Models.Statistics;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace Elpida.Backend.Data
 {
-    public class TaskStatisticsRepository : EntityRepositoryWithPreviews<TaskStatisticsModel, TaskStatisticsPreviewModel>, ITaskStatisticsRepository
+    public class TaskStatisticsRepository : EntityRepository<TaskStatisticsModel>, ITaskStatisticsRepository
     {
         public TaskStatisticsRepository(ElpidaContext context)
             : base(context, context.TaskStatistics)
@@ -41,26 +45,38 @@ namespace Elpida.Backend.Data
                 .Include(m => m.Topology)
                 .Include(m => m.Task);
         }
-        
-        protected override IQueryable<TaskStatisticsModel> ProcessGetMultiplePaged(IQueryable<TaskStatisticsModel> queryable)
+
+        protected override IQueryable<TaskStatisticsModel> ProcessGetMultiplePaged(
+            IQueryable<TaskStatisticsModel> queryable)
         {
             return ProcessGetSingle(queryable);
         }
 
-        protected override Expression<Func<TaskStatisticsModel, TaskStatisticsPreviewModel>> GetPreviewConstructionExpression()
-        {
-            return m => new TaskStatisticsPreviewModel
-            {
-                CpuVendor = m.Cpu.Vendor,
-                CpuBrand = m.Cpu.Brand,
-                CpuCores = m.Topology.TotalPhysicalCores,
-                CpuLogicalCores = m.Topology.TotalLogicalCores,
-                TopologyHash = m.Topology.TopologyHash,
-                TaskName = m.Task.Name,
-                Mean = m.Mean,
-                SampleSize = m.SampleSize,
-                TaskResultUnit = m.Task.ResultUnit
-            };
-        }
+        // public async Task<PagedQueryResult<TReturnEntity>> GetPagedProjectionByCpuAsync<TOrderKey, TReturnEntity>(
+        //     int from,
+        //     int count,
+        //     Expression<Func<CpuModel, IEnumerable<TaskStatisticsModel>, TReturnEntity>> constructionExpression,
+        //     bool descending = false,
+        //     bool calculateTotalCount = false,
+        //     Expression<Func<TaskStatisticsModel, TOrderKey>>? orderBy = null,
+        //     IEnumerable<Expression<Func<TaskStatisticsModel, bool>>>? filters = null,
+        //     CancellationToken cancellationToken = default)
+        // {
+        //     var (totalCount, query) = await PreprocessQueryAsync(
+        //         ProcessGetMultiplePaged(Collection.AsQueryable()),
+        //         from,
+        //         count,
+        //         descending,
+        //         calculateTotalCount,
+        //         orderBy,
+        //         filters,
+        //         cancellationToken);
+        //     
+        //     
+        //     var 
+        //     
+        //     
+        //     return new PagedQueryResult<TReturnEntity>(0, null);
+        // }
     }
 }

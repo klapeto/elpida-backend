@@ -17,11 +17,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System.Threading;
+using System.Threading.Tasks;
 using Elpida.Backend.Services.Abstractions.Dtos.Cpu;
 
 namespace Elpida.Backend.Services.Abstractions.Interfaces
 {
     public interface ICpuService : IService<CpuDto>
     {
+        Task<PagedResult<CpuPreviewDto>> GetPagedPreviewsAsync(QueryRequest queryRequest,
+            CancellationToken cancellationToken = default);
     }
 }

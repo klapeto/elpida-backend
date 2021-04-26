@@ -19,10 +19,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Elpida.Backend.Data.Abstractions;
 using Elpida.Backend.Data.Abstractions.Models;
+using Elpida.Backend.Data.Abstractions.Models.Task;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services.Abstractions;
 using Elpida.Backend.Services.Abstractions.Dtos;
@@ -34,9 +37,14 @@ namespace Elpida.Backend.Services
 {
     public class BenchmarkService : Service<BenchmarkDto, BenchmarkModel, IBenchmarkRepository>, IBenchmarkService
     {
-        public BenchmarkService(IBenchmarkRepository benchmarkRepository)
+        private readonly ITaskRepository _taskRepository;
+        private readonly ITaskService _taskService;
+        
+        public BenchmarkService(IBenchmarkRepository benchmarkRepository, ITaskRepository taskRepository, ITaskService taskService)
             : base(benchmarkRepository)
         {
+            _taskRepository = taskRepository;
+            _taskService = taskService;
         }
 
         private static IEnumerable<FilterExpression> BenchmarkExpressions { get; } = new List<FilterExpression>
@@ -53,6 +61,24 @@ namespace Elpida.Backend.Services
             return model.ToDto();
         }
 
+        protected override async Task<BenchmarkModel> ProcessDtoAndCreateModelAsync(BenchmarkDto dto, CancellationToken cancellationToken)
+        {
+            var returnModel = new BenchmarkModel
+            {
+                Id = dto.Id,
+                Uuid = dto.Uuid,
+                Name = dto.Name,
+                Tasks = new List<TaskModel>()
+            };
+            
+            foreach (var taskDto in dto.TaskSpecifications)
+            {
+                returnModel.Tasks.Add(await GetOrAddForeignDto(_taskRepository, _taskService, taskDto, cancellationToken));
+            }
+
+            return returnModel;
+        }
+
         protected override IEnumerable<FilterExpression> GetFilterExpressions()
         {
             return BenchmarkExpressions;
@@ -62,11 +88,7 @@ namespace Elpida.Backend.Services
         {
             return model.ToDto();
         }
-
-        protected override BenchmarkModel ToModel(BenchmarkDto dto)
-        {
-            return dto.ToDto();
-        }
+        
 
         protected override Expression<Func<BenchmarkModel, bool>> GetCreationBypassCheckExpression(BenchmarkDto dto)
         {

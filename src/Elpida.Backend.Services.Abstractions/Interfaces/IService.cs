@@ -22,10 +22,11 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Elpida.Backend.Services.Abstractions.Dtos;
 
 namespace Elpida.Backend.Services.Abstractions.Interfaces
 {
-    public interface IService<TDto>
+    public interface IService<TDto> where TDto : FountationDto
     {
         Task<TDto> GetSingleAsync(long id, CancellationToken cancellationToken = default);
         Task<PagedResult<TDto>> GetPagedAsync(QueryRequest queryRequest, CancellationToken cancellationToken = default);

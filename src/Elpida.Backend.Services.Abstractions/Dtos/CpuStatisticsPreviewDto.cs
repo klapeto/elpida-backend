@@ -6,7 +6,5 @@ namespace Elpida.Backend.Services.Abstractions.Dtos
         public string CpuBrand { get; set; } = default!;
         public int Tasks { get; set; }
         public int Topologies { get; set; }
-        public int CpuCores { get; set; }
-        public int CpuLogicalCores { get; set; }
     }
 }

@@ -10,26 +10,13 @@ namespace Elpida.Backend.Controllers
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{version:apiVersion}/[controller]")]
-    public class StatisticsController : ControllerBase
+    public class CpuController: ControllerBase
     {
-        private readonly ITaskStatisticsService _taskStatisticsService;
+        private readonly ICpuService _cpuService;
 
-        public StatisticsController(ITaskStatisticsService taskStatisticsService)
+        public CpuController(ICpuService cpuService)
         {
-            _taskStatisticsService = taskStatisticsService;
-        }
-        
-        [HttpGet("{id}", Name = nameof(GetSingleStatistic))]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetSingleStatistic([FromRoute] string id, CancellationToken cancellationToken)
-        {
-            if (long.TryParse(id, out var lid))
-            {
-                return Ok(await _taskStatisticsService.GetSingleAsync(lid, cancellationToken));
-            }
-
-            return BadRequest("Id must be an Integer number");
+            _cpuService = cpuService;
         }
 
         [HttpGet]
@@ -41,8 +28,21 @@ namespace Elpida.Backend.Controllers
         public async Task<IActionResult> GetPaged([FromQuery] PageRequest pageRequest,
             CancellationToken cancellationToken)
         {
-            return Ok(await _taskStatisticsService.GetPagedPreviewsAsync(new QueryRequest {PageRequest = pageRequest},
+            return Ok(await _cpuService.GetPagedPreviewsAsync(new QueryRequest {PageRequest = pageRequest},
                 cancellationToken));
+        }
+        
+        [HttpGet("{id}", Name = nameof(GetSingleCpu))]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetSingleCpu([FromRoute] string id, CancellationToken cancellationToken)
+        {
+            if (long.TryParse(id, out var lid))
+            {
+                return Ok(await _cpuService.GetSingleAsync(lid, cancellationToken));
+            }
+
+            return BadRequest("Id must be an Integer number");
         }
         
         [HttpPost("search")]
@@ -55,8 +55,8 @@ namespace Elpida.Backend.Controllers
             CancellationToken cancellationToken)
         {
             ValueUtilities.PreprocessQuery(queryRequest);
-
-            return Ok(await _taskStatisticsService.GetPagedPreviewsAsync(queryRequest, cancellationToken));
+            
+            return Ok(await _cpuService.GetPagedPreviewsAsync(queryRequest, cancellationToken));
         }
     }
 }

@@ -73,6 +73,10 @@ namespace Elpida.Backend.Data
             modelBuilder.Entity<CpuModel>()
                 .HasMany(m => m.TaskStatistics)
                 .WithOne(m => m.Cpu);
+            
+            modelBuilder.Entity<CpuModel>()
+                .HasMany(m => m.Topologies)
+                .WithOne(m => m.Cpu);
 
             modelBuilder.Entity<TaskStatisticsModel>()
                 .HasOne(m => m.Cpu);

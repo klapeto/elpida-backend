@@ -19,7 +19,7 @@
 
 namespace Elpida.Backend.Services.Abstractions.Dtos
 {
-    public class TaskStatisticsPreviewDto
+    public class TaskStatisticsPreviewDto : FountationDto
     {
         public string CpuVendor { get; set; } = default!;
         public string CpuBrand { get; set; } = default!;

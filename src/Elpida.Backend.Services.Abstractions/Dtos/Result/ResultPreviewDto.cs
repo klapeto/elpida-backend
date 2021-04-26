@@ -21,9 +21,8 @@ using System;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 {
-    public class ResultPreviewDto
+    public class ResultPreviewDto : FountationDto
     {
-        public long Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public DateTime TimeStamp { get; set; }
         public int ElpidaVersionMajor { get; set; }

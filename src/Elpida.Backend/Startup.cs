@@ -64,7 +64,7 @@ namespace Elpida.Backend
 			services.AddScoped<ICpuService, CpuService>();
 			services.AddScoped<IElpidaService, ElpidaService>();
 			services.AddScoped<IOsService, OsService>();
-			services.AddScoped<IStatisticsService, StatisticsService>();
+			services.AddScoped<ITaskStatisticsService, TaskTaskStatisticsService>();
 			services.AddScoped<ITaskService, TaskService>();
 			services.AddScoped<ITopologyService, TopologyService>();
 			

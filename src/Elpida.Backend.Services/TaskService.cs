@@ -51,9 +51,9 @@ namespace Elpida.Backend.Services
             return model.ToDto();
         }
 
-        protected override TaskModel ToModel(TaskDto dto)
+        protected override Task<TaskModel> ProcessDtoAndCreateModelAsync(TaskDto dto, CancellationToken cancellationToken)
         {
-            return dto.ToModel();
+            return Task.FromResult(dto.ToModel());
         }
 
         protected override Expression<Func<TaskModel, bool>> GetCreationBypassCheckExpression(TaskDto dto)

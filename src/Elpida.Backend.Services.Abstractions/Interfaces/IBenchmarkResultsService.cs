@@ -17,11 +17,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System.Threading;
+using System.Threading.Tasks;
 using Elpida.Backend.Services.Abstractions.Dtos.Result;
 
 namespace Elpida.Backend.Services.Abstractions.Interfaces
 {
-    public interface IBenchmarkResultsService : IServiceWithPreviews<ResultDto, ResultPreviewDto>
+    public interface IBenchmarkResultsService : IService<ResultDto>
     {
+        Task<PagedResult<ResultPreviewDto>> GetPagedPreviewsAsync(QueryRequest queryRequest,
+            CancellationToken cancellationToken = default);
     }
 }

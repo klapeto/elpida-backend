@@ -22,9 +22,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Elpida.Backend.Data.Abstractions.Models;
+using Elpida.Backend.Data.Abstractions;
 using Elpida.Backend.Data.Abstractions.Models.Cpu;
-using Elpida.Backend.Data.Abstractions.Models.Result;
 using Elpida.Backend.Data.Abstractions.Models.Statistics;
 using Elpida.Backend.Data.Abstractions.Models.Task;
 using Elpida.Backend.Data.Abstractions.Models.Topology;
@@ -40,17 +39,17 @@ using Elpida.Backend.Services.Utilities;
 
 namespace Elpida.Backend.Services
 {
-    public class StatisticsService : 
-        ServiceWithPreviews<TaskStatisticsDto, TaskStatisticsModel, TaskStatisticsPreviewDto, TaskStatisticsPreviewModel>,
-        IStatisticsService
+    public class TaskTaskStatisticsService :
+        Service<TaskStatisticsDto, TaskStatisticsModel, ITaskStatisticsRepository>,
+        ITaskStatisticsService
     {
-        private readonly ITaskService _taskService;
         private readonly ICpuService _cpuService;
+        private readonly ITaskService _taskService;
         private readonly ITopologyService _topologyService;
 
-        public StatisticsService(ITaskService taskService, 
+        public TaskTaskStatisticsService(ITaskService taskService,
             ITopologyService topologyService,
-            ITaskStatisticsRepository taskStatisticsRepository, 
+            ITaskStatisticsRepository taskStatisticsRepository,
             ICpuService cpuService)
             : base(taskStatisticsRepository)
         {
@@ -59,13 +58,6 @@ namespace Elpida.Backend.Services
             _taskService = taskService;
         }
 
-        protected override IEnumerable<FilterExpression> GetFilterExpressions()
-        {
-            return _cpuService.GetFilters<TaskStatisticsModel, CpuModel>(m => m.Cpu)
-                .Concat(_topologyService.GetFilters<TaskStatisticsModel, TopologyModel>(m => m.Topology))
-                .Concat(_taskService.GetFilters<TaskStatisticsModel, TaskModel>(m => m.Task));
-        }
-        
         public async Task UpdateTaskStatisticsAsync(IEnumerable<TaskResultDto> taskResults,
             CancellationToken cancellationToken = default)
         {
@@ -74,9 +66,9 @@ namespace Elpida.Backend.Services
                 var topology = await _topologyService.GetSingleAsync(taskResult.TopologyId, cancellationToken);
                 var task = await _taskService.GetSingleAsync(taskResult.Uuid, cancellationToken);
 
-                var stats = await Repository.GetSingleAsync(t => t.TaskId == task.Id
-                                                                 && t.TopologyId == topology.Id,
-                    cancellationToken);
+                var stats = await Repository.GetSingleAsync(
+                    t => t.TaskId == task.Id 
+                         && t.TopologyId == topology.Id, cancellationToken);
                 if (stats == null)
                 {
                     stats = new TaskStatisticsModel
@@ -113,9 +105,47 @@ namespace Elpida.Backend.Services
             await Repository.SaveChangesAsync(cancellationToken);
         }
 
-        public Task<PagedResult<CpuStatisticsPreviewDto>> GetPagedPreviewsByCpuAsync(QueryRequest queryRequest, CancellationToken cancellationToken = default)
+        public Task<PagedResult<TaskStatisticsPreviewDto>> GetPagedPreviewsAsync(QueryRequest queryRequest,
+            CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            return GetPagedProjectionsAsync(queryRequest, m => new TaskStatisticsPreviewDto
+            {
+                Id = m.Id,
+                CpuVendor = m.Cpu.Vendor,
+                CpuBrand = m.Cpu.Brand,
+                CpuCores = m.Topology.TotalPhysicalCores,
+                CpuLogicalCores = m.Topology.TotalLogicalCores,
+                TaskName = m.Task.Name,
+                SampleSize = m.SampleSize,
+                TopologyHash = m.Topology.TopologyHash,
+                TaskResultUnit = m.Task.ResultUnit,
+                Mean = m.Mean
+            }, cancellationToken);
+        }
+
+        protected override Task<TaskStatisticsModel> ProcessDtoAndCreateModelAsync(TaskStatisticsDto dto, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(new TaskStatisticsModel
+            {
+                Id = dto.Id,
+                CpuId = dto.Cpu.Id,
+                TopologyId = dto.Topology.Id,
+                TaskId = dto.Task.Id,
+                Max = dto.Max,
+                Mean = dto.Mean,
+                Min = dto.Min,
+                Tau = dto.Tau,
+                SampleSize = dto.SampleSize,
+                StandardDeviation = dto.StandardDeviation,
+                MarginOfError = dto.MarginOfError
+            });
+        }
+
+        protected override IEnumerable<FilterExpression> GetFilterExpressions()
+        {
+            return _cpuService.GetFilters<TaskStatisticsModel, CpuModel>(m => m.Cpu)
+                .Concat(_topologyService.GetFilters<TaskStatisticsModel, TopologyModel>(m => m.Topology))
+                .Concat(_taskService.GetFilters<TaskStatisticsModel, TaskModel>(m => m.Task));
         }
 
         protected override TaskStatisticsDto ToDto(TaskStatisticsModel model)
@@ -133,40 +163,6 @@ namespace Elpida.Backend.Services
                 SampleSize = model.SampleSize,
                 StandardDeviation = model.StandardDeviation,
                 MarginOfError = model.MarginOfError
-            };
-        }
-
-        protected override TaskStatisticsModel ToModel(TaskStatisticsDto dto)
-        {
-            return new TaskStatisticsModel
-            {
-                Id = dto.Id,
-                CpuId = dto.Cpu.Id,
-                TopologyId = dto.Topology.Id,
-                TaskId = dto.Task.Id,
-                Max = dto.Max,
-                Mean = dto.Mean,
-                Min = dto.Min,
-                Tau = dto.Tau,
-                SampleSize = dto.SampleSize,
-                StandardDeviation = dto.StandardDeviation,
-                MarginOfError = dto.MarginOfError
-            };
-        }
-
-        protected override TaskStatisticsPreviewDto ToPreviewDto(TaskStatisticsPreviewModel model)
-        {
-            return new TaskStatisticsPreviewDto
-            {
-                CpuVendor = model.CpuVendor,
-                CpuBrand = model.CpuBrand,
-                CpuCores = model.CpuCores,
-                CpuLogicalCores = model.CpuLogicalCores,
-                TaskName = model.TaskName,
-                SampleSize = model.SampleSize,
-                TopologyHash = model.TopologyHash,
-                TaskResultUnit = model.TaskResultUnit,
-                Mean = model.Mean
             };
         }
     }

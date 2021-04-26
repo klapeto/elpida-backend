@@ -23,9 +23,8 @@ using System.Collections.Generic;
 namespace Elpida.Backend.Services.Abstractions.Dtos.Cpu
 {
     [Serializable]
-    public class CpuDto
+    public class CpuDto : FountationDto
     {
-        public long Id { get; set; }
         public string Vendor { get; set; } = string.Empty;
         public string Brand { get; set; } = string.Empty;
         public long Frequency { get; set; }

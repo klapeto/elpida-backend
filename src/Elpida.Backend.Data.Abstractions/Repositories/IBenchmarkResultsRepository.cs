@@ -22,8 +22,7 @@ using Elpida.Backend.Data.Abstractions.Models.Result;
 
 namespace Elpida.Backend.Data.Abstractions.Repositories
 {
-    public interface IBenchmarkResultsRepository :
-        IRepositoryWithPreviews<BenchmarkResultModel, BenchmarkResultPreviewModel>
+    public interface IBenchmarkResultsRepository : IRepository<BenchmarkResultModel>
     {
     }
 }

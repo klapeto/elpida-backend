@@ -88,13 +88,7 @@ namespace Elpida.Backend.Controllers
 		public async Task<IActionResult> Search([FromBody] QueryRequest queryRequest,
 			CancellationToken cancellationToken)
 		{
-			if (queryRequest.Filters != null)
-			{
-				foreach (var queryRequestFilter in queryRequest.Filters)
-				{
-					ValueUtilities.ConvertValues(queryRequestFilter);
-				}
-			}
+			ValueUtilities.PreprocessQuery(queryRequest);
 
 			return Ok(await _benchmarkResultsService.GetPagedPreviewsAsync(queryRequest, cancellationToken));
 		}

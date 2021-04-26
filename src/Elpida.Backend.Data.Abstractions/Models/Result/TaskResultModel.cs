@@ -36,6 +36,8 @@ namespace Elpida.Backend.Data.Abstractions.Models.Result
 
         public long TaskId { get; set; }
         public TaskModel Task { get; set; } = default!;
+        
+        public int Order { get; set; }
         public double Value { get; set; }
         public double Time { get; set; }
         public long InputSize { get; set; }

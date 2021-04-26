@@ -21,9 +21,8 @@ using System;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos
 {
-    public class TaskDto
+    public class TaskDto : FountationDto
     {
-        public long Id { get; set; }
         public Guid Uuid { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;

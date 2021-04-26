@@ -19,6 +19,7 @@
 
 using System.Collections.Generic;
 using Elpida.Backend.Data.Abstractions.Models.Statistics;
+using Elpida.Backend.Data.Abstractions.Models.Topology;
 
 namespace Elpida.Backend.Data.Abstractions.Models.Cpu
 {
@@ -33,5 +34,6 @@ namespace Elpida.Backend.Data.Abstractions.Models.Cpu
         public string Features { get; set; } = default!;
 
         public ICollection<TaskStatisticsModel> TaskStatistics { get; set; } = default!;
+        public ICollection<TopologyModel> Topologies { get; set; } = default!;
     }
 }
