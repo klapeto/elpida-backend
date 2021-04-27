@@ -24,25 +24,25 @@ namespace Elpida.Backend.Services.Extensions.Result
 {
     public static class ResultPreviewExtensions
     {
-        public static ResultPreviewDto ToDto(this BenchmarkResultPreviewModel model)
-        {
-            return new ResultPreviewDto
-            {
-                Name = model.Name,
-                Id = model.Id,
-                OsName = model.OsName,
-                OsVersion = model.OsVersion,
-                ElpidaVersionMajor = model.ElpidaVersionMajor,
-                ElpidaVersionMinor = model.ElpidaVersionMinor,
-                ElpidaVersionRevision = model.ElpidaVersionRevision,
-                ElpidaVersionBuild = model.ElpidaVersionBuild,
-                CpuBrand = model.CpuBrand,
-                CpuCores = model.CpuCores,
-                CpuLogicalCores = model.CpuLogicalCores,
-                CpuFrequency = model.CpuFrequency,
-                MemorySize = model.MemorySize,
-                TimeStamp = model.TimeStamp
-            };
-        }
+        // public static ResultPreviewDto ToDto(this BenchmarkResultPreviewModel model)
+        // {
+        //     return new ResultPreviewDto
+        //     {
+        //         Name = model.Name,
+        //         Id = model.Id,
+        //         OsName = model.OsName,
+        //         OsVersion = model.OsVersion,
+        //         ElpidaVersionMajor = model.ElpidaVersionMajor,
+        //         ElpidaVersionMinor = model.ElpidaVersionMinor,
+        //         ElpidaVersionRevision = model.ElpidaVersionRevision,
+        //         ElpidaVersionBuild = model.ElpidaVersionBuild,
+        //         CpuBrand = model.CpuBrand,
+        //         CpuCores = model.CpuCores,
+        //         CpuLogicalCores = model.CpuLogicalCores,
+        //         CpuFrequency = model.CpuFrequency,
+        //         MemorySize = model.MemorySize,
+        //         TimeStamp = model.TimeStamp
+        //     };
+        // }
     }
 }

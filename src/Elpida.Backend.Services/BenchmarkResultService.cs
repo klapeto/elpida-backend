@@ -67,6 +67,7 @@ namespace Elpida.Backend.Services
                 Id = m.Id,
                 TimeStamp = m.TimeStamp,
                 Name = m.Benchmark.Name,
+                CpuVendor = m.Topology.Cpu.Vendor,
                 CpuBrand = m.Topology.Cpu.Brand,
                 CpuCores = m.Topology.TotalPhysicalCores,
                 CpuLogicalCores = m.Topology.TotalLogicalCores,

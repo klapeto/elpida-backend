@@ -23,9 +23,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Elpida.Backend.Data.Abstractions;
 using Elpida.Backend.Data.Abstractions.Models.Cpu;
-using Elpida.Backend.Data.Abstractions.Models.Task;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services.Abstractions;
 using Elpida.Backend.Services.Abstractions.Dtos.Cpu;
@@ -40,17 +38,11 @@ namespace Elpida.Backend.Services
     public class CpuService : Service<CpuDto, CpuModel, ICpuRepository>, ICpuService
     {
         private readonly ICpuRepository _cpuRepository;
-        private readonly ITaskService _taskService;
-        private readonly ITopologyRepository _topologyRepository;
 
-        public CpuService(ICpuRepository cpuRepository,
-            ITaskService taskService,
-            ITopologyRepository topologyRepository)
+        public CpuService(ICpuRepository cpuRepository)
             : base(cpuRepository)
         {
             _cpuRepository = cpuRepository;
-            _taskService = taskService;
-            _topologyRepository = topologyRepository;
         }
 
         private static IEnumerable<FilterExpression> CpuExpressions { get; } = new List<FilterExpression>

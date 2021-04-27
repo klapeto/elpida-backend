@@ -31,6 +31,7 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result
         public int ElpidaVersionBuild { get; set; }
         public string OsName { get; set; } = string.Empty;
         public string OsVersion { get; set; } = string.Empty;
+        public string CpuVendor { get; set; } = string.Empty;
         public string CpuBrand { get; set; } = string.Empty;
         public long CpuFrequency { get; set; }
         public int CpuCores { get; set; }

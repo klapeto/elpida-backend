@@ -10,16 +10,17 @@ namespace Elpida.Backend.Controllers
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{version:apiVersion}/[controller]")]
-    public class StatisticsController : ControllerBase
+    public class TaskStatisticsController : ControllerBase
     {
         private readonly ITaskStatisticsService _taskStatisticsService;
 
-        public StatisticsController(ITaskStatisticsService taskStatisticsService)
+        public TaskStatisticsController(ITaskStatisticsService taskStatisticsService)
         {
             _taskStatisticsService = taskStatisticsService;
         }
         
         [HttpGet("{id}", Name = nameof(GetSingleStatistic))]
+        [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetSingleStatistic([FromRoute] string id, CancellationToken cancellationToken)
@@ -45,7 +46,7 @@ namespace Elpida.Backend.Controllers
                 cancellationToken));
         }
         
-        [HttpPost("search")]
+        [HttpPost("Search")]
         [Produces("application/json")]
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]

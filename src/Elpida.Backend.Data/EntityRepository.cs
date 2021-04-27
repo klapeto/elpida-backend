@@ -59,6 +59,16 @@ namespace Elpida.Backend.Data
                 .FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
         }
 
+        public Task<TReturnEntity> GetSingleAsync<TReturnEntity>(long id,
+            Expression<Func<TEntity, TReturnEntity>> constructionExpression,
+            CancellationToken cancellationToken = default)
+        {
+            return ProcessGetSingle(Collection.AsQueryable())
+                .Where(e => e.Id == id)
+                .Select(constructionExpression)
+                .FirstOrDefaultAsync(cancellationToken);
+        }
+
         public async Task<TEntity?> GetSingleAsync(Expression<Func<TEntity, bool>> filters,
             CancellationToken cancellationToken = default)
         {
@@ -85,27 +95,28 @@ namespace Elpida.Backend.Data
                 cancellationToken);
         }
 
-        public async Task<PagedQueryResult<TReturnEntity>> GetPagedGroupProjectionAsync<TOrderKey, TGroupBy, TReturnEntity>(
-            int from, 
+        public async Task<PagedQueryResult<TReturnEntity>> GetPagedGroupProjectionAsync<TOrderKey, TGroupBy,
+            TReturnEntity>(
+            int from,
             int count,
-            Expression<Func<IGrouping<TGroupBy, TEntity>, TReturnEntity>> constructionExpression, 
-            Expression<Func<TEntity, TGroupBy>> groupBy, 
-            bool descending = false, 
+            Expression<Func<IGrouping<TGroupBy, TEntity>, TReturnEntity>> constructionExpression,
+            Expression<Func<TEntity, TGroupBy>> groupBy,
+            bool descending = false,
             bool calculateTotalCount = false,
-            Expression<Func<TEntity, TOrderKey>>? orderBy = null, 
-            IEnumerable<Expression<Func<TEntity, bool>>>? filters = null, 
+            Expression<Func<TEntity, TOrderKey>>? orderBy = null,
+            IEnumerable<Expression<Func<TEntity, bool>>>? filters = null,
             CancellationToken cancellationToken = default)
         {
             var (totalCount, query) = await PreprocessQueryAsync(
                 ProcessGetMultiplePaged(Collection.AsQueryable()),
-                from, 
-                count, 
-                descending, 
-                calculateTotalCount, 
+                from,
+                count,
+                descending,
+                calculateTotalCount,
                 orderBy,
-                filters, 
+                filters,
                 cancellationToken);
-            
+
             var results = await query
                 .GroupBy(groupBy)
                 .Select(constructionExpression)
@@ -115,7 +126,8 @@ namespace Elpida.Backend.Data
         }
 
 
-        protected async Task<(int Count, IQueryable<TCollectionEntity> query)> PreprocessQueryAsync<TCollectionEntity, TOrderKey>(
+        protected async Task<(int Count, IQueryable<TCollectionEntity> query)> PreprocessQueryAsync<TCollectionEntity,
+            TOrderKey>(
             IQueryable<TCollectionEntity> query,
             int from,
             int count,
@@ -140,7 +152,7 @@ namespace Elpida.Backend.Data
 
             result = result.Skip(from)
                 .Take(count);
-            
+
             return (totalCount, result);
         }
 
@@ -156,12 +168,12 @@ namespace Elpida.Backend.Data
         {
             var (totalCount, query) = await PreprocessQueryAsync(
                 ProcessGetMultiplePaged(Collection.AsQueryable()),
-                from, 
-                count, 
-                descending, 
-                calculateTotalCount, 
+                from,
+                count,
+                descending,
+                calculateTotalCount,
                 orderBy,
-                filters, 
+                filters,
                 cancellationToken);
 
             var results = await query

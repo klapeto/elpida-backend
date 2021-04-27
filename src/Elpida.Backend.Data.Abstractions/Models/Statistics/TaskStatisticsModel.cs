@@ -35,8 +35,11 @@ namespace Elpida.Backend.Data.Abstractions.Models.Statistics
         public TopologyModel Topology { get; set; } = default!;
 
         public double TotalValue { get; set; }
+        public double TotalTime { get; set; }
         public double TotalDeviation { get; set; }
 
+        public double MeanTime { get; set; }
+        
         public long SampleSize { get; set; }
         public double Max { get; set; }
         public double Min { get; set; }

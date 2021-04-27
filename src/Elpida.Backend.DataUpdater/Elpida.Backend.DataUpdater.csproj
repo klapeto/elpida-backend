@@ -29,13 +29,18 @@
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
         </Content>
+        <Content Include="ResultData\Intel-i7-1065G7.json">
+            <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        </Content>
     </ItemGroup>
 
 
     <ItemGroup>
-        <ProjectReference Include="..\Elpida.Backend.Data\Elpida.Backend.Data.csproj"/>
-        <ProjectReference Include="..\Elpida.Backend.Services.Abstractions\Elpida.Backend.Services.Abstractions.csproj"/>
-        <ProjectReference Include="..\Elpida.Backend.Services\Elpida.Backend.Services.csproj"/>
+        <ProjectReference Include="..\Elpida.Backend.Data\Elpida.Backend.Data.csproj" />
+        <ProjectReference Include="..\Elpida.Backend.Services.Abstractions\Elpida.Backend.Services.Abstractions.csproj" />
+        <ProjectReference Include="..\Elpida.Backend.Services\Elpida.Backend.Services.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -43,17 +48,17 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.4"/>
-        <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="5.0.0"/>
-        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0"/>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1"/>
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0"/>
-        <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0"/>
-        <PackageReference Include="Newtonsoft.Json" Version="12.0.3"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.4" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="5.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
+        <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Elpida.Backend.Data.Abstractions\Elpida.Backend.Data.Abstractions.csproj"/>
+        <ProjectReference Include="..\Elpida.Backend.Data.Abstractions\Elpida.Backend.Data.Abstractions.csproj" />
     </ItemGroup>
 
 </Project>

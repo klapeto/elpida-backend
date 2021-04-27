@@ -30,6 +30,8 @@ namespace Elpida.Backend.Data.Abstractions.Interfaces
     public interface IRepository<TEntity> where TEntity : Entity
     {
         Task<TEntity?> GetSingleAsync(long id, CancellationToken cancellationToken = default);
+        
+        Task<TReturnEntity> GetSingleAsync<TReturnEntity>(long id, Expression<Func<TEntity, TReturnEntity>> constructionExpression, CancellationToken cancellationToken = default);
 
         Task<TEntity?> GetSingleAsync(Expression<Func<TEntity, bool>> filters,
             CancellationToken cancellationToken = default);

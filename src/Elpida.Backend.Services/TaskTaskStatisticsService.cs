@@ -84,7 +84,9 @@ namespace Elpida.Backend.Services
                         TotalValue = taskResult.Value,
                         Tau = StatisticsHelpers.CalculateTau(1),
                         StandardDeviation = 0,
-                        MarginOfError = 0
+                        MarginOfError = 0,
+                        TotalTime = taskResult.Time,
+                        MeanTime = taskResult.Time,
                     };
                     await Repository.CreateAsync(stats, cancellationToken);
                 }
@@ -99,6 +101,8 @@ namespace Elpida.Backend.Services
                     stats.StandardDeviation = Math.Sqrt(stats.TotalDeviation / stats.SampleSize);
                     stats.MarginOfError = stats.StandardDeviation / Math.Sqrt(stats.SampleSize);
                     stats.Tau = StatisticsHelpers.CalculateTau(stats.SampleSize);
+                    stats.TotalTime += taskResult.Time;
+                    stats.MeanTime = stats.TotalTime / stats.SampleSize;
                 }
             }
 
@@ -119,7 +123,10 @@ namespace Elpida.Backend.Services
                 SampleSize = m.SampleSize,
                 TopologyHash = m.Topology.TopologyHash,
                 TaskResultUnit = m.Task.ResultUnit,
-                Mean = m.Mean
+                Mean = m.Mean,
+                Aggregation = m.Task.ResultAggregation,
+                Type = m.Task.ResultType,
+                Time = m.MeanTime
             }, cancellationToken);
         }
 
@@ -140,10 +147,18 @@ namespace Elpida.Backend.Services
                 MarginOfError = dto.MarginOfError
             });
         }
+        
+        private static IEnumerable<FilterExpression> StatisticsExpressions { get; } = new List<FilterExpression>
+        {
+            CreateFilter("cpuId", model => model.CpuId),
+            CreateFilter("topologyId", model => model.TopologyId),
+            CreateFilter("taskId", model => model.TaskId)
+        };
 
         protected override IEnumerable<FilterExpression> GetFilterExpressions()
         {
-            return _cpuService.GetFilters<TaskStatisticsModel, CpuModel>(m => m.Cpu)
+            return StatisticsExpressions
+                .Concat(_cpuService.GetFilters<TaskStatisticsModel, CpuModel>(m => m.Cpu))
                 .Concat(_topologyService.GetFilters<TaskStatisticsModel, TopologyModel>(m => m.Topology))
                 .Concat(_taskService.GetFilters<TaskStatisticsModel, TaskModel>(m => m.Task));
         }

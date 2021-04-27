@@ -29,6 +29,9 @@ namespace Elpida.Backend.Services.Abstractions.Dtos
         public int CpuLogicalCores { get; set; }
         public string TopologyHash { get; set; } = default!;
         public double Mean { get; set; }
+        public double Time { get; set; }
         public long SampleSize { get; set; }
+        public int Aggregation { get; set; }
+        public int Type { get; set; }
     }
 }
