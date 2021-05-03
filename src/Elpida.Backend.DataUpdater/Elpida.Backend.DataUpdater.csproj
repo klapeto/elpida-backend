@@ -24,6 +24,10 @@
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
         </Content>
+        <None Remove="ResultData\Intel-i7-1065G7.json" />
+        <Content Include="ResultData\Intel-i7-1065G7.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
 
 

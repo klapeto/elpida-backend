@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System.Collections.Generic;
 using System.Linq;
 using Elpida.Backend.Data.Abstractions.Models;
 using Elpida.Backend.Data.Abstractions.Models.Task;
@@ -40,9 +41,9 @@ namespace Elpida.Backend.Services.Extensions.Benchmark
                     Comparison = benchmarkModel.ScoreComparison,
                     Unit = benchmarkModel.ScoreUnit
                 },
-                TaskSpecifications = benchmarkModel.Tasks
+                TaskSpecifications = benchmarkModel.Tasks?
                     .Select(t => t.ToDto())
-                    .ToList()
+                    .ToList() ?? new List<TaskDto>()
             };
         }
         
