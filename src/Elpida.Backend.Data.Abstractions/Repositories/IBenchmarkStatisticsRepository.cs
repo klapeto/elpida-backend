@@ -29,7 +29,7 @@ using Elpida.Backend.Data.Abstractions.Models.Statistics;
 
 namespace Elpida.Backend.Data.Abstractions.Repositories
 {
-    public interface ITaskStatisticsRepository : IRepository<TaskStatisticsModel>
+    public interface IBenchmarkStatisticsRepository : IRepository<BenchmarkStatisticsModel>
     {
         // Task<PagedQueryResult<TReturnEntity>> GetPagedProjectionByCpuAsync<TOrderKey, TReturnEntity>(
         //     int from,

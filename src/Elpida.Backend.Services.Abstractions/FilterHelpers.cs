@@ -28,7 +28,9 @@ namespace Elpida.Backend.Services.Abstractions
         public enum Comparison
         {
             Equal,
+            NotEqual,
             Contains,
+            NotContain,
             GreaterEqual,
             Greater,
             LessEqual,
@@ -41,7 +43,9 @@ namespace Elpida.Backend.Services.Abstractions
             new Dictionary<Comparison, string>
             {
                 [Comparison.Equal] = "eq",
+                [Comparison.NotEqual] = "neq",
                 [Comparison.Contains] = "c",
+                [Comparison.NotContain] = "nc",
                 [Comparison.GreaterEqual] = "ge",
                 [Comparison.Greater] = "g",
                 [Comparison.LessEqual] = "le",
@@ -60,7 +64,9 @@ namespace Elpida.Backend.Services.Abstractions
         public static HashSet<string> StringComparisons { get; } = new HashSet<string>
         {
             ComparisonMap[Comparison.Equal],
-            ComparisonMap[Comparison.Contains]
+            ComparisonMap[Comparison.NotEqual],
+            ComparisonMap[Comparison.Contains],
+            ComparisonMap[Comparison.NotContain]
         };
     }
 }

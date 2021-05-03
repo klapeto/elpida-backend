@@ -27,6 +27,8 @@ namespace Elpida.Backend.Data.Abstractions.Models
     {
         public Guid Uuid { get; set; }
         public string Name { get; set; } = default!;
+        public string ScoreUnit { get; set; } = default!;
+        public int ScoreComparison { get; set; }
         public IList<TaskModel> Tasks { get; set; } = default!;
     }
 }

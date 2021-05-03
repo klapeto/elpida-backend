@@ -33,7 +33,7 @@ namespace Elpida.Backend.Data.Abstractions.Models.Cpu
         public string Caches { get; set; } = default!;
         public string Features { get; set; } = default!;
 
-        public ICollection<TaskStatisticsModel> TaskStatistics { get; set; } = default!;
+        public ICollection<BenchmarkStatisticsModel> BenchmarkStatistics { get; set; } = default!;
         public ICollection<TopologyModel> Topologies { get; set; } = default!;
     }
 }

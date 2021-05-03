@@ -42,7 +42,7 @@ namespace Elpida.Backend.Data
         public DbSet<TaskResultModel> TaskResults { get; set; } = default!;
         public DbSet<ElpidaModel> Elpidas { get; set; } = default!;
         public DbSet<OsModel> Oses { get; set; } = default!;
-        public DbSet<TaskStatisticsModel> TaskStatistics { get; set; } = default!;
+        public DbSet<BenchmarkStatisticsModel> BenchmarkStatistics { get; set; } = default!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -71,21 +71,21 @@ namespace Elpida.Backend.Data
                 .HasOne(m => m.Benchmark);
 
             modelBuilder.Entity<CpuModel>()
-                .HasMany(m => m.TaskStatistics)
+                .HasMany(m => m.BenchmarkStatistics)
                 .WithOne(m => m.Cpu);
             
             modelBuilder.Entity<CpuModel>()
                 .HasMany(m => m.Topologies)
                 .WithOne(m => m.Cpu);
 
-            modelBuilder.Entity<TaskStatisticsModel>()
+            modelBuilder.Entity<BenchmarkStatisticsModel>()
                 .HasOne(m => m.Cpu);
 
-            modelBuilder.Entity<TaskStatisticsModel>()
+            modelBuilder.Entity<BenchmarkStatisticsModel>()
                 .HasOne(m => m.Topology);
             
-            modelBuilder.Entity<TaskStatisticsModel>()
-                .HasOne(m => m.Task);
+            modelBuilder.Entity<BenchmarkStatisticsModel>()
+                .HasOne(m => m.Benchmark);
         }
     }
 }

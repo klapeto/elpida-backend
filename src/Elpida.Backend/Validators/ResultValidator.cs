@@ -27,7 +27,7 @@ namespace Elpida.Backend.Validators
 		public ResultValidator()
 		{
 			RuleFor(dto => dto.Id)
-				.Null();
+				.Empty();
 
 			RuleFor(dto => dto.Affinity)
 				.NotEmpty();

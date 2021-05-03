@@ -21,6 +21,7 @@ using System.Linq;
 using Elpida.Backend.Data.Abstractions.Models;
 using Elpida.Backend.Data.Abstractions.Models.Task;
 using Elpida.Backend.Services.Abstractions.Dtos;
+using Elpida.Backend.Services.Abstractions.Dtos.Result;
 using Elpida.Backend.Services.Extensions.Task;
 
 namespace Elpida.Backend.Services.Extensions.Benchmark
@@ -34,6 +35,11 @@ namespace Elpida.Backend.Services.Extensions.Benchmark
                 Id = benchmarkModel.Id,
                 Uuid = benchmarkModel.Uuid,
                 Name = benchmarkModel.Name,
+                ScoreSpecification = new BenchmarkScoreSpecificationDto
+                {
+                    Comparison = benchmarkModel.ScoreComparison,
+                    Unit = benchmarkModel.ScoreUnit
+                },
                 TaskSpecifications = benchmarkModel.Tasks
                     .Select(t => t.ToDto())
                     .ToList()
@@ -47,6 +53,8 @@ namespace Elpida.Backend.Services.Extensions.Benchmark
                 Id = benchmarkDto.Id,
                 Uuid = benchmarkDto.Uuid,
                 Name = benchmarkDto.Name,
+                ScoreComparison = benchmarkDto.ScoreSpecification.Comparison,
+                ScoreUnit = benchmarkDto.ScoreSpecification.Unit,
                 Tasks = benchmarkDto.TaskSpecifications
                     .Select(t => t.ToModel())
                     .ToList()

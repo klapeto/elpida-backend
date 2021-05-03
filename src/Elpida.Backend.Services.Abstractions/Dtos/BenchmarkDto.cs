@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using Elpida.Backend.Services.Abstractions.Dtos.Result;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos
 {
@@ -26,6 +27,7 @@ namespace Elpida.Backend.Services.Abstractions.Dtos
     {
         public Guid Uuid { get; set; }
         public string Name { get; set; } = string.Empty;
+        public BenchmarkScoreSpecificationDto ScoreSpecification { get; set; } = new BenchmarkScoreSpecificationDto();
         public IList<TaskDto> TaskSpecifications { get; set; } = new List<TaskDto>();
     }
 }

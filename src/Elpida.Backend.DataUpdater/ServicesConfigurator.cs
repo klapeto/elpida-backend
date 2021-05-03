@@ -36,7 +36,7 @@ namespace Elpida.Backend.DataUpdater
             services.AddScoped<ICpuService, CpuService>();
             services.AddScoped<IElpidaService, ElpidaService>();
             services.AddScoped<IOsService, OsService>();
-            services.AddScoped<ITaskStatisticsService, TaskTaskStatisticsService>();
+            services.AddScoped<IBenchmarkStatisticsService, BenchmarkStatisticsService>();
             services.AddScoped<ITaskService, TaskService>();
             services.AddScoped<ITopologyService, TopologyService>();
 
@@ -48,7 +48,7 @@ namespace Elpida.Backend.DataUpdater
             services.AddTransient<ITaskRepository, TaskRepository>();
             services.AddTransient<IElpidaRepository, ElpidaRepository>();
             services.AddTransient<IOsRepository, OsRepository>();
-            services.AddTransient<ITaskStatisticsRepository, TaskStatisticsRepository>();
+            services.AddTransient<IBenchmarkStatisticsRepository, BenchmarkStatisticsRepository>();
             
             services.AddDbContext<ElpidaContext>(builder =>
             {

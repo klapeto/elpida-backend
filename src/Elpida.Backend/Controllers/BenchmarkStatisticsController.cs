@@ -10,13 +10,13 @@ namespace Elpida.Backend.Controllers
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{version:apiVersion}/[controller]")]
-    public class TaskStatisticsController : ControllerBase
+    public class BenchmarkStatisticsController : ControllerBase
     {
-        private readonly ITaskStatisticsService _taskStatisticsService;
+        private readonly IBenchmarkStatisticsService _benchmarkStatisticsService;
 
-        public TaskStatisticsController(ITaskStatisticsService taskStatisticsService)
+        public BenchmarkStatisticsController(IBenchmarkStatisticsService benchmarkStatisticsService)
         {
-            _taskStatisticsService = taskStatisticsService;
+            _benchmarkStatisticsService = benchmarkStatisticsService;
         }
         
         [HttpGet("{id}", Name = nameof(GetSingleStatistic))]
@@ -27,7 +27,7 @@ namespace Elpida.Backend.Controllers
         {
             if (long.TryParse(id, out var lid))
             {
-                return Ok(await _taskStatisticsService.GetSingleAsync(lid, cancellationToken));
+                return Ok(await _benchmarkStatisticsService.GetSingleAsync(lid, cancellationToken));
             }
 
             return BadRequest("Id must be an Integer number");
@@ -42,7 +42,7 @@ namespace Elpida.Backend.Controllers
         public async Task<IActionResult> GetPaged([FromQuery] PageRequest pageRequest,
             CancellationToken cancellationToken)
         {
-            return Ok(await _taskStatisticsService.GetPagedPreviewsAsync(new QueryRequest {PageRequest = pageRequest},
+            return Ok(await _benchmarkStatisticsService.GetPagedPreviewsAsync(new QueryRequest {PageRequest = pageRequest},
                 cancellationToken));
         }
         
@@ -57,7 +57,7 @@ namespace Elpida.Backend.Controllers
         {
             ValueUtilities.PreprocessQuery(queryRequest);
 
-            return Ok(await _taskStatisticsService.GetPagedPreviewsAsync(queryRequest, cancellationToken));
+            return Ok(await _benchmarkStatisticsService.GetPagedPreviewsAsync(queryRequest, cancellationToken));
         }
     }
 }

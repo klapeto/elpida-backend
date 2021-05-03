@@ -17,21 +17,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System;
+
 namespace Elpida.Backend.Services.Abstractions.Dtos
 {
-    public class TaskStatisticsPreviewDto : FountationDto
+    public class BenchmarkStatisticsPreviewDto : FountationDto
     {
         public string CpuVendor { get; set; } = default!;
         public string CpuBrand { get; set; } = default!;
-        public string TaskName { get; set; } = default!;
-        public string TaskResultUnit { get; set; } = default!;
+        public string BenchmarkName { get; set; } = default!;
+        public string BenchmarkScoreUnit { get; set; } = default!;
+        public Guid BenchmarkUuid { get; set; }
         public int CpuCores { get; set; }
         public int CpuLogicalCores { get; set; }
         public string TopologyHash { get; set; } = default!;
         public double Mean { get; set; }
-        public double Time { get; set; }
         public long SampleSize { get; set; }
-        public int Aggregation { get; set; }
-        public int Type { get; set; }
+        public int Comparison { get; set; }
     }
 }

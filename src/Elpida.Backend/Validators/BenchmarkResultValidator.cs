@@ -29,6 +29,12 @@ namespace Elpida.Backend.Validators
 			RuleFor(dto => dto.Name)
 				.NotEmpty()
 				.MaximumLength(100);
+
+			RuleFor(dto => dto.Uuid)
+				.NotEmpty();
+
+			RuleFor(dto => dto.ScoreSpecification)
+				.NotNull();
 		}
 	}
 }

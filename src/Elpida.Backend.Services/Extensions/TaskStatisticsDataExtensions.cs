@@ -24,7 +24,7 @@ namespace Elpida.Backend.Services.Extensions
 {
     public static class TaskStatisticsDataExtensions
     {
-        public static TaskRunStatisticsDto ToDto(this TaskStatisticsModel statisticsModel)
+        public static TaskRunStatisticsDto ToDto(this BenchmarkStatisticsModel statisticsModel)
         {
             return new TaskRunStatisticsDto
             {

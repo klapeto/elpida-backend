@@ -25,12 +25,12 @@ using Elpida.Backend.Services.Abstractions.Dtos.Result;
 
 namespace Elpida.Backend.Services.Abstractions.Interfaces
 {
-    public interface ITaskStatisticsService : IService<TaskStatisticsDto>
+    public interface IBenchmarkStatisticsService : IService<BenchmarkStatisticsDto>
     {
-        Task UpdateTaskStatisticsAsync(IEnumerable<TaskResultDto> taskResults,
+        Task UpdateTaskStatisticsAsync(ResultDto resultDto,
             CancellationToken cancellationToken = default);
 
-        Task<PagedResult<TaskStatisticsPreviewDto>> GetPagedPreviewsAsync(QueryRequest queryRequest,
+        Task<PagedResult<BenchmarkStatisticsPreviewDto>> GetPagedPreviewsAsync(QueryRequest queryRequest,
             CancellationToken cancellationToken = default);
     }
 }

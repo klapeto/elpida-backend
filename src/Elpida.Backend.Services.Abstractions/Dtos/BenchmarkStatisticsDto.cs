@@ -22,10 +22,10 @@ using Elpida.Backend.Services.Abstractions.Dtos.Topology;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos
 {
-    public class TaskStatisticsDto : FountationDto
+    public class BenchmarkStatisticsDto : FountationDto
     {
         public CpuDto Cpu { get; set; } = default!;
-        public TaskDto Task { get; set; } = default!;
+        public BenchmarkDto Benchmark { get; set; } = default!;
         public TopologyDto Topology { get; set; } = default!;
         
         public long SampleSize { get; set; }

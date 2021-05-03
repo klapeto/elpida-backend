@@ -68,6 +68,8 @@ namespace Elpida.Backend.Services
                 Id = dto.Id,
                 Uuid = dto.Uuid,
                 Name = dto.Name,
+                ScoreUnit = dto.ScoreSpecification.Unit,
+                ScoreComparison = dto.ScoreSpecification.Comparison,
                 Tasks = new List<TaskModel>()
             };
             
@@ -89,7 +91,6 @@ namespace Elpida.Backend.Services
             return model.ToDto();
         }
         
-
         protected override Expression<Func<BenchmarkModel, bool>> GetCreationBypassCheckExpression(BenchmarkDto dto)
         {
             return model => model.Uuid == dto.Uuid;

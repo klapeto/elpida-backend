@@ -14,7 +14,9 @@ namespace Elpida.Backend.Migrations
                     Id = table.Column<long>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Uuid = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", nullable: false)
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    ScoreUnit = table.Column<string>(type: "TEXT", nullable: false),
+                    ScoreComparison = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -170,7 +172,8 @@ namespace Elpida.Backend.Migrations
                     LockOverhead = table.Column<double>(type: "REAL", nullable: false),
                     LoopOverhead = table.Column<double>(type: "REAL", nullable: false),
                     JoinOverhead = table.Column<double>(type: "REAL", nullable: false),
-                    TargetTime = table.Column<double>(type: "REAL", nullable: false)
+                    TargetTime = table.Column<double>(type: "REAL", nullable: false),
+                    Score = table.Column<double>(type: "REAL", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -202,18 +205,16 @@ namespace Elpida.Backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TaskStatistics",
+                name: "BenchmarkStatistics",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    TaskId = table.Column<long>(type: "INTEGER", nullable: false),
+                    BenchmarkId = table.Column<long>(type: "INTEGER", nullable: false),
                     CpuId = table.Column<long>(type: "INTEGER", nullable: false),
                     TopologyId = table.Column<long>(type: "INTEGER", nullable: false),
                     TotalValue = table.Column<double>(type: "REAL", nullable: false),
-                    TotalTime = table.Column<double>(type: "REAL", nullable: false),
                     TotalDeviation = table.Column<double>(type: "REAL", nullable: false),
-                    MeanTime = table.Column<double>(type: "REAL", nullable: false),
                     SampleSize = table.Column<long>(type: "INTEGER", nullable: false),
                     Max = table.Column<double>(type: "REAL", nullable: false),
                     Min = table.Column<double>(type: "REAL", nullable: false),
@@ -224,21 +225,21 @@ namespace Elpida.Backend.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TaskStatistics", x => x.Id);
+                    table.PrimaryKey("PK_BenchmarkStatistics", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TaskStatistics_Cpus_CpuId",
+                        name: "FK_BenchmarkStatistics_Benchmarks_BenchmarkId",
+                        column: x => x.BenchmarkId,
+                        principalTable: "Benchmarks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_BenchmarkStatistics_Cpus_CpuId",
                         column: x => x.CpuId,
                         principalTable: "Cpus",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_TaskStatistics_Tasks_TaskId",
-                        column: x => x.TaskId,
-                        principalTable: "Tasks",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_TaskStatistics_Topologies_TopologyId",
+                        name: "FK_BenchmarkStatistics_Topologies_TopologyId",
                         column: x => x.TopologyId,
                         principalTable: "Topologies",
                         principalColumn: "Id",
@@ -322,6 +323,21 @@ namespace Elpida.Backend.Migrations
                 column: "TopologyId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_BenchmarkStatistics_BenchmarkId",
+                table: "BenchmarkStatistics",
+                column: "BenchmarkId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BenchmarkStatistics_CpuId",
+                table: "BenchmarkStatistics",
+                column: "CpuId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BenchmarkStatistics_TopologyId",
+                table: "BenchmarkStatistics",
+                column: "TopologyId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TaskResults_BenchmarkResultId",
                 table: "TaskResults",
                 column: "BenchmarkResultId");
@@ -342,21 +358,6 @@ namespace Elpida.Backend.Migrations
                 column: "TopologyId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TaskStatistics_CpuId",
-                table: "TaskStatistics",
-                column: "CpuId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TaskStatistics_TaskId",
-                table: "TaskStatistics",
-                column: "TaskId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TaskStatistics_TopologyId",
-                table: "TaskStatistics",
-                column: "TopologyId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Topologies_CpuId",
                 table: "Topologies",
                 column: "CpuId");
@@ -368,10 +369,10 @@ namespace Elpida.Backend.Migrations
                 name: "BenchmarkModelTaskModel");
 
             migrationBuilder.DropTable(
-                name: "TaskResults");
+                name: "BenchmarkStatistics");
 
             migrationBuilder.DropTable(
-                name: "TaskStatistics");
+                name: "TaskResults");
 
             migrationBuilder.DropTable(
                 name: "BenchmarkResults");

@@ -23,10 +23,10 @@ using Elpida.Backend.Data.Abstractions.Models.Topology;
 
 namespace Elpida.Backend.Data.Abstractions.Models.Statistics
 {
-    public class TaskStatisticsModel : Entity
+    public class BenchmarkStatisticsModel : Entity
     {
-        public long TaskId { get; set; }
-        public TaskModel Task { get; set; } = default!;
+        public long BenchmarkId { get; set; }
+        public BenchmarkModel Benchmark { get; set; } = default!;
 
         public long CpuId { get; set; }
         public CpuModel Cpu { get; set; } = default!;
@@ -35,11 +35,8 @@ namespace Elpida.Backend.Data.Abstractions.Models.Statistics
         public TopologyModel Topology { get; set; } = default!;
 
         public double TotalValue { get; set; }
-        public double TotalTime { get; set; }
         public double TotalDeviation { get; set; }
 
-        public double MeanTime { get; set; }
-        
         public long SampleSize { get; set; }
         public double Max { get; set; }
         public double Min { get; set; }

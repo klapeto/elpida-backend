@@ -26,6 +26,8 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result
     {
         public Guid Uuid { get; set; }
         public string Name { get; set; } = string.Empty;
+        public BenchmarkScoreSpecificationDto ScoreSpecification { get; set; } = new BenchmarkScoreSpecificationDto();
+        public double Score { get; set; }
         public IList<TaskResultDto> TaskResults { get; set; } = new List<TaskResultDto>();
     }
 }

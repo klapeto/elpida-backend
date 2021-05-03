@@ -14,12 +14,12 @@ namespace Elpida.Backend.Controllers
     public class CpuController: ControllerBase
     {
         private readonly ICpuService _cpuService;
-        private readonly ITaskStatisticsService _taskStatisticsService;
+        private readonly IBenchmarkStatisticsService _benchmarkStatisticsService;
 
-        public CpuController(ICpuService cpuService, ITaskStatisticsService taskStatisticsService)
+        public CpuController(ICpuService cpuService, IBenchmarkStatisticsService benchmarkStatisticsService)
         {
             _cpuService = cpuService;
-            _taskStatisticsService = taskStatisticsService;
+            _benchmarkStatisticsService = benchmarkStatisticsService;
         }
 
         [HttpGet]
@@ -72,7 +72,7 @@ namespace Elpida.Backend.Controllers
                     PageRequest = pageRequest
                 };
                     
-                return Ok(await _taskStatisticsService.GetPagedPreviewsAsync(queryRequest, cancellationToken));
+                return Ok(await _benchmarkStatisticsService.GetPagedPreviewsAsync(queryRequest, cancellationToken));
             }
 
             return BadRequest("Id must be an Integer number");
@@ -110,7 +110,7 @@ namespace Elpida.Backend.Controllers
                 var additionalFilters = new[] {GetQueryInstanceForId(lid)};
                 queryRequest.Filters = queryRequest.Filters?.Concat(additionalFilters).ToArray() ?? additionalFilters;
                 
-                return Ok(await _taskStatisticsService.GetPagedPreviewsAsync(queryRequest, cancellationToken));
+                return Ok(await _benchmarkStatisticsService.GetPagedPreviewsAsync(queryRequest, cancellationToken));
             }
 
             return BadRequest("Id must be an Integer number");

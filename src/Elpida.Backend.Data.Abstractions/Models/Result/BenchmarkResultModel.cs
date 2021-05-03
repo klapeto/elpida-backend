@@ -49,6 +49,8 @@ namespace Elpida.Backend.Data.Abstractions.Models.Result
         public double LoopOverhead { get; set; }
         public double JoinOverhead { get; set; }
         public double TargetTime { get; set; }
+        
+        public double Score { get; set; }
 
         public ICollection<TaskResultModel> TaskResults { get; set; } = null!;
     }

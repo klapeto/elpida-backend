@@ -49,7 +49,7 @@ namespace Elpida.Backend.Services
         private readonly IOsRepository _osRepository;
         private readonly IOsService _osService;
         private readonly ITaskRepository _taskRepository;
-        private readonly ITaskStatisticsService _taskStatisticsService;
+        private readonly IBenchmarkStatisticsService _benchmarkStatisticsService;
         private readonly ITopologyRepository _topologyRepository;
         private readonly ITopologyService _topologyService;
 
@@ -86,7 +86,7 @@ namespace Elpida.Backend.Services
 
         public BenchmarkResultService(
             IBenchmarkResultsRepository benchmarkResultsRepository,
-            ITaskStatisticsService taskStatisticsService,
+            IBenchmarkStatisticsService benchmarkStatisticsService,
             ICpuRepository cpuRepository,
             IBenchmarkRepository benchmarkRepository,
             ITopologyRepository topologyRepository,
@@ -100,7 +100,7 @@ namespace Elpida.Backend.Services
             IBenchmarkService benchmarkService)
             : base(benchmarkResultsRepository)
         {
-            _taskStatisticsService = taskStatisticsService;
+            _benchmarkStatisticsService = benchmarkStatisticsService;
             _cpuRepository = cpuRepository;
             _benchmarkRepository = benchmarkRepository;
             _topologyRepository = topologyRepository;
@@ -139,8 +139,12 @@ namespace Elpida.Backend.Services
             var cpu = await GetOrAddForeignDto(_cpuRepository, _cpuService, dto.System.Cpu, cancellationToken);
 
             dto.System.Topology.CpuId = cpu.Id;
+            
             var topology = await GetOrAddForeignDto(_topologyRepository, _topologyService, dto.System.Topology,
                 cancellationToken);
+
+            dto.System.Topology.Id = topology.Id;
+            
             var elpida = await GetOrAddForeignDto(_elpidaRepository, _elpidaService, dto.Elpida, cancellationToken);
             var os = await GetOrAddForeignDto(_osRepository, _osService, dto.System.Os, cancellationToken);
 
@@ -161,6 +165,7 @@ namespace Elpida.Backend.Services
                 WakeupOverhead = dto.System.Timing.WakeupOverhead,
                 MemorySize = dto.System.Memory.TotalSize,
                 PageSize = dto.System.Memory.PageSize,
+                Score = dto.Result.Score,
                 TaskResults = new List<TaskResultModel>(),
                 TimeStamp = DateTime.UtcNow
             };
@@ -198,7 +203,7 @@ namespace Elpida.Backend.Services
             BenchmarkResultModel entity,
             CancellationToken cancellationToken)
         {
-            return _taskStatisticsService.UpdateTaskStatisticsAsync(dto.Result.TaskResults, cancellationToken);
+            return _benchmarkStatisticsService.UpdateTaskStatisticsAsync(dto, cancellationToken);
         }
 
         #endregion

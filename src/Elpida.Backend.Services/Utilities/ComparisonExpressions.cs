@@ -35,7 +35,11 @@ namespace Elpida.Backend.Services.Utilities
         {
             [FilterHelpers.ComparisonMap[FilterHelpers.Comparison.Contains]] =
                 (left, right) => Expression.Call(left, Contains, right),
+            
+            [FilterHelpers.ComparisonMap[FilterHelpers.Comparison.NotContain]] =
+                (left, right) => Expression.Not(Expression.Call(left, Contains, right)),
             [FilterHelpers.ComparisonMap[FilterHelpers.Comparison.Equal]] = Expression.Equal,
+            [FilterHelpers.ComparisonMap[FilterHelpers.Comparison.NotEqual]] = Expression.NotEqual,
             [FilterHelpers.ComparisonMap[FilterHelpers.Comparison.Greater]] = Expression.GreaterThan,
             [FilterHelpers.ComparisonMap[FilterHelpers.Comparison.GreaterEqual]] = Expression.GreaterThanOrEqual,
             [FilterHelpers.ComparisonMap[FilterHelpers.Comparison.Less]] = Expression.LessThan,

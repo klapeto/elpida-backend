@@ -61,7 +61,7 @@ namespace Elpida.Backend.Services
                 Vendor = m.Vendor,
                 Brand = m.Brand,
                 TopologiesCount = m.Topologies.Count(),
-                TaskStatisticsCount = m.TaskStatistics.Count()
+                TaskStatisticsCount = m.BenchmarkStatistics.Count()
             }, cancellationToken);
         }
 
@@ -72,7 +72,7 @@ namespace Elpida.Backend.Services
 
             if (cpuModel == null) throw new NotFoundException("Cpu was not found.", cpuId);
 
-            return cpuModel.TaskStatistics.Select(s => s.ToDto());
+            return cpuModel.BenchmarkStatistics.Select(s => s.ToDto());
         }
 
         protected override Task<CpuModel> ProcessDtoAndCreateModelAsync(CpuDto dto, CancellationToken cancellationToken)

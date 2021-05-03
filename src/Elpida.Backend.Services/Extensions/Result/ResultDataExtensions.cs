@@ -25,6 +25,7 @@ using Elpida.Backend.Services.Abstractions.Dtos;
 using Elpida.Backend.Services.Abstractions.Dtos.Result;
 using Elpida.Backend.Services.Abstractions.Dtos.Topology;
 using Elpida.Backend.Services.Extensions.Cpu;
+using Elpida.Backend.Services.Extensions.Topology;
 using Newtonsoft.Json;
 
 namespace Elpida.Backend.Services.Extensions.Result
@@ -84,6 +85,12 @@ namespace Elpida.Backend.Services.Extensions.Result
                     Id = benchmarkResultModel.Benchmark.Id,
                     Uuid = benchmarkResultModel.Benchmark.Uuid,
                     Name = benchmarkResultModel.Benchmark.Name,
+                    ScoreSpecification = new BenchmarkScoreSpecificationDto
+                    {
+                        Unit = benchmarkResultModel.Benchmark.ScoreUnit,
+                        Comparison = benchmarkResultModel.Benchmark.ScoreComparison,
+                    },
+                    Score = benchmarkResultModel.Score,
                     TaskResults = benchmarkResultModel.TaskResults
                         .OrderBy(m => m.Order)
                         .Select(r => new TaskResultDto
@@ -146,13 +153,7 @@ namespace Elpida.Backend.Services.Extensions.Result
                         TargetTime = benchmarkResultModel.TargetTime,
                         WakeupOverhead = benchmarkResultModel.WakeupOverhead
                     },
-                    Topology = new TopologyDto
-                    {
-                        TotalDepth = benchmarkResultModel.Topology.TotalDepth,
-                        TotalLogicalCores = benchmarkResultModel.Topology.TotalLogicalCores,
-                        TotalPhysicalCores = benchmarkResultModel.Topology.TotalPhysicalCores,
-                        Root = JsonConvert.DeserializeObject<CpuNodeDto>(benchmarkResultModel.Topology.Root)
-                    }
+                    Topology = benchmarkResultModel.Topology.ToDto()
                 }
             };
         }
