@@ -17,28 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading;
-using System.Threading.Tasks;
 using Elpida.Backend.Data.Abstractions.Interfaces;
-using Elpida.Backend.Data.Abstractions.Models.Cpu;
 using Elpida.Backend.Data.Abstractions.Models.Statistics;
 
 namespace Elpida.Backend.Data.Abstractions.Repositories
 {
     public interface IBenchmarkStatisticsRepository : IRepository<BenchmarkStatisticsModel>
     {
-        // Task<PagedQueryResult<TReturnEntity>> GetPagedProjectionByCpuAsync<TOrderKey, TReturnEntity>(
-        //     int from,
-        //     int count,
-        //     Expression<Func<CpuModel, IEnumerable<TaskStatisticsModel>, TReturnEntity>> constructionExpression,
-        //     bool descending = false,
-        //     bool calculateTotalCount = false,
-        //     Expression<Func<TaskStatisticsModel, TOrderKey>>? orderBy = null,
-        //     IEnumerable<Expression<Func<TaskStatisticsModel, bool>>>? filters = null,
-        //     CancellationToken cancellationToken = default);
     }
 }

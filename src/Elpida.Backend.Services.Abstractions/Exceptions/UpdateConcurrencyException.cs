@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2020 Ioannis Panagiotopoulos
+ * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,27 +17,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using Elpida.Backend.Services.Abstractions.Dtos.Result;
-using FluentValidation;
+using System;
 
-namespace Elpida.Backend.Validators
+namespace Elpida.Backend.Services.Abstractions.Exceptions
 {
-	public class BenchmarkResultValidator : AbstractValidator<BenchmarkResultDto>
-	{
-		public BenchmarkResultValidator()
-		{
-			RuleFor(dto => dto.Name)
-				.NotEmpty()
-				.MaximumLength(100);
+    public class UpdateConcurrencyException : Exception
+    {
+        public UpdateConcurrencyException()
+        {
+        }
 
-			RuleFor(dto => dto.Uuid)
-				.NotEmpty();
+        public UpdateConcurrencyException(string message) : base(message)
+        {
+        }
 
-			RuleFor(dto => dto.ScoreSpecification)
-				.NotNull();
-
-			RuleFor(dto => dto.Score)
-				.GreaterThan(0.0);
-		}
-	}
+        public UpdateConcurrencyException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
+    }
 }

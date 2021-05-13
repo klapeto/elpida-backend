@@ -32,6 +32,7 @@ using Elpida.Backend.Services.Abstractions.Exceptions;
 using Elpida.Backend.Services.Abstractions.Interfaces;
 using Elpida.Backend.Services.Extensions;
 using Elpida.Backend.Services.Extensions.Cpu;
+using Newtonsoft.Json;
 
 namespace Elpida.Backend.Services
 {
@@ -39,8 +40,8 @@ namespace Elpida.Backend.Services
     {
         private readonly ICpuRepository _cpuRepository;
 
-        public CpuService(ICpuRepository cpuRepository)
-            : base(cpuRepository)
+        public CpuService(ICpuRepository cpuRepository, ILockFactory lockFactory)
+            : base(cpuRepository, lockFactory)
         {
             _cpuRepository = cpuRepository;
         }
@@ -77,7 +78,17 @@ namespace Elpida.Backend.Services
 
         protected override Task<CpuModel> ProcessDtoAndCreateModelAsync(CpuDto dto, CancellationToken cancellationToken)
         {
-            return Task.FromResult(dto.ToModel());
+            return Task.FromResult(new CpuModel
+            {
+                Id = dto.Id,
+                Brand = dto.Brand,
+                Caches = JsonConvert.SerializeObject(dto.Caches),
+                Features = JsonConvert.SerializeObject(dto.Features),
+                Frequency = dto.Frequency,
+                Smt = dto.Smt,
+                Vendor = dto.Vendor,
+                AdditionalInfo = JsonConvert.SerializeObject(dto.AdditionalInfo)
+            });
         }
 
         protected override IEnumerable<FilterExpression> GetFilterExpressions()

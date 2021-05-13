@@ -49,7 +49,7 @@ namespace Elpida.Backend.Services
         private readonly IOsRepository _osRepository;
         private readonly IOsService _osService;
         private readonly ITaskRepository _taskRepository;
-        private readonly IBenchmarkStatisticsService _benchmarkStatisticsService;
+        private readonly IStatisticsUpdaterService _statisticsUpdaterService;
         private readonly ITopologyRepository _topologyRepository;
         private readonly ITopologyService _topologyService;
 
@@ -86,7 +86,7 @@ namespace Elpida.Backend.Services
 
         public BenchmarkResultService(
             IBenchmarkResultsRepository benchmarkResultsRepository,
-            IBenchmarkStatisticsService benchmarkStatisticsService,
+            IStatisticsUpdaterService statisticsUpdaterService,
             ICpuRepository cpuRepository,
             IBenchmarkRepository benchmarkRepository,
             ITopologyRepository topologyRepository,
@@ -97,10 +97,10 @@ namespace Elpida.Backend.Services
             ITopologyService topologyService,
             IElpidaService elpidaService,
             IOsService osService,
-            IBenchmarkService benchmarkService)
-            : base(benchmarkResultsRepository)
+            IBenchmarkService benchmarkService,
+            ILockFactory lockFactory)
+            : base(benchmarkResultsRepository, lockFactory)
         {
-            _benchmarkStatisticsService = benchmarkStatisticsService;
             _cpuRepository = cpuRepository;
             _benchmarkRepository = benchmarkRepository;
             _topologyRepository = topologyRepository;
@@ -112,6 +112,7 @@ namespace Elpida.Backend.Services
             _elpidaService = elpidaService;
             _osService = osService;
             _benchmarkService = benchmarkService;
+            _statisticsUpdaterService = statisticsUpdaterService;
         }
 
         protected override IEnumerable<FilterExpression> GetFilterExpressions()
@@ -203,7 +204,7 @@ namespace Elpida.Backend.Services
             BenchmarkResultModel entity,
             CancellationToken cancellationToken)
         {
-            return _benchmarkStatisticsService.UpdateTaskStatisticsAsync(dto, cancellationToken);
+            return _statisticsUpdaterService.EnqueueUpdateAsync(new StatisticsUpdateRequest(dto.System.Topology.Id, dto.Result.Id), cancellationToken);
         }
 
         #endregion

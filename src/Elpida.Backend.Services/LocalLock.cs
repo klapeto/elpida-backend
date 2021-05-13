@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
  *   
- * Copyright (C) 2020 Ioannis Panagiotopoulos
+ * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,27 +17,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using Elpida.Backend.Services.Abstractions.Dtos.Result;
-using FluentValidation;
+using System;
+using System.Threading;
 
-namespace Elpida.Backend.Validators
+namespace Elpida.Backend.Services
 {
-	public class BenchmarkResultValidator : AbstractValidator<BenchmarkResultDto>
-	{
-		public BenchmarkResultValidator()
-		{
-			RuleFor(dto => dto.Name)
-				.NotEmpty()
-				.MaximumLength(100);
+    internal class LocalLock : IDisposable
+    {
+        private readonly object _locker = new object();
 
-			RuleFor(dto => dto.Uuid)
-				.NotEmpty();
+        public void Acquire()
+        {
+            Monitor.Enter(_locker);
+        }
 
-			RuleFor(dto => dto.ScoreSpecification)
-				.NotNull();
-
-			RuleFor(dto => dto.Score)
-				.GreaterThan(0.0);
-		}
-	}
+        public void Dispose()
+        {
+            Monitor.Exit(_locker);
+        }
+    }
 }

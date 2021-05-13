@@ -59,6 +59,9 @@ namespace Elpida.Backend
 					configuration.RegisterValidatorsFromAssemblyContaining<ResultValidator>();
 				});
 
+
+
+			
 			services.AddScoped<IBenchmarkResultsService, BenchmarkResultService>();
 			services.AddScoped<IBenchmarkService, BenchmarkService>();
 			services.AddScoped<ICpuService, CpuService>();
@@ -67,8 +70,14 @@ namespace Elpida.Backend
 			services.AddScoped<IBenchmarkStatisticsService, BenchmarkStatisticsService>();
 			services.AddScoped<ITaskService, TaskService>();
 			services.AddScoped<ITopologyService, TopologyService>();
-			
 
+
+			services.AddSingleton<ILockFactory, LocalLockFactory>();
+			
+			services.AddSingleton<StatisticsUpdaterService>();
+			services.AddSingleton<IStatisticsUpdaterService>(x => x.GetRequiredService<StatisticsUpdaterService>());
+			services.AddHostedService(x => x.GetRequiredService<StatisticsUpdaterService>());
+			
 			services.AddTransient<IBenchmarkResultsRepository, BenchmarkResultsRepository>();
 			services.AddTransient<ICpuRepository, CpuRepository>();
 			services.AddTransient<ITopologyRepository, TopologyRepository>();

@@ -9,23 +9,26 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Content Include="benchmark-data.json">
-            <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-            <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-        </Content>
         <Content Include="appsettings.json">
             <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
         </Content>
-        <Content Include="ResultData\AMD-ThreadRipper-1920X.json">
-            <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-            <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        <None Remove="ResultData\AMD-ThreadRipper-1920X_2.json" />
+        <Content Include="BenchmarkData\benchmark-data.json">
+          <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+          <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
         </Content>
-        <None Remove="ResultData\Intel-i7-1065G7.json" />
-        <Content Include="ResultData\Intel-i7-1065G7.json">
+        <Content Include="ResultData\AMD-ThreadRipper-1920X_2.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="ResultData\Intel-i3-330m.json" />
+        <Content Include="ResultData\Intel-i3-330m.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1620677224.json" />
+        <Content Include="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1620677224.json">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
     </ItemGroup>

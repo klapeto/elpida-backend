@@ -39,9 +39,12 @@ namespace Elpida.Backend.Services
         where TRepository : IRepository<TModel>
         where TDto : FountationDto
     {
-        protected Service(TRepository repository)
+        protected ILockFactory LockFactory { get; }
+        
+        protected Service(TRepository repository, ILockFactory lockFactory)
         {
             Repository = repository;
+            LockFactory = lockFactory;
         }
 
         protected TRepository Repository { get; }
@@ -74,24 +77,33 @@ namespace Elpida.Backend.Services
             return new PagedResult<TDto>(result.Items.Select(ToDto).ToList(), queryRequest.PageRequest);
         }
 
-        public async Task<TDto> GetOrAddAsync(TDto dto, CancellationToken cancellationToken = default)
+        public virtual async Task<TDto> GetOrAddAsync(TDto dto, CancellationToken cancellationToken = default)
         {
-            TModel? entity;
             var bypassExpression = GetCreationBypassCheckExpression(dto);
-            if (bypassExpression != null)
+            if (bypassExpression == null) return await DoAddAsync(dto, cancellationToken);
+            
+            var entity = await Repository.GetSingleAsync(bypassExpression, cancellationToken);
+            if (entity != null) return ToDto(entity);
+
+            using (LockFactory.Acquire(nameof(ToDto)))
             {
                 entity = await Repository.GetSingleAsync(bypassExpression, cancellationToken);
                 if (entity != null) return ToDto(entity);
+                    
+                return await DoAddAsync(dto, cancellationToken);
             }
-            
-            entity = await ProcessDtoAndCreateModelAsync(dto, cancellationToken);
+        }
+
+        private async Task<TDto> DoAddAsync(TDto dto, CancellationToken cancellationToken)
+        {
+            var entity = await ProcessDtoAndCreateModelAsync(dto, cancellationToken);
             entity.Id = 0;
             entity = await Repository.CreateAsync(entity, cancellationToken);
 
             await Repository.SaveChangesAsync(cancellationToken);
-            
+
             dto = ToDto(entity);
-            
+
             await OnEntityCreatedAsync(dto, entity, cancellationToken);
 
             return dto;

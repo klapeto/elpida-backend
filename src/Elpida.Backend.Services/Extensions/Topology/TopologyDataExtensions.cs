@@ -35,7 +35,10 @@ namespace Elpida.Backend.Services.Extensions.Topology
                 TopologyHash = topologyRoot.ToHashString(),
                 TotalDepth = topologyDto.TotalDepth,
                 TotalLogicalCores = topologyDto.TotalLogicalCores,
-                TotalPhysicalCores = topologyDto.TotalLogicalCores,
+                TotalPhysicalCores = topologyDto.TotalPhysicalCores,
+                TotalMachines = topologyDto.TotalMachines,
+                TotalNumaNodes = topologyDto.TotalNumaNodes,
+                TotalPackages = topologyDto.TotalPackages,
                 Root = topologyRoot
             };
         }
@@ -48,7 +51,10 @@ namespace Elpida.Backend.Services.Extensions.Topology
                 CpuId = topologyModel.CpuId,
                 TotalDepth = topologyModel.TotalDepth,
                 TotalLogicalCores = topologyModel.TotalLogicalCores,
-                TotalPhysicalCores = topologyModel.TotalLogicalCores,
+                TotalPhysicalCores = topologyModel.TotalPhysicalCores,
+                TotalMachines = topologyModel.TotalMachines,
+                TotalNumaNodes = topologyModel.TotalNumaNodes,
+                TotalPackages = topologyModel.TotalPackages,
                 Root = JsonConvert.DeserializeObject<CpuNodeDto>(topologyModel.Root)
             };
         }

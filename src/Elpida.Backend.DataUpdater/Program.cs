@@ -18,11 +18,19 @@
  */
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Data;
+using Elpida.Backend.Services.Abstractions.Dtos;
+using Elpida.Backend.Services.Abstractions.Dtos.Result;
+using Elpida.Backend.Services.Abstractions.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace Elpida.Backend.DataUpdater
 {
@@ -30,36 +38,184 @@ namespace Elpida.Backend.DataUpdater
     {
         private static async Task Main(string[] args)
         {
-            var servicesConfiguration = new ServicesConfigurator(args);
-            var serviceProvider = servicesConfiguration.ServiceProvider;
+            using var servicesConfiguration = new ServicesConfigurator(args);
+            using var scope = servicesConfiguration.ServiceProvider.CreateScope();
+            var serviceProvider = scope.ServiceProvider;
 
             var baseLogger = serviceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("Main");
-            
+
+            var targetDirectory = Path.Combine(Path.GetTempPath(), "Elpida");
+
+            baseLogger.LogInformation("Creating temporary directory for split files: {Directory}", targetDirectory);
+            Directory.CreateDirectory(targetDirectory);
             try
             {
-                using (baseLogger.BeginScope("Database update"))
+                await SplitFiles(serviceProvider, "ResultData", targetDirectory);
+                await UpdateDbAsync(serviceProvider, "BenchmarkData", targetDirectory);
+
+                baseLogger.LogInformation("All operations completed successfully");
+            }
+            finally
+            {
+                baseLogger.LogInformation("Deleting temporary directory for split files: {Directory}", targetDirectory);
+                Directory.Delete(targetDirectory, true);
+            }
+        }
+
+        private static async Task SplitFiles(IServiceProvider serviceProvider, string sourceDirectory,
+            string targetDirectory)
+        {
+            using var scope = serviceProvider.CreateScope();
+            serviceProvider = scope.ServiceProvider;
+
+            var logger = serviceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("File splitter");
+
+            var filesProduced = 0;
+            var filesRead = 0;
+            logger.LogInformation("Begin splitting files");
+            var stopWatch = Stopwatch.StartNew();
+            await ParallelExecutor.ParallelExecAsync(Directory.EnumerateFiles(sourceDirectory), async (file, token) =>
+            {
+                var resultData =
+                    JsonConvert.DeserializeObject<List<ResultDto>?>(await File.ReadAllTextAsync(file, token));
+
+                if (resultData == null) return;
+
+                Interlocked.Increment(ref filesRead);
+
+                file = Path.GetFileName(file);
+
+                await ParallelExecutor.ParallelExecAsync(resultData, async (dto, ct) =>
                 {
-                    var context = serviceProvider.GetRequiredService<ElpidaContext>();
+                    var id = Interlocked.Increment(ref filesProduced);
+                    await File.WriteAllTextAsync(Path.Combine(targetDirectory, $"{file}_{id}.json"),
+                        JsonConvert.SerializeObject(new[] {dto}), ct);
+                }, token);
+            });
 
-                    await context.Database.EnsureDeletedAsync();
-                    await context.Database.EnsureCreatedAsync();
+            stopWatch.Stop();
+            logger.LogInformation(
+                "Split complete. {FilesRead} files were split into {FilesSplit} and took {Time} ",
+                filesRead,
+                filesProduced,
+                stopWatch.Elapsed);
+        }
 
-                    var benchmarkSeeder = new BenchmarkDataSeeder(serviceProvider);
+        private static async Task UpdateDbAsync(IServiceProvider serviceProvider, string benchmarkDataDirectory,
+            string seedDataDirectory)
+        {
+            using var scope = serviceProvider.CreateScope();
+            serviceProvider = scope.ServiceProvider;
 
-                    await benchmarkSeeder.SeedAsync(new [] {"benchmark-data.json"});
+            var logger = serviceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("Database updater");
 
-                    var resultSeeder = new ResultDataSeeder(serviceProvider);
+            try
+            {
+                var context = serviceProvider.GetRequiredService<ElpidaContext>();
 
-                    await resultSeeder.SeedAsync(Directory.EnumerateFiles("ResultData"));
-                }
+                await context.Database.EnsureDeletedAsync();
+                await context.Database.EnsureCreatedAsync();
+
+                await SeedBenchmarks(serviceProvider, benchmarkDataDirectory);
+                await SeedResults(serviceProvider, seedDataDirectory);
             }
             catch (Exception ex)
             {
-                baseLogger.LogCritical(ex, "Failed to update:");
-                return;
+                logger.LogCritical(ex, "Failed to update");
             }
+        }
 
-            baseLogger.LogInformation("Success");
+        private static long _resultsAddedCount;
+        private static long _resultsProcessedCount;
+
+        private static async Task ProcessResultAsync(
+            IServiceProvider serviceProvider,
+            ResultDto resultDto,
+            CancellationToken cancellationToken)
+        {
+            var logger = serviceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("Result seeder");
+
+            try
+            {
+                Interlocked.Increment(ref _resultsProcessedCount);
+                var resultService = serviceProvider.GetRequiredService<IBenchmarkResultsService>();
+                logger.LogTrace("Seeding result: '{Name}': '{Uuid}'", resultDto.Result.Name,
+                    resultDto.Result.Uuid);
+                await resultService.GetOrAddAsync(resultDto, cancellationToken);
+                var currentResults = Interlocked.Increment(ref _resultsAddedCount);
+                if (currentResults % 500 == 0)
+                {
+                    logger.LogInformation("Added so far: {Added}", currentResults);
+                }
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, "Failed to add result");
+            }
+        }
+
+        private static async Task ProcessBenchmarkAsync(
+            IServiceProvider serviceProvider,
+            BenchmarkDto benchmarkDto,
+            CancellationToken cancellationToken)
+        {
+            var logger = serviceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("Benchmarks updater");
+
+            try
+            {
+                var benchmarkService = serviceProvider.GetRequiredService<IBenchmarkService>();
+                logger.LogTrace("Updating benchmark data: '{Name}': '{Uuid}'", benchmarkDto.Name, benchmarkDto.Uuid);
+                await benchmarkService.GetOrAddAsync(benchmarkDto, cancellationToken);
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, "Failed to add benchmark");
+            }
+        }
+
+        private static async Task SeedResults(IServiceProvider serviceProvider, string resultsDirectory)
+        {
+            using var scope = serviceProvider.CreateScope();
+            serviceProvider = scope.ServiceProvider;
+
+            var logger = serviceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("Results seeder");
+
+            await TimeProcedure(ParallelExecutor.ProcessFilesInDirectoryAsync<ResultDto>(
+                resultsDirectory,
+                serviceProvider,
+                ProcessResultAsync), logger);
+
+            logger.LogInformation("Results processed: {Processed}. Results successfully added: {Added}",
+                _resultsProcessedCount, _resultsAddedCount);
+        }
+
+        private static async Task SeedBenchmarks(IServiceProvider serviceProvider, string benchmarksDirectory)
+        {
+            using var scope = serviceProvider.CreateScope();
+            serviceProvider = scope.ServiceProvider;
+
+            var logger = serviceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("Benchmarks updater");
+
+            await TimeProcedure(ParallelExecutor.ProcessFilesInDirectoryAsync<BenchmarkDto>(
+                benchmarksDirectory,
+                serviceProvider,
+                ProcessBenchmarkAsync), logger);
+        }
+
+        private static async Task TimeProcedure(Task operation, ILogger logger, [CallerMemberName] string name = "")
+        {
+            using (logger.BeginScope("Operation: '{Name}'", name))
+            {
+                logger.LogInformation("Operation started");
+
+                var stopWatch = Stopwatch.StartNew();
+
+                await operation;
+
+                stopWatch.Stop();
+
+                logger.LogInformation("Operation completed: {Time}", stopWatch.Elapsed);
+            }
         }
     }
 }

@@ -27,6 +27,9 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Topology
         public long CpuId { get; set; }
         public int TotalLogicalCores { get; set; }
         public int TotalPhysicalCores { get; set; }
+        public int TotalNumaNodes { get; set; }
+        public int TotalPackages { get; set; }
+        public int TotalMachines { get; set; }
         public int TotalDepth { get; set; }
         public CpuNodeDto Root { get; set; } = new CpuNodeDto();
     }

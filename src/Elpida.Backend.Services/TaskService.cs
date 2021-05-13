@@ -34,8 +34,8 @@ namespace Elpida.Backend.Services
 {
     public class TaskService : Service<TaskDto, TaskModel, ITaskRepository>, ITaskService
     {
-        public TaskService(ITaskRepository taskRepository)
-            : base(taskRepository)
+        public TaskService(ITaskRepository taskRepository, ILockFactory lockFactory)
+            : base(taskRepository, lockFactory)
         {
         }
 

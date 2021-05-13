@@ -29,12 +29,12 @@ using Elpida.Backend.Data.Abstractions.Models.Topology;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services.Abstractions;
 using Elpida.Backend.Services.Abstractions.Dtos;
-using Elpida.Backend.Services.Abstractions.Dtos.Result;
 using Elpida.Backend.Services.Abstractions.Interfaces;
 using Elpida.Backend.Services.Extensions.Benchmark;
 using Elpida.Backend.Services.Extensions.Cpu;
 using Elpida.Backend.Services.Extensions.Topology;
 using Elpida.Backend.Services.Utilities;
+using Newtonsoft.Json;
 
 namespace Elpida.Backend.Services
 {
@@ -42,6 +42,7 @@ namespace Elpida.Backend.Services
         Service<BenchmarkStatisticsDto, BenchmarkStatisticsModel, IBenchmarkStatisticsRepository>,
         IBenchmarkStatisticsService
     {
+        private readonly IBenchmarkResultsRepository _benchmarkResultsRepository;
         private readonly IBenchmarkService _benchmarkService;
         private readonly ICpuService _cpuService;
         private readonly ITopologyService _topologyService;
@@ -49,11 +50,14 @@ namespace Elpida.Backend.Services
         public BenchmarkStatisticsService(IBenchmarkService benchmarkService,
             ITopologyService topologyService,
             IBenchmarkStatisticsRepository benchmarkStatisticsRepository,
-            ICpuService cpuService)
-            : base(benchmarkStatisticsRepository)
+            ICpuService cpuService, 
+            IBenchmarkResultsRepository benchmarkResultsRepository, 
+            ILockFactory lockFactory)
+            : base(benchmarkStatisticsRepository, lockFactory)
         {
             _topologyService = topologyService;
             _cpuService = cpuService;
+            _benchmarkResultsRepository = benchmarkResultsRepository;
             _benchmarkService = benchmarkService;
         }
 
@@ -64,49 +68,39 @@ namespace Elpida.Backend.Services
             CreateFilter("benchmarkId", model => model.BenchmarkId)
         };
 
-        public async Task UpdateTaskStatisticsAsync(ResultDto resultDto,
+        public async Task UpdateTaskStatisticsAsync(
+            long benchmarkId,
+            long topologyId,
             CancellationToken cancellationToken = default)
         {
-            var topology = await _topologyService.GetSingleAsync(resultDto.System.Topology.Id, cancellationToken);
-            var benchmark = await _benchmarkService.GetSingleAsync(resultDto.Result.Uuid, cancellationToken);
+            var stats = await GetStatisticsModelAsync(benchmarkId, topologyId, cancellationToken);
 
-            var stats = await Repository.GetSingleAsync(
-                t => t.BenchmarkId == benchmark.Id
-                     && t.TopologyId == topology.Id, cancellationToken);
-            if (stats == null)
-            {
-                stats = new BenchmarkStatisticsModel
-                {
-                    CpuId = topology.CpuId,
-                    Max = resultDto.Result.Score,
-                    Mean = resultDto.Result.Score,
-                    Min = resultDto.Result.Score,
-                    BenchmarkId = benchmark.Id,
-                    TopologyId = topology.Id,
-                    SampleSize = 1,
-                    TotalDeviation = 0,
-                    TotalValue = resultDto.Result.Score,
-                    Tau = StatisticsHelpers.CalculateTau(1),
-                    StandardDeviation = 0,
-                    MarginOfError = 0,
-                };
-                await Repository.CreateAsync(stats, cancellationToken);
-            }
-            else
-            {
-                stats.Max = Math.Max(stats.Max, resultDto.Result.Score);
-                stats.Min = Math.Min(stats.Min, resultDto.Result.Score);
-                stats.TotalValue += resultDto.Result.Score;
-                stats.SampleSize++;
-                stats.Mean = stats.TotalValue / stats.SampleSize;
-                stats.TotalDeviation += Math.Pow(resultDto.Result.Score - stats.Mean, 2.0);
-                stats.StandardDeviation = Math.Sqrt(stats.TotalDeviation / stats.SampleSize);
-                stats.MarginOfError = stats.StandardDeviation / Math.Sqrt(stats.SampleSize);
-                stats.Tau = StatisticsHelpers.CalculateTau(stats.SampleSize);
+            var basicStatistics =
+                await _benchmarkResultsRepository.GetStatisticsAsync(benchmarkId, topologyId, cancellationToken);
+            
+            stats.Max = basicStatistics.Max;
+            stats.Min = basicStatistics.Min;
+            stats.SampleSize = basicStatistics.Count;
+            stats.Mean = basicStatistics.Mean;
+            stats.StandardDeviation = basicStatistics.StandardDeviation;
+            stats.MarginOfError = basicStatistics.MarginOfError;
+            stats.Tau = StatisticsHelpers.CalculateTau(basicStatistics.Count);
 
+            var actualClasses = GetDefaultClasses(stats.SampleSize, stats.Min, stats.Max)
+                .ToArray();
+            
+            foreach (var cls in actualClasses)
+            {
+                cls.Count = await _benchmarkResultsRepository.GetCountWithScoreBetween(
+                    stats.BenchmarkId,
+                    stats.TopologyId,
+                    cls.Low,
+                    cls.High,
+                    cancellationToken);
             }
 
-            // TODO: concurrency
+            stats.FrequencyClasses = JsonConvert.SerializeObject(actualClasses);
+            
             await Repository.SaveChangesAsync(cancellationToken);
         }
 
@@ -126,8 +120,59 @@ namespace Elpida.Backend.Services
                 TopologyHash = m.Topology.TopologyHash,
                 BenchmarkScoreUnit = m.Benchmark.ScoreUnit,
                 Mean = m.Mean,
-                Comparison = m.Benchmark.ScoreComparison,
+                Comparison = m.Benchmark.ScoreComparison
             }, cancellationToken);
+        }
+
+        private static IEnumerable<FrequencyClassDto> GetDefaultClasses(long count, double min, double max)
+        {
+            var classes = (int) Math.Round(1 + 3.3 * Math.Log10(count));
+            var range = Math.Abs(max - min);
+            var classWidth = range / classes;
+
+            // widen the range
+            min -= classWidth * 2;
+            max += classWidth * 2;
+            classes += 2;
+
+            range = Math.Abs(max - min);
+            classWidth = range / classes;
+
+            var cls = Enumerable
+                .Range(0, classes)
+                .Select(i => new FrequencyClassDto
+                {
+                    Low = min + i * classWidth,
+                    High = min + i * classWidth + classWidth
+                }).ToArray();
+
+            // cls.First().Low = min ;
+            // cls.Last().High = max;
+
+            return cls;
+        }
+
+
+        private async Task<BenchmarkStatisticsModel> GetStatisticsModelAsync(long benchmarkId,
+            long topologyId, CancellationToken cancellationToken)
+        {
+            var stats = await Repository.GetSingleAsync(
+                t => t.BenchmarkId == benchmarkId
+                     && t.TopologyId == topologyId, cancellationToken);
+            if (stats != null) return stats;
+
+            var topology = await _topologyService.GetSingleAsync(topologyId, cancellationToken);
+            stats = new BenchmarkStatisticsModel
+            {
+                Id = 0,
+                CpuId = topology.CpuId,
+                TopologyId = topologyId,
+                BenchmarkId = benchmarkId
+            };
+
+            await Repository.CreateAsync(stats, cancellationToken);
+
+            return stats;
         }
 
         protected override Task<BenchmarkStatisticsModel> ProcessDtoAndCreateModelAsync(BenchmarkStatisticsDto dto,
@@ -145,7 +190,8 @@ namespace Elpida.Backend.Services
                 Tau = dto.Tau,
                 SampleSize = dto.SampleSize,
                 StandardDeviation = dto.StandardDeviation,
-                MarginOfError = dto.MarginOfError
+                MarginOfError = dto.MarginOfError,
+                FrequencyClasses = JsonConvert.SerializeObject(dto.Classes)
             });
         }
 
@@ -171,7 +217,8 @@ namespace Elpida.Backend.Services
                 Tau = model.Tau,
                 SampleSize = model.SampleSize,
                 StandardDeviation = model.StandardDeviation,
-                MarginOfError = model.MarginOfError
+                MarginOfError = model.MarginOfError,
+                Classes = JsonConvert.DeserializeObject<List<FrequencyClassDto>>(model.FrequencyClasses)
             };
         }
     }

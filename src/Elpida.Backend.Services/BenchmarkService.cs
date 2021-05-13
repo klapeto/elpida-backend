@@ -40,8 +40,8 @@ namespace Elpida.Backend.Services
         private readonly ITaskRepository _taskRepository;
         private readonly ITaskService _taskService;
         
-        public BenchmarkService(IBenchmarkRepository benchmarkRepository, ITaskRepository taskRepository, ITaskService taskService)
-            : base(benchmarkRepository)
+        public BenchmarkService(IBenchmarkRepository benchmarkRepository, ITaskRepository taskRepository, ITaskService taskService, ILockFactory lockFactory)
+            : base(benchmarkRepository, lockFactory)
         {
             _taskRepository = taskRepository;
             _taskService = taskService;

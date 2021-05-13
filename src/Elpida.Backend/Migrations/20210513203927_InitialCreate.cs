@@ -113,6 +113,9 @@ namespace Elpida.Backend.Migrations
                     TopologyHash = table.Column<string>(type: "TEXT", nullable: false),
                     TotalLogicalCores = table.Column<int>(type: "INTEGER", nullable: false),
                     TotalPhysicalCores = table.Column<int>(type: "INTEGER", nullable: false),
+                    TotalNumaNodes = table.Column<int>(type: "INTEGER", nullable: false),
+                    TotalPackages = table.Column<int>(type: "INTEGER", nullable: false),
+                    TotalMachines = table.Column<int>(type: "INTEGER", nullable: false),
                     TotalDepth = table.Column<int>(type: "INTEGER", nullable: false),
                     Root = table.Column<string>(type: "TEXT", nullable: false)
                 },
@@ -213,15 +216,15 @@ namespace Elpida.Backend.Migrations
                     BenchmarkId = table.Column<long>(type: "INTEGER", nullable: false),
                     CpuId = table.Column<long>(type: "INTEGER", nullable: false),
                     TopologyId = table.Column<long>(type: "INTEGER", nullable: false),
-                    TotalValue = table.Column<double>(type: "REAL", nullable: false),
-                    TotalDeviation = table.Column<double>(type: "REAL", nullable: false),
                     SampleSize = table.Column<long>(type: "INTEGER", nullable: false),
                     Max = table.Column<double>(type: "REAL", nullable: false),
                     Min = table.Column<double>(type: "REAL", nullable: false),
                     Mean = table.Column<double>(type: "REAL", nullable: false),
                     StandardDeviation = table.Column<double>(type: "REAL", nullable: false),
                     Tau = table.Column<double>(type: "REAL", nullable: false),
-                    MarginOfError = table.Column<double>(type: "REAL", nullable: false)
+                    MarginOfError = table.Column<double>(type: "REAL", nullable: false),
+                    FrequencyClasses = table.Column<string>(type: "TEXT", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true)
                 },
                 constraints: table =>
                 {

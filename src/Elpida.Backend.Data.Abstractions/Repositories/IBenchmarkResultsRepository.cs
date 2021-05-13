@@ -17,6 +17,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System.Threading;
+using System.Threading.Tasks;
 using Elpida.Backend.Data.Abstractions.Interfaces;
 using Elpida.Backend.Data.Abstractions.Models.Result;
 
@@ -24,5 +26,17 @@ namespace Elpida.Backend.Data.Abstractions.Repositories
 {
     public interface IBenchmarkResultsRepository : IRepository<BenchmarkResultModel>
     {
+        Task<long> GetCountWithScoreBetween(
+            long benchmarkId, 
+            long topologyId, 
+            double min, 
+            double max,
+            CancellationToken cancellationToken = default);
+        
+        Task<BasicStatisticsModel> GetStatisticsAsync(
+            long benchmarkId, 
+            long topologyId,
+            CancellationToken cancellationToken = default);
+        
     }
 }

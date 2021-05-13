@@ -28,6 +28,9 @@ namespace Elpida.Backend.Data.Abstractions.Models.Topology
         public string TopologyHash { get; set; } = default!;
         public int TotalLogicalCores { get; set; }
         public int TotalPhysicalCores { get; set; }
+        public int TotalNumaNodes { get; set; }
+        public int TotalPackages { get; set; }
+        public int TotalMachines { get; set; }
         public int TotalDepth { get; set; }
         public string Root { get; set; } = default!;
     }

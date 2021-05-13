@@ -28,14 +28,16 @@ using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services.Abstractions;
 using Elpida.Backend.Services.Abstractions.Dtos.Topology;
 using Elpida.Backend.Services.Abstractions.Interfaces;
+using Elpida.Backend.Services.Extensions;
 using Elpida.Backend.Services.Extensions.Topology;
+using Newtonsoft.Json;
 
 namespace Elpida.Backend.Services
 {
     public class TopologyService : Service<TopologyDto, TopologyModel, ITopologyRepository>, ITopologyService
     {
-        public TopologyService(ITopologyRepository topologyRepository)
-            : base(topologyRepository)
+        public TopologyService(ITopologyRepository topologyRepository, ILockFactory lockFactory)
+            : base(topologyRepository, lockFactory)
         {
         }
 
@@ -47,7 +49,20 @@ namespace Elpida.Backend.Services
 
         protected override Task<TopologyModel> ProcessDtoAndCreateModelAsync(TopologyDto dto, CancellationToken cancellationToken)
         {
-            return Task.FromResult(dto.ToModel());
+            var serializedRoot = JsonConvert.SerializeObject(dto.Root);
+            return Task.FromResult( new TopologyModel
+            {
+                Id = dto.Id,
+                CpuId = dto.CpuId,
+                TopologyHash = GetTopologyHash(dto, serializedRoot),
+                TotalDepth = dto.TotalDepth,
+                TotalLogicalCores = dto.TotalLogicalCores,
+                TotalPhysicalCores = dto.TotalPhysicalCores,
+                TotalMachines = dto.TotalMachines,
+                TotalNumaNodes = dto.TotalNumaNodes,
+                TotalPackages = dto.TotalPackages,
+                Root = serializedRoot
+            });
         }
 
         protected override IEnumerable<FilterExpression> GetFilterExpressions()
@@ -59,10 +74,16 @@ namespace Elpida.Backend.Services
         {
             return model.ToDto();
         }
-
+        
+        private static string GetTopologyHash(TopologyDto dto, string? serializedRoot = null)
+        {
+            serializedRoot ??= JsonConvert.SerializeObject(dto.Root);
+            
+            return serializedRoot.ToHashString();
+        }
         protected override Expression<Func<TopologyModel, bool>> GetCreationBypassCheckExpression(TopologyDto dto)
         {
-            var topologyHash = dto.ToModel().TopologyHash;
+            var topologyHash = GetTopologyHash(dto);
             return t =>
                 t.CpuId == dto.CpuId
                 && t.TopologyHash == topologyHash;

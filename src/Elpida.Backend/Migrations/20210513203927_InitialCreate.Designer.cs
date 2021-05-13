@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Elpida.Backend.Migrations
 {
     [DbContext(typeof(ElpidaContext))]
-    [Migration("20210503100644_InitialCreate")]
+    [Migration("20210513203927_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -296,6 +296,10 @@ namespace Elpida.Backend.Migrations
                     b.Property<long>("CpuId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("FrequencyClasses")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<double>("MarginOfError")
                         .HasColumnType("REAL");
 
@@ -308,6 +312,11 @@ namespace Elpida.Backend.Migrations
                     b.Property<double>("Min")
                         .HasColumnType("REAL");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("BLOB");
+
                     b.Property<long>("SampleSize")
                         .HasColumnType("INTEGER");
 
@@ -319,12 +328,6 @@ namespace Elpida.Backend.Migrations
 
                     b.Property<long>("TopologyId")
                         .HasColumnType("INTEGER");
-
-                    b.Property<double>("TotalDeviation")
-                        .HasColumnType("REAL");
-
-                    b.Property<double>("TotalValue")
-                        .HasColumnType("REAL");
 
                     b.HasKey("Id");
 
@@ -422,6 +425,15 @@ namespace Elpida.Backend.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("TotalLogicalCores")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TotalMachines")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TotalNumaNodes")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TotalPackages")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("TotalPhysicalCores")

@@ -77,7 +77,8 @@ namespace Elpida.Backend.Data
             modelBuilder.Entity<CpuModel>()
                 .HasMany(m => m.Topologies)
                 .WithOne(m => m.Cpu);
-
+            
+            
             modelBuilder.Entity<BenchmarkStatisticsModel>()
                 .HasOne(m => m.Cpu);
 
@@ -86,6 +87,10 @@ namespace Elpida.Backend.Data
             
             modelBuilder.Entity<BenchmarkStatisticsModel>()
                 .HasOne(m => m.Benchmark);
+            
+            modelBuilder.Entity<BenchmarkStatisticsModel>()
+                .Property(m=> m.RowVersion)
+                .IsRowVersion();
         }
     }
 }

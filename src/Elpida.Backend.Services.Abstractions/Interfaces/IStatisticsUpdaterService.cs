@@ -17,14 +17,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System;
-using System.Collections.Generic;
-using Elpida.Backend.Services.Abstractions.Dtos;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace Elpida.Backend.DataUpdater
+namespace Elpida.Backend.Services.Abstractions.Interfaces
 {
-    internal class BenchmarkData
+    public interface IStatisticsUpdaterService
     {
-        public IReadOnlyList<BenchmarkDto> Benchmarks { get; set; } = Array.Empty<BenchmarkDto>();
+        Task EnqueueUpdateAsync(StatisticsUpdateRequest request, CancellationToken cancellationToken = default);
     }
 }

@@ -26,6 +26,7 @@ using System.Threading.Tasks;
 using Elpida.Backend.Data.Abstractions;
 using Elpida.Backend.Data.Abstractions.Interfaces;
 using Elpida.Backend.Data.Abstractions.Models;
+using Elpida.Backend.Services.Abstractions.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Elpida.Backend.Data
@@ -76,10 +77,10 @@ namespace Elpida.Backend.Data
                 .FirstOrDefaultAsync(filters, cancellationToken);
         }
 
-        public async Task<TEntity> CreateAsync(TEntity entity, CancellationToken cancellationToken = default)
+        public Task<TEntity> CreateAsync(TEntity entity, CancellationToken cancellationToken = default)
         {
-            var addedEntity = await Collection.AddAsync(entity, cancellationToken);
-            return addedEntity.Entity;
+            var addedEntity = Collection.Add(entity);
+            return Task.FromResult(addedEntity.Entity);
         }
 
         public Task<PagedQueryResult<TEntity>> GetMultiplePagedAsync<TOrderKey>(
@@ -91,7 +92,11 @@ namespace Elpida.Backend.Data
             IEnumerable<Expression<Func<TEntity, bool>>>? filters,
             CancellationToken cancellationToken = default)
         {
-            return GetPagedProjectionAsync(from, count, m => m, descending, calculateTotalCount, orderBy, filters,
+            return GetPagedProjectionAsync(from, count, m => m, 
+                descending, 
+                calculateTotalCount, 
+                orderBy, 
+                filters,
                 cancellationToken);
         }
 
@@ -146,7 +151,14 @@ namespace Elpida.Backend.Data
 
             if (filters != null) result = filters.Aggregate(result, (current, filter) => current.Where(filter));
 
-            if (orderBy != null) result = descending ? result.OrderByDescending(orderBy) : result.OrderBy(orderBy);
+            if (orderBy != null)
+            {
+                result = descending ? result.OrderByDescending(orderBy) : result.OrderBy(orderBy);
+            }
+            else
+            {
+                result = result.OrderBy(m => m.Id);
+            }
 
             var totalCount = calculateTotalCount ? await result.CountAsync(cancellationToken) : 0;
 
@@ -193,9 +205,16 @@ namespace Elpida.Backend.Data
             return result.ToListAsync(cancellationToken);
         }
 
-        public Task SaveChangesAsync(CancellationToken cancellationToken = default)
+        public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            return Context.SaveChangesAsync(cancellationToken);
+            try
+            {
+                await Context.SaveChangesAsync(cancellationToken);
+            }
+            catch (DbUpdateConcurrencyException e)
+            {
+                throw new UpdateConcurrencyException("Failed to update because another service updated this on the mean time", e);
+            }
         }
 
         #endregion

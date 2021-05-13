@@ -31,8 +31,8 @@ namespace Elpida.Backend.Services
 {
     public class ElpidaService : Service<ElpidaDto, ElpidaModel, IElpidaRepository>, IElpidaService
     {
-        public ElpidaService(IElpidaRepository elpidaRepository)
-            : base(elpidaRepository)
+        public ElpidaService(IElpidaRepository elpidaRepository, ILockFactory lockFactory)
+            : base(elpidaRepository, lockFactory)
         {
         }
 

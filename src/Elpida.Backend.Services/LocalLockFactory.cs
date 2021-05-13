@@ -17,20 +17,32 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System.Threading;
-using System.Threading.Tasks;
-using Elpida.Backend.Services.Abstractions.Dtos;
+using System;
+using System.Collections.Generic;
+using Elpida.Backend.Services.Abstractions.Interfaces;
 
-namespace Elpida.Backend.Services.Abstractions.Interfaces
+namespace Elpida.Backend.Services
 {
-    public interface IBenchmarkStatisticsService : IService<BenchmarkStatisticsDto>
+    public class LocalLockFactory : ILockFactory
     {
-        Task UpdateTaskStatisticsAsync(
-            long benchmarkId,
-            long topologyId,
-            CancellationToken cancellationToken = default);
+        private readonly object _locker = new object();
+        private readonly Dictionary<string, LocalLock> _locks = new Dictionary<string, LocalLock>();
 
-        Task<PagedResult<BenchmarkStatisticsPreviewDto>> GetPagedPreviewsAsync(QueryRequest queryRequest,
-            CancellationToken cancellationToken = default);
+        public IDisposable Acquire(string name)
+        {
+            LocalLock returnLock;
+            lock (_locker)
+            {
+                if (!_locks.TryGetValue(name, out returnLock))
+                {
+                    returnLock = new LocalLock();
+                    _locks.Add(name, returnLock);
+                }
+            }
+
+            returnLock.Acquire();
+
+            return returnLock;
+        }
     }
 }

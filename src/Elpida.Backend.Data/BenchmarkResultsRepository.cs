@@ -17,9 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Elpida.Backend.Data.Abstractions;
 using Elpida.Backend.Data.Abstractions.Models.Result;
-using Elpida.Backend.Data.Abstractions.Models.Task;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,6 +35,47 @@ namespace Elpida.Backend.Data
         public BenchmarkResultsRepository(ElpidaContext elpidaContext)
             : base(elpidaContext, elpidaContext.BenchmarkResults)
         {
+        }
+
+        public Task<long> GetCountWithScoreBetween(long benchmarkId, long topologyId, double min, double max,
+            CancellationToken cancellationToken = default)
+        {
+            return Collection
+                .Where(s => s.BenchmarkId == benchmarkId
+                            && s.TopologyId == topologyId
+                            && s.Score >= min
+                            && s.Score < max)
+                .LongCountAsync(cancellationToken);
+        }
+
+        public async Task<BasicStatisticsModel> GetStatisticsAsync(long benchmarkId, long topologyId, CancellationToken cancellationToken = default)
+        {
+            var baseQuery = Collection
+                .AsNoTracking()
+                .Where(m => m.TopologyId == topologyId && m.BenchmarkId == benchmarkId)
+                .GroupBy(m => m.BenchmarkId);
+            
+            var result = await baseQuery
+                .Select(m => new BasicStatisticsModel
+                {
+                    Mean = m.Average(x => x.Score),
+                    Max = m.Max(x => x.Score),
+                    Min = m.Min(x => x.Score),
+                    Count = m.LongCount()
+                })
+                .FirstAsync(cancellationToken);
+
+            if (result.Count == 0) return result;
+
+            var variance = await baseQuery
+                .Select(m => m.Sum(x => (x.Score - result.Mean) * (x.Score - result.Mean)))
+                .FirstAsync(cancellationToken)
+                           / result.Count;
+
+            result.StandardDeviation = Math.Sqrt(variance);
+            result.MarginOfError = result.StandardDeviation / Math.Sqrt(result.Count);
+
+            return result;
         }
 
         protected override IQueryable<BenchmarkResultModel> ProcessGetMultiplePaged(

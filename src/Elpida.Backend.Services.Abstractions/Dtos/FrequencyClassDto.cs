@@ -17,26 +17,37 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System.Collections.Generic;
-using Elpida.Backend.Services.Abstractions.Dtos.Cpu;
-using Elpida.Backend.Services.Abstractions.Dtos.Topology;
+using System;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos
 {
-    public class BenchmarkStatisticsDto : FountationDto
-    {
-        public CpuDto Cpu { get; set; } = default!;
-        public BenchmarkDto Benchmark { get; set; } = default!;
-        public TopologyDto Topology { get; set; } = default!;
-        
-        public long SampleSize { get; set; }
-        public double Max { get; set; }
-        public double Min { get; set; }
-        public double Mean { get; set; }
-        public double StandardDeviation { get; set; }
-        public double Tau { get; set; }
-        public double MarginOfError { get; set; }
 
-        public List<FrequencyClassDto> Classes { get; set; } = new List<FrequencyClassDto>();
+    public class FrequencyClassDto
+    {
+        public double Low { get; set; }
+        public double High { get; set; }
+        public long Count { get; set; }
+
+        protected bool Equals(FrequencyClassDto other)
+        {
+            return Low.Equals(other.Low) && High.Equals(other.High);
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj.GetType() == GetType() && Equals((FrequencyClassDto) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Low, High);
+        }
+        
+        public override string ToString()
+        {
+            return $"{{ {Low:r} - {High:r} }}";
+        }
     }
 }

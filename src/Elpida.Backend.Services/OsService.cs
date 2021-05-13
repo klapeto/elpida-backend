@@ -41,8 +41,8 @@ namespace Elpida.Backend.Services
             CreateFilter("osVersion", model => model.Version)
         };
 
-        public OsService(IOsRepository osRepository)
-            : base(osRepository)
+        public OsService(IOsRepository osRepository, ILockFactory lockFactory)
+            : base(osRepository, lockFactory)
         {
         }
 
