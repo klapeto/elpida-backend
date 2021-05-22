@@ -25,6 +25,8 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Topology
     public class TopologyDto : FountationDto
     {
         public long CpuId { get; set; }
+        public string CpuVendor { get; set; }
+        public string CpuBrand { get; set; }
         public int TotalLogicalCores { get; set; }
         public int TotalPhysicalCores { get; set; }
         public int TotalNumaNodes { get; set; }

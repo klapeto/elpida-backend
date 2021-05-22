@@ -18,14 +18,15 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Common.Lock;
 using Elpida.Backend.Data.Abstractions.Models.Elpida;
 using Elpida.Backend.Data.Abstractions.Repositories;
+using Elpida.Backend.Services.Abstractions;
 using Elpida.Backend.Services.Abstractions.Dtos.Elpida;
-using Elpida.Backend.Services.Abstractions.Dtos.Result;
 using Elpida.Backend.Services.Abstractions.Interfaces;
 using Elpida.Backend.Services.Extensions.Elpida;
 
@@ -36,6 +37,22 @@ namespace Elpida.Backend.Services
         public ElpidaService(IElpidaRepository elpidaRepository, ILockFactory lockFactory)
             : base(elpidaRepository, lockFactory)
         {
+        }
+        
+        private static IEnumerable<FilterExpression> ElpidaExpressions { get; } = new List<FilterExpression>
+        {
+            CreateFilter("compilerName", model => model.CompilerName),
+            CreateFilter("compilerVersion", model => model.CompilerVersion),
+            CreateFilter("buildVersion", model => model.VersionBuild),
+            CreateFilter("revisionVersion", model => model.VersionRevision),
+            CreateFilter("minorVersion", model => model.VersionMinor),
+            CreateFilter("majorVersion", model => model.VersionMajor),
+        };
+
+
+        protected override IEnumerable<FilterExpression> GetFilterExpressions()
+        {
+            return ElpidaExpressions;
         }
 
         protected override ElpidaDto ToDto(ElpidaModel model)

@@ -17,8 +17,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System.Linq;
 using Elpida.Backend.Data.Abstractions.Models.Topology;
 using Elpida.Backend.Data.Abstractions.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Elpida.Backend.Data
 {
@@ -27,6 +29,17 @@ namespace Elpida.Backend.Data
         public TopologyRepository(ElpidaContext context)
             : base(context, context.Topologies)
         {
+        }
+
+        protected override IQueryable<TopologyModel> ProcessGetSingle(IQueryable<TopologyModel> queryable)
+        {
+            return queryable
+                .Include(m => m.Cpu);
+        }
+
+        protected override IQueryable<TopologyModel> ProcessGetMultiplePaged(IQueryable<TopologyModel> queryable)
+        {
+            return ProcessGetSingle(queryable);
         }
     }
 }

@@ -31,6 +31,8 @@ namespace Elpida.Backend.Services.Extensions.Topology
             {
                 Id = topologyModel.Id,
                 CpuId = topologyModel.CpuId,
+                CpuVendor = topologyModel.Cpu.Vendor,
+                CpuBrand = topologyModel.Cpu.Brand,
                 TotalDepth = topologyModel.TotalDepth,
                 TotalLogicalCores = topologyModel.TotalLogicalCores,
                 TotalPhysicalCores = topologyModel.TotalPhysicalCores,
