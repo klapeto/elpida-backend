@@ -22,13 +22,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Elpida.Backend.Data.Abstractions.Models;
+using Elpida.Backend.Common.Lock;
+using Elpida.Backend.Data.Abstractions.Models.Benchmark;
 using Elpida.Backend.Data.Abstractions.Models.Cpu;
 using Elpida.Backend.Data.Abstractions.Models.Statistics;
 using Elpida.Backend.Data.Abstractions.Models.Topology;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services.Abstractions;
 using Elpida.Backend.Services.Abstractions.Dtos;
+using Elpida.Backend.Services.Abstractions.Dtos.Statistics;
 using Elpida.Backend.Services.Abstractions.Interfaces;
 using Elpida.Backend.Services.Extensions.Benchmark;
 using Elpida.Backend.Services.Extensions.Cpu;
@@ -50,8 +52,8 @@ namespace Elpida.Backend.Services
         public BenchmarkStatisticsService(IBenchmarkService benchmarkService,
             ITopologyService topologyService,
             IBenchmarkStatisticsRepository benchmarkStatisticsRepository,
-            ICpuService cpuService, 
-            IBenchmarkResultsRepository benchmarkResultsRepository, 
+            ICpuService cpuService,
+            IBenchmarkResultsRepository benchmarkResultsRepository,
             ILockFactory lockFactory)
             : base(benchmarkStatisticsRepository, lockFactory)
         {
@@ -77,7 +79,7 @@ namespace Elpida.Backend.Services
 
             var basicStatistics =
                 await _benchmarkResultsRepository.GetStatisticsAsync(benchmarkId, topologyId, cancellationToken);
-            
+
             stats.Max = basicStatistics.Max;
             stats.Min = basicStatistics.Min;
             stats.SampleSize = basicStatistics.Count;
@@ -88,7 +90,7 @@ namespace Elpida.Backend.Services
 
             var actualClasses = GetDefaultClasses(stats.SampleSize, stats.Min, stats.Max)
                 .ToArray();
-            
+
             foreach (var cls in actualClasses)
             {
                 cls.Count = await _benchmarkResultsRepository.GetCountWithScoreBetween(
@@ -100,7 +102,7 @@ namespace Elpida.Backend.Services
             }
 
             stats.FrequencyClasses = JsonConvert.SerializeObject(actualClasses);
-            
+
             await Repository.SaveChangesAsync(cancellationToken);
         }
 
@@ -205,7 +207,7 @@ namespace Elpida.Backend.Services
 
         protected override BenchmarkStatisticsDto ToDto(BenchmarkStatisticsModel model)
         {
-            return new BenchmarkStatisticsDto
+            return new()
             {
                 Id = model.Id,
                 Cpu = model.Cpu.ToDto(),

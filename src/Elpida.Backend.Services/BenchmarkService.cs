@@ -19,16 +19,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Elpida.Backend.Data.Abstractions;
-using Elpida.Backend.Data.Abstractions.Models;
+using Elpida.Backend.Common.Lock;
+using Elpida.Backend.Data.Abstractions.Models.Benchmark;
 using Elpida.Backend.Data.Abstractions.Models.Task;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services.Abstractions;
 using Elpida.Backend.Services.Abstractions.Dtos;
+using Elpida.Backend.Services.Abstractions.Dtos.Benchmark;
 using Elpida.Backend.Services.Abstractions.Exceptions;
 using Elpida.Backend.Services.Abstractions.Interfaces;
 using Elpida.Backend.Services.Extensions.Benchmark;
@@ -39,8 +39,9 @@ namespace Elpida.Backend.Services
     {
         private readonly ITaskRepository _taskRepository;
         private readonly ITaskService _taskService;
-        
-        public BenchmarkService(IBenchmarkRepository benchmarkRepository, ITaskRepository taskRepository, ITaskService taskService, ILockFactory lockFactory)
+
+        public BenchmarkService(IBenchmarkRepository benchmarkRepository, ITaskRepository taskRepository,
+            ITaskService taskService, ILockFactory lockFactory)
             : base(benchmarkRepository, lockFactory)
         {
             _taskRepository = taskRepository;
@@ -61,7 +62,18 @@ namespace Elpida.Backend.Services
             return model.ToDto();
         }
 
-        protected override async Task<BenchmarkModel> ProcessDtoAndCreateModelAsync(BenchmarkDto dto, CancellationToken cancellationToken)
+        public Task<PagedResult<BenchmarkPreviewDto>> GetPagedPreviewsAsync(QueryRequest queryRequest, CancellationToken cancellationToken = default)
+        {
+            return GetPagedProjectionsAsync(queryRequest, m => new BenchmarkPreviewDto
+            {
+                Id = m.Id,
+                Name = m.Name,
+                Uuid = m.Uuid
+            }, cancellationToken);
+        }
+
+        protected override async Task<BenchmarkModel> ProcessDtoAndCreateModelAsync(BenchmarkDto dto,
+            CancellationToken cancellationToken)
         {
             var returnModel = new BenchmarkModel
             {
@@ -70,12 +82,23 @@ namespace Elpida.Backend.Services
                 Name = dto.Name,
                 ScoreUnit = dto.ScoreSpecification.Unit,
                 ScoreComparison = dto.ScoreSpecification.Comparison,
-                Tasks = new List<TaskModel>()
+                Tasks = new List<BenchmarkTaskModel>()
             };
-            
-            foreach (var taskDto in dto.TaskSpecifications)
+
+            foreach (var taskDto in dto.Tasks)
             {
-                returnModel.Tasks.Add(await GetOrAddForeignDto(_taskRepository, _taskService, taskDto, cancellationToken));
+                var task = await _taskRepository.GetSingleAsync(t => t.Uuid == taskDto.Uuid, cancellationToken);
+                if (task == null) throw new NotFoundException("Task was not found", taskDto.Uuid);
+
+                var taskModel = new BenchmarkTaskModel
+                {
+                    TaskId = task.Id,
+                    CanBeDisabled = taskDto.CanBeDisabled,
+                    IterationsToRun = taskDto.IterationsToRun,
+                    CanBeMultiThreaded = taskDto.CanBeMultiThreaded,
+                    IsCountedOnResults = taskDto.IsCountedOnResults,
+                };
+                returnModel.Tasks.Add(taskModel);
             }
 
             return returnModel;
@@ -90,7 +113,7 @@ namespace Elpida.Backend.Services
         {
             return model.ToDto();
         }
-        
+
         protected override Expression<Func<BenchmarkModel, bool>> GetCreationBypassCheckExpression(BenchmarkDto dto)
         {
             return model => model.Uuid == dto.Uuid;

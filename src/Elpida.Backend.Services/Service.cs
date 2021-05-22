@@ -23,7 +23,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Elpida.Backend.Data.Abstractions;
+using Elpida.Backend.Common.Lock;
 using Elpida.Backend.Data.Abstractions.Interfaces;
 using Elpida.Backend.Data.Abstractions.Models;
 using Elpida.Backend.Services.Abstractions;
@@ -34,18 +34,18 @@ using Elpida.Backend.Services.Utilities;
 
 namespace Elpida.Backend.Services
 {
-    public abstract class Service<TDto, TModel, TRepository> : IService<TDto> 
-        where TModel : Entity 
+    public abstract class Service<TDto, TModel, TRepository> : IService<TDto>
+        where TModel : Entity
         where TRepository : IRepository<TModel>
         where TDto : FountationDto
     {
-        protected ILockFactory LockFactory { get; }
-        
         protected Service(TRepository repository, ILockFactory lockFactory)
         {
             Repository = repository;
             LockFactory = lockFactory;
         }
+
+        protected ILockFactory LockFactory { get; }
 
         protected TRepository Repository { get; }
 
@@ -81,17 +81,27 @@ namespace Elpida.Backend.Services
         {
             var bypassExpression = GetCreationBypassCheckExpression(dto);
             if (bypassExpression == null) return await DoAddAsync(dto, cancellationToken);
-            
+
             var entity = await Repository.GetSingleAsync(bypassExpression, cancellationToken);
             if (entity != null) return ToDto(entity);
 
-            using (LockFactory.Acquire(nameof(ToDto)))
+            using (await LockFactory.AcquireAsync(GetType().Name, cancellationToken))
             {
                 entity = await Repository.GetSingleAsync(bypassExpression, cancellationToken);
                 if (entity != null) return ToDto(entity);
-                    
+
                 return await DoAddAsync(dto, cancellationToken);
             }
+        }
+
+        public IEnumerable<FilterExpression> GetFilters<T, TR>(Expression<Func<T, TR>> baseExpression)
+        {
+            if (typeof(TR) != typeof(TModel))
+                throw new ArgumentException($"The type of the TR is not of type: {typeof(TModel).Name}");
+            var baseBody = baseExpression.Body;
+            foreach (var filter in GetFilterExpressions())
+                yield return new FilterExpression(filter.Name,
+                    Expression.MakeMemberAccess(baseBody, filter.Expression.Member));
         }
 
         private async Task<TDto> DoAddAsync(TDto dto, CancellationToken cancellationToken)
@@ -107,16 +117,6 @@ namespace Elpida.Backend.Services
             await OnEntityCreatedAsync(dto, entity, cancellationToken);
 
             return dto;
-        }
-
-        public IEnumerable<FilterExpression> GetFilters<T, TR>(Expression<Func<T, TR>> baseExpression)
-        {
-            if (typeof(TR) != typeof(TModel))
-                throw new ArgumentException($"The type of the TR is not of type: {typeof(TModel).Name}");
-            var baseBody = baseExpression.Body;
-            foreach (var filter in GetFilterExpressions())
-                yield return new FilterExpression(filter.Name,
-                    Expression.MakeMemberAccess(baseBody, filter.Expression.Member));
         }
 
         protected static FilterExpression CreateFilter<T>(string name, Expression<Func<TModel, T>> expression)
@@ -162,7 +162,7 @@ namespace Elpida.Backend.Services
         {
             return Task.CompletedTask;
         }
-        
+
         protected async Task<PagedResult<TProjection>> GetPagedProjectionsAsync<TProjection>(
             QueryRequest queryRequest,
             Expression<Func<TModel, TProjection>> constructionExpression,
@@ -184,13 +184,13 @@ namespace Elpida.Backend.Services
 
             return new PagedResult<TProjection>(result.Items.ToList(), queryRequest.PageRequest);
         }
-        
+
         protected static async Task<TFModel> GetOrAddForeignDto<TFDto, TFModel>(
-            IRepository<TFModel> repository, 
+            IRepository<TFModel> repository,
             IService<TFDto> service,
             TFDto dto,
-            CancellationToken cancellationToken) 
-            where TFModel : Entity 
+            CancellationToken cancellationToken)
+            where TFModel : Entity
             where TFDto : FountationDto
         {
             var newDto = await service.GetOrAddAsync(dto, cancellationToken);

@@ -19,6 +19,7 @@
 
 using Elpida.Backend.Data.Abstractions.Interfaces;
 using Elpida.Backend.Data.Abstractions.Models;
+using Elpida.Backend.Data.Abstractions.Models.Os;
 
 namespace Elpida.Backend.Data.Abstractions.Repositories
 {

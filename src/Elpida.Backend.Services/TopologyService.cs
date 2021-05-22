@@ -22,13 +22,13 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Elpida.Backend.Data.Abstractions;
+using Elpida.Backend.Common.Extensions;
+using Elpida.Backend.Common.Lock;
 using Elpida.Backend.Data.Abstractions.Models.Topology;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services.Abstractions;
 using Elpida.Backend.Services.Abstractions.Dtos.Topology;
 using Elpida.Backend.Services.Abstractions.Interfaces;
-using Elpida.Backend.Services.Extensions;
 using Elpida.Backend.Services.Extensions.Topology;
 using Newtonsoft.Json;
 
@@ -43,14 +43,18 @@ namespace Elpida.Backend.Services
 
         private static IEnumerable<FilterExpression> FilterExpressions { get; } = new List<FilterExpression>
         {
+            CreateFilter("machines", model => model.TotalMachines),
+            CreateFilter("cpuPackages", model => model.TotalPackages),
+            CreateFilter("cpuNumaNodes", model => model.TotalNumaNodes),
             CreateFilter("cpuCores", model => model.TotalPhysicalCores),
             CreateFilter("cpuLogicalCores", model => model.TotalLogicalCores)
         };
 
-        protected override Task<TopologyModel> ProcessDtoAndCreateModelAsync(TopologyDto dto, CancellationToken cancellationToken)
+        protected override Task<TopologyModel> ProcessDtoAndCreateModelAsync(TopologyDto dto,
+            CancellationToken cancellationToken)
         {
             var serializedRoot = JsonConvert.SerializeObject(dto.Root);
-            return Task.FromResult( new TopologyModel
+            return Task.FromResult(new TopologyModel
             {
                 Id = dto.Id,
                 CpuId = dto.CpuId,
@@ -74,19 +78,39 @@ namespace Elpida.Backend.Services
         {
             return model.ToDto();
         }
-        
+
         private static string GetTopologyHash(TopologyDto dto, string? serializedRoot = null)
         {
             serializedRoot ??= JsonConvert.SerializeObject(dto.Root);
-            
+
             return serializedRoot.ToHashString();
         }
+
         protected override Expression<Func<TopologyModel, bool>> GetCreationBypassCheckExpression(TopologyDto dto)
         {
             var topologyHash = GetTopologyHash(dto);
             return t =>
                 t.CpuId == dto.CpuId
                 && t.TopologyHash == topologyHash;
+        }
+
+        public Task<PagedResult<TopologyPreviewDto>> GetPagedPreviewsAsync(QueryRequest queryRequest,
+            CancellationToken cancellationToken = default)
+        {
+            return GetPagedProjectionsAsync(queryRequest, m => new TopologyPreviewDto
+            {
+                Id = m.Id,
+                CpuId = m.CpuId,
+                CpuVendor = m.Cpu.Vendor,
+                CpuBrand = m.Cpu.Brand,
+                TotalDepth = m.TotalDepth,
+                TotalMachines = m.TotalMachines,
+                TotalPackages = m.TotalPackages,
+                TotalNumaNodes = m.TotalNumaNodes,
+                TotalPhysicalCores = m.TotalPhysicalCores,
+                TotalLogicalCores = m.TotalLogicalCores,
+                Hash = m.TopologyHash
+            }, cancellationToken);
         }
     }
 }

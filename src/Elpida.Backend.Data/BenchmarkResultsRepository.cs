@@ -23,6 +23,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Data.Abstractions;
 using Elpida.Backend.Data.Abstractions.Models.Result;
+using Elpida.Backend.Data.Abstractions.Models.Statistics;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Microsoft.EntityFrameworkCore;
 

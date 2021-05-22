@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using Elpida.Backend.Services.Abstractions.Dtos.Result;
+using Elpida.Backend.Services.Abstractions.Dtos.Elpida;
 
 namespace Elpida.Backend.Services.Abstractions.Interfaces
 {

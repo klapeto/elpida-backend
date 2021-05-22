@@ -28,14 +28,14 @@ namespace Elpida.Backend.Services.Utilities
     public static class ComparisonExpressions
     {
         private static readonly MethodInfo Contains =
-            typeof(string).GetMethod(nameof(string.Contains), new[] {typeof(string)});
+            typeof(string).GetMethod(nameof(string.Contains), new[] {typeof(string)})!;
 
         public static IReadOnlyDictionary<string, Func<Expression, Expression, Expression>>
             ExpressionFactories { get; } = new Dictionary<string, Func<Expression, Expression, Expression>>
         {
             [FilterHelpers.ComparisonMap[FilterHelpers.Comparison.Contains]] =
                 (left, right) => Expression.Call(left, Contains, right),
-            
+
             [FilterHelpers.ComparisonMap[FilterHelpers.Comparison.NotContain]] =
                 (left, right) => Expression.Not(Expression.Call(left, Contains, right)),
             [FilterHelpers.ComparisonMap[FilterHelpers.Comparison.Equal]] = Expression.Equal,

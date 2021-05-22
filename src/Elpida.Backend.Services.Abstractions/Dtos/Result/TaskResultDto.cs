@@ -17,6 +17,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using Elpida.Backend.Services.Abstractions.Dtos.Task;
+
 namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 {
     public class TaskResultDto : TaskDto

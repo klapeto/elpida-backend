@@ -18,7 +18,6 @@
  */
 
 using System;
-using System.Collections.Generic;
 
 namespace Elpida.Backend.Data.Abstractions.Models.Task
 {
@@ -43,7 +42,5 @@ namespace Elpida.Backend.Data.Abstractions.Models.Task
         public string? OutputDescription { get; set; }
         public string? OutputUnit { get; set; }
         public string? OutputProperties { get; set; }
-
-        public ICollection<BenchmarkModel> Benchmarks { get; set; } = default!;
     }
 }

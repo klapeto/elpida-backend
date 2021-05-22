@@ -23,6 +23,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace Elpida.Backend
 {
@@ -42,15 +43,19 @@ namespace Elpida.Backend
 				return;
 			}
 
-			var validKey = context.HttpContext.RequestServices.GetRequiredService<IConfiguration>()
-				.GetValue<string>(KeyName);
-			if (validKey == null)
-				throw new ArgumentException("Provided key name does not exist in the configuration!", KeyName);
+			var apiKeys = context.HttpContext.RequestServices.GetRequiredService<IOptions<ApiKeys>>().Value;
 
-			if (!validKey.Equals(key))
+			if (apiKeys.TryGetValue(KeyName, out var validKey))
 			{
-				context.Result = new UnauthorizedResult();
-				return;
+				if (!validKey.Equals(key))
+				{
+					context.Result = new UnauthorizedResult();
+					return;
+				}
+			}
+			else
+			{
+				throw new ArgumentException("Provided key name does not exist in the configuration!", KeyName);
 			}
 
 			await next();

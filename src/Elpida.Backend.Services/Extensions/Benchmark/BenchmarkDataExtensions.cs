@@ -19,10 +19,11 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using Elpida.Backend.Data.Abstractions.Models;
-using Elpida.Backend.Data.Abstractions.Models.Task;
+using Elpida.Backend.Data.Abstractions.Models.Benchmark;
 using Elpida.Backend.Services.Abstractions.Dtos;
+using Elpida.Backend.Services.Abstractions.Dtos.Benchmark;
 using Elpida.Backend.Services.Abstractions.Dtos.Result;
+using Elpida.Backend.Services.Abstractions.Dtos.Task;
 using Elpida.Backend.Services.Extensions.Task;
 
 namespace Elpida.Backend.Services.Extensions.Benchmark
@@ -31,7 +32,7 @@ namespace Elpida.Backend.Services.Extensions.Benchmark
     {
         public static BenchmarkDto ToDto(this BenchmarkModel benchmarkModel)
         {
-            return new BenchmarkDto
+            return new()
             {
                 Id = benchmarkModel.Id,
                 Uuid = benchmarkModel.Uuid,
@@ -41,24 +42,22 @@ namespace Elpida.Backend.Services.Extensions.Benchmark
                     Comparison = benchmarkModel.ScoreComparison,
                     Unit = benchmarkModel.ScoreUnit
                 },
-                TaskSpecifications = benchmarkModel.Tasks?
+                Tasks = benchmarkModel.Tasks?
                     .Select(t => t.ToDto())
-                    .ToList() ?? new List<TaskDto>()
+                    .ToList() ?? new List<BenchmarkTaskDto>()
             };
         }
-        
-        public static BenchmarkModel ToModel(this BenchmarkDto benchmarkDto)
+
+        public static BenchmarkTaskDto ToDto(this BenchmarkTaskModel benchmarkTaskModel)
         {
-            return new BenchmarkModel
+            return new()
             {
-                Id = benchmarkDto.Id,
-                Uuid = benchmarkDto.Uuid,
-                Name = benchmarkDto.Name,
-                ScoreComparison = benchmarkDto.ScoreSpecification.Comparison,
-                ScoreUnit = benchmarkDto.ScoreSpecification.Unit,
-                Tasks = benchmarkDto.TaskSpecifications
-                    .Select(t => t.ToModel())
-                    .ToList()
+                Uuid = benchmarkTaskModel.Task.Uuid,
+                Task = benchmarkTaskModel.Task?.ToDto(),
+                CanBeDisabled = benchmarkTaskModel.CanBeDisabled,
+                IterationsToRun = benchmarkTaskModel.IterationsToRun,
+                CanBeMultiThreaded = benchmarkTaskModel.CanBeMultiThreaded,
+                IsCountedOnResults = benchmarkTaskModel.IsCountedOnResults
             };
         }
     }

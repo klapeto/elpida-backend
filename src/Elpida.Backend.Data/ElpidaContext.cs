@@ -18,7 +18,10 @@
  */
 
 using Elpida.Backend.Data.Abstractions.Models;
+using Elpida.Backend.Data.Abstractions.Models.Benchmark;
 using Elpida.Backend.Data.Abstractions.Models.Cpu;
+using Elpida.Backend.Data.Abstractions.Models.Elpida;
+using Elpida.Backend.Data.Abstractions.Models.Os;
 using Elpida.Backend.Data.Abstractions.Models.Result;
 using Elpida.Backend.Data.Abstractions.Models.Statistics;
 using Elpida.Backend.Data.Abstractions.Models.Task;
@@ -48,7 +51,11 @@ namespace Elpida.Backend.Data
         {
             modelBuilder.Entity<BenchmarkModel>()
                 .HasMany(m => m.Tasks)
-                .WithMany(m => m.Benchmarks);
+                .WithOne(m => m.Benchmark)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            modelBuilder.Entity<BenchmarkTaskModel>()
+                .HasOne(m => m.Task);
 
             modelBuilder.Entity<TaskResultModel>()
                 .HasOne(m => m.Task);
@@ -77,7 +84,6 @@ namespace Elpida.Backend.Data
             modelBuilder.Entity<CpuModel>()
                 .HasMany(m => m.Topologies)
                 .WithOne(m => m.Cpu);
-            
             
             modelBuilder.Entity<BenchmarkStatisticsModel>()
                 .HasOne(m => m.Cpu);

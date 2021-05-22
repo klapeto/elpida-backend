@@ -22,8 +22,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Elpida.Backend.Data.Abstractions.Models;
+using Elpida.Backend.Common.Lock;
+using Elpida.Backend.Data.Abstractions.Models.Benchmark;
 using Elpida.Backend.Data.Abstractions.Models.Cpu;
+using Elpida.Backend.Data.Abstractions.Models.Elpida;
+using Elpida.Backend.Data.Abstractions.Models.Os;
 using Elpida.Backend.Data.Abstractions.Models.Result;
 using Elpida.Backend.Data.Abstractions.Models.Topology;
 using Elpida.Backend.Data.Abstractions.Repositories;
@@ -48,8 +51,8 @@ namespace Elpida.Backend.Services
         private readonly IElpidaService _elpidaService;
         private readonly IOsRepository _osRepository;
         private readonly IOsService _osService;
-        private readonly ITaskRepository _taskRepository;
         private readonly IStatisticsUpdaterService _statisticsUpdaterService;
+        private readonly ITaskRepository _taskRepository;
         private readonly ITopologyRepository _topologyRepository;
         private readonly ITopologyService _topologyService;
 
@@ -140,12 +143,12 @@ namespace Elpida.Backend.Services
             var cpu = await GetOrAddForeignDto(_cpuRepository, _cpuService, dto.System.Cpu, cancellationToken);
 
             dto.System.Topology.CpuId = cpu.Id;
-            
+
             var topology = await GetOrAddForeignDto(_topologyRepository, _topologyService, dto.System.Topology,
                 cancellationToken);
 
             dto.System.Topology.Id = topology.Id;
-            
+
             var elpida = await GetOrAddForeignDto(_elpidaRepository, _elpidaService, dto.Elpida, cancellationToken);
             var os = await GetOrAddForeignDto(_osRepository, _osService, dto.System.Os, cancellationToken);
 
@@ -204,7 +207,8 @@ namespace Elpida.Backend.Services
             BenchmarkResultModel entity,
             CancellationToken cancellationToken)
         {
-            return _statisticsUpdaterService.EnqueueUpdateAsync(new StatisticsUpdateRequest(dto.System.Topology.Id, dto.Result.Id), cancellationToken);
+            return _statisticsUpdaterService.EnqueueUpdateAsync(
+                new StatisticsUpdateRequest(dto.System.Topology.Id, dto.Result.Id), cancellationToken);
         }
 
         #endregion

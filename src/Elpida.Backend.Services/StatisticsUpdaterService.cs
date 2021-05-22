@@ -34,14 +34,14 @@ namespace Elpida.Backend.Services
 {
     public class StatisticsUpdaterService : IHostedService, IStatisticsUpdaterService
     {
-        private readonly List<Thread> _consumerThreads = new List<Thread>();
+        private readonly List<Thread> _consumerThreads = new();
 
         private BlockingCollection<StatisticsUpdateRequest> _updateRequests = default!;
         private readonly ILogger<StatisticsUpdaterService> _logger;
         private CancellationTokenSource _cancellationTokenSource = default!;
         private readonly IServiceProvider _serviceProvider;
 
-        private readonly object _addLocker = new object();
+        private readonly object _addLocker = new();
 
         private const int ConsumerThreadsCount = 1;
 

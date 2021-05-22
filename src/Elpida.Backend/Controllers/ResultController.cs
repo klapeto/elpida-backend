@@ -43,6 +43,7 @@ namespace Elpida.Backend.Controllers
 		}
 
 		[HttpPost]
+		[ApiKeyAuthentication(KeyName = "Results")]
 		[Consumes(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -88,7 +89,7 @@ namespace Elpida.Backend.Controllers
 		public async Task<IActionResult> Search([FromBody] QueryRequest queryRequest,
 			CancellationToken cancellationToken)
 		{
-			ValueUtilities.PreprocessQuery(queryRequest);
+			QueryRequestUtilities.PreprocessQuery(queryRequest);
 
 			return Ok(await _benchmarkResultsService.GetPagedPreviewsAsync(queryRequest, cancellationToken));
 		}

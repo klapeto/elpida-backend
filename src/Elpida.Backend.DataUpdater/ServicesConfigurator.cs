@@ -19,6 +19,8 @@
 
 using System;
 using System.Threading;
+using Elpida.Backend.Common.Lock;
+using Elpida.Backend.Common.Lock.Redis;
 using Elpida.Backend.Data;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services;
@@ -32,10 +34,6 @@ namespace Elpida.Backend.DataUpdater
 {
     internal class ServicesConfigurator : IDisposable
     {
-        public IServiceProvider ServiceProvider { get; }
-
-        public IConfigurationRoot Configuration { get; }
-
         public ServicesConfigurator(string[] args)
         {
             var services = new ServiceCollection();
@@ -60,7 +58,17 @@ namespace Elpida.Backend.DataUpdater
             services.AddScoped<ITaskService, TaskService>();
             services.AddScoped<ITopologyService, TopologyService>();
 
-            services.AddSingleton<ILockFactory, LocalLockFactory>();
+
+            var redisOptions = Configuration.GetSection("Redis");
+            if (redisOptions.Exists())
+            {
+                services.AddRedisLocks();
+                services.Configure<RedisOptions>(redisOptions);
+            }
+            else
+            {
+                services.AddLocalLocks();
+            }
 
             services.AddSingleton<StatisticsUpdaterService>();
             services.AddSingleton<IStatisticsUpdaterService>(x => x.GetRequiredService<StatisticsUpdaterService>());
@@ -76,7 +84,7 @@ namespace Elpida.Backend.DataUpdater
 
             services.AddDbContext<ElpidaContext>(builder =>
             {
-                builder.UseSqlite(Configuration.GetConnectionString("Local"));
+                builder.UseSqlite(Configuration.GetConnectionString("Local"), optionsBuilder => optionsBuilder.CommandTimeout(60));
             });
 
             ServiceProvider = services.BuildServiceProvider();
@@ -87,6 +95,10 @@ namespace Elpida.Backend.DataUpdater
                 .GetAwaiter()
                 .GetResult();
         }
+
+        public IServiceProvider ServiceProvider { get; }
+
+        public IConfigurationRoot Configuration { get; }
 
         public void Dispose()
         {

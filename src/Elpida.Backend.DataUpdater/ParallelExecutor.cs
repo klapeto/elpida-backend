@@ -28,16 +28,18 @@ using Newtonsoft.Json;
 
 namespace Elpida.Backend.DataUpdater
 {
-    public static class ParallelExecutor
+    internal static class ParallelExecutor
     {
-        public static Task ParallelExecAsync<T>(IEnumerable<T> enumerable, Func<T, CancellationToken, Task> callback,
+        public static Task ParallelExecAsync<T>(
+            IEnumerable<T> enumerable,
+            Func<T, CancellationToken, Task> callback,
             CancellationToken cancellationToken = default)
         {
             return Task.WhenAll(enumerable
-                .Select(file => callback(file, cancellationToken))
-                    .ToArray());
+                .Select(item => callback(item, cancellationToken))
+                .ToArray());
         }
-        
+
         public static Task ProcessFilesInDirectoryAsync<T>(string directory,
             IServiceProvider serviceProvider,
             Func<IServiceProvider, T, CancellationToken, Task> itemProcessor,
@@ -46,15 +48,22 @@ namespace Elpida.Backend.DataUpdater
             return ParallelExecAsync(Directory.EnumerateFiles(directory), async (file, ct) =>
             {
                 var data = JsonConvert.DeserializeObject<List<T>?>(await File.ReadAllTextAsync(file, ct));
-                
+
                 if (data != null)
                 {
-                    await ParallelExecAsync(data, async (item, token) =>
-                    {
-                        using var scope = serviceProvider.CreateScope();
-                        await itemProcessor(scope.ServiceProvider, item, token);
-                    }, ct);
+                    await ProcessItemsAsync(data, serviceProvider, itemProcessor, ct);
                 }
+            }, cancellationToken);
+        }
+
+        public static Task ProcessItemsAsync<T>(IEnumerable<T> data, IServiceProvider serviceProvider,
+            Func<IServiceProvider, T, CancellationToken, Task> itemProcessor,
+            CancellationToken cancellationToken = default)
+        {
+            return ParallelExecAsync(data, async (item, token) =>
+            {
+                using var scope = serviceProvider.CreateScope();
+                await itemProcessor(scope.ServiceProvider, item, token);
             }, cancellationToken);
         }
     }

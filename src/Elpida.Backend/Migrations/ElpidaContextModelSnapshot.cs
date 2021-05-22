@@ -16,22 +16,7 @@ namespace Elpida.Backend.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "5.0.4");
 
-            modelBuilder.Entity("BenchmarkModelTaskModel", b =>
-                {
-                    b.Property<long>("BenchmarksId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<long>("TasksId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("BenchmarksId", "TasksId");
-
-                    b.HasIndex("TasksId");
-
-                    b.ToTable("BenchmarkModelTaskModel");
-                });
-
-            modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.BenchmarkModel", b =>
+            modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Benchmark.BenchmarkModel", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -54,6 +39,39 @@ namespace Elpida.Backend.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Benchmarks");
+                });
+
+            modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Benchmark.BenchmarkTaskModel", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("BenchmarkId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("CanBeDisabled")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("CanBeMultiThreaded")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsCountedOnResults")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("IterationsToRun")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("TaskId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BenchmarkId");
+
+                    b.HasIndex("TaskId");
+
+                    b.ToTable("BenchmarkTaskModel");
                 });
 
             modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Cpu.CpuModel", b =>
@@ -93,7 +111,7 @@ namespace Elpida.Backend.Migrations
                     b.ToTable("Cpus");
                 });
 
-            modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.ElpidaModel", b =>
+            modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Elpida.ElpidaModel", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -124,7 +142,7 @@ namespace Elpida.Backend.Migrations
                     b.ToTable("Elpidas");
                 });
 
-            modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.OsModel", b =>
+            modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Os.OsModel", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -444,36 +462,40 @@ namespace Elpida.Backend.Migrations
                     b.ToTable("Topologies");
                 });
 
-            modelBuilder.Entity("BenchmarkModelTaskModel", b =>
+            modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Benchmark.BenchmarkTaskModel", b =>
                 {
-                    b.HasOne("Elpida.Backend.Data.Abstractions.Models.BenchmarkModel", null)
-                        .WithMany()
-                        .HasForeignKey("BenchmarksId")
+                    b.HasOne("Elpida.Backend.Data.Abstractions.Models.Benchmark.BenchmarkModel", "Benchmark")
+                        .WithMany("Tasks")
+                        .HasForeignKey("BenchmarkId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Elpida.Backend.Data.Abstractions.Models.Task.TaskModel", null)
+                    b.HasOne("Elpida.Backend.Data.Abstractions.Models.Task.TaskModel", "Task")
                         .WithMany()
-                        .HasForeignKey("TasksId")
+                        .HasForeignKey("TaskId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Benchmark");
+
+                    b.Navigation("Task");
                 });
 
             modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Result.BenchmarkResultModel", b =>
                 {
-                    b.HasOne("Elpida.Backend.Data.Abstractions.Models.BenchmarkModel", "Benchmark")
+                    b.HasOne("Elpida.Backend.Data.Abstractions.Models.Benchmark.BenchmarkModel", "Benchmark")
                         .WithMany()
                         .HasForeignKey("BenchmarkId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Elpida.Backend.Data.Abstractions.Models.ElpidaModel", "Elpida")
+                    b.HasOne("Elpida.Backend.Data.Abstractions.Models.Elpida.ElpidaModel", "Elpida")
                         .WithMany()
                         .HasForeignKey("ElpidaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Elpida.Backend.Data.Abstractions.Models.OsModel", "Os")
+                    b.HasOne("Elpida.Backend.Data.Abstractions.Models.Os.OsModel", "Os")
                         .WithMany()
                         .HasForeignKey("OsId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -531,7 +553,7 @@ namespace Elpida.Backend.Migrations
 
             modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Statistics.BenchmarkStatisticsModel", b =>
                 {
-                    b.HasOne("Elpida.Backend.Data.Abstractions.Models.BenchmarkModel", "Benchmark")
+                    b.HasOne("Elpida.Backend.Data.Abstractions.Models.Benchmark.BenchmarkModel", "Benchmark")
                         .WithMany()
                         .HasForeignKey("BenchmarkId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -565,6 +587,11 @@ namespace Elpida.Backend.Migrations
                         .IsRequired();
 
                     b.Navigation("Cpu");
+                });
+
+            modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Benchmark.BenchmarkModel", b =>
+                {
+                    b.Navigation("Tasks");
                 });
 
             modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Cpu.CpuModel", b =>

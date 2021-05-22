@@ -18,6 +18,7 @@
  */
 
 using Elpida.Backend.Services.Abstractions.Dtos.Cpu;
+using Elpida.Backend.Services.Abstractions.Dtos.Os;
 using Elpida.Backend.Services.Abstractions.Dtos.Topology;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Result

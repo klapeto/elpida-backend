@@ -21,11 +21,13 @@ using System;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Elpida.Backend.Data.Abstractions.Models;
+using Elpida.Backend.Common.Lock;
+using Elpida.Backend.Data.Abstractions.Models.Elpida;
 using Elpida.Backend.Data.Abstractions.Repositories;
+using Elpida.Backend.Services.Abstractions.Dtos.Elpida;
 using Elpida.Backend.Services.Abstractions.Dtos.Result;
 using Elpida.Backend.Services.Abstractions.Interfaces;
-using Elpida.Backend.Services.Extensions;
+using Elpida.Backend.Services.Extensions.Elpida;
 
 namespace Elpida.Backend.Services
 {
@@ -41,9 +43,19 @@ namespace Elpida.Backend.Services
             return model.ToDto();
         }
 
-        protected override Task<ElpidaModel> ProcessDtoAndCreateModelAsync(ElpidaDto dto, CancellationToken cancellationToken)
+        protected override Task<ElpidaModel> ProcessDtoAndCreateModelAsync(ElpidaDto dto,
+            CancellationToken cancellationToken)
         {
-            return Task.FromResult(dto.ToModel());
+            return Task.FromResult(new ElpidaModel
+            {
+                Id = dto.Id,
+                CompilerName = dto.Compiler.Name,
+                CompilerVersion = dto.Compiler.Version,
+                VersionMajor = dto.Version.Major,
+                VersionMinor = dto.Version.Minor,
+                VersionRevision = dto.Version.Revision,
+                VersionBuild = dto.Version.Build
+            });
         }
 
         protected override Expression<Func<ElpidaModel, bool>> GetCreationBypassCheckExpression(ElpidaDto dto)

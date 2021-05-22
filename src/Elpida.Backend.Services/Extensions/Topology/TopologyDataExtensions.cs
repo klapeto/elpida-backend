@@ -25,27 +25,9 @@ namespace Elpida.Backend.Services.Extensions.Topology
 {
     public static class TopologyDataExtensions
     {
-        public static TopologyModel ToModel(this TopologyDto topologyDto)
-        {
-            var topologyRoot = JsonConvert.SerializeObject(topologyDto.Root);
-            return new TopologyModel
-            {
-                Id = topologyDto.Id,
-                CpuId = topologyDto.CpuId,
-                TopologyHash = topologyRoot.ToHashString(),
-                TotalDepth = topologyDto.TotalDepth,
-                TotalLogicalCores = topologyDto.TotalLogicalCores,
-                TotalPhysicalCores = topologyDto.TotalPhysicalCores,
-                TotalMachines = topologyDto.TotalMachines,
-                TotalNumaNodes = topologyDto.TotalNumaNodes,
-                TotalPackages = topologyDto.TotalPackages,
-                Root = topologyRoot
-            };
-        }
-
         public static TopologyDto ToDto(this TopologyModel topologyModel)
         {
-            return new TopologyDto
+            return new()
             {
                 Id = topologyModel.Id,
                 CpuId = topologyModel.CpuId,

@@ -22,9 +22,11 @@ using System.Linq;
 using Elpida.Backend.Data.Abstractions.Models.Result;
 using Elpida.Backend.Data.Abstractions.Models.Task;
 using Elpida.Backend.Services.Abstractions.Dtos;
+using Elpida.Backend.Services.Abstractions.Dtos.Benchmark;
 using Elpida.Backend.Services.Abstractions.Dtos.Result;
-using Elpida.Backend.Services.Abstractions.Dtos.Topology;
+using Elpida.Backend.Services.Abstractions.Dtos.Task;
 using Elpida.Backend.Services.Extensions.Cpu;
+using Elpida.Backend.Services.Extensions.Elpida;
 using Elpida.Backend.Services.Extensions.Topology;
 using Newtonsoft.Json;
 
@@ -60,25 +62,11 @@ namespace Elpida.Backend.Services.Extensions.Result
 
         public static ResultDto ToDto(this BenchmarkResultModel benchmarkResultModel)
         {
-            return new ResultDto
+            return new()
             {
                 TimeStamp = benchmarkResultModel.TimeStamp,
                 Id = benchmarkResultModel.Id,
-                Elpida = new ElpidaDto
-                {
-                    Compiler = new CompilerDto
-                    {
-                        Name = benchmarkResultModel.Elpida.CompilerName,
-                        Version = benchmarkResultModel.Elpida.CompilerVersion
-                    },
-                    Version = new VersionDto
-                    {
-                        Major = benchmarkResultModel.Elpida.VersionMajor,
-                        Minor = benchmarkResultModel.Elpida.VersionMinor,
-                        Revision = benchmarkResultModel.Elpida.VersionRevision,
-                        Build = benchmarkResultModel.Elpida.VersionBuild
-                    }
-                },
+                Elpida = benchmarkResultModel.Elpida.ToDto(),
                 Affinity = JsonConvert.DeserializeObject<List<long>>(benchmarkResultModel.Affinity),
                 Result = new BenchmarkResultDto
                 {
@@ -88,59 +76,54 @@ namespace Elpida.Backend.Services.Extensions.Result
                     ScoreSpecification = new BenchmarkScoreSpecificationDto
                     {
                         Unit = benchmarkResultModel.Benchmark.ScoreUnit,
-                        Comparison = benchmarkResultModel.Benchmark.ScoreComparison,
+                        Comparison = benchmarkResultModel.Benchmark.ScoreComparison
                     },
                     Score = benchmarkResultModel.Score,
                     TaskResults = benchmarkResultModel.TaskResults
                         .OrderBy(m => m.Order)
                         .Select(r => new TaskResultDto
-                    {
-                        Id = r.Task.Id,
-                        Uuid = r.Task.Uuid,
-                        Name = r.Task.Name,
-                        CpuId = benchmarkResultModel.Topology.Cpu.Id,
-                        TopologyId = benchmarkResultModel.Topology.Id,
-                        TaskId = r.Task.Id,
-                        BenchmarkResultId = benchmarkResultModel.Id,
-                        Description = r.Task.Description,
-                        Input = r.Task.CreateInputSpecDto(),
-                        Output = r.Task.CreateOutputSpecDto(),
-                        Result = new ResultSpecificationDto
                         {
-                            Name = r.Task.ResultName,
-                            Description = r.Task.ResultDescription,
-                            Aggregation = r.Task.ResultAggregation,
-                            Type = r.Task.ResultType,
-                            Unit = r.Task.ResultUnit
-                        },
-                        Statistics = new TaskRunStatisticsDto
-                        {
-                            Max = r.Max,
-                            Mean = r.Mean,
-                            Min = r.Min,
-                            Sd = r.StandardDeviation,
-                            Tau = r.Tau,
-                            SampleSize = r.SampleSize,
-                            MarginOfError = r.MarginOfError
-                        },
-                        Time = r.Time,
-                        Value = r.Value,
-                        InputSize = r.InputSize
-                    }).ToList()
+                            Id = r.Task.Id,
+                            Uuid = r.Task.Uuid,
+                            Name = r.Task.Name,
+                            CpuId = benchmarkResultModel.Topology.Cpu.Id,
+                            TopologyId = benchmarkResultModel.Topology.Id,
+                            TaskId = r.Task.Id,
+                            BenchmarkResultId = benchmarkResultModel.Id,
+                            Description = r.Task.Description,
+                            Input = r.Task.CreateInputSpecDto(),
+                            Output = r.Task.CreateOutputSpecDto(),
+                            Result = new ResultSpecificationDto
+                            {
+                                Name = r.Task.ResultName,
+                                Description = r.Task.ResultDescription,
+                                Aggregation = r.Task.ResultAggregation,
+                                Type = r.Task.ResultType,
+                                Unit = r.Task.ResultUnit
+                            },
+                            Statistics = new TaskRunStatisticsDto
+                            {
+                                Max = r.Max,
+                                Mean = r.Mean,
+                                Min = r.Min,
+                                Sd = r.StandardDeviation,
+                                Tau = r.Tau,
+                                SampleSize = r.SampleSize,
+                                MarginOfError = r.MarginOfError
+                            },
+                            Time = r.Time,
+                            Value = r.Value,
+                            InputSize = r.InputSize
+                        }).ToList()
                 },
                 System = new SystemDto
                 {
                     Cpu = benchmarkResultModel.Topology.Cpu.ToDto(),
+                    Os = benchmarkResultModel.Os.ToDto(),
                     Memory = new MemoryDto
                     {
                         PageSize = benchmarkResultModel.PageSize,
                         TotalSize = benchmarkResultModel.MemorySize
-                    },
-                    Os = new OsDto
-                    {
-                        Category = benchmarkResultModel.Os.Category,
-                        Name = benchmarkResultModel.Os.Name,
-                        Version = benchmarkResultModel.Os.Version
                     },
                     Timing = new TimingDto
                     {
@@ -155,30 +138,6 @@ namespace Elpida.Backend.Services.Extensions.Result
                     },
                     Topology = benchmarkResultModel.Topology.ToDto()
                 }
-            };
-        }
-
-        public static BenchmarkResultModel ToModel(this ResultDto resultDto)
-        {
-            return new BenchmarkResultModel
-            {
-                Affinity = JsonConvert.SerializeObject(resultDto.Affinity),
-                BenchmarkId = resultDto.Result.Id,
-                TopologyId = resultDto.System.Topology.Id,
-                OsId = resultDto.System.Os.Id,
-                ElpidaId = resultDto.Elpida.Id,
-                JoinOverhead = resultDto.System.Timing.JoinOverhead,
-                LockOverhead = resultDto.System.Timing.LockOverhead,
-                LoopOverhead = resultDto.System.Timing.LoopOverhead,
-                NotifyOverhead = resultDto.System.Timing.NotifyOverhead,
-                NowOverhead = resultDto.System.Timing.NowOverhead,
-                SleepOverhead = resultDto.System.Timing.SleepOverhead,
-                TargetTime = resultDto.System.Timing.TargetTime,
-                WakeupOverhead = resultDto.System.Timing.WakeupOverhead,
-                MemorySize = resultDto.System.Memory.TotalSize,
-                PageSize = resultDto.System.Memory.PageSize,
-                TaskResults = resultDto.Result.TaskResults.Select(t => t.ToModel()).ToList(),
-                TimeStamp = resultDto.TimeStamp
             };
         }
     }

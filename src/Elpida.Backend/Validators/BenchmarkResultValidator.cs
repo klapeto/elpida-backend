@@ -38,6 +38,9 @@ namespace Elpida.Backend.Validators
 
 			RuleFor(dto => dto.Score)
 				.GreaterThan(0.0);
+			
+			RuleFor(dto => dto.TaskResults)
+				.NotEmpty();
 		}
 	}
 }

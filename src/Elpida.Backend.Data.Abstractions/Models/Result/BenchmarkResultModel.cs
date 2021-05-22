@@ -19,6 +19,9 @@
 
 using System;
 using System.Collections.Generic;
+using Elpida.Backend.Data.Abstractions.Models.Benchmark;
+using Elpida.Backend.Data.Abstractions.Models.Elpida;
+using Elpida.Backend.Data.Abstractions.Models.Os;
 using Elpida.Backend.Data.Abstractions.Models.Topology;
 
 namespace Elpida.Backend.Data.Abstractions.Models.Result

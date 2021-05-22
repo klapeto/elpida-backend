@@ -18,7 +18,7 @@
  */
 
 using System.Linq;
-using Elpida.Backend.Data.Abstractions.Models;
+using Elpida.Backend.Data.Abstractions.Models.Benchmark;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -34,7 +34,8 @@ namespace Elpida.Backend.Data
         protected override IQueryable<BenchmarkModel> ProcessGetSingle(IQueryable<BenchmarkModel> queryable)
         {
             return queryable
-                .Include(model => model.Tasks);
+                .Include(model => model.Tasks)
+                .ThenInclude(model => model.Task);
         }
 
         protected override IQueryable<BenchmarkModel> ProcessGetMultiplePaged(IQueryable<BenchmarkModel> queryable)

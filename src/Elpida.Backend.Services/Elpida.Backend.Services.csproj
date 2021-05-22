@@ -1,11 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard2.1</TargetFramework>
+        <TargetFramework>net5.0</TargetFramework>
         <Nullable>enable</Nullable>
+        <LangVersion>default</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Elpida.Backend.Common\Elpida.Backend.Common.csproj" />
       <ProjectReference Include="..\Elpida.Backend.Data.Abstractions\Elpida.Backend.Data.Abstractions.csproj" />
       <ProjectReference Include="..\Elpida.Backend.Services.Abstractions\Elpida.Backend.Services.Abstractions.csproj" />
     </ItemGroup>

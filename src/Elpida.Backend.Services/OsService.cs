@@ -22,10 +22,11 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Elpida.Backend.Data.Abstractions;
-using Elpida.Backend.Data.Abstractions.Models;
+using Elpida.Backend.Common.Lock;
+using Elpida.Backend.Data.Abstractions.Models.Os;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services.Abstractions;
+using Elpida.Backend.Services.Abstractions.Dtos.Os;
 using Elpida.Backend.Services.Abstractions.Dtos.Result;
 using Elpida.Backend.Services.Abstractions.Interfaces;
 using Elpida.Backend.Services.Extensions;
@@ -48,7 +49,13 @@ namespace Elpida.Backend.Services
 
         protected override Task<OsModel> ProcessDtoAndCreateModelAsync(OsDto dto, CancellationToken cancellationToken)
         {
-            return Task.FromResult(dto.ToModel());
+            return Task.FromResult(new OsModel
+            {
+                Id = dto.Id,
+                Category = dto.Category,
+                Name = dto.Name,
+                Version = dto.Version
+            });
         }
 
         protected override IEnumerable<FilterExpression> GetFilterExpressions()
@@ -60,7 +67,7 @@ namespace Elpida.Backend.Services
         {
             return model.ToDto();
         }
-        
+
         protected override Expression<Func<OsModel, bool>> GetCreationBypassCheckExpression(OsDto dto)
         {
             return o =>

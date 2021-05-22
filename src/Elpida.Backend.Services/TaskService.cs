@@ -22,13 +22,16 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Elpida.Backend.Common.Lock;
 using Elpida.Backend.Data.Abstractions.Models.Task;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services.Abstractions;
 using Elpida.Backend.Services.Abstractions.Dtos;
+using Elpida.Backend.Services.Abstractions.Dtos.Task;
 using Elpida.Backend.Services.Abstractions.Exceptions;
 using Elpida.Backend.Services.Abstractions.Interfaces;
 using Elpida.Backend.Services.Extensions.Task;
+using Newtonsoft.Json;
 
 namespace Elpida.Backend.Services
 {
@@ -65,7 +68,29 @@ namespace Elpida.Backend.Services
 
         protected override Task<TaskModel> ProcessDtoAndCreateModelAsync(TaskDto dto, CancellationToken cancellationToken)
         {
-            return Task.FromResult(dto.ToModel());
+            return Task.FromResult(new TaskModel
+            {
+                Id = dto.Id,
+                Uuid = dto.Uuid,
+                Name = dto.Name,
+                Description = dto.Description,
+
+                InputName = dto.Input?.Name,
+                InputDescription = dto.Input?.Description,
+                InputUnit = dto.Input?.Unit,
+                InputProperties = JsonConvert.SerializeObject(dto.Input?.RequiredProperties),
+
+                OutputName = dto.Output?.Name,
+                OutputDescription = dto.Output?.Description,
+                OutputUnit = dto.Output?.Unit,
+                OutputProperties = JsonConvert.SerializeObject(dto.Output?.RequiredProperties),
+
+                ResultName = dto.Result.Name,
+                ResultDescription = dto.Result.Description,
+                ResultType = dto.Result.Type,
+                ResultAggregation = dto.Result.Aggregation,
+                ResultUnit = dto.Result.Unit
+            });
         }
 
         protected override Expression<Func<TaskModel, bool>> GetCreationBypassCheckExpression(TaskDto dto)

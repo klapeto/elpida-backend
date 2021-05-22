@@ -23,14 +23,12 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Elpida.Backend.Common.Lock;
 using Elpida.Backend.Data.Abstractions.Models.Cpu;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services.Abstractions;
 using Elpida.Backend.Services.Abstractions.Dtos.Cpu;
-using Elpida.Backend.Services.Abstractions.Dtos.Result;
-using Elpida.Backend.Services.Abstractions.Exceptions;
 using Elpida.Backend.Services.Abstractions.Interfaces;
-using Elpida.Backend.Services.Extensions;
 using Elpida.Backend.Services.Extensions.Cpu;
 using Newtonsoft.Json;
 
@@ -38,12 +36,9 @@ namespace Elpida.Backend.Services
 {
     public class CpuService : Service<CpuDto, CpuModel, ICpuRepository>, ICpuService
     {
-        private readonly ICpuRepository _cpuRepository;
-
         public CpuService(ICpuRepository cpuRepository, ILockFactory lockFactory)
             : base(cpuRepository, lockFactory)
         {
-            _cpuRepository = cpuRepository;
         }
 
         private static IEnumerable<FilterExpression> CpuExpressions { get; } = new List<FilterExpression>
@@ -61,19 +56,9 @@ namespace Elpida.Backend.Services
                 Id = m.Id,
                 Vendor = m.Vendor,
                 Brand = m.Brand,
-                TopologiesCount = m.Topologies.Count(),
-                TaskStatisticsCount = m.BenchmarkStatistics.Count()
+                TopologiesCount = m.Topologies.Count,
+                TaskStatisticsCount = m.BenchmarkStatistics.Count
             }, cancellationToken);
-        }
-
-        public async Task<IEnumerable<TaskRunStatisticsDto>> GetStatisticsAsync(long cpuId,
-            CancellationToken cancellationToken = default)
-        {
-            var cpuModel = await _cpuRepository.GetSingleAsync(cpuId, cancellationToken);
-
-            if (cpuModel == null) throw new NotFoundException("Cpu was not found.", cpuId);
-
-            return cpuModel.BenchmarkStatistics.Select(s => s.ToDto());
         }
 
         protected override Task<CpuModel> ProcessDtoAndCreateModelAsync(CpuDto dto, CancellationToken cancellationToken)
@@ -103,7 +88,7 @@ namespace Elpida.Backend.Services
 
         protected override Expression<Func<CpuModel, bool>> GetCreationBypassCheckExpression(CpuDto dto)
         {
-            var additionalInfo = dto.ToModel().AdditionalInfo;
+            var additionalInfo = JsonConvert.SerializeObject(dto.AdditionalInfo);
             return model =>
                 model.Vendor == dto.Vendor
                 && model.Brand == dto.Brand

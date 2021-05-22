@@ -21,6 +21,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Data.Abstractions.Interfaces;
 using Elpida.Backend.Data.Abstractions.Models.Result;
+using Elpida.Backend.Data.Abstractions.Models.Statistics;
 
 namespace Elpida.Backend.Data.Abstractions.Repositories
 {

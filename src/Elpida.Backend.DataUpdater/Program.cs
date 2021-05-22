@@ -25,8 +25,9 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Data;
-using Elpida.Backend.Services.Abstractions.Dtos;
+using Elpida.Backend.Services.Abstractions.Dtos.Benchmark;
 using Elpida.Backend.Services.Abstractions.Dtos.Result;
+using Elpida.Backend.Services.Abstractions.Dtos.Task;
 using Elpida.Backend.Services.Abstractions.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -173,6 +174,25 @@ namespace Elpida.Backend.DataUpdater
             }
         }
 
+        private static async Task ProcessTaskAsync(
+            IServiceProvider serviceProvider,
+            TaskDto taskDto,
+            CancellationToken cancellationToken)
+        {
+            var logger = serviceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("Tasks updater");
+
+            try
+            {
+                var taskService = serviceProvider.GetRequiredService<ITaskService>();
+                logger.LogTrace("Updating task data: '{Name}': '{Uuid}'", taskDto.Name, taskDto.Uuid);
+                await taskService.GetOrAddAsync(taskDto, cancellationToken);
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, "Failed to add task");
+            }
+        }
+
         private static async Task SeedResults(IServiceProvider serviceProvider, string resultsDirectory)
         {
             using var scope = serviceProvider.CreateScope();
@@ -196,10 +216,30 @@ namespace Elpida.Backend.DataUpdater
 
             var logger = serviceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("Benchmarks updater");
 
-            await TimeProcedure(ParallelExecutor.ProcessFilesInDirectoryAsync<BenchmarkDto>(
-                benchmarksDirectory,
-                serviceProvider,
-                ProcessBenchmarkAsync), logger);
+            await TimeProcedure(Task.Run(async () =>
+            {
+                var taskData =
+                    JsonConvert.DeserializeObject<List<TaskDto>?>(
+                        await File.ReadAllTextAsync(Path.Combine(benchmarksDirectory, "tasks.json")));
+
+                if (taskData != null)
+                {
+                    await ParallelExecutor.ProcessItemsAsync(taskData, serviceProvider, ProcessTaskAsync);
+                }
+            }), logger, "Tasks update");
+
+
+            await TimeProcedure(Task.Run(async () =>
+            {
+                var taskData =
+                    JsonConvert.DeserializeObject<List<BenchmarkDto>?>(
+                        await File.ReadAllTextAsync(Path.Combine(benchmarksDirectory, "benchmarks.json")));
+
+                if (taskData != null)
+                {
+                    await ParallelExecutor.ProcessItemsAsync(taskData, serviceProvider, ProcessBenchmarkAsync);
+                }
+            }), logger, "Benchmarks update");
         }
 
         private static async Task TimeProcedure(Task operation, ILogger logger, [CallerMemberName] string name = "")

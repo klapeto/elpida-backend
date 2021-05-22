@@ -28,7 +28,7 @@ namespace Elpida.Backend.Services.Extensions.Cpu
     {
         public static CpuDto ToDto(this CpuModel model)
         {
-            return new CpuDto
+            return new()
             {
                 Id = model.Id,
                 Brand = model.Brand,
@@ -38,21 +38,6 @@ namespace Elpida.Backend.Services.Extensions.Cpu
                 Smt = model.Smt,
                 Vendor = model.Vendor,
                 AdditionalInfo = JsonConvert.DeserializeObject<Dictionary<string, string>>(model.AdditionalInfo)
-            };
-        }
-
-        public static CpuModel ToModel(this CpuDto cpuDto)
-        {
-            return new CpuModel
-            {
-                Id = cpuDto.Id,
-                Brand = cpuDto.Brand,
-                Caches = JsonConvert.SerializeObject(cpuDto.Caches),
-                Features = JsonConvert.SerializeObject(cpuDto.Features),
-                Frequency = cpuDto.Frequency,
-                Smt = cpuDto.Smt,
-                Vendor = cpuDto.Vendor,
-                AdditionalInfo = JsonConvert.SerializeObject(cpuDto.AdditionalInfo)
             };
         }
     }

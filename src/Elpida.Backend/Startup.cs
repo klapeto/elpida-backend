@@ -21,6 +21,8 @@ using System;
 using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
+using Elpida.Backend.Common.Lock;
+using Elpida.Backend.Common.Lock.Redis;
 using Elpida.Backend.Data;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services;
@@ -58,9 +60,6 @@ namespace Elpida.Backend
 					configuration.ImplicitlyValidateChildProperties = true;
 					configuration.RegisterValidatorsFromAssemblyContaining<ResultValidator>();
 				});
-
-
-
 			
 			services.AddScoped<IBenchmarkResultsService, BenchmarkResultService>();
 			services.AddScoped<IBenchmarkService, BenchmarkService>();
@@ -71,9 +70,8 @@ namespace Elpida.Backend
 			services.AddScoped<ITaskService, TaskService>();
 			services.AddScoped<ITopologyService, TopologyService>();
 
+			AddLocking(services);
 
-			services.AddSingleton<ILockFactory, LocalLockFactory>();
-			
 			services.AddSingleton<StatisticsUpdaterService>();
 			services.AddSingleton<IStatisticsUpdaterService>(x => x.GetRequiredService<StatisticsUpdaterService>());
 			services.AddHostedService(x => x.GetRequiredService<StatisticsUpdaterService>());
@@ -98,9 +96,25 @@ namespace Elpida.Backend
 #endif
 			});
 
+
+			services.Configure<ApiKeys>(Configuration.GetSection("ApiKeys"));
 			services.AddApiVersioning();
 
 			services.AddCors();
+		}
+
+		private void AddLocking(IServiceCollection services)
+		{
+			var redisOptions = Configuration.GetSection("Redis");
+			if (redisOptions.Exists())
+			{
+				services.AddRedisLocks();
+				services.Configure<RedisOptions>(redisOptions);
+			}
+			else
+			{
+				services.AddLocalLocks();
+			}
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

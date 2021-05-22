@@ -18,6 +18,7 @@
  */
 
 using Elpida.Backend.Services.Abstractions.Dtos;
+using Elpida.Backend.Services.Abstractions.Dtos.Task;
 using FluentValidation;
 
 namespace Elpida.Backend.Validators
