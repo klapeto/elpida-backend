@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2020 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -38,7 +38,7 @@ namespace Elpida.Backend.Validators
 
 			RuleFor(dto => dto.Score)
 				.GreaterThan(0.0);
-			
+
 			RuleFor(dto => dto.TaskResults)
 				.NotEmpty();
 		}

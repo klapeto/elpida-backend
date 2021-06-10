@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2020 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,29 +21,29 @@ using System.Collections.Generic;
 
 namespace Elpida.Backend.Services.Abstractions
 {
-    public class PagedResult<T>
-    {
-        public PagedResult(IList<T> list, PageRequest pageRequest)
-        {
-            Count = list.Count;
-            List = list;
-            TotalCount = pageRequest.TotalCount;
-            NextPage = list.Count == pageRequest.Count
-                ? new PageRequest {Count = pageRequest.Count, Next = pageRequest.Next + list.Count}
-                : null;
-        }
+	public class PagedResult<T>
+	{
+		public PagedResult(IList<T> list, PageRequest pageRequest)
+		{
+			Count = list.Count;
+			List = list;
+			TotalCount = pageRequest.TotalCount;
+			NextPage = list.Count == pageRequest.Count
+				? new PageRequest { Count = pageRequest.Count, Next = pageRequest.Next + list.Count }
+				: null;
+		}
 
-        public IList<T> List { get; set; }
+		public IList<T> List { get; set; }
 
-        public int Count { get; set; }
+		public int Count { get; set; }
 
-        public long TotalCount { get; set; }
+		public long TotalCount { get; set; }
 
-        public PageRequest? NextPage { get; set; }
+		public PageRequest? NextPage { get; set; }
 
-        public static PagedResult<T> Empty()
-        {
-            return new PagedResult<T>(new List<T>(), new PageRequest());
-        }
-    }
+		public static PagedResult<T> Empty()
+		{
+			return new PagedResult<T>(new List<T>(), new PageRequest());
+		}
+	}
 }

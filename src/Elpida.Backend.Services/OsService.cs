@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -27,53 +27,54 @@ using Elpida.Backend.Data.Abstractions.Models.Os;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services.Abstractions;
 using Elpida.Backend.Services.Abstractions.Dtos.Os;
-using Elpida.Backend.Services.Abstractions.Dtos.Result;
 using Elpida.Backend.Services.Abstractions.Interfaces;
-using Elpida.Backend.Services.Extensions;
+using Elpida.Backend.Services.Extensions.Os;
 
 namespace Elpida.Backend.Services
 {
-    public class OsService : Service<OsDto, OsModel, IOsRepository>, IOsService
-    {
-        private static readonly IEnumerable<FilterExpression> OsFilters = new List<FilterExpression>
-        {
-            CreateFilter("osCategory", model => model.Category),
-            CreateFilter("osName", model => model.Name),
-            CreateFilter("osVersion", model => model.Version)
-        };
+	public class OsService : Service<OsDto, OsModel, IOsRepository>, IOsService
+	{
+		private static readonly IEnumerable<FilterExpression> OsFilters = new List<FilterExpression>
+		{
+			CreateFilter("osCategory", model => model.Category),
+			CreateFilter("osName", model => model.Name),
+			CreateFilter("osVersion", model => model.Version),
+		};
 
-        public OsService(IOsRepository osRepository, ILockFactory lockFactory)
-            : base(osRepository, lockFactory)
-        {
-        }
+		public OsService(IOsRepository osRepository, ILockFactory lockFactory)
+			: base(osRepository, lockFactory)
+		{
+		}
 
-        protected override Task<OsModel> ProcessDtoAndCreateModelAsync(OsDto dto, CancellationToken cancellationToken)
-        {
-            return Task.FromResult(new OsModel
-            {
-                Id = dto.Id,
-                Category = dto.Category,
-                Name = dto.Name,
-                Version = dto.Version
-            });
-        }
+		protected override Task<OsModel> ProcessDtoAndCreateModelAsync(OsDto dto, CancellationToken cancellationToken)
+		{
+			return Task.FromResult(
+				new OsModel
+				{
+					Id = dto.Id,
+					Category = dto.Category,
+					Name = dto.Name,
+					Version = dto.Version,
+				}
+			);
+		}
 
-        protected override IEnumerable<FilterExpression> GetFilterExpressions()
-        {
-            return OsFilters;
-        }
+		protected override IEnumerable<FilterExpression> GetFilterExpressions()
+		{
+			return OsFilters;
+		}
 
-        protected override OsDto ToDto(OsModel model)
-        {
-            return model.ToDto();
-        }
+		protected override OsDto ToDto(OsModel model)
+		{
+			return model.ToDto();
+		}
 
-        protected override Expression<Func<OsModel, bool>> GetCreationBypassCheckExpression(OsDto dto)
-        {
-            return o =>
-                o.Category == dto.Category
-                && o.Name == dto.Name
-                && o.Version == dto.Version;
-        }
-    }
+		protected override Expression<Func<OsModel, bool>> GetCreationBypassCheckExpression(OsDto dto)
+		{
+			return o =>
+				o.Category == dto.Category
+				&& o.Name == dto.Name
+				&& o.Version == dto.Version;
+		}
+	}
 }

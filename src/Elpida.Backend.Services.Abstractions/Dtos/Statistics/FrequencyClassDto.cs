@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,33 +21,42 @@ using System;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Statistics
 {
+	public class FrequencyClassDto
+	{
+		public double Low { get; set; }
 
-    public class FrequencyClassDto
-    {
-        public double Low { get; set; }
-        public double High { get; set; }
-        public long Count { get; set; }
+		public double High { get; set; }
 
-        protected bool Equals(FrequencyClassDto other)
-        {
-            return Low.Equals(other.Low) && High.Equals(other.High);
-        }
+		public long Count { get; set; }
 
-        public override bool Equals(object? obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((FrequencyClassDto) obj);
-        }
+		public override bool Equals(object? obj)
+		{
+			if (ReferenceEquals(null, obj))
+			{
+				return false;
+			}
 
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(Low, High);
-        }
-        
-        public override string ToString()
-        {
-            return $"{{ {Low:r} - {High:r} }}";
-        }
-    }
+			if (ReferenceEquals(this, obj))
+			{
+				return true;
+			}
+
+			return obj.GetType() == GetType() && Equals((FrequencyClassDto)obj);
+		}
+
+		public override int GetHashCode()
+		{
+			return HashCode.Combine(Low, High);
+		}
+
+		public override string ToString()
+		{
+			return $"{{ {Low:r} - {High:r} }}";
+		}
+
+		protected bool Equals(FrequencyClassDto other)
+		{
+			return Low.Equals(other.Low) && High.Equals(other.High);
+		}
+	}
 }

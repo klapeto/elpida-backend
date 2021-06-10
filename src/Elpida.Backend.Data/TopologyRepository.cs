@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,22 +24,22 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Elpida.Backend.Data
 {
-    public class TopologyRepository : EntityRepository<TopologyModel>, ITopologyRepository
-    {
-        public TopologyRepository(ElpidaContext context)
-            : base(context, context.Topologies)
-        {
-        }
+	public class TopologyRepository : EntityRepository<TopologyModel>, ITopologyRepository
+	{
+		public TopologyRepository(ElpidaContext context)
+			: base(context, context.Topologies)
+		{
+		}
 
-        protected override IQueryable<TopologyModel> ProcessGetSingle(IQueryable<TopologyModel> queryable)
-        {
-            return queryable
-                .Include(m => m.Cpu);
-        }
+		protected override IQueryable<TopologyModel> ProcessGetSingle(IQueryable<TopologyModel> queryable)
+		{
+			return queryable
+				.Include(m => m.Cpu);
+		}
 
-        protected override IQueryable<TopologyModel> ProcessGetMultiplePaged(IQueryable<TopologyModel> queryable)
-        {
-            return ProcessGetSingle(queryable);
-        }
-    }
+		protected override IQueryable<TopologyModel> ProcessGetMultiplePaged(IQueryable<TopologyModel> queryable)
+		{
+			return ProcessGetSingle(queryable);
+		}
+	}
 }

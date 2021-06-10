@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -32,80 +32,85 @@ using Microsoft.Extensions.Logging;
 
 namespace Elpida.Backend.DataUpdater
 {
-    internal class ServicesConfigurator : IDisposable
-    {
-        public ServicesConfigurator(string[] args)
-        {
-            var services = new ServiceCollection();
+	internal class ServicesConfigurator : IDisposable
+	{
+		public ServicesConfigurator(string[] args)
+		{
+			var services = new ServiceCollection();
 
-            Configuration = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", false, true)
-                .AddCommandLine(args)
-                .Build();
+			Configuration = new ConfigurationBuilder()
+				.AddJsonFile("appsettings.json", false, true)
+				.AddCommandLine(args)
+				.Build();
 
-            services.AddLogging(builder =>
-            {
-                builder.AddConsole();
-                builder.AddConfiguration(Configuration.GetSection("Logging"));
-            });
+			services.AddLogging(
+				builder =>
+				{
+					builder.AddConsole();
+					builder.AddConfiguration(Configuration.GetSection("Logging"));
+				}
+			);
 
-            services.AddScoped<IBenchmarkResultsService, BenchmarkResultService>();
-            services.AddScoped<IBenchmarkService, BenchmarkService>();
-            services.AddScoped<ICpuService, CpuService>();
-            services.AddScoped<IElpidaService, ElpidaService>();
-            services.AddScoped<IOsService, OsService>();
-            services.AddScoped<IBenchmarkStatisticsService, BenchmarkStatisticsService>();
-            services.AddScoped<ITaskService, TaskService>();
-            services.AddScoped<ITopologyService, TopologyService>();
+			services.AddScoped<IBenchmarkResultsService, BenchmarkResultService>();
+			services.AddScoped<IBenchmarkService, BenchmarkService>();
+			services.AddScoped<ICpuService, CpuService>();
+			services.AddScoped<IElpidaService, ElpidaService>();
+			services.AddScoped<IOsService, OsService>();
+			services.AddScoped<IBenchmarkStatisticsService, BenchmarkStatisticsService>();
+			services.AddScoped<ITaskService, TaskService>();
+			services.AddScoped<ITopologyService, TopologyService>();
 
+			var redisOptions = Configuration.GetSection("Redis");
+			if (redisOptions.Exists())
+			{
+				services.AddRedisLocks();
+				services.Configure<RedisOptions>(redisOptions);
+			}
+			else
+			{
+				services.AddLocalLocks();
+			}
 
-            var redisOptions = Configuration.GetSection("Redis");
-            if (redisOptions.Exists())
-            {
-                services.AddRedisLocks();
-                services.Configure<RedisOptions>(redisOptions);
-            }
-            else
-            {
-                services.AddLocalLocks();
-            }
+			services.AddSingleton<StatisticsUpdaterService>();
+			services.AddSingleton<IStatisticsUpdaterService>(x => x.GetRequiredService<StatisticsUpdaterService>());
 
-            services.AddSingleton<StatisticsUpdaterService>();
-            services.AddSingleton<IStatisticsUpdaterService>(x => x.GetRequiredService<StatisticsUpdaterService>());
+			services.AddTransient<IBenchmarkResultsRepository, BenchmarkResultsRepository>();
+			services.AddTransient<ICpuRepository, CpuRepository>();
+			services.AddTransient<ITopologyRepository, TopologyRepository>();
+			services.AddTransient<IBenchmarkRepository, BenchmarkRepository>();
+			services.AddTransient<ITaskRepository, TaskRepository>();
+			services.AddTransient<IElpidaRepository, ElpidaRepository>();
+			services.AddTransient<IOsRepository, OsRepository>();
+			services.AddTransient<IBenchmarkStatisticsRepository, BenchmarkStatisticsRepository>();
 
-            services.AddTransient<IBenchmarkResultsRepository, BenchmarkResultsRepository>();
-            services.AddTransient<ICpuRepository, CpuRepository>();
-            services.AddTransient<ITopologyRepository, TopologyRepository>();
-            services.AddTransient<IBenchmarkRepository, BenchmarkRepository>();
-            services.AddTransient<ITaskRepository, TaskRepository>();
-            services.AddTransient<IElpidaRepository, ElpidaRepository>();
-            services.AddTransient<IOsRepository, OsRepository>();
-            services.AddTransient<IBenchmarkStatisticsRepository, BenchmarkStatisticsRepository>();
+			services.AddDbContext<ElpidaContext>(
+				builder =>
+				{
+					builder.UseSqlite(
+						Configuration.GetConnectionString("Local"),
+						optionsBuilder => optionsBuilder.CommandTimeout(60)
+					);
+				}
+			);
 
-            services.AddDbContext<ElpidaContext>(builder =>
-            {
-                builder.UseSqlite(Configuration.GetConnectionString("Local"), optionsBuilder => optionsBuilder.CommandTimeout(60));
-            });
+			ServiceProvider = services.BuildServiceProvider();
 
-            ServiceProvider = services.BuildServiceProvider();
+			ServiceProvider.GetRequiredService<StatisticsUpdaterService>()
+				.StartAsync(CancellationToken.None)
+				.GetAwaiter()
+				.GetResult();
+		}
 
+		public IServiceProvider ServiceProvider { get; }
 
-            ServiceProvider.GetRequiredService<StatisticsUpdaterService>()
-                .StartAsync(CancellationToken.None)
-                .GetAwaiter()
-                .GetResult();
-        }
+		public IConfigurationRoot Configuration { get; }
 
-        public IServiceProvider ServiceProvider { get; }
-
-        public IConfigurationRoot Configuration { get; }
-
-        public void Dispose()
-        {
-            ServiceProvider.GetRequiredService<StatisticsUpdaterService>()
-                .StopAsync(CancellationToken.None)
-                .GetAwaiter()
-                .GetResult();
-        }
-    }
+		public void Dispose()
+		{
+			ServiceProvider.GetRequiredService<StatisticsUpdaterService>()
+				.StopAsync(CancellationToken.None)
+				.GetAwaiter()
+				.GetResult();
+		}
+	}
 }

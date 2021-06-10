@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,14 +23,17 @@ using Elpida.Backend.Services.Abstractions.Dtos.Statistics;
 
 namespace Elpida.Backend.Services.Abstractions.Interfaces
 {
-    public interface IBenchmarkStatisticsService : IService<BenchmarkStatisticsDto>
-    {
-        Task UpdateTaskStatisticsAsync(
-            long benchmarkId,
-            long topologyId,
-            CancellationToken cancellationToken = default);
+	public interface IBenchmarkStatisticsService : IService<BenchmarkStatisticsDto>
+	{
+		Task UpdateTaskStatisticsAsync(
+			long benchmarkId,
+			long topologyId,
+			CancellationToken cancellationToken = default
+		);
 
-        Task<PagedResult<BenchmarkStatisticsPreviewDto>> GetPagedPreviewsAsync(QueryRequest queryRequest,
-            CancellationToken cancellationToken = default);
-    }
+		Task<PagedResult<BenchmarkStatisticsPreviewDto>> GetPagedPreviewsAsync(
+			QueryRequest queryRequest,
+			CancellationToken cancellationToken = default
+		);
+	}
 }

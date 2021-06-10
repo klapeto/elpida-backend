@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,200 +23,226 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Elpida.Backend.Common.Exceptions;
 using Elpida.Backend.Data.Abstractions;
 using Elpida.Backend.Data.Abstractions.Interfaces;
 using Elpida.Backend.Data.Abstractions.Models;
-using Elpida.Backend.Services.Abstractions.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Elpida.Backend.Data
 {
-    public class EntityRepository<TEntity> : IRepository<TEntity> where TEntity : Entity
-    {
-        public EntityRepository(ElpidaContext context, DbSet<TEntity> collection)
-        {
-            Collection = collection;
-            Context = context;
-        }
+	public class EntityRepository<TEntity> : IRepository<TEntity>
+		where TEntity : Entity
+	{
+		protected EntityRepository(ElpidaContext context, DbSet<TEntity> collection)
+		{
+			Collection = collection;
+			Context = context;
+		}
 
-        protected DbSet<TEntity> Collection { get; }
-        protected ElpidaContext Context { get; }
+		protected DbSet<TEntity> Collection { get; }
 
-        protected virtual IQueryable<TEntity> ProcessGetSingle(IQueryable<TEntity> queryable)
-        {
-            return queryable;
-        }
+		private ElpidaContext Context { get; }
 
-        protected virtual IQueryable<TEntity> ProcessGetMultiplePaged(IQueryable<TEntity> queryable)
-        {
-            return queryable;
-        }
+		public async Task<TEntity?> GetSingleAsync(long id, CancellationToken cancellationToken = default)
+		{
+			return await ProcessGetSingle(Collection.AsQueryable())
+				.FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
+		}
 
-        #region IRepository<TEntity> Members
+		public Task<TReturnEntity> GetSingleAsync<TReturnEntity>(
+			long id,
+			Expression<Func<TEntity, TReturnEntity>> constructionExpression,
+			CancellationToken cancellationToken = default
+		)
+		{
+			return ProcessGetSingle(Collection.AsQueryable())
+				.Where(e => e.Id == id)
+				.Select(constructionExpression)
+				.FirstOrDefaultAsync(cancellationToken);
+		}
 
-        public async Task<TEntity?> GetSingleAsync(long id, CancellationToken cancellationToken = default)
-        {
-            return await ProcessGetSingle(Collection.AsQueryable())
-                .FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
-        }
+		public async Task<TEntity?> GetSingleAsync(
+			Expression<Func<TEntity, bool>> filters,
+			CancellationToken cancellationToken = default
+		)
+		{
+			return await ProcessGetSingle(Collection.AsQueryable())
+				.FirstOrDefaultAsync(filters, cancellationToken);
+		}
 
-        public Task<TReturnEntity> GetSingleAsync<TReturnEntity>(long id,
-            Expression<Func<TEntity, TReturnEntity>> constructionExpression,
-            CancellationToken cancellationToken = default)
-        {
-            return ProcessGetSingle(Collection.AsQueryable())
-                .Where(e => e.Id == id)
-                .Select(constructionExpression)
-                .FirstOrDefaultAsync(cancellationToken);
-        }
+		public Task<TEntity> CreateAsync(TEntity entity, CancellationToken cancellationToken = default)
+		{
+			var addedEntity = Collection.Add(entity);
+			return Task.FromResult(addedEntity.Entity);
+		}
 
-        public async Task<TEntity?> GetSingleAsync(Expression<Func<TEntity, bool>> filters,
-            CancellationToken cancellationToken = default)
-        {
-            return await ProcessGetSingle(Collection.AsQueryable())
-                .FirstOrDefaultAsync(filters, cancellationToken);
-        }
+		public Task<PagedQueryResult<TEntity>> GetMultiplePagedAsync<TOrderKey>(
+			int from,
+			int count,
+			bool descending,
+			bool calculateTotalCount,
+			Expression<Func<TEntity, TOrderKey>>? orderBy,
+			IEnumerable<Expression<Func<TEntity, bool>>>? filters,
+			CancellationToken cancellationToken = default
+		)
+		{
+			return GetPagedProjectionAsync(
+				from,
+				count,
+				m => m,
+				descending,
+				calculateTotalCount,
+				orderBy,
+				filters,
+				cancellationToken
+			);
+		}
 
-        public Task<TEntity> CreateAsync(TEntity entity, CancellationToken cancellationToken = default)
-        {
-            var addedEntity = Collection.Add(entity);
-            return Task.FromResult(addedEntity.Entity);
-        }
+		public async Task<PagedQueryResult<TReturnEntity>> GetPagedGroupProjectionAsync<TOrderKey, TGroupBy,
+			TReturnEntity>(
+			int from,
+			int count,
+			Expression<Func<IGrouping<TGroupBy, TEntity>, TReturnEntity>> constructionExpression,
+			Expression<Func<TEntity, TGroupBy>> groupBy,
+			bool descending = false,
+			bool calculateTotalCount = false,
+			Expression<Func<TEntity, TOrderKey>>? orderBy = null,
+			IEnumerable<Expression<Func<TEntity, bool>>>? filters = null,
+			CancellationToken cancellationToken = default
+		)
+		{
+			var (totalCount, query) = await PreprocessQueryAsync(
+				ProcessGetMultiplePaged(Collection.AsQueryable()),
+				from,
+				count,
+				descending,
+				calculateTotalCount,
+				orderBy,
+				filters,
+				cancellationToken
+			);
 
-        public Task<PagedQueryResult<TEntity>> GetMultiplePagedAsync<TOrderKey>(
-            int from,
-            int count,
-            bool descending,
-            bool calculateTotalCount,
-            Expression<Func<TEntity, TOrderKey>>? orderBy,
-            IEnumerable<Expression<Func<TEntity, bool>>>? filters,
-            CancellationToken cancellationToken = default)
-        {
-            return GetPagedProjectionAsync(from, count, m => m, 
-                descending, 
-                calculateTotalCount, 
-                orderBy, 
-                filters,
-                cancellationToken);
-        }
+			var results = await query
+				.GroupBy(groupBy)
+				.Select(constructionExpression)
+				.ToListAsync(cancellationToken);
 
-        public async Task<PagedQueryResult<TReturnEntity>> GetPagedGroupProjectionAsync<TOrderKey, TGroupBy,
-            TReturnEntity>(
-            int from,
-            int count,
-            Expression<Func<IGrouping<TGroupBy, TEntity>, TReturnEntity>> constructionExpression,
-            Expression<Func<TEntity, TGroupBy>> groupBy,
-            bool descending = false,
-            bool calculateTotalCount = false,
-            Expression<Func<TEntity, TOrderKey>>? orderBy = null,
-            IEnumerable<Expression<Func<TEntity, bool>>>? filters = null,
-            CancellationToken cancellationToken = default)
-        {
-            var (totalCount, query) = await PreprocessQueryAsync(
-                ProcessGetMultiplePaged(Collection.AsQueryable()),
-                from,
-                count,
-                descending,
-                calculateTotalCount,
-                orderBy,
-                filters,
-                cancellationToken);
+			return new PagedQueryResult<TReturnEntity>(totalCount, results);
+		}
 
-            var results = await query
-                .GroupBy(groupBy)
-                .Select(constructionExpression)
-                .ToListAsync(cancellationToken);
+		public async Task<PagedQueryResult<TReturnEntity>> GetPagedProjectionAsync<TOrderKey, TReturnEntity>(
+			int from,
+			int count,
+			Expression<Func<TEntity, TReturnEntity>> constructionExpression,
+			bool descending = false,
+			bool calculateTotalCount = false,
+			Expression<Func<TEntity, TOrderKey>>? orderBy = null,
+			IEnumerable<Expression<Func<TEntity, bool>>>? filters = null,
+			CancellationToken cancellationToken = default
+		)
+		{
+			var (totalCount, query) = await PreprocessQueryAsync(
+				ProcessGetMultiplePaged(Collection.AsQueryable()),
+				from,
+				count,
+				descending,
+				calculateTotalCount,
+				orderBy,
+				filters,
+				cancellationToken
+			);
 
-            return new PagedQueryResult<TReturnEntity>(totalCount, results);
-        }
+			var results = await query
+				.Select(constructionExpression)
+				.ToListAsync(cancellationToken);
 
+			return new PagedQueryResult<TReturnEntity>(totalCount, results);
+		}
 
-        protected async Task<(int Count, IQueryable<TCollectionEntity> query)> PreprocessQueryAsync<TCollectionEntity,
-            TOrderKey>(
-            IQueryable<TCollectionEntity> query,
-            int from,
-            int count,
-            bool descending = false,
-            bool calculateTotalCount = false,
-            Expression<Func<TCollectionEntity, TOrderKey>>? orderBy = null,
-            IEnumerable<Expression<Func<TCollectionEntity, bool>>>? filters = null,
-            CancellationToken cancellationToken = default
-        ) where TCollectionEntity : Entity
-        {
-            if (from < 0) throw new ArgumentException("'from' must be positive or 0", nameof(from));
+		public Task<List<TEntity>> GetMultipleAsync(
+			IEnumerable<Expression<Func<TEntity, bool>>> filters,
+			CancellationToken cancellationToken = default
+		)
+		{
+			var result = ProcessGetMultiplePaged(Collection.AsQueryable())
+				.AsNoTracking();
 
-            if (count <= 0) throw new ArgumentException("'count' must be positive", nameof(count));
+			result = filters.Aggregate(result, (current, filter) => current.Where(filter));
 
-            var result = query.AsNoTracking();
+			return result.ToListAsync(cancellationToken);
+		}
 
-            if (filters != null) result = filters.Aggregate(result, (current, filter) => current.Where(filter));
+		public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
+		{
+			try
+			{
+				await Context.SaveChangesAsync(cancellationToken);
+			}
+			catch (DbUpdateConcurrencyException e)
+			{
+				throw new UpdateConcurrencyException(
+					"Failed to update because another service updated this on the mean time",
+					e
+				);
+			}
+		}
 
-            if (orderBy != null)
-            {
-                result = descending ? result.OrderByDescending(orderBy) : result.OrderBy(orderBy);
-            }
-            else
-            {
-                result = result.OrderBy(m => m.Id);
-            }
+		protected virtual IQueryable<TEntity> ProcessGetSingle(IQueryable<TEntity> queryable)
+		{
+			return queryable;
+		}
 
-            var totalCount = calculateTotalCount ? await result.CountAsync(cancellationToken) : 0;
+		protected virtual IQueryable<TEntity> ProcessGetMultiplePaged(IQueryable<TEntity> queryable)
+		{
+			return queryable;
+		}
 
-            result = result.Skip(from)
-                .Take(count);
+		protected async Task<(int Count, IQueryable<TCollectionEntity> query)> PreprocessQueryAsync<TCollectionEntity,
+			TOrderKey>(
+			IQueryable<TCollectionEntity> query,
+			int from,
+			int count,
+			bool descending = false,
+			bool calculateTotalCount = false,
+			Expression<Func<TCollectionEntity, TOrderKey>>? orderBy = null,
+			IEnumerable<Expression<Func<TCollectionEntity, bool>>>? filters = null,
+			CancellationToken cancellationToken = default
+		)
+		    where TCollectionEntity : Entity
+		{
+			if (from < 0)
+			{
+				throw new ArgumentException("'from' must be positive or 0", nameof(from));
+			}
 
-            return (totalCount, result);
-        }
+			if (count <= 0)
+			{
+				throw new ArgumentException("'count' must be positive", nameof(count));
+			}
 
-        public async Task<PagedQueryResult<TReturnEntity>> GetPagedProjectionAsync<TOrderKey, TReturnEntity>(
-            int from,
-            int count,
-            Expression<Func<TEntity, TReturnEntity>> constructionExpression,
-            bool descending = false,
-            bool calculateTotalCount = false,
-            Expression<Func<TEntity, TOrderKey>>? orderBy = null,
-            IEnumerable<Expression<Func<TEntity, bool>>>? filters = null,
-            CancellationToken cancellationToken = default)
-        {
-            var (totalCount, query) = await PreprocessQueryAsync(
-                ProcessGetMultiplePaged(Collection.AsQueryable()),
-                from,
-                count,
-                descending,
-                calculateTotalCount,
-                orderBy,
-                filters,
-                cancellationToken);
+			var result = query.AsNoTracking();
 
-            var results = await query
-                .Select(constructionExpression)
-                .ToListAsync(cancellationToken);
+			if (filters != null)
+			{
+				result = filters.Aggregate(result, (current, filter) => current.Where(filter));
+			}
 
-            return new PagedQueryResult<TReturnEntity>(totalCount, results);
-        }
+			if (orderBy != null)
+			{
+				result = descending ? result.OrderByDescending(orderBy) : result.OrderBy(orderBy);
+			}
+			else
+			{
+				result = result.OrderBy(m => m.Id);
+			}
 
-        public Task<List<TEntity>> GetMultipleAsync(IEnumerable<Expression<Func<TEntity, bool>>> filters,
-            CancellationToken cancellationToken = default)
-        {
-            var result = ProcessGetMultiplePaged(Collection.AsQueryable())
-                .AsNoTracking();
-            result = filters.Aggregate(result, (current, filter) => current.Where(filter));
+			var totalCount = calculateTotalCount ? await result.CountAsync(cancellationToken) : 0;
 
-            return result.ToListAsync(cancellationToken);
-        }
+			result = result.Skip(from)
+				.Take(count);
 
-        public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
-        {
-            try
-            {
-                await Context.SaveChangesAsync(cancellationToken);
-            }
-            catch (DbUpdateConcurrencyException e)
-            {
-                throw new UpdateConcurrencyException("Failed to update because another service updated this on the mean time", e);
-            }
-        }
-
-        #endregion
-    }
+			return (totalCount, result);
+		}
+	}
 }

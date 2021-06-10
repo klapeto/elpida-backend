@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,20 +24,28 @@ using Elpida.Backend.Services.Abstractions.Dtos.Topology;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Statistics
 {
-    public class BenchmarkStatisticsDto : FountationDto
-    {
-        public CpuDto Cpu { get; set; } = default!;
-        public BenchmarkDto Benchmark { get; set; } = default!;
-        public TopologyDto Topology { get; set; } = default!;
-        
-        public long SampleSize { get; set; }
-        public double Max { get; set; }
-        public double Min { get; set; }
-        public double Mean { get; set; }
-        public double StandardDeviation { get; set; }
-        public double Tau { get; set; }
-        public double MarginOfError { get; set; }
+	public class BenchmarkStatisticsDto : FountationDto
+	{
+		public CpuDto Cpu { get; set; } = default!;
 
-        public List<FrequencyClassDto> Classes { get; set; } = new List<FrequencyClassDto>();
-    }
+		public BenchmarkDto Benchmark { get; set; } = default!;
+
+		public TopologyDto Topology { get; set; } = default!;
+
+		public long SampleSize { get; set; }
+
+		public double Max { get; set; }
+
+		public double Min { get; set; }
+
+		public double Mean { get; set; }
+
+		public double StandardDeviation { get; set; }
+
+		public double Tau { get; set; }
+
+		public double MarginOfError { get; set; }
+
+		public List<FrequencyClassDto> Classes { get; set; } = new List<FrequencyClassDto>();
+	}
 }

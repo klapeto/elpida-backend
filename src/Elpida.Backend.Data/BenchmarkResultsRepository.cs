@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2020 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,7 +21,6 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Elpida.Backend.Data.Abstractions;
 using Elpida.Backend.Data.Abstractions.Models.Result;
 using Elpida.Backend.Data.Abstractions.Models.Statistics;
 using Elpida.Backend.Data.Abstractions.Repositories;
@@ -29,73 +28,90 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Elpida.Backend.Data
 {
-    public class BenchmarkResultsRepository :
-        EntityRepository<BenchmarkResultModel>,
-        IBenchmarkResultsRepository
-    {
-        public BenchmarkResultsRepository(ElpidaContext elpidaContext)
-            : base(elpidaContext, elpidaContext.BenchmarkResults)
-        {
-        }
+	public class BenchmarkResultsRepository
+		: EntityRepository<BenchmarkResultModel>,
+			IBenchmarkResultsRepository
+	{
+		public BenchmarkResultsRepository(ElpidaContext elpidaContext)
+			: base(elpidaContext, elpidaContext.BenchmarkResults)
+		{
+		}
 
-        public Task<long> GetCountWithScoreBetween(long benchmarkId, long topologyId, double min, double max,
-            CancellationToken cancellationToken = default)
-        {
-            return Collection
-                .Where(s => s.BenchmarkId == benchmarkId
-                            && s.TopologyId == topologyId
-                            && s.Score >= min
-                            && s.Score < max)
-                .LongCountAsync(cancellationToken);
-        }
+		public Task<long> GetCountWithScoreBetween(
+			long benchmarkId,
+			long topologyId,
+			double min,
+			double max,
+			CancellationToken cancellationToken = default
+		)
+		{
+			return Collection
+				.Where(
+					s => s.BenchmarkId == benchmarkId
+					     && s.TopologyId == topologyId
+					     && s.Score >= min
+					     && s.Score < max
+				)
+				.LongCountAsync(cancellationToken);
+		}
 
-        public async Task<BasicStatisticsModel> GetStatisticsAsync(long benchmarkId, long topologyId, CancellationToken cancellationToken = default)
-        {
-            var baseQuery = Collection
-                .AsNoTracking()
-                .Where(m => m.TopologyId == topologyId && m.BenchmarkId == benchmarkId)
-                .GroupBy(m => m.BenchmarkId);
-            
-            var result = await baseQuery
-                .Select(m => new BasicStatisticsModel
-                {
-                    Mean = m.Average(x => x.Score),
-                    Max = m.Max(x => x.Score),
-                    Min = m.Min(x => x.Score),
-                    Count = m.LongCount()
-                })
-                .FirstAsync(cancellationToken);
+		public async Task<BasicStatisticsModel> GetStatisticsAsync(
+			long benchmarkId,
+			long topologyId,
+			CancellationToken cancellationToken = default
+		)
+		{
+			var baseQuery = Collection
+				.AsNoTracking()
+				.Where(m => m.TopologyId == topologyId && m.BenchmarkId == benchmarkId)
+				.GroupBy(m => m.BenchmarkId);
 
-            if (result.Count == 0) return result;
+			var result = await baseQuery
+				.Select(
+					m => new BasicStatisticsModel
+					{
+						Mean = m.Average(x => x.Score),
+						Max = m.Max(x => x.Score),
+						Min = m.Min(x => x.Score),
+						Count = m.LongCount(),
+					}
+				)
+				.FirstAsync(cancellationToken);
 
-            var variance = await baseQuery
-                .Select(m => m.Sum(x => (x.Score - result.Mean) * (x.Score - result.Mean)))
-                .FirstAsync(cancellationToken)
-                           / result.Count;
+			if (result.Count == 0)
+			{
+				return result;
+			}
 
-            result.StandardDeviation = Math.Sqrt(variance);
-            result.MarginOfError = result.StandardDeviation / Math.Sqrt(result.Count);
+			var variance = await baseQuery
+				               .Select(m => m.Sum(x => (x.Score - result.Mean) * (x.Score - result.Mean)))
+				               .FirstAsync(cancellationToken)
+			               / result.Count;
 
-            return result;
-        }
+			result.StandardDeviation = Math.Sqrt(variance);
+			result.MarginOfError = result.StandardDeviation / Math.Sqrt(result.Count);
 
-        protected override IQueryable<BenchmarkResultModel> ProcessGetMultiplePaged(
-            IQueryable<BenchmarkResultModel> queryable)
-        {
-            return ProcessGetSingle(queryable);
-        }
+			return result;
+		}
 
-        protected override IQueryable<BenchmarkResultModel> ProcessGetSingle(IQueryable<BenchmarkResultModel> queryable)
-        {
-            return queryable
-                .AsNoTracking()
-                .Include(model => model.Benchmark)
-                .Include(model => model.Os)
-                .Include(model => model.Elpida)
-                .Include(model => model.TaskResults)
-                .ThenInclude(model => model.Task)
-                .Include(model => model.Topology)
-                .ThenInclude(model => model.Cpu);
-        }
-    }
+		protected override IQueryable<BenchmarkResultModel> ProcessGetMultiplePaged(
+			IQueryable<BenchmarkResultModel> queryable
+		)
+		{
+			return ProcessGetSingle(queryable);
+		}
+
+		protected override IQueryable<BenchmarkResultModel> ProcessGetSingle(IQueryable<BenchmarkResultModel> queryable)
+		{
+			return queryable
+				.AsNoTracking()
+				.Include(model => model.Benchmark)
+				.Include(model => model.Os)
+				.Include(model => model.Elpida)
+				.Include(model => model.TaskResults)
+				.ThenInclude(model => model.Task)
+				.Include(model => model.Topology)
+				.ThenInclude(model => model.Cpu);
+		}
+	}
 }

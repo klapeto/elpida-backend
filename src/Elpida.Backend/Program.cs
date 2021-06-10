@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2020 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,7 +23,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Elpida.Backend
 {
-	public class Program
+	public static class Program
 	{
 		public static void Main(string[] args)
 		{

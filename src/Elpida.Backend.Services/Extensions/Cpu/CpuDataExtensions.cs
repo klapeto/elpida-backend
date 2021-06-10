@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,21 +24,21 @@ using Newtonsoft.Json;
 
 namespace Elpida.Backend.Services.Extensions.Cpu
 {
-    public static class CpuDataExtensions
-    {
-        public static CpuDto ToDto(this CpuModel model)
-        {
-            return new()
-            {
-                Id = model.Id,
-                Brand = model.Brand,
-                Caches = JsonConvert.DeserializeObject<List<CpuCacheDto>>(model.Caches),
-                Features = JsonConvert.DeserializeObject<List<string>>(model.Features),
-                Frequency = model.Frequency,
-                Smt = model.Smt,
-                Vendor = model.Vendor,
-                AdditionalInfo = JsonConvert.DeserializeObject<Dictionary<string, string>>(model.AdditionalInfo)
-            };
-        }
-    }
+	public static class CpuDataExtensions
+	{
+		public static CpuDto ToDto(this CpuModel model)
+		{
+			return new ()
+			{
+				Id = model.Id,
+				Brand = model.Brand,
+				Caches = JsonConvert.DeserializeObject<List<CpuCacheDto>>(model.Caches),
+				Features = JsonConvert.DeserializeObject<List<string>>(model.Features),
+				Frequency = model.Frequency,
+				Smt = model.Smt,
+				Vendor = model.Vendor,
+				AdditionalInfo = JsonConvert.DeserializeObject<Dictionary<string, string>>(model.AdditionalInfo),
+			};
+		}
+	}
 }

@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,14 +23,14 @@ using System.Text;
 
 namespace Elpida.Backend.Common.Extensions
 {
-    public static class StringExtensions
-    {
-        public static string ToHashString(this string str)
-        {
-            using var md5 = MD5.Create();
-            using var ms = new MemoryStream(Encoding.UTF8.GetBytes(str));
+	public static class StringExtensions
+	{
+		public static string ToHashString(this string str)
+		{
+			using var md5 = MD5.Create();
+			using var ms = new MemoryStream(Encoding.UTF8.GetBytes(str));
 
-            return md5.ComputeHash(ms).ToHexString();
-        }
-    }
+			return md5.ComputeHash(ms).ToHexString();
+		}
+	}
 }

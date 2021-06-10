@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2020 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,19 +25,20 @@ using Elpida.Backend.Data.Abstractions.Models.Statistics;
 
 namespace Elpida.Backend.Data.Abstractions.Repositories
 {
-    public interface IBenchmarkResultsRepository : IRepository<BenchmarkResultModel>
-    {
-        Task<long> GetCountWithScoreBetween(
-            long benchmarkId, 
-            long topologyId, 
-            double min, 
-            double max,
-            CancellationToken cancellationToken = default);
-        
-        Task<BasicStatisticsModel> GetStatisticsAsync(
-            long benchmarkId, 
-            long topologyId,
-            CancellationToken cancellationToken = default);
-        
-    }
+	public interface IBenchmarkResultsRepository : IRepository<BenchmarkResultModel>
+	{
+		Task<long> GetCountWithScoreBetween(
+			long benchmarkId,
+			long topologyId,
+			double min,
+			double max,
+			CancellationToken cancellationToken = default
+		);
+
+		Task<BasicStatisticsModel> GetStatisticsAsync(
+			long benchmarkId,
+			long topologyId,
+			CancellationToken cancellationToken = default
+		);
+	}
 }

@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2020 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,7 +18,6 @@
  */
 
 using Elpida.Backend.Services.Abstractions.Dtos.Elpida;
-using Elpida.Backend.Services.Abstractions.Dtos.Result;
 using FluentValidation;
 
 namespace Elpida.Backend.Validators

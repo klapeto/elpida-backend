@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2020 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,7 +21,6 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -31,9 +30,8 @@ namespace Elpida.Backend
 	public class ApiKeyAuthenticationAttribute : Attribute, IAsyncActionFilter
 	{
 		private const string ApiKeyHeaderName = "api_key";
-		public string KeyName { get; set; }
 
-		#region IAsyncActionFilter Members
+		public string KeyName { get; set; }
 
 		public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
 		{
@@ -60,7 +58,5 @@ namespace Elpida.Backend
 
 			await next();
 		}
-
-		#endregion
 	}
 }

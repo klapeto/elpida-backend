@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,30 +19,29 @@
 
 using Elpida.Backend.Data.Abstractions.Models.Elpida;
 using Elpida.Backend.Services.Abstractions.Dtos.Elpida;
-using Elpida.Backend.Services.Abstractions.Dtos.Result;
 
 namespace Elpida.Backend.Services.Extensions.Elpida
 {
-    public static class ElpidaExtensions
-    {
-        public static ElpidaDto ToDto(this ElpidaModel elpidaModel)
-        {
-            return new()
-            {
-                Id = elpidaModel.Id,
-                Compiler = new CompilerDto
-                {
-                    Name = elpidaModel.CompilerName,
-                    Version = elpidaModel.CompilerVersion
-                },
-                Version = new VersionDto
-                {
-                    Major = elpidaModel.VersionMajor,
-                    Minor = elpidaModel.VersionMinor,
-                    Revision = elpidaModel.VersionRevision,
-                    Build = elpidaModel.VersionBuild
-                }
-            };
-        }
-    }
+	public static class ElpidaExtensions
+	{
+		public static ElpidaDto ToDto(this ElpidaModel elpidaModel)
+		{
+			return new ()
+			{
+				Id = elpidaModel.Id,
+				Compiler = new CompilerDto
+				{
+					Name = elpidaModel.CompilerName,
+					Version = elpidaModel.CompilerVersion,
+				},
+				Version = new VersionDto
+				{
+					Major = elpidaModel.VersionMajor,
+					Minor = elpidaModel.VersionMinor,
+					Revision = elpidaModel.VersionRevision,
+					Build = elpidaModel.VersionBuild,
+				},
+			};
+		}
+	}
 }

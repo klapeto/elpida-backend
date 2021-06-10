@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,11 +26,15 @@ using Elpida.Backend.Services.Abstractions.Dtos;
 
 namespace Elpida.Backend.Services.Abstractions.Interfaces
 {
-    public interface IService<TDto> where TDto : FountationDto
-    {
-        Task<TDto> GetSingleAsync(long id, CancellationToken cancellationToken = default);
-        Task<PagedResult<TDto>> GetPagedAsync(QueryRequest queryRequest, CancellationToken cancellationToken = default);
-        Task<TDto> GetOrAddAsync(TDto dto, CancellationToken cancellationToken = default);
-        IEnumerable<FilterExpression> GetFilters<T, TR>(Expression<Func<T, TR>> baseExpression);
-    }
+	public interface IService<TDto>
+		where TDto : FountationDto
+	{
+		Task<TDto> GetSingleAsync(long id, CancellationToken cancellationToken = default);
+
+		Task<PagedResult<TDto>> GetPagedAsync(QueryRequest queryRequest, CancellationToken cancellationToken = default);
+
+		Task<TDto> GetOrAddAsync(TDto dto, CancellationToken cancellationToken = default);
+
+		IEnumerable<FilterExpression> GetFilters<T, TR>(Expression<Func<T, TR>> baseExpression);
+	}
 }

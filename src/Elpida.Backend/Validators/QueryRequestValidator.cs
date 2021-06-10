@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2020 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@ using FluentValidation;
 
 namespace Elpida.Backend.Validators
 {
-	public class QueryRequestValidator: AbstractValidator<QueryRequest>
+	public class QueryRequestValidator : AbstractValidator<QueryRequest>
 	{
 		public QueryRequestValidator()
 		{

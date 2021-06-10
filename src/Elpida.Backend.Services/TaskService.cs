@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,80 +22,87 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Elpida.Backend.Common.Exceptions;
 using Elpida.Backend.Common.Lock;
 using Elpida.Backend.Data.Abstractions.Models.Task;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services.Abstractions;
-using Elpida.Backend.Services.Abstractions.Dtos;
 using Elpida.Backend.Services.Abstractions.Dtos.Task;
-using Elpida.Backend.Services.Abstractions.Exceptions;
 using Elpida.Backend.Services.Abstractions.Interfaces;
 using Elpida.Backend.Services.Extensions.Task;
 using Newtonsoft.Json;
 
 namespace Elpida.Backend.Services
 {
-    public class TaskService : Service<TaskDto, TaskModel, ITaskRepository>, ITaskService
-    {
-        public TaskService(ITaskRepository taskRepository, ILockFactory lockFactory)
-            : base(taskRepository, lockFactory)
-        {
-        }
+	public class TaskService : Service<TaskDto, TaskModel, ITaskRepository>, ITaskService
+	{
+		public TaskService(ITaskRepository taskRepository, ILockFactory lockFactory)
+			: base(taskRepository, lockFactory)
+		{
+		}
 
-        private static IEnumerable<FilterExpression> ResultFilters { get; } = new List<FilterExpression>
-        {
-            CreateFilter("taskName", model => model.Name)
-        };
-        
-        public async Task<TaskDto> GetSingleAsync(Guid uuid, CancellationToken cancellationToken = default)
-        {
-            var model = await Repository.GetSingleAsync(b => b.Uuid == uuid, cancellationToken);
+		private static IEnumerable<FilterExpression> ResultFilters { get; } = new List<FilterExpression>
+		{
+			CreateFilter("taskName", model => model.Name),
+		};
 
-            if (model == null) throw new NotFoundException("Task was not found.", uuid);
+		public async Task<TaskDto> GetSingleAsync(Guid uuid, CancellationToken cancellationToken = default)
+		{
+			var model = await Repository.GetSingleAsync(b => b.Uuid == uuid, cancellationToken);
 
-            return model.ToDto();
-        }
+			if (model == null)
+			{
+				throw new NotFoundException("Task was not found.", uuid);
+			}
 
-        protected override IEnumerable<FilterExpression> GetFilterExpressions()
-        {
-            return ResultFilters;
-        }
+			return model.ToDto();
+		}
 
-        protected override TaskDto ToDto(TaskModel model)
-        {
-            return model.ToDto();
-        }
+		protected override IEnumerable<FilterExpression> GetFilterExpressions()
+		{
+			return ResultFilters;
+		}
 
-        protected override Task<TaskModel> ProcessDtoAndCreateModelAsync(TaskDto dto, CancellationToken cancellationToken)
-        {
-            return Task.FromResult(new TaskModel
-            {
-                Id = dto.Id,
-                Uuid = dto.Uuid,
-                Name = dto.Name,
-                Description = dto.Description,
+		protected override TaskDto ToDto(TaskModel model)
+		{
+			return model.ToDto();
+		}
 
-                InputName = dto.Input?.Name,
-                InputDescription = dto.Input?.Description,
-                InputUnit = dto.Input?.Unit,
-                InputProperties = JsonConvert.SerializeObject(dto.Input?.RequiredProperties),
+		protected override Task<TaskModel> ProcessDtoAndCreateModelAsync(
+			TaskDto dto,
+			CancellationToken cancellationToken
+		)
+		{
+			return Task.FromResult(
+				new TaskModel
+				{
+					Id = dto.Id,
+					Uuid = dto.Uuid,
+					Name = dto.Name,
+					Description = dto.Description,
 
-                OutputName = dto.Output?.Name,
-                OutputDescription = dto.Output?.Description,
-                OutputUnit = dto.Output?.Unit,
-                OutputProperties = JsonConvert.SerializeObject(dto.Output?.RequiredProperties),
+					InputName = dto.Input?.Name,
+					InputDescription = dto.Input?.Description,
+					InputUnit = dto.Input?.Unit,
+					InputProperties = JsonConvert.SerializeObject(dto.Input?.RequiredProperties),
 
-                ResultName = dto.Result.Name,
-                ResultDescription = dto.Result.Description,
-                ResultType = dto.Result.Type,
-                ResultAggregation = dto.Result.Aggregation,
-                ResultUnit = dto.Result.Unit
-            });
-        }
+					OutputName = dto.Output?.Name,
+					OutputDescription = dto.Output?.Description,
+					OutputUnit = dto.Output?.Unit,
+					OutputProperties = JsonConvert.SerializeObject(dto.Output?.RequiredProperties),
 
-        protected override Expression<Func<TaskModel, bool>> GetCreationBypassCheckExpression(TaskDto dto)
-        {
-            return model => model.Uuid == dto.Uuid;
-        }
-    }
+					ResultName = dto.Result.Name,
+					ResultDescription = dto.Result.Description,
+					ResultType = dto.Result.Type,
+					ResultAggregation = dto.Result.Aggregation,
+					ResultUnit = dto.Result.Unit,
+				}
+			);
+		}
+
+		protected override Expression<Func<TaskModel, bool>> GetCreationBypassCheckExpression(TaskDto dto)
+		{
+			return model => model.Uuid == dto.Uuid;
+		}
+	}
 }

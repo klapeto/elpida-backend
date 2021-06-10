@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,10 +23,10 @@ using System.Threading.Tasks;
 
 namespace Elpida.Backend.Common.Lock
 {
-    public interface ILockFactory
-    {
-        IDisposable Acquire(string name);
+	public interface ILockFactory
+	{
+		IDisposable Acquire(string name);
 
-        Task<IDisposable> AcquireAsync(string name, CancellationToken cancellationToken = default);
-    }
+		Task<IDisposable> AcquireAsync(string name, CancellationToken cancellationToken = default);
+	}
 }

@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,24 +23,24 @@ using Newtonsoft.Json;
 
 namespace Elpida.Backend.Services.Extensions.Topology
 {
-    public static class TopologyDataExtensions
-    {
-        public static TopologyDto ToDto(this TopologyModel topologyModel)
-        {
-            return new()
-            {
-                Id = topologyModel.Id,
-                CpuId = topologyModel.CpuId,
-                CpuVendor = topologyModel.Cpu.Vendor,
-                CpuBrand = topologyModel.Cpu.Brand,
-                TotalDepth = topologyModel.TotalDepth,
-                TotalLogicalCores = topologyModel.TotalLogicalCores,
-                TotalPhysicalCores = topologyModel.TotalPhysicalCores,
-                TotalMachines = topologyModel.TotalMachines,
-                TotalNumaNodes = topologyModel.TotalNumaNodes,
-                TotalPackages = topologyModel.TotalPackages,
-                Root = JsonConvert.DeserializeObject<CpuNodeDto>(topologyModel.Root)
-            };
-        }
-    }
+	public static class TopologyDataExtensions
+	{
+		public static TopologyDto ToDto(this TopologyModel topologyModel)
+		{
+			return new ()
+			{
+				Id = topologyModel.Id,
+				CpuId = topologyModel.CpuId,
+				CpuVendor = topologyModel.Cpu.Vendor,
+				CpuBrand = topologyModel.Cpu.Brand,
+				TotalDepth = topologyModel.TotalDepth,
+				TotalLogicalCores = topologyModel.TotalLogicalCores,
+				TotalPhysicalCores = topologyModel.TotalPhysicalCores,
+				TotalMachines = topologyModel.TotalMachines,
+				TotalNumaNodes = topologyModel.TotalNumaNodes,
+				TotalPackages = topologyModel.TotalPackages,
+				Root = JsonConvert.DeserializeObject<CpuNodeDto>(topologyModel.Root),
+			};
+		}
+	}
 }

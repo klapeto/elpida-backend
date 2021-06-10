@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -27,50 +27,62 @@ using Elpida.Backend.Data.Abstractions.Models;
 
 namespace Elpida.Backend.Data.Abstractions.Interfaces
 {
-    public interface IRepository<TEntity> where TEntity : Entity
-    {
-        Task<TEntity?> GetSingleAsync(long id, CancellationToken cancellationToken = default);
-        
-        Task<TReturnEntity> GetSingleAsync<TReturnEntity>(long id, Expression<Func<TEntity, TReturnEntity>> constructionExpression, CancellationToken cancellationToken = default);
+	public interface IRepository<TEntity>
+	    where TEntity : Entity
+	{
+		Task<TEntity?> GetSingleAsync(long id, CancellationToken cancellationToken = default);
 
-        Task<TEntity?> GetSingleAsync(Expression<Func<TEntity, bool>> filters,
-            CancellationToken cancellationToken = default);
+		Task<TReturnEntity> GetSingleAsync<TReturnEntity>(
+			long id,
+			Expression<Func<TEntity, TReturnEntity>> constructionExpression,
+			CancellationToken cancellationToken = default
+		);
 
-        Task<TEntity> CreateAsync(TEntity entity, CancellationToken cancellationToken = default);
+		Task<TEntity?> GetSingleAsync(
+			Expression<Func<TEntity, bool>> filters,
+			CancellationToken cancellationToken = default
+		);
 
-        Task<PagedQueryResult<TEntity>> GetMultiplePagedAsync<TOrderKey>(
-            int from,
-            int count,
-            bool descending = false,
-            bool calculateTotalCount = false,
-            Expression<Func<TEntity, TOrderKey>>? orderBy = null,
-            IEnumerable<Expression<Func<TEntity, bool>>>? filters = null,
-            CancellationToken cancellationToken = default);
+		Task<TEntity> CreateAsync(TEntity entity, CancellationToken cancellationToken = default);
 
-        Task<PagedQueryResult<TReturnEntity>> GetPagedProjectionAsync<TOrderKey, TReturnEntity>(
-            int from,
-            int count,
-            Expression<Func<TEntity, TReturnEntity>> constructionExpression,
-            bool descending = false,
-            bool calculateTotalCount = false,
-            Expression<Func<TEntity, TOrderKey>>? orderBy = null,
-            IEnumerable<Expression<Func<TEntity, bool>>>? filters = null,
-            CancellationToken cancellationToken = default);
-        
-        Task<PagedQueryResult<TReturnEntity>> GetPagedGroupProjectionAsync<TOrderKey, TGroupBy, TReturnEntity>(
-            int from,
-            int count,
-            Expression<Func<IGrouping<TGroupBy, TEntity>, TReturnEntity>> constructionExpression,
-            Expression<Func<TEntity, TGroupBy>> groupBy,
-            bool descending = false,
-            bool calculateTotalCount = false,
-            Expression<Func<TEntity, TOrderKey>>? orderBy = null,
-            IEnumerable<Expression<Func<TEntity, bool>>>? filters = null,
-            CancellationToken cancellationToken = default);
+		Task<PagedQueryResult<TEntity>> GetMultiplePagedAsync<TOrderKey>(
+			int from,
+			int count,
+			bool descending = false,
+			bool calculateTotalCount = false,
+			Expression<Func<TEntity, TOrderKey>>? orderBy = null,
+			IEnumerable<Expression<Func<TEntity, bool>>>? filters = null,
+			CancellationToken cancellationToken = default
+		);
 
-        Task<List<TEntity>> GetMultipleAsync(IEnumerable<Expression<Func<TEntity, bool>>> filters,
-            CancellationToken cancellationToken = default);
+		Task<PagedQueryResult<TReturnEntity>> GetPagedProjectionAsync<TOrderKey, TReturnEntity>(
+			int from,
+			int count,
+			Expression<Func<TEntity, TReturnEntity>> constructionExpression,
+			bool descending = false,
+			bool calculateTotalCount = false,
+			Expression<Func<TEntity, TOrderKey>>? orderBy = null,
+			IEnumerable<Expression<Func<TEntity, bool>>>? filters = null,
+			CancellationToken cancellationToken = default
+		);
 
-        Task SaveChangesAsync(CancellationToken cancellationToken = default);
-    }
+		Task<PagedQueryResult<TReturnEntity>> GetPagedGroupProjectionAsync<TOrderKey, TGroupBy, TReturnEntity>(
+			int from,
+			int count,
+			Expression<Func<IGrouping<TGroupBy, TEntity>, TReturnEntity>> constructionExpression,
+			Expression<Func<TEntity, TGroupBy>> groupBy,
+			bool descending = false,
+			bool calculateTotalCount = false,
+			Expression<Func<TEntity, TOrderKey>>? orderBy = null,
+			IEnumerable<Expression<Func<TEntity, bool>>>? filters = null,
+			CancellationToken cancellationToken = default
+		);
+
+		Task<List<TEntity>> GetMultipleAsync(
+			IEnumerable<Expression<Func<TEntity, bool>>> filters,
+			CancellationToken cancellationToken = default
+		);
+
+		Task SaveChangesAsync(CancellationToken cancellationToken = default);
+	}
 }

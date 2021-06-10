@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,31 +24,31 @@ using System.Threading.Tasks;
 
 namespace Elpida.Backend.Common.Lock.Local
 {
-    public class LocalLockFactory : ILockFactory
-    {
-        private readonly object _locker = new();
-        private readonly Dictionary<string, LocalLock> _locks = new();
+	public class LocalLockFactory : ILockFactory
+	{
+		private readonly object _locker = new ();
+		private readonly Dictionary<string, LocalLock> _locks = new ();
 
-        public IDisposable Acquire(string name)
-        {
-            LocalLock? returnLock;
-            lock (_locker)
-            {
-                if (!_locks.TryGetValue(name, out returnLock))
-                {
-                    returnLock = new LocalLock();
-                    _locks.Add(name, returnLock);
-                }
-            }
+		public IDisposable Acquire(string name)
+		{
+			LocalLock? returnLock;
+			lock (_locker)
+			{
+				if (!_locks.TryGetValue(name, out returnLock))
+				{
+					returnLock = new LocalLock();
+					_locks.Add(name, returnLock);
+				}
+			}
 
-            returnLock.Acquire();
+			returnLock.Acquire();
 
-            return returnLock;
-        }
+			return returnLock;
+		}
 
-        public Task<IDisposable> AcquireAsync(string name, CancellationToken cancellationToken = default)
-        {
-            return Task.Run(() => Acquire(name), cancellationToken);
-        }
-    }
+		public Task<IDisposable> AcquireAsync(string name, CancellationToken cancellationToken = default)
+		{
+			return Task.Run(() => Acquire(name), cancellationToken);
+		}
+	}
 }

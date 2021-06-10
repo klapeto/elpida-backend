@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,14 +19,18 @@
 
 namespace Elpida.Backend.Data.Abstractions.Models.Elpida
 {
-    public class ElpidaModel : Entity
-    {
-        public int VersionMajor { get; set; }
-        public int VersionMinor { get; set; }
-        public int VersionRevision { get; set; }
-        public int VersionBuild { get; set; }
+	public class ElpidaModel : Entity
+	{
+		public int VersionMajor { get; set; }
 
-        public string CompilerVersion { get; set; } = default!;
-        public string CompilerName { get; set; } = default!;
-    }
+		public int VersionMinor { get; set; }
+
+		public int VersionRevision { get; set; }
+
+		public int VersionBuild { get; set; }
+
+		public string CompilerVersion { get; set; } = default!;
+
+		public string CompilerName { get; set; } = default!;
+	}
 }

@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,18 +21,28 @@ using System;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Statistics
 {
-    public class BenchmarkStatisticsPreviewDto : FountationDto
-    {
-        public string CpuVendor { get; set; } = default!;
-        public string CpuBrand { get; set; } = default!;
-        public string BenchmarkName { get; set; } = default!;
-        public string BenchmarkScoreUnit { get; set; } = default!;
-        public Guid BenchmarkUuid { get; set; }
-        public int CpuCores { get; set; }
-        public int CpuLogicalCores { get; set; }
-        public string TopologyHash { get; set; } = default!;
-        public double Mean { get; set; }
-        public long SampleSize { get; set; }
-        public int Comparison { get; set; }
-    }
+	public class BenchmarkStatisticsPreviewDto : FountationDto
+	{
+		public string CpuVendor { get; set; } = default!;
+
+		public string CpuBrand { get; set; } = default!;
+
+		public string BenchmarkName { get; set; } = default!;
+
+		public string BenchmarkScoreUnit { get; set; } = default!;
+
+		public Guid BenchmarkUuid { get; set; }
+
+		public int CpuCores { get; set; }
+
+		public int CpuLogicalCores { get; set; }
+
+		public string TopologyHash { get; set; } = default!;
+
+		public double Mean { get; set; }
+
+		public long SampleSize { get; set; }
+
+		public int Comparison { get; set; }
+	}
 }

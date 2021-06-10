@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2020 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,12 +21,12 @@ using System;
 using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
+using Elpida.Backend.Common.Exceptions;
 using Elpida.Backend.Common.Lock;
 using Elpida.Backend.Common.Lock.Redis;
 using Elpida.Backend.Data;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services;
-using Elpida.Backend.Services.Abstractions.Exceptions;
 using Elpida.Backend.Services.Abstractions.Interfaces;
 using Elpida.Backend.Validators;
 using FluentValidation.AspNetCore;
@@ -55,12 +55,14 @@ namespace Elpida.Backend
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.AddControllers()
-				.AddFluentValidation(configuration =>
-				{
-					configuration.ImplicitlyValidateChildProperties = true;
-					configuration.RegisterValidatorsFromAssemblyContaining<ResultValidator>();
-				});
-			
+				.AddFluentValidation(
+					configuration =>
+					{
+						configuration.ImplicitlyValidateChildProperties = true;
+						configuration.RegisterValidatorsFromAssemblyContaining<ResultValidator>();
+					}
+				);
+
 			services.AddScoped<IBenchmarkResultsService, BenchmarkResultService>();
 			services.AddScoped<IBenchmarkService, BenchmarkService>();
 			services.AddScoped<ICpuService, CpuService>();
@@ -75,7 +77,7 @@ namespace Elpida.Backend
 			services.AddSingleton<StatisticsUpdaterService>();
 			services.AddSingleton<IStatisticsUpdaterService>(x => x.GetRequiredService<StatisticsUpdaterService>());
 			services.AddHostedService(x => x.GetRequiredService<StatisticsUpdaterService>());
-			
+
 			services.AddTransient<IBenchmarkResultsRepository, BenchmarkResultsRepository>();
 			services.AddTransient<ICpuRepository, CpuRepository>();
 			services.AddTransient<ITopologyRepository, TopologyRepository>();
@@ -85,36 +87,25 @@ namespace Elpida.Backend
 			services.AddTransient<IOsRepository, OsRepository>();
 			services.AddTransient<IBenchmarkStatisticsRepository, BenchmarkStatisticsRepository>();
 
-			services.AddDbContext<ElpidaContext>(builder =>
-			{
+			services.AddDbContext<ElpidaContext>(
+				builder =>
+				{
 #if DEBUG
-				builder.UseSqlite("Data Source=results.db",
-					b => b.MigrationsAssembly(Assembly.GetExecutingAssembly().GetName().Name));
+					builder.UseSqlite(
+						"Data Source=results.db",
+						b => b.MigrationsAssembly(Assembly.GetExecutingAssembly().GetName().Name)
+					);
 #else
 				// Use something else, eg SQL Server
 				#error
 #endif
-			});
-
+				}
+			);
 
 			services.Configure<ApiKeys>(Configuration.GetSection("ApiKeys"));
 			services.AddApiVersioning();
 
 			services.AddCors();
-		}
-
-		private void AddLocking(IServiceCollection services)
-		{
-			var redisOptions = Configuration.GetSection("Redis");
-			if (redisOptions.Exists())
-			{
-				services.AddRedisLocks();
-				services.Configure<RedisOptions>(redisOptions);
-			}
-			else
-			{
-				services.AddLocalLocks();
-			}
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -130,17 +121,19 @@ namespace Elpida.Backend
 				app.UseExceptionHandler(builder => builder.Run(ErrorHandler));
 			}
 
-			app.UseCors(builder =>
-				builder.WithOrigins("https://beta.elpida.dev",
-						"https://elpida.dev",
-						"https://www.elpida.dev"
-					)
-					.WithMethods(HttpMethods.Get, HttpMethods.Post)
-					.WithHeaders(HeaderNames.ContentType, HeaderNames.Accept)
-					.WithExposedHeaders(
-						HeaderNames.ContentLength,
-						HeaderNames.ContentRange
-					)
+			app.UseCors(
+				builder =>
+					builder.WithOrigins(
+							"https://beta.elpida.dev",
+							"https://elpida.dev",
+							"https://www.elpida.dev"
+						)
+						.WithMethods(HttpMethods.Get, HttpMethods.Post)
+						.WithHeaders(HeaderNames.ContentType, HeaderNames.Accept)
+						.WithExposedHeaders(
+							HeaderNames.ContentLength,
+							HeaderNames.ContentRange
+						)
 			);
 
 			app.UseRouting();
@@ -159,24 +152,40 @@ namespace Elpida.Backend
 			switch (exceptionHandlerPathFeature.Error)
 			{
 				case ArgumentException ae:
-					context.Response.StatusCode = (int) HttpStatusCode.BadRequest;
+					context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
 					await context.Response.WriteAsync($"{ae.Message}: '{ae.ParamName}'");
 					break;
 				case ConflictException ce:
-					context.Response.StatusCode = (int) HttpStatusCode.Conflict;
+					context.Response.StatusCode = (int)HttpStatusCode.Conflict;
 					await context.Response.WriteAsync($"Conflict detected for id: '{ce.Id}' Reason: {ce.Message}");
 					break;
 				case NotFoundException _:
-					context.Response.StatusCode = (int) HttpStatusCode.NotFound;
+					context.Response.StatusCode = (int)HttpStatusCode.NotFound;
 					break;
 				case CorruptedRecordException cre:
-					context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
+					context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 					await context.Response.WriteAsync(
-						$"The requested record is corrupted!. Please report this to Elpida Backend repository along with this id: {cre.Id}");
+						$"The requested record is corrupted!. Please report this to Elpida Backend repository along with this id: {cre.Id}"
+					);
+
 					break;
 				default:
-					context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
+					context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 					break;
+			}
+		}
+
+		private void AddLocking(IServiceCollection services)
+		{
+			var redisOptions = Configuration.GetSection("Redis");
+			if (redisOptions.Exists())
+			{
+				services.AddRedisLocks();
+				services.Configure<RedisOptions>(redisOptions);
+			}
+			else
+			{
+				services.AddLocalLocks();
 			}
 		}
 	}

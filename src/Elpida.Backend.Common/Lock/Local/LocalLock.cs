@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,18 +22,18 @@ using System.Threading;
 
 namespace Elpida.Backend.Common.Lock.Local
 {
-    internal class LocalLock : IDisposable
-    {
-        private readonly SemaphoreSlim _semaphore = new(1,1);
+	internal class LocalLock : IDisposable
+	{
+		private readonly SemaphoreSlim _semaphore = new (1, 1);
 
-        public void Acquire()
-        {
-            _semaphore.Wait();
-        }
+		public void Dispose()
+		{
+			_semaphore.Release();
+		}
 
-        public void Dispose()
-        {
-            _semaphore.Release();
-        }
-    }
+		public void Acquire()
+		{
+			_semaphore.Wait();
+		}
+	}
 }

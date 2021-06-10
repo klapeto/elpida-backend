@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,53 +26,60 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Elpida.Backend.Controllers
 {
-    
-    [ApiController]
-    [ApiVersion("1")]
-    [Route("api/v{version:apiVersion}/[controller]")]
-    public class ElpidaController : ControllerBase
-    {
-        private readonly IElpidaService _elpidaService;
+	[ApiController]
+	[ApiVersion("1")]
+	[Route("api/v{version:apiVersion}/[controller]")]
+	public class ElpidaController : ControllerBase
+	{
+		private readonly IElpidaService _elpidaService;
 
-        public ElpidaController(IElpidaService elpidaService)
-        {
-            _elpidaService = elpidaService;
-        }
+		public ElpidaController(IElpidaService elpidaService)
+		{
+			_elpidaService = elpidaService;
+		}
 
-        [HttpGet]
-        [Produces("application/json")]
-        [Consumes("application/json")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetPaged([FromQuery] PageRequest pageRequest,
-            CancellationToken cancellationToken)
-        {
-            return Ok(await _elpidaService.GetPagedAsync(new QueryRequest {PageRequest = pageRequest},
-                cancellationToken));
-        }
+		[HttpGet]
+		[Produces("application/json")]
+		[Consumes("application/json")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		public async Task<IActionResult> GetPaged(
+			[FromQuery] PageRequest pageRequest,
+			CancellationToken cancellationToken
+		)
+		{
+			return Ok(
+				await _elpidaService.GetPagedAsync(
+					new QueryRequest { PageRequest = pageRequest },
+					cancellationToken
+				)
+			);
+		}
 
-        [HttpGet("{id:long}")]
-        [Produces("application/json")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetSingle([FromRoute] long id, CancellationToken cancellationToken)
-        {
-            return Ok(await _elpidaService.GetSingleAsync(id, cancellationToken));
-        }
+		[HttpGet("{id:long}")]
+		[Produces("application/json")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<IActionResult> GetSingle([FromRoute] long id, CancellationToken cancellationToken)
+		{
+			return Ok(await _elpidaService.GetSingleAsync(id, cancellationToken));
+		}
 
-        [HttpPost("Search")]
-        [Produces("application/json")]
-        [Consumes("application/json")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Search([FromBody] QueryRequest queryRequest,
-            CancellationToken cancellationToken)
-        {
-            QueryRequestUtilities.PreprocessQuery(queryRequest);
+		[HttpPost("Search")]
+		[Produces("application/json")]
+		[Consumes("application/json")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		public async Task<IActionResult> Search(
+			[FromBody] QueryRequest queryRequest,
+			CancellationToken cancellationToken
+		)
+		{
+			QueryRequestUtilities.PreprocessQuery(queryRequest);
 
-            return Ok(await _elpidaService.GetPagedAsync(queryRequest, cancellationToken));
-        }
-    }
+			return Ok(await _elpidaService.GetPagedAsync(queryRequest, cancellationToken));
+		}
+	}
 }

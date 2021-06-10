@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@ using Elpida.Backend.Services.Abstractions.Dtos.Os;
 
 namespace Elpida.Backend.Services.Abstractions.Interfaces
 {
-    public interface IOsService : IService<OsDto>
-    {
-    }
+	public interface IOsService : IService<OsDto>
+	{
+	}
 }

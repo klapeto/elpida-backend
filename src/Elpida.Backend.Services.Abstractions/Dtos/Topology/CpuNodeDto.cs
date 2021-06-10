@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2020 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,14 +22,19 @@ using System.Collections.Generic;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Topology
 {
-    [Serializable]
-    public class CpuNodeDto
-    {
-        public int NodeType { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public long? OsIndex { get; set; }
-        public long? Value { get; set; }
-        public IList<CpuNodeDto>? Children { get; set; }
-        public IList<CpuNodeDto>? MemoryChildren { get; set; }
-    }
+	[Serializable]
+	public class CpuNodeDto
+	{
+		public int NodeType { get; set; }
+
+		public string Name { get; set; } = string.Empty;
+
+		public long? OsIndex { get; set; }
+
+		public long? Value { get; set; }
+
+		public IList<CpuNodeDto>? Children { get; set; }
+
+		public IList<CpuNodeDto>? MemoryChildren { get; set; }
+	}
 }

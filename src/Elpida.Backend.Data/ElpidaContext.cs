@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using Elpida.Backend.Data.Abstractions.Models;
 using Elpida.Backend.Data.Abstractions.Models.Benchmark;
 using Elpida.Backend.Data.Abstractions.Models.Cpu;
 using Elpida.Backend.Data.Abstractions.Models.Elpida;
@@ -30,73 +29,81 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Elpida.Backend.Data
 {
-    public class ElpidaContext : DbContext
-    {
-        public ElpidaContext(DbContextOptions contextOptions)
-            : base(contextOptions)
-        {
-        }
+	public class ElpidaContext : DbContext
+	{
+		public ElpidaContext(DbContextOptions contextOptions)
+			: base(contextOptions)
+		{
+		}
 
-        public DbSet<BenchmarkModel> Benchmarks { get; set; } = default!;
-        public DbSet<TaskModel> Tasks { get; set; } = default!;
-        public DbSet<CpuModel> Cpus { get; set; } = default!;
-        public DbSet<TopologyModel> Topologies { get; set; } = default!;
-        public DbSet<BenchmarkResultModel> BenchmarkResults { get; set; } = default!;
-        public DbSet<TaskResultModel> TaskResults { get; set; } = default!;
-        public DbSet<ElpidaModel> Elpidas { get; set; } = default!;
-        public DbSet<OsModel> Oses { get; set; } = default!;
-        public DbSet<BenchmarkStatisticsModel> BenchmarkStatistics { get; set; } = default!;
+		public DbSet<BenchmarkModel> Benchmarks { get; set; } = default!;
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<BenchmarkModel>()
-                .HasMany(m => m.Tasks)
-                .WithOne(m => m.Benchmark)
-                .OnDelete(DeleteBehavior.Cascade);
-            
-            modelBuilder.Entity<BenchmarkTaskModel>()
-                .HasOne(m => m.Task);
+		public DbSet<TaskModel> Tasks { get; set; } = default!;
 
-            modelBuilder.Entity<TaskResultModel>()
-                .HasOne(m => m.Task);
+		public DbSet<CpuModel> Cpus { get; set; } = default!;
 
-            modelBuilder.Entity<TaskResultModel>()
-                .HasOne(m => m.Topology);
+		public DbSet<TopologyModel> Topologies { get; set; } = default!;
 
-            modelBuilder.Entity<TaskResultModel>()
-                .HasOne(m => m.Cpu);
+		public DbSet<BenchmarkResultModel> BenchmarkResults { get; set; } = default!;
 
-            modelBuilder.Entity<BenchmarkResultModel>()
-                .HasMany(m => m.TaskResults)
-                .WithOne(m => m.BenchmarkResult)
-                .OnDelete(DeleteBehavior.Cascade);
+		public DbSet<TaskResultModel> TaskResults { get; set; } = default!;
 
-            modelBuilder.Entity<BenchmarkResultModel>()
-                .HasOne(m => m.Topology);
+		public DbSet<ElpidaModel> Elpidas { get; set; } = default!;
 
-            modelBuilder.Entity<BenchmarkResultModel>()
-                .HasOne(m => m.Benchmark);
+		public DbSet<OsModel> Oses { get; set; } = default!;
 
-            modelBuilder.Entity<CpuModel>()
-                .HasMany(m => m.BenchmarkStatistics)
-                .WithOne(m => m.Cpu);
-            
-            modelBuilder.Entity<CpuModel>()
-                .HasMany(m => m.Topologies)
-                .WithOne(m => m.Cpu);
-            
-            modelBuilder.Entity<BenchmarkStatisticsModel>()
-                .HasOne(m => m.Cpu);
+		public DbSet<BenchmarkStatisticsModel> BenchmarkStatistics { get; set; } = default!;
 
-            modelBuilder.Entity<BenchmarkStatisticsModel>()
-                .HasOne(m => m.Topology);
-            
-            modelBuilder.Entity<BenchmarkStatisticsModel>()
-                .HasOne(m => m.Benchmark);
-            
-            modelBuilder.Entity<BenchmarkStatisticsModel>()
-                .Property(m=> m.RowVersion)
-                .IsRowVersion();
-        }
-    }
+		protected override void OnModelCreating(ModelBuilder modelBuilder)
+		{
+			modelBuilder.Entity<BenchmarkModel>()
+				.HasMany(m => m.Tasks)
+				.WithOne(m => m.Benchmark)
+				.OnDelete(DeleteBehavior.Cascade);
+
+			modelBuilder.Entity<BenchmarkTaskModel>()
+				.HasOne(m => m.Task);
+
+			modelBuilder.Entity<TaskResultModel>()
+				.HasOne(m => m.Task);
+
+			modelBuilder.Entity<TaskResultModel>()
+				.HasOne(m => m.Topology);
+
+			modelBuilder.Entity<TaskResultModel>()
+				.HasOne(m => m.Cpu);
+
+			modelBuilder.Entity<BenchmarkResultModel>()
+				.HasMany(m => m.TaskResults)
+				.WithOne(m => m.BenchmarkResult)
+				.OnDelete(DeleteBehavior.Cascade);
+
+			modelBuilder.Entity<BenchmarkResultModel>()
+				.HasOne(m => m.Topology);
+
+			modelBuilder.Entity<BenchmarkResultModel>()
+				.HasOne(m => m.Benchmark);
+
+			modelBuilder.Entity<CpuModel>()
+				.HasMany(m => m.BenchmarkStatistics)
+				.WithOne(m => m.Cpu);
+
+			modelBuilder.Entity<CpuModel>()
+				.HasMany(m => m.Topologies)
+				.WithOne(m => m.Cpu);
+
+			modelBuilder.Entity<BenchmarkStatisticsModel>()
+				.HasOne(m => m.Cpu);
+
+			modelBuilder.Entity<BenchmarkStatisticsModel>()
+				.HasOne(m => m.Topology);
+
+			modelBuilder.Entity<BenchmarkStatisticsModel>()
+				.HasOne(m => m.Benchmark);
+
+			modelBuilder.Entity<BenchmarkStatisticsModel>()
+				.Property(m => m.RowVersion)
+				.IsRowVersion();
+		}
+	}
 }

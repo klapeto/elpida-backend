@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,27 +23,36 @@ using Elpida.Backend.Data.Abstractions.Models.Topology;
 
 namespace Elpida.Backend.Data.Abstractions.Models.Statistics
 {
-    public class BenchmarkStatisticsModel : Entity
-    {
-        public long BenchmarkId { get; set; }
-        public BenchmarkModel Benchmark { get; set; } = default!;
+	public class BenchmarkStatisticsModel : Entity
+	{
+		public long BenchmarkId { get; set; }
 
-        public long CpuId { get; set; }
-        public CpuModel Cpu { get; set; } = default!;
-        
-        public long TopologyId { get; set; }
-        public TopologyModel Topology { get; set; } = default!;
+		public BenchmarkModel Benchmark { get; set; } = default!;
 
-        public long SampleSize { get; set; }
-        public double Max { get; set; }
-        public double Min { get; set; }
-        public double Mean { get; set; }
-        public double StandardDeviation { get; set; }
-        public double Tau { get; set; }
-        public double MarginOfError { get; set; }
-        
-        public string FrequencyClasses { get; set; } = default!;
+		public long CpuId { get; set; }
 
-        public byte[]? RowVersion { get; set; } = default;
-    }
+		public CpuModel Cpu { get; set; } = default!;
+
+		public long TopologyId { get; set; }
+
+		public TopologyModel Topology { get; set; } = default!;
+
+		public long SampleSize { get; set; }
+
+		public double Max { get; set; }
+
+		public double Min { get; set; }
+
+		public double Mean { get; set; }
+
+		public double StandardDeviation { get; set; }
+
+		public double Tau { get; set; }
+
+		public double MarginOfError { get; set; }
+
+		public string FrequencyClasses { get; set; } = default!;
+
+		public byte[]? RowVersion { get; set; } = default;
+	}
 }

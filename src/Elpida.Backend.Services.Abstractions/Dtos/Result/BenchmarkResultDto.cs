@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2020 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,12 +23,16 @@ using Elpida.Backend.Services.Abstractions.Dtos.Benchmark;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 {
-    public class BenchmarkResultDto : FountationDto
-    {
-        public Guid Uuid { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public BenchmarkScoreSpecificationDto ScoreSpecification { get; set; } = new BenchmarkScoreSpecificationDto();
-        public double Score { get; set; }
-        public IList<TaskResultDto> TaskResults { get; set; } = new List<TaskResultDto>();
-    }
+	public class BenchmarkResultDto : FountationDto
+	{
+		public Guid Uuid { get; set; }
+
+		public string Name { get; set; } = string.Empty;
+
+		public BenchmarkScoreSpecificationDto ScoreSpecification { get; set; } = new BenchmarkScoreSpecificationDto();
+
+		public double Score { get; set; }
+
+		public IList<TaskResultDto> TaskResults { get; set; } = new List<TaskResultDto>();
+	}
 }

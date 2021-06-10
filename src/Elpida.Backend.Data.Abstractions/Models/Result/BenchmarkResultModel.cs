@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2020 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,35 +26,50 @@ using Elpida.Backend.Data.Abstractions.Models.Topology;
 
 namespace Elpida.Backend.Data.Abstractions.Models.Result
 {
-    public class BenchmarkResultModel : Entity
-    {
-        public long ElpidaId { get; set; }
-        public ElpidaModel Elpida { get; set; } = default!;
+	public class BenchmarkResultModel : Entity
+	{
+		public long ElpidaId { get; set; }
 
-        public long OsId { get; set; }
-        public OsModel Os { get; set; } = default!;
+		public ElpidaModel Elpida { get; set; } = default!;
 
-        public long TopologyId { get; set; }
-        public TopologyModel Topology { get; set; } = null!;
+		public long OsId { get; set; }
 
-        public long BenchmarkId { get; set; }
-        public BenchmarkModel Benchmark { get; set; } = null!;
+		public OsModel Os { get; set; } = default!;
 
-        public DateTime TimeStamp { get; set; }
-        public string Affinity { get; set; } = default!;
-        public long MemorySize { get; set; }
-        public long PageSize { get; set; }
-        public double NotifyOverhead { get; set; }
-        public double WakeupOverhead { get; set; }
-        public double SleepOverhead { get; set; }
-        public double NowOverhead { get; set; }
-        public double LockOverhead { get; set; }
-        public double LoopOverhead { get; set; }
-        public double JoinOverhead { get; set; }
-        public double TargetTime { get; set; }
-        
-        public double Score { get; set; }
+		public long TopologyId { get; set; }
 
-        public ICollection<TaskResultModel> TaskResults { get; set; } = null!;
-    }
+		public TopologyModel Topology { get; set; } = null!;
+
+		public long BenchmarkId { get; set; }
+
+		public BenchmarkModel Benchmark { get; set; } = null!;
+
+		public DateTime TimeStamp { get; set; }
+
+		public string Affinity { get; set; } = default!;
+
+		public long MemorySize { get; set; }
+
+		public long PageSize { get; set; }
+
+		public double NotifyOverhead { get; set; }
+
+		public double WakeupOverhead { get; set; }
+
+		public double SleepOverhead { get; set; }
+
+		public double NowOverhead { get; set; }
+
+		public double LockOverhead { get; set; }
+
+		public double LoopOverhead { get; set; }
+
+		public double JoinOverhead { get; set; }
+
+		public double TargetTime { get; set; }
+
+		public double Score { get; set; }
+
+		public ICollection<TaskResultModel> TaskResults { get; set; } = null!;
+	}
 }

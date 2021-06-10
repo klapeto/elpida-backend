@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,9 +23,11 @@ using Elpida.Backend.Services.Abstractions.Dtos.Cpu;
 
 namespace Elpida.Backend.Services.Abstractions.Interfaces
 {
-    public interface ICpuService : IService<CpuDto>
-    {
-        Task<PagedResult<CpuPreviewDto>> GetPagedPreviewsAsync(QueryRequest queryRequest,
-            CancellationToken cancellationToken = default);
-    }
+	public interface ICpuService : IService<CpuDto>
+	{
+		Task<PagedResult<CpuPreviewDto>> GetPagedPreviewsAsync(
+			QueryRequest queryRequest,
+			CancellationToken cancellationToken = default
+		);
+	}
 }

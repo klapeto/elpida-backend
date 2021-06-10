@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2020 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,7 +18,6 @@
  */
 
 using Elpida.Backend.Services.Abstractions.Dtos.Cpu;
-using Elpida.Backend.Services.Abstractions.Dtos.Result;
 using FluentValidation;
 
 namespace Elpida.Backend.Validators
@@ -33,10 +32,10 @@ namespace Elpida.Backend.Validators
 
 			RuleFor(dto => dto.Size)
 				.GreaterThanOrEqualTo(0);
-			
+
 			RuleFor(dto => dto.LineSize)
 				.GreaterThanOrEqualTo(0);
-			
+
 			RuleFor(dto => dto.LinesPerTag)
 				.GreaterThanOrEqualTo(0);
 		}

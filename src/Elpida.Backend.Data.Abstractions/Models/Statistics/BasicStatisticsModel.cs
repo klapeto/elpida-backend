@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,13 +19,18 @@
 
 namespace Elpida.Backend.Data.Abstractions.Models.Statistics
 {
-    public class BasicStatisticsModel
-    {
-        public double Mean { get; set; }
-        public double Max { get; set; }
-        public double Min { get; set; }
-        public double StandardDeviation { get; set; }
-        public double MarginOfError { get; set; }
-        public long Count { get; set; }
-    }
+	public class BasicStatisticsModel
+	{
+		public double Mean { get; set; }
+
+		public double Max { get; set; }
+
+		public double Min { get; set; }
+
+		public double StandardDeviation { get; set; }
+
+		public double MarginOfError { get; set; }
+
+		public long Count { get; set; }
+	}
 }

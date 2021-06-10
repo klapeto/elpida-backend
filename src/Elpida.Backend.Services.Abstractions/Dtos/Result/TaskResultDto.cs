@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2020 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,15 +21,22 @@ using Elpida.Backend.Services.Abstractions.Dtos.Task;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 {
-    public class TaskResultDto : TaskDto
-    {
-        public long TaskId { get; set; }
-        public long BenchmarkResultId { get; set; }
-        public long CpuId { get; set; }
-        public long TopologyId { get; set; }
-        public double Value { get; set; }
-        public double Time { get; set; }
-        public long InputSize { get; set; }
-        public TaskRunStatisticsDto Statistics { get; set; } = new TaskRunStatisticsDto();
-    }
+	public class TaskResultDto : TaskDto
+	{
+		public long TaskId { get; set; }
+
+		public long BenchmarkResultId { get; set; }
+
+		public long CpuId { get; set; }
+
+		public long TopologyId { get; set; }
+
+		public double Value { get; set; }
+
+		public double Time { get; set; }
+
+		public long InputSize { get; set; }
+
+		public TaskRunStatisticsDto Statistics { get; set; } = new TaskRunStatisticsDto();
+	}
 }

@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,15 +19,22 @@
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 {
-    public class TimingDto
-    {
-        public double NotifyOverhead { get; set; }
-        public double WakeupOverhead { get; set; }
-        public double SleepOverhead { get; set; }
-        public double NowOverhead { get; set; }
-        public double LockOverhead { get; set; }
-        public double LoopOverhead { get; set; }
-        public double JoinOverhead { get; set; }
-        public double TargetTime { get; set; }
-    }
+	public class TimingDto
+	{
+		public double NotifyOverhead { get; set; }
+
+		public double WakeupOverhead { get; set; }
+
+		public double SleepOverhead { get; set; }
+
+		public double NowOverhead { get; set; }
+
+		public double LockOverhead { get; set; }
+
+		public double LoopOverhead { get; set; }
+
+		public double JoinOverhead { get; set; }
+
+		public double TargetTime { get; set; }
+	}
 }

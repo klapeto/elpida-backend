@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2020 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,9 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System;
 using System.Net.Mime;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Services.Abstractions;
@@ -47,11 +45,14 @@ namespace Elpida.Backend.Controllers
 		[Consumes(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<IActionResult> PostNewResult([FromBody] ResultDto resultDto, ApiVersion apiVersion,
-			CancellationToken cancellationToken)
+		public async Task<IActionResult> PostNewResult(
+			[FromBody] ResultDto resultDto,
+			ApiVersion apiVersion,
+			CancellationToken cancellationToken
+		)
 		{
 			var result = await _benchmarkResultsService.GetOrAddAsync(resultDto, cancellationToken);
-			return CreatedAtRoute(nameof(GetSingleResult), new {id = result.Id, version = $"{apiVersion}"}, null);
+			return CreatedAtRoute(nameof(GetSingleResult), new { id = result.Id, version = $"{apiVersion}" }, null);
 		}
 
 		[HttpGet("{id}", Name = nameof(GetSingleResult))]
@@ -73,11 +74,17 @@ namespace Elpida.Backend.Controllers
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<IActionResult> GetPaged([FromQuery] PageRequest pageRequest,
-			CancellationToken cancellationToken)
+		public async Task<IActionResult> GetPaged(
+			[FromQuery] PageRequest pageRequest,
+			CancellationToken cancellationToken
+		)
 		{
-			return Ok(await _benchmarkResultsService.GetPagedPreviewsAsync(new QueryRequest {PageRequest = pageRequest},
-				cancellationToken));
+			return Ok(
+				await _benchmarkResultsService.GetPagedPreviewsAsync(
+					new QueryRequest { PageRequest = pageRequest },
+					cancellationToken
+				)
+			);
 		}
 
 		[HttpPost("search")]
@@ -86,8 +93,10 @@ namespace Elpida.Backend.Controllers
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<IActionResult> Search([FromBody] QueryRequest queryRequest,
-			CancellationToken cancellationToken)
+		public async Task<IActionResult> Search(
+			[FromBody] QueryRequest queryRequest,
+			CancellationToken cancellationToken
+		)
 		{
 			QueryRequestUtilities.PreprocessQuery(queryRequest);
 

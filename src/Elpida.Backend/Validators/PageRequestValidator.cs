@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2020 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,16 +22,16 @@ using FluentValidation;
 
 namespace Elpida.Backend.Validators
 {
-    public class PageRequestValidator : AbstractValidator<PageRequest>
-    {
-        public PageRequestValidator()
-        {
-            RuleFor(dto => dto.Count)
-                .LessThanOrEqualTo(PageRequest.MaxCount)
-                .GreaterThanOrEqualTo(1);
+	public class PageRequestValidator : AbstractValidator<PageRequest>
+	{
+		public PageRequestValidator()
+		{
+			RuleFor(dto => dto.Count)
+				.LessThanOrEqualTo(PageRequest.MaxCount)
+				.GreaterThanOrEqualTo(1);
 
-            RuleFor(dto => dto.Next)
-                .GreaterThanOrEqualTo(0);
-        }
-    }
+			RuleFor(dto => dto.Next)
+				.GreaterThanOrEqualTo(0);
+		}
+	}
 }

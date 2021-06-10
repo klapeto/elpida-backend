@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2020 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,10 +19,12 @@
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Os
 {
-    public class OsDto : FountationDto
-    {
-        public string Category { get; set; } = string.Empty;
-        public string Name { get; set; } = string.Empty;
-        public string Version { get; set; } = string.Empty;
-    }
+	public class OsDto : FountationDto
+	{
+		public string Category { get; set; } = string.Empty;
+
+		public string Name { get; set; } = string.Empty;
+
+		public string Version { get; set; } = string.Empty;
+	}
 }

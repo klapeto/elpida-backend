@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,11 +19,14 @@
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Cpu
 {
-    public class CpuPreviewDto : FountationDto
-    {
-        public string Vendor { get; set; } = default!;
-        public string Brand { get; set; } = default!;
-        public int TopologiesCount { get; set; }
-        public int TaskStatisticsCount { get; set; }
-    }
+	public class CpuPreviewDto : FountationDto
+	{
+		public string Vendor { get; set; } = default!;
+
+		public string Brand { get; set; } = default!;
+
+		public int TopologiesCount { get; set; }
+
+		public int TaskStatisticsCount { get; set; }
+	}
 }

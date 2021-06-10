@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,11 +19,14 @@
 
 namespace Elpida.Backend.Common.Lock.Redis
 {
-    public class RedisOptions
-    {
-        public string ConnectionString { get; set; } = default!;
-        public int WaitTimeout { get; set; } = 30000;
-        public int ExpireTimeout { get; set; } = 30000;
-        public int RetryInterval { get; set; } = 500;
-    }
+	public class RedisOptions
+	{
+		public string ConnectionString { get; set; } = default!;
+
+		public int WaitTimeout { get; set; } = 30000;
+
+		public int ExpireTimeout { get; set; } = 30000;
+
+		public int RetryInterval { get; set; } = 500;
+	}
 }

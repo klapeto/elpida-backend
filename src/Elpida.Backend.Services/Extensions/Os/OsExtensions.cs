@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,22 +19,20 @@
 
 using Elpida.Backend.Data.Abstractions.Models.Os;
 using Elpida.Backend.Services.Abstractions.Dtos.Os;
-using Elpida.Backend.Services.Abstractions.Dtos.Result;
 
-namespace Elpida.Backend.Services.Extensions
+namespace Elpida.Backend.Services.Extensions.Os
 {
-    public static class OsExtensions
-    {
-
-        public static OsDto ToDto(this OsModel osModel)
-        {
-            return new()
-            {
-                Id = osModel.Id,
-                Category = osModel.Category,
-                Name = osModel.Name,
-                Version = osModel.Version
-            };
-        }
-    }
+	public static class OsExtensions
+	{
+		public static OsDto ToDto(this OsModel osModel)
+		{
+			return new ()
+			{
+				Id = osModel.Id,
+				Category = osModel.Category,
+				Name = osModel.Name,
+				Version = osModel.Version,
+			};
+		}
+	}
 }

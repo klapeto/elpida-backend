@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,20 +23,20 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Elpida.Backend.Common.Lock
 {
-    public static class ServicesCollectionExtensions
-    {
-        public static IServiceCollection AddLocalLocks(this IServiceCollection collection)
-        {
-            collection.AddSingleton<ILockFactory, LocalLockFactory>();
-            
-            return collection;
-        }
+	public static class ServicesCollectionExtensions
+	{
+		public static IServiceCollection AddLocalLocks(this IServiceCollection collection)
+		{
+			collection.AddSingleton<ILockFactory, LocalLockFactory>();
 
-        public static IServiceCollection AddRedisLocks(this IServiceCollection collection)
-        {
-            collection.AddOptions();
-            collection.AddSingleton<ILockFactory, RedisLockFactory>();
-            return collection;
-        }
-    }
+			return collection;
+		}
+
+		public static IServiceCollection AddRedisLocks(this IServiceCollection collection)
+		{
+			collection.AddOptions();
+			collection.AddSingleton<ILockFactory, RedisLockFactory>();
+			return collection;
+		}
+	}
 }

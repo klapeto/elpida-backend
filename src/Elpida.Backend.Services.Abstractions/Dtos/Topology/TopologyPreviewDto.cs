@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2020 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,17 +19,26 @@
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Topology
 {
-    public class TopologyPreviewDto: FountationDto
-    {
-        public long CpuId { get; set; }
-        public string CpuVendor { get; set; } = default!;
-        public string CpuBrand { get; set; } = default!;
-        public int TotalLogicalCores { get; set; }
-        public int TotalPhysicalCores { get; set; }
-        public int TotalNumaNodes { get; set; }
-        public int TotalPackages { get; set; }
-        public int TotalMachines { get; set; }
-        public int TotalDepth { get; set; }
-        public string Hash { get; set; } = default!;
-    }
+	public class TopologyPreviewDto : FountationDto
+	{
+		public long CpuId { get; set; }
+
+		public string CpuVendor { get; set; } = default!;
+
+		public string CpuBrand { get; set; } = default!;
+
+		public int TotalLogicalCores { get; set; }
+
+		public int TotalPhysicalCores { get; set; }
+
+		public int TotalNumaNodes { get; set; }
+
+		public int TotalPackages { get; set; }
+
+		public int TotalMachines { get; set; }
+
+		public int TotalDepth { get; set; }
+
+		public string Hash { get; set; } = default!;
+	}
 }

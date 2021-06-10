@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2020 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,27 +18,24 @@
  */
 
 using System.Linq;
-using Elpida.Backend.Data.Abstractions.Models;
 using Elpida.Backend.Data.Abstractions.Models.Cpu;
-using Elpida.Backend.Data.Abstractions.Models.Statistics;
-using Elpida.Backend.Data.Abstractions.Models.Task;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace Elpida.Backend.Data
 {
-    public class CpuRepository : EntityRepository<CpuModel>, ICpuRepository
-    {
-        public CpuRepository(ElpidaContext elpidaContext)
-            : base(elpidaContext, elpidaContext.Cpus)
-        {
-        }
+	public class CpuRepository : EntityRepository<CpuModel>, ICpuRepository
+	{
+		public CpuRepository(ElpidaContext elpidaContext)
+			: base(elpidaContext, elpidaContext.Cpus)
+		{
+		}
 
-        protected override IQueryable<CpuModel> ProcessGetSingle(IQueryable<CpuModel> queryable)
-        {
-            return queryable
-                .Include(m => m.BenchmarkStatistics)
-                .ThenInclude(m => m.Benchmark);
-        }
-    }
+		protected override IQueryable<CpuModel> ProcessGetSingle(IQueryable<CpuModel> queryable)
+		{
+			return queryable
+				.Include(m => m.BenchmarkStatistics)
+				.ThenInclude(m => m.Benchmark);
+		}
+	}
 }

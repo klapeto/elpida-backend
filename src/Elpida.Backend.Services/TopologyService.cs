@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -34,83 +34,93 @@ using Newtonsoft.Json;
 
 namespace Elpida.Backend.Services
 {
-    public class TopologyService : Service<TopologyDto, TopologyModel, ITopologyRepository>, ITopologyService
-    {
-        public TopologyService(ITopologyRepository topologyRepository, ILockFactory lockFactory)
-            : base(topologyRepository, lockFactory)
-        {
-        }
+	public class TopologyService : Service<TopologyDto, TopologyModel, ITopologyRepository>, ITopologyService
+	{
+		public TopologyService(ITopologyRepository topologyRepository, ILockFactory lockFactory)
+			: base(topologyRepository, lockFactory)
+		{
+		}
 
-        private static IEnumerable<FilterExpression> FilterExpressions { get; } = new List<FilterExpression>
-        {
-            CreateFilter("machines", model => model.TotalMachines),
-            CreateFilter("cpuPackages", model => model.TotalPackages),
-            CreateFilter("cpuNumaNodes", model => model.TotalNumaNodes),
-            CreateFilter("cpuCores", model => model.TotalPhysicalCores),
-            CreateFilter("cpuLogicalCores", model => model.TotalLogicalCores)
-        };
+		private static IEnumerable<FilterExpression> FilterExpressions { get; } = new List<FilterExpression>
+		{
+			CreateFilter("machines", model => model.TotalMachines),
+			CreateFilter("cpuPackages", model => model.TotalPackages),
+			CreateFilter("cpuNumaNodes", model => model.TotalNumaNodes),
+			CreateFilter("cpuCores", model => model.TotalPhysicalCores),
+			CreateFilter("cpuLogicalCores", model => model.TotalLogicalCores),
+		};
 
-        protected override Task<TopologyModel> ProcessDtoAndCreateModelAsync(TopologyDto dto,
-            CancellationToken cancellationToken)
-        {
-            var serializedRoot = JsonConvert.SerializeObject(dto.Root);
-            return Task.FromResult(new TopologyModel
-            {
-                Id = dto.Id,
-                CpuId = dto.CpuId,
-                TopologyHash = GetTopologyHash(dto, serializedRoot),
-                TotalDepth = dto.TotalDepth,
-                TotalLogicalCores = dto.TotalLogicalCores,
-                TotalPhysicalCores = dto.TotalPhysicalCores,
-                TotalMachines = dto.TotalMachines,
-                TotalNumaNodes = dto.TotalNumaNodes,
-                TotalPackages = dto.TotalPackages,
-                Root = serializedRoot
-            });
-        }
+		public Task<PagedResult<TopologyPreviewDto>> GetPagedPreviewsAsync(
+			QueryRequest queryRequest,
+			CancellationToken cancellationToken = default
+		)
+		{
+			return GetPagedProjectionsAsync(
+				queryRequest,
+				m => new TopologyPreviewDto
+				{
+					Id = m.Id,
+					CpuId = m.CpuId,
+					CpuVendor = m.Cpu.Vendor,
+					CpuBrand = m.Cpu.Brand,
+					TotalDepth = m.TotalDepth,
+					TotalMachines = m.TotalMachines,
+					TotalPackages = m.TotalPackages,
+					TotalNumaNodes = m.TotalNumaNodes,
+					TotalPhysicalCores = m.TotalPhysicalCores,
+					TotalLogicalCores = m.TotalLogicalCores,
+					Hash = m.TopologyHash,
+				},
+				cancellationToken
+			);
+		}
 
-        protected override IEnumerable<FilterExpression> GetFilterExpressions()
-        {
-            return FilterExpressions;
-        }
+		protected override Task<TopologyModel> ProcessDtoAndCreateModelAsync(
+			TopologyDto dto,
+			CancellationToken cancellationToken
+		)
+		{
+			var serializedRoot = JsonConvert.SerializeObject(dto.Root);
+			return Task.FromResult(
+				new TopologyModel
+				{
+					Id = dto.Id,
+					CpuId = dto.CpuId,
+					TopologyHash = GetTopologyHash(dto, serializedRoot),
+					TotalDepth = dto.TotalDepth,
+					TotalLogicalCores = dto.TotalLogicalCores,
+					TotalPhysicalCores = dto.TotalPhysicalCores,
+					TotalMachines = dto.TotalMachines,
+					TotalNumaNodes = dto.TotalNumaNodes,
+					TotalPackages = dto.TotalPackages,
+					Root = serializedRoot,
+				}
+			);
+		}
 
-        protected override TopologyDto ToDto(TopologyModel model)
-        {
-            return model.ToDto();
-        }
+		protected override IEnumerable<FilterExpression> GetFilterExpressions()
+		{
+			return FilterExpressions;
+		}
 
-        private static string GetTopologyHash(TopologyDto dto, string? serializedRoot = null)
-        {
-            serializedRoot ??= JsonConvert.SerializeObject(dto.Root);
+		protected override TopologyDto ToDto(TopologyModel model)
+		{
+			return model.ToDto();
+		}
 
-            return serializedRoot.ToHashString();
-        }
+		protected override Expression<Func<TopologyModel, bool>> GetCreationBypassCheckExpression(TopologyDto dto)
+		{
+			var topologyHash = GetTopologyHash(dto);
+			return t =>
+				t.CpuId == dto.CpuId
+				&& t.TopologyHash == topologyHash;
+		}
 
-        protected override Expression<Func<TopologyModel, bool>> GetCreationBypassCheckExpression(TopologyDto dto)
-        {
-            var topologyHash = GetTopologyHash(dto);
-            return t =>
-                t.CpuId == dto.CpuId
-                && t.TopologyHash == topologyHash;
-        }
+		private static string GetTopologyHash(TopologyDto dto, string? serializedRoot = null)
+		{
+			serializedRoot ??= JsonConvert.SerializeObject(dto.Root);
 
-        public Task<PagedResult<TopologyPreviewDto>> GetPagedPreviewsAsync(QueryRequest queryRequest,
-            CancellationToken cancellationToken = default)
-        {
-            return GetPagedProjectionsAsync(queryRequest, m => new TopologyPreviewDto
-            {
-                Id = m.Id,
-                CpuId = m.CpuId,
-                CpuVendor = m.Cpu.Vendor,
-                CpuBrand = m.Cpu.Brand,
-                TotalDepth = m.TotalDepth,
-                TotalMachines = m.TotalMachines,
-                TotalPackages = m.TotalPackages,
-                TotalNumaNodes = m.TotalNumaNodes,
-                TotalPhysicalCores = m.TotalPhysicalCores,
-                TotalLogicalCores = m.TotalLogicalCores,
-                Hash = m.TopologyHash
-            }, cancellationToken);
-        }
-    }
+			return serializedRoot.ToHashString();
+		}
+	}
 }

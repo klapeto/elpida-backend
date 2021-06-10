@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@ using FluentValidation;
 
 namespace Elpida.Backend.Validators
 {
-	public class TimingValidator: AbstractValidator<TimingDto>
+	public class TimingValidator : AbstractValidator<TimingDto>
 	{
 		public TimingValidator()
 		{

@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -32,58 +32,61 @@ using Elpida.Backend.Services.Extensions.Elpida;
 
 namespace Elpida.Backend.Services
 {
-    public class ElpidaService : Service<ElpidaDto, ElpidaModel, IElpidaRepository>, IElpidaService
-    {
-        public ElpidaService(IElpidaRepository elpidaRepository, ILockFactory lockFactory)
-            : base(elpidaRepository, lockFactory)
-        {
-        }
-        
-        private static IEnumerable<FilterExpression> ElpidaExpressions { get; } = new List<FilterExpression>
-        {
-            CreateFilter("compilerName", model => model.CompilerName),
-            CreateFilter("compilerVersion", model => model.CompilerVersion),
-            CreateFilter("buildVersion", model => model.VersionBuild),
-            CreateFilter("revisionVersion", model => model.VersionRevision),
-            CreateFilter("minorVersion", model => model.VersionMinor),
-            CreateFilter("majorVersion", model => model.VersionMajor),
-        };
+	public class ElpidaService : Service<ElpidaDto, ElpidaModel, IElpidaRepository>, IElpidaService
+	{
+		public ElpidaService(IElpidaRepository elpidaRepository, ILockFactory lockFactory)
+			: base(elpidaRepository, lockFactory)
+		{
+		}
 
+		private static IEnumerable<FilterExpression> ElpidaExpressions { get; } = new List<FilterExpression>
+		{
+			CreateFilter("compilerName", model => model.CompilerName),
+			CreateFilter("compilerVersion", model => model.CompilerVersion),
+			CreateFilter("buildVersion", model => model.VersionBuild),
+			CreateFilter("revisionVersion", model => model.VersionRevision),
+			CreateFilter("minorVersion", model => model.VersionMinor),
+			CreateFilter("majorVersion", model => model.VersionMajor),
+		};
 
-        protected override IEnumerable<FilterExpression> GetFilterExpressions()
-        {
-            return ElpidaExpressions;
-        }
+		protected override IEnumerable<FilterExpression> GetFilterExpressions()
+		{
+			return ElpidaExpressions;
+		}
 
-        protected override ElpidaDto ToDto(ElpidaModel model)
-        {
-            return model.ToDto();
-        }
+		protected override ElpidaDto ToDto(ElpidaModel model)
+		{
+			return model.ToDto();
+		}
 
-        protected override Task<ElpidaModel> ProcessDtoAndCreateModelAsync(ElpidaDto dto,
-            CancellationToken cancellationToken)
-        {
-            return Task.FromResult(new ElpidaModel
-            {
-                Id = dto.Id,
-                CompilerName = dto.Compiler.Name,
-                CompilerVersion = dto.Compiler.Version,
-                VersionMajor = dto.Version.Major,
-                VersionMinor = dto.Version.Minor,
-                VersionRevision = dto.Version.Revision,
-                VersionBuild = dto.Version.Build
-            });
-        }
+		protected override Task<ElpidaModel> ProcessDtoAndCreateModelAsync(
+			ElpidaDto dto,
+			CancellationToken cancellationToken
+		)
+		{
+			return Task.FromResult(
+				new ElpidaModel
+				{
+					Id = dto.Id,
+					CompilerName = dto.Compiler.Name,
+					CompilerVersion = dto.Compiler.Version,
+					VersionMajor = dto.Version.Major,
+					VersionMinor = dto.Version.Minor,
+					VersionRevision = dto.Version.Revision,
+					VersionBuild = dto.Version.Build,
+				}
+			);
+		}
 
-        protected override Expression<Func<ElpidaModel, bool>> GetCreationBypassCheckExpression(ElpidaDto dto)
-        {
-            return e =>
-                e.VersionMajor == dto.Version.Major
-                && e.VersionMinor == dto.Version.Minor
-                && e.VersionRevision == dto.Version.Revision
-                && e.VersionBuild == dto.Version.Build
-                && e.CompilerName == dto.Compiler.Name
-                && e.CompilerVersion == dto.Compiler.Version;
-        }
-    }
+		protected override Expression<Func<ElpidaModel, bool>> GetCreationBypassCheckExpression(ElpidaDto dto)
+		{
+			return e =>
+				e.VersionMajor == dto.Version.Major
+				&& e.VersionMinor == dto.Version.Minor
+				&& e.VersionRevision == dto.Version.Revision
+				&& e.VersionBuild == dto.Version.Build
+				&& e.CompilerName == dto.Compiler.Name
+				&& e.CompilerVersion == dto.Compiler.Version;
+		}
+	}
 }

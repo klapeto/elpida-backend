@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2020 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,22 +22,22 @@ using FluentValidation;
 
 namespace Elpida.Backend.Validators
 {
-    public class CpuNodeValidator : AbstractValidator<CpuNodeDto>
-    {
-        public CpuNodeValidator()
-        {
-            RuleFor(dto => dto.Name)
-                .NotEmpty()
-                .MaximumLength(100);
+	public class CpuNodeValidator : AbstractValidator<CpuNodeDto>
+	{
+		public CpuNodeValidator()
+		{
+			RuleFor(dto => dto.Name)
+				.NotEmpty()
+				.MaximumLength(100);
 
-            RuleFor(dto => dto.NodeType)
-                .GreaterThanOrEqualTo(0);
+			RuleFor(dto => dto.NodeType)
+				.GreaterThanOrEqualTo(0);
 
-            RuleFor(dto => dto.Value)
-                .GreaterThanOrEqualTo(0);
+			RuleFor(dto => dto.Value)
+				.GreaterThanOrEqualTo(0);
 
-            RuleFor(dto => dto.OsIndex)
-                .GreaterThanOrEqualTo(0);
-        }
-    }
+			RuleFor(dto => dto.OsIndex)
+				.GreaterThanOrEqualTo(0);
+		}
+	}
 }

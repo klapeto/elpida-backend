@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,15 +19,15 @@
 
 using System;
 
-namespace Elpida.Backend.Services.Abstractions.Exceptions
+namespace Elpida.Backend.Common.Exceptions
 {
-    public class CorruptedRecordException : Exception
-    {
-        public CorruptedRecordException(string id)
-        {
-            Id = id;
-        }
+	public class CorruptedRecordException : Exception
+	{
+		public CorruptedRecordException(string id)
+		{
+			Id = id;
+		}
 
-        public string Id { get; }
-    }
+		public string Id { get; }
+	}
 }

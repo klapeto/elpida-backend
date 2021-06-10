@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,14 +17,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-
 using System;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Benchmark
 {
-    public class BenchmarkPreviewDto : FountationDto
-    {
-        public Guid Uuid { get; set; }
-        public string Name { get; set; } = string.Empty;
-    }
+	public class BenchmarkPreviewDto : FountationDto
+	{
+		public Guid Uuid { get; set; }
+
+		public string Name { get; set; } = string.Empty;
+	}
 }

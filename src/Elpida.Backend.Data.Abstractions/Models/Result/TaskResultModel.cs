@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2020 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,30 +23,44 @@ using Elpida.Backend.Data.Abstractions.Models.Topology;
 
 namespace Elpida.Backend.Data.Abstractions.Models.Result
 {
-    public class TaskResultModel : Entity
-    {
-        public long TopologyId { get; set; }
-        public TopologyModel Topology { get; set; } = default!;
+	public class TaskResultModel : Entity
+	{
+		public long TopologyId { get; set; }
 
-        public long CpuId { get; set; }
-        public CpuModel Cpu { get; set; } = default!;
+		public TopologyModel Topology { get; set; } = default!;
 
-        public long BenchmarkResultId { get; set; }
-        public BenchmarkResultModel BenchmarkResult { get; set; } = default!;
+		public long CpuId { get; set; }
 
-        public long TaskId { get; set; }
-        public TaskModel Task { get; set; } = default!;
-        
-        public int Order { get; set; }
-        public double Value { get; set; }
-        public double Time { get; set; }
-        public long InputSize { get; set; }
-        public long SampleSize { get; set; }
-        public double Max { get; set; }
-        public double Min { get; set; }
-        public double Mean { get; set; }
-        public double StandardDeviation { get; set; }
-        public double Tau { get; set; }
-        public double MarginOfError { get; set; }
-    }
+		public CpuModel Cpu { get; set; } = default!;
+
+		public long BenchmarkResultId { get; set; }
+
+		public BenchmarkResultModel BenchmarkResult { get; set; } = default!;
+
+		public long TaskId { get; set; }
+
+		public TaskModel Task { get; set; } = default!;
+
+		public int Order { get; set; }
+
+		public double Value { get; set; }
+
+		public double Time { get; set; }
+
+		public long InputSize { get; set; }
+
+		public long SampleSize { get; set; }
+
+		public double Max { get; set; }
+
+		public double Min { get; set; }
+
+		public double Mean { get; set; }
+
+		public double StandardDeviation { get; set; }
+
+		public double Tau { get; set; }
+
+		public double MarginOfError { get; set; }
+	}
 }

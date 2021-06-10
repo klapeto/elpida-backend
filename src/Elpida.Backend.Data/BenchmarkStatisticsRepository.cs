@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,25 +24,29 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Elpida.Backend.Data
 {
-    public class BenchmarkStatisticsRepository : EntityRepository<BenchmarkStatisticsModel>, IBenchmarkStatisticsRepository
-    {
-        public BenchmarkStatisticsRepository(ElpidaContext context)
-            : base(context, context.BenchmarkStatistics)
-        {
-        }
+	public class BenchmarkStatisticsRepository
+		: EntityRepository<BenchmarkStatisticsModel>, IBenchmarkStatisticsRepository
+	{
+		public BenchmarkStatisticsRepository(ElpidaContext context)
+			: base(context, context.BenchmarkStatistics)
+		{
+		}
 
-        protected override IQueryable<BenchmarkStatisticsModel> ProcessGetSingle(IQueryable<BenchmarkStatisticsModel> queryable)
-        {
-            return queryable
-                .Include(m => m.Cpu)
-                .Include(m => m.Topology)
-                .Include(m => m.Benchmark);
-        }
+		protected override IQueryable<BenchmarkStatisticsModel> ProcessGetSingle(
+			IQueryable<BenchmarkStatisticsModel> queryable
+		)
+		{
+			return queryable
+				.Include(m => m.Cpu)
+				.Include(m => m.Topology)
+				.Include(m => m.Benchmark);
+		}
 
-        protected override IQueryable<BenchmarkStatisticsModel> ProcessGetMultiplePaged(
-            IQueryable<BenchmarkStatisticsModel> queryable)
-        {
-            return ProcessGetSingle(queryable);
-        }
-    }
+		protected override IQueryable<BenchmarkStatisticsModel> ProcessGetMultiplePaged(
+			IQueryable<BenchmarkStatisticsModel> queryable
+		)
+		{
+			return ProcessGetSingle(queryable);
+		}
+	}
 }

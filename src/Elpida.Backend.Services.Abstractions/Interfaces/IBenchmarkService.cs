@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,10 +24,13 @@ using Elpida.Backend.Services.Abstractions.Dtos.Benchmark;
 
 namespace Elpida.Backend.Services.Abstractions.Interfaces
 {
-    public interface IBenchmarkService : IService<BenchmarkDto>
-    {
-        Task<BenchmarkDto> GetSingleAsync(Guid uuid, CancellationToken cancellationToken = default);
-        Task<PagedResult<BenchmarkPreviewDto>> GetPagedPreviewsAsync(QueryRequest queryRequest,
-            CancellationToken cancellationToken = default);
-    }
+	public interface IBenchmarkService : IService<BenchmarkDto>
+	{
+		Task<BenchmarkDto> GetSingleAsync(Guid uuid, CancellationToken cancellationToken = default);
+
+		Task<PagedResult<BenchmarkPreviewDto>> GetPagedPreviewsAsync(
+			QueryRequest queryRequest,
+			CancellationToken cancellationToken = default
+		);
+	}
 }

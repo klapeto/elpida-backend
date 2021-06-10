@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
- *   
- * Copyright (C) 2021 Ioannis Panagiotopoulos
+ *
+ * Copyright (C) 2020 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -19,20 +19,33 @@
 
 using System;
 
-namespace Elpida.Backend.Services.Abstractions.Exceptions
+namespace Elpida.Backend.Common.Exceptions
 {
-    public class UpdateConcurrencyException : Exception
-    {
-        public UpdateConcurrencyException()
-        {
-        }
+	public class NotFoundException : Exception
+	{
+		public NotFoundException(string id)
+		{
+			Id = id;
+		}
 
-        public UpdateConcurrencyException(string message) : base(message)
-        {
-        }
+		public NotFoundException(string message, string id)
+			: base(message)
+		{
+			Id = id;
+		}
 
-        public UpdateConcurrencyException(string message, Exception innerException) : base(message, innerException)
-        {
-        }
-    }
+		public NotFoundException(string message, long id)
+			: base(message)
+		{
+			Id = id.ToString();
+		}
+
+		public NotFoundException(string message, Guid id)
+			: base(message)
+		{
+			Id = id.ToString();
+		}
+
+		public string Id { get; }
+	}
 }

@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2020 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,12 +23,16 @@ using Elpida.Backend.Services.Abstractions.Dtos.Elpida;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 {
-    public class ResultDto : FountationDto
-    {
-        public DateTime TimeStamp { get; set; }
-        public IList<long> Affinity { get; set; } = new List<long>();
-        public ElpidaDto Elpida { get; set; } = new ElpidaDto();
-        public SystemDto System { get; set; } = new SystemDto();
-        public BenchmarkResultDto Result { get; set; } = new BenchmarkResultDto();
-    }
+	public class ResultDto : FountationDto
+	{
+		public DateTime TimeStamp { get; set; }
+
+		public IList<long> Affinity { get; set; } = new List<long>();
+
+		public ElpidaDto Elpida { get; set; } = new ElpidaDto();
+
+		public SystemDto System { get; set; } = new SystemDto();
+
+		public BenchmarkResultDto Result { get; set; } = new BenchmarkResultDto();
+	}
 }

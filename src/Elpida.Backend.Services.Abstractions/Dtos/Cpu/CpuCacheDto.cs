@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2020 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,13 +21,17 @@ using System;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Cpu
 {
-    [Serializable]
-    public class CpuCacheDto
-    {
-        public string Name { get; set; } = string.Empty;
-        public string Associativity { get; set; } = string.Empty;
-        public long Size { get; set; }
-        public int LinesPerTag { get; set; }
-        public int LineSize { get; set; }
-    }
+	[Serializable]
+	public class CpuCacheDto
+	{
+		public string Name { get; set; } = string.Empty;
+
+		public string Associativity { get; set; } = string.Empty;
+
+		public long Size { get; set; }
+
+		public int LinesPerTag { get; set; }
+
+		public int LineSize { get; set; }
+	}
 }

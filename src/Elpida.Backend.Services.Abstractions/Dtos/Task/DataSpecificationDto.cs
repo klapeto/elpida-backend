@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,11 +21,14 @@ using System.Collections.Generic;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Task
 {
-    public class DataSpecificationDto
-    {
-        public string Name { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public string Unit { get; set; } = string.Empty;
-        public IList<string> RequiredProperties { get; set; } = new List<string>();
-    }
+	public class DataSpecificationDto
+	{
+		public string Name { get; set; } = string.Empty;
+
+		public string Description { get; set; } = string.Empty;
+
+		public string Unit { get; set; } = string.Empty;
+
+		public IList<string> RequiredProperties { get; set; } = new List<string>();
+	}
 }

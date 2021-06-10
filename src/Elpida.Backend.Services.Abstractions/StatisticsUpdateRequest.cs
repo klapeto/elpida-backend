@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,32 +21,41 @@ using System;
 
 namespace Elpida.Backend.Services.Abstractions
 {
-    public class StatisticsUpdateRequest
-    {
-        public StatisticsUpdateRequest(long topologyId, long benchmarkId)
-        {
-            TopologyId = topologyId;
-            BenchmarkId = benchmarkId;
-        }
+	public class StatisticsUpdateRequest
+	{
+		public StatisticsUpdateRequest(long topologyId, long benchmarkId)
+		{
+			TopologyId = topologyId;
+			BenchmarkId = benchmarkId;
+		}
 
-        public long TopologyId { get; }
-        public long BenchmarkId { get; }
+		public long TopologyId { get; }
 
-        private bool Equals(StatisticsUpdateRequest other)
-        {
-            return TopologyId == other.TopologyId && BenchmarkId == other.BenchmarkId;
-        }
+		public long BenchmarkId { get; }
 
-        public override bool Equals(object? obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((StatisticsUpdateRequest) obj);
-        }
+		public override bool Equals(object? obj)
+		{
+			if (ReferenceEquals(null, obj))
+			{
+				return false;
+			}
 
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(TopologyId, BenchmarkId);
-        }
-    }
+			if (ReferenceEquals(this, obj))
+			{
+				return true;
+			}
+
+			return obj.GetType() == GetType() && Equals((StatisticsUpdateRequest)obj);
+		}
+
+		public override int GetHashCode()
+		{
+			return HashCode.Combine(TopologyId, BenchmarkId);
+		}
+
+		private bool Equals(StatisticsUpdateRequest other)
+		{
+			return TopologyId == other.TopologyId && BenchmarkId == other.BenchmarkId;
+		}
+	}
 }

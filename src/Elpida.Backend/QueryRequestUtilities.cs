@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2020 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,44 +23,51 @@ using Elpida.Backend.Services.Abstractions;
 
 namespace Elpida.Backend
 {
-    public static class QueryRequestUtilities
-    {
-        public static void PreprocessQuery(QueryRequest queryRequest)
-        {
-            if (queryRequest.Filters == null) return;
+	public static class QueryRequestUtilities
+	{
+		public static void PreprocessQuery(QueryRequest queryRequest)
+		{
+			if (queryRequest.Filters == null)
+			{
+				return;
+			}
 
-            foreach (var queryRequestFilter in queryRequest.Filters)
-            {
-                ConvertValues(queryRequestFilter);
-            }
-        }
+			foreach (var queryRequestFilter in queryRequest.Filters)
+			{
+				ConvertValues(queryRequestFilter);
+			}
+		}
 
-        private static void ConvertValues(QueryInstance instance)
-        {
-            if (instance.Value == null) return;
-            var element = (JsonElement) instance.Value;
-            switch (element.ValueKind)
-            {
-                case JsonValueKind.String:
-                    instance.Value = element.GetString();
-                    break;
-                case JsonValueKind.Number:
-                    instance.Value = element.GetDouble();
-                    break;
-                case JsonValueKind.False:
-                case JsonValueKind.True:
-                    instance.Value = element.GetBoolean();
-                    break;
-                case JsonValueKind.Null:
-                case JsonValueKind.Undefined:
-                    instance.Value = null;
-                    break;
-                case JsonValueKind.Object:
-                case JsonValueKind.Array:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-    }
+		private static void ConvertValues(QueryInstance instance)
+		{
+			if (instance.Value == null)
+			{
+				return;
+			}
+
+			var element = (JsonElement)instance.Value;
+			switch (element.ValueKind)
+			{
+				case JsonValueKind.String:
+					instance.Value = element.GetString();
+					break;
+				case JsonValueKind.Number:
+					instance.Value = element.GetDouble();
+					break;
+				case JsonValueKind.False:
+				case JsonValueKind.True:
+					instance.Value = element.GetBoolean();
+					break;
+				case JsonValueKind.Null:
+				case JsonValueKind.Undefined:
+					instance.Value = null;
+					break;
+				case JsonValueKind.Object:
+				case JsonValueKind.Array:
+					break;
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
+		}
+	}
 }

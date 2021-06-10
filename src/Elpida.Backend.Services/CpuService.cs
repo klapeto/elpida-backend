@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,7 +19,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,65 +33,73 @@ using Newtonsoft.Json;
 
 namespace Elpida.Backend.Services
 {
-    public class CpuService : Service<CpuDto, CpuModel, ICpuRepository>, ICpuService
-    {
-        public CpuService(ICpuRepository cpuRepository, ILockFactory lockFactory)
-            : base(cpuRepository, lockFactory)
-        {
-        }
+	public class CpuService : Service<CpuDto, CpuModel, ICpuRepository>, ICpuService
+	{
+		public CpuService(ICpuRepository cpuRepository, ILockFactory lockFactory)
+			: base(cpuRepository, lockFactory)
+		{
+		}
 
-        private static IEnumerable<FilterExpression> CpuExpressions { get; } = new List<FilterExpression>
-        {
-            CreateFilter("cpuBrand", model => model.Brand),
-            CreateFilter("cpuVendor", model => model.Vendor),
-            CreateFilter("cpuFrequency", model => model.Frequency)
-        };
+		private static IEnumerable<FilterExpression> CpuExpressions { get; } = new List<FilterExpression>
+		{
+			CreateFilter("cpuBrand", model => model.Brand),
+			CreateFilter("cpuVendor", model => model.Vendor),
+			CreateFilter("cpuFrequency", model => model.Frequency),
+		};
 
-        public Task<PagedResult<CpuPreviewDto>> GetPagedPreviewsAsync(QueryRequest queryRequest,
-            CancellationToken cancellationToken = default)
-        {
-            return GetPagedProjectionsAsync(queryRequest, m => new CpuPreviewDto
-            {
-                Id = m.Id,
-                Vendor = m.Vendor,
-                Brand = m.Brand,
-                TopologiesCount = m.Topologies.Count,
-                TaskStatisticsCount = m.BenchmarkStatistics.Count
-            }, cancellationToken);
-        }
+		public Task<PagedResult<CpuPreviewDto>> GetPagedPreviewsAsync(
+			QueryRequest queryRequest,
+			CancellationToken cancellationToken = default
+		)
+		{
+			return GetPagedProjectionsAsync(
+				queryRequest,
+				m => new CpuPreviewDto
+				{
+					Id = m.Id,
+					Vendor = m.Vendor,
+					Brand = m.Brand,
+					TopologiesCount = m.Topologies.Count,
+					TaskStatisticsCount = m.BenchmarkStatistics.Count,
+				},
+				cancellationToken
+			);
+		}
 
-        protected override Task<CpuModel> ProcessDtoAndCreateModelAsync(CpuDto dto, CancellationToken cancellationToken)
-        {
-            return Task.FromResult(new CpuModel
-            {
-                Id = dto.Id,
-                Brand = dto.Brand,
-                Caches = JsonConvert.SerializeObject(dto.Caches),
-                Features = JsonConvert.SerializeObject(dto.Features),
-                Frequency = dto.Frequency,
-                Smt = dto.Smt,
-                Vendor = dto.Vendor,
-                AdditionalInfo = JsonConvert.SerializeObject(dto.AdditionalInfo)
-            });
-        }
+		protected override Task<CpuModel> ProcessDtoAndCreateModelAsync(CpuDto dto, CancellationToken cancellationToken)
+		{
+			return Task.FromResult(
+				new CpuModel
+				{
+					Id = dto.Id,
+					Brand = dto.Brand,
+					Caches = JsonConvert.SerializeObject(dto.Caches),
+					Features = JsonConvert.SerializeObject(dto.Features),
+					Frequency = dto.Frequency,
+					Smt = dto.Smt,
+					Vendor = dto.Vendor,
+					AdditionalInfo = JsonConvert.SerializeObject(dto.AdditionalInfo),
+				}
+			);
+		}
 
-        protected override IEnumerable<FilterExpression> GetFilterExpressions()
-        {
-            return CpuExpressions;
-        }
+		protected override IEnumerable<FilterExpression> GetFilterExpressions()
+		{
+			return CpuExpressions;
+		}
 
-        protected override CpuDto ToDto(CpuModel model)
-        {
-            return model.ToDto();
-        }
+		protected override CpuDto ToDto(CpuModel model)
+		{
+			return model.ToDto();
+		}
 
-        protected override Expression<Func<CpuModel, bool>> GetCreationBypassCheckExpression(CpuDto dto)
-        {
-            var additionalInfo = JsonConvert.SerializeObject(dto.AdditionalInfo);
-            return model =>
-                model.Vendor == dto.Vendor
-                && model.Brand == dto.Brand
-                && model.AdditionalInfo == additionalInfo;
-        }
-    }
+		protected override Expression<Func<CpuModel, bool>> GetCreationBypassCheckExpression(CpuDto dto)
+		{
+			var additionalInfo = JsonConvert.SerializeObject(dto.AdditionalInfo);
+			return model =>
+				model.Vendor == dto.Vendor
+				&& model.Brand == dto.Brand
+				&& model.AdditionalInfo == additionalInfo;
+		}
+	}
 }

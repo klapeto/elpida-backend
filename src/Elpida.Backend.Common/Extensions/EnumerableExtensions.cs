@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,20 +22,24 @@ using System.Collections.Generic;
 
 namespace Elpida.Backend.Common.Extensions
 {
-    public static class EnumerableExtensions
-    {
-        public static IEnumerable<T> DistinctBy<T, TR>(this IEnumerable<T> enumerable, Func<T, TR> keyGetter)
-        {
-            var hashset = new HashSet<TR>();
-            using var enumerator = enumerable.GetEnumerator();
+	public static class EnumerableExtensions
+	{
+		public static IEnumerable<T> DistinctBy<T, TR>(this IEnumerable<T> enumerable, Func<T, TR> keyGetter)
+		{
+			var hashset = new HashSet<TR>();
+			using var enumerator = enumerable.GetEnumerator();
 
-            while (enumerator.MoveNext())
-            {
-                var key = keyGetter(enumerator.Current);
-                if (hashset.Contains(key)) continue;
-                hashset.Add(key);
-                yield return enumerator.Current;
-            }
-        }
-    }
+			while (enumerator.MoveNext())
+			{
+				var key = keyGetter(enumerator.Current);
+				if (hashset.Contains(key))
+				{
+					continue;
+				}
+
+				hashset.Add(key);
+				yield return enumerator.Current;
+			}
+		}
+	}
 }

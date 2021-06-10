@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using Elpida.Backend.Services.Abstractions.Dtos;
 using Elpida.Backend.Services.Abstractions.Dtos.Task;
 using FluentValidation;
 
