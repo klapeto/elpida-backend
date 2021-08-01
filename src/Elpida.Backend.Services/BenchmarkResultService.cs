@@ -106,9 +106,10 @@ namespace Elpida.Backend.Services
 				{
 					Id = m.Id,
 					TimeStamp = m.TimeStamp,
-					Name = m.Benchmark.Name,
+					BenchmarkUuid = m.Benchmark.Uuid,
+					BenchmarkName = m.Benchmark.Name,
 					CpuVendor = m.Topology.Cpu.Vendor,
-					CpuBrand = m.Topology.Cpu.Brand,
+					CpuBrand = m.Topology.Cpu.ModelName,
 					CpuCores = m.Topology.TotalPhysicalCores,
 					CpuLogicalCores = m.Topology.TotalLogicalCores,
 					CpuFrequency = m.Topology.Cpu.Frequency,
@@ -164,6 +165,7 @@ namespace Elpida.Backend.Services
 			);
 
 			dto.System.Topology.Id = topology.Id;
+			dto.System.Cpu.Id = cpu.Id;
 
 			var elpida = await GetOrAddForeignDto(_elpidaRepository, _elpidaService, dto.Elpida, cancellationToken);
 			var os = await GetOrAddForeignDto(_osRepository, _osService, dto.System.Os, cancellationToken);
@@ -173,6 +175,7 @@ namespace Elpida.Backend.Services
 				Benchmark = benchmark,
 				Elpida = elpida,
 				Topology = topology,
+				Cpu = cpu,
 				Os = os,
 				Affinity = JsonConvert.SerializeObject(dto.Affinity),
 				JoinOverhead = dto.System.Timing.JoinOverhead,
@@ -231,7 +234,7 @@ namespace Elpida.Backend.Services
 		)
 		{
 			return _statisticsUpdaterService.EnqueueUpdateAsync(
-				new StatisticsUpdateRequest(dto.System.Topology.Id, dto.Result.Id),
+				new StatisticsUpdateRequest(dto.System.Cpu.Id, dto.Result.Id),
 				cancellationToken
 			);
 		}

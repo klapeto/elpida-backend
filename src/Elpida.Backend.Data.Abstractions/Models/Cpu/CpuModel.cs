@@ -25,9 +25,11 @@ namespace Elpida.Backend.Data.Abstractions.Models.Cpu
 {
 	public class CpuModel : Entity
 	{
+		public string Architecture { get; set; } = default!;
+
 		public string Vendor { get; set; } = default!;
 
-		public string Brand { get; set; } = default!;
+		public string ModelName { get; set; } = default!;
 
 		public long Frequency { get; set; }
 

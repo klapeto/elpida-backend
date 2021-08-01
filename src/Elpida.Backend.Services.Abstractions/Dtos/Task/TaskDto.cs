@@ -21,18 +21,41 @@ using System;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Task
 {
-	public class TaskDto : FountationDto
+	/// <summary>
+	/// Details of Task.
+	/// </summary>
+	public class TaskDto : FoundationDto
 	{
+		/// <summary>
+		/// The UUID of this Task.
+		/// </summary>
 		public Guid Uuid { get; set; }
 
+		/// <summary>
+		/// The name of this Task.
+		/// </summary>
+		/// <example>Allocate Memory</example>
 		public string Name { get; set; } = string.Empty;
 
+		/// <summary>
+		/// The description of this Task.
+		/// </summary>
+		/// <example>Allocated memory to be used by the next Tasks.</example>
 		public string Description { get; set; } = string.Empty;
 
-		public ResultSpecificationDto Result { get; set; } = new ResultSpecificationDto();
+		/// <summary>
+		/// The result specification of this Task.
+		/// </summary>
+		public ResultSpecificationDto Result { get; set; } = new ();
 
+		/// <summary>
+		/// The input data specification of this Task.
+		/// </summary>
 		public DataSpecificationDto? Input { get; set; }
 
+		/// <summary>
+		/// The output data specification of this Task.
+		/// </summary>
 		public DataSpecificationDto? Output { get; set; }
 	}
 }

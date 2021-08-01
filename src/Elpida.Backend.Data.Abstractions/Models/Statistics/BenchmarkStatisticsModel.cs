@@ -19,7 +19,6 @@
 
 using Elpida.Backend.Data.Abstractions.Models.Benchmark;
 using Elpida.Backend.Data.Abstractions.Models.Cpu;
-using Elpida.Backend.Data.Abstractions.Models.Topology;
 
 namespace Elpida.Backend.Data.Abstractions.Models.Statistics
 {
@@ -32,10 +31,6 @@ namespace Elpida.Backend.Data.Abstractions.Models.Statistics
 		public long CpuId { get; set; }
 
 		public CpuModel Cpu { get; set; } = default!;
-
-		public long TopologyId { get; set; }
-
-		public TopologyModel Topology { get; set; } = default!;
 
 		public long SampleSize { get; set; }
 

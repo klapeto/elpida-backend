@@ -31,7 +31,8 @@ namespace Elpida.Backend.Services.Extensions.Cpu
 			return new ()
 			{
 				Id = model.Id,
-				Brand = model.Brand,
+				Architecture = model.Architecture,
+				ModelName = model.ModelName,
 				Caches = JsonConvert.DeserializeObject<List<CpuCacheDto>>(model.Caches),
 				Features = JsonConvert.DeserializeObject<List<string>>(model.Features),
 				Frequency = model.Frequency,

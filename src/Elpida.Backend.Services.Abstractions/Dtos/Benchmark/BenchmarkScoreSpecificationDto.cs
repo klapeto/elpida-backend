@@ -17,12 +17,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using Elpida.Backend.Common;
+
 namespace Elpida.Backend.Services.Abstractions.Dtos.Benchmark
 {
+	/// <summary>
+	/// Specification details for a Benchmark score.
+	/// </summary>
 	public class BenchmarkScoreSpecificationDto
 	{
+		/// <summary>
+		/// The uint of this Benchmark's score.
+		/// </summary>
+		/// <example>Pixels/s</example>
 		public string Unit { get; set; } = default!;
 
-		public int Comparison { get; set; }
+		/// <summary>
+		/// The comparison type of this Benchmark's score.
+		/// </summary>
+		public ValueComparison Comparison { get; set; }
 	}
 }

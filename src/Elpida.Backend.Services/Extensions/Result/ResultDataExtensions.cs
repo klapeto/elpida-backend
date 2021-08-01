@@ -61,7 +61,7 @@ namespace Elpida.Backend.Services.Extensions.Result
 								Id = r.Task.Id,
 								Uuid = r.Task.Uuid,
 								Name = r.Task.Name,
-								CpuId = benchmarkResultModel.Topology.Cpu.Id,
+								CpuId = benchmarkResultModel.Cpu.Id,
 								TopologyId = benchmarkResultModel.Topology.Id,
 								TaskId = r.Task.Id,
 								BenchmarkResultId = benchmarkResultModel.Id,
@@ -72,8 +72,8 @@ namespace Elpida.Backend.Services.Extensions.Result
 								{
 									Name = r.Task.ResultName,
 									Description = r.Task.ResultDescription,
-									Aggregation = r.Task.ResultAggregation,
-									Type = r.Task.ResultType,
+									Aggregation = (AggregationType)r.Task.ResultAggregation,
+									Type = (ResultType)r.Task.ResultType,
 									Unit = r.Task.ResultUnit,
 								},
 								Statistics = new TaskRunStatisticsDto
@@ -95,7 +95,7 @@ namespace Elpida.Backend.Services.Extensions.Result
 				},
 				System = new SystemDto
 				{
-					Cpu = benchmarkResultModel.Topology.Cpu.ToDto(),
+					Cpu = benchmarkResultModel.Cpu.ToDto(),
 					Os = benchmarkResultModel.Os.ToDto(),
 					Memory = new MemoryDto
 					{

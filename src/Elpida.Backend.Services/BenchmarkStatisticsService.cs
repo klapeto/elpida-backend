@@ -20,8 +20,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Elpida.Backend.Common;
 using Elpida.Backend.Common.Lock;
 using Elpida.Backend.Data.Abstractions.Models.Benchmark;
 using Elpida.Backend.Data.Abstractions.Models.Cpu;
@@ -29,6 +31,7 @@ using Elpida.Backend.Data.Abstractions.Models.Statistics;
 using Elpida.Backend.Data.Abstractions.Models.Topology;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services.Abstractions;
+using Elpida.Backend.Services.Abstractions.Dtos.Benchmark;
 using Elpida.Backend.Services.Abstractions.Dtos.Statistics;
 using Elpida.Backend.Services.Abstractions.Interfaces;
 using Elpida.Backend.Services.Extensions.Benchmark;
@@ -46,11 +49,9 @@ namespace Elpida.Backend.Services
 		private readonly IBenchmarkResultsRepository _benchmarkResultsRepository;
 		private readonly IBenchmarkService _benchmarkService;
 		private readonly ICpuService _cpuService;
-		private readonly ITopologyService _topologyService;
 
 		public BenchmarkStatisticsService(
 			IBenchmarkService benchmarkService,
-			ITopologyService topologyService,
 			IBenchmarkStatisticsRepository benchmarkStatisticsRepository,
 			ICpuService cpuService,
 			IBenchmarkResultsRepository benchmarkResultsRepository,
@@ -58,7 +59,6 @@ namespace Elpida.Backend.Services
 		)
 			: base(benchmarkStatisticsRepository, lockFactory)
 		{
-			_topologyService = topologyService;
 			_cpuService = cpuService;
 			_benchmarkResultsRepository = benchmarkResultsRepository;
 			_benchmarkService = benchmarkService;
@@ -67,20 +67,20 @@ namespace Elpida.Backend.Services
 		private static IEnumerable<FilterExpression> StatisticsExpressions { get; } = new List<FilterExpression>
 		{
 			CreateFilter("cpuId", model => model.CpuId),
-			CreateFilter("topologyId", model => model.TopologyId),
 			CreateFilter("benchmarkId", model => model.BenchmarkId),
+			CreateFilter("benchmarkScoreMean", model => model.Mean),
 		};
 
 		public async Task UpdateTaskStatisticsAsync(
 			long benchmarkId,
-			long topologyId,
+			long cpuId,
 			CancellationToken cancellationToken = default
 		)
 		{
-			var stats = await GetStatisticsModelAsync(benchmarkId, topologyId, cancellationToken);
+			var stats = await GetStatisticsModelAsync(benchmarkId, cpuId, cancellationToken);
 
 			var basicStatistics =
-				await _benchmarkResultsRepository.GetStatisticsAsync(benchmarkId, topologyId, cancellationToken);
+				await _benchmarkResultsRepository.GetStatisticsAsync(benchmarkId, cpuId, cancellationToken);
 
 			stats.Max = basicStatistics.Max;
 			stats.Min = basicStatistics.Min;
@@ -97,7 +97,7 @@ namespace Elpida.Backend.Services
 			{
 				cls.Count = await _benchmarkResultsRepository.GetCountWithScoreBetween(
 					stats.BenchmarkId,
-					stats.TopologyId,
+					stats.CpuId,
 					cls.Low,
 					cls.High,
 					cancellationToken
@@ -109,6 +109,22 @@ namespace Elpida.Backend.Services
 			await Repository.SaveChangesAsync(cancellationToken);
 		}
 
+		private static Expression<Func<BenchmarkStatisticsModel, BenchmarkStatisticsPreviewDto>> GetPreviewConstructionExpression()
+		{
+			return m => new BenchmarkStatisticsPreviewDto
+			{
+				Id = m.Id,
+				CpuVendor = m.Cpu.Vendor,
+				CpuModelName = m.Cpu.ModelName,
+				BenchmarkName = m.Benchmark.Name,
+				BenchmarkUuid = m.Benchmark.Uuid,
+				SampleSize = m.SampleSize,
+				BenchmarkScoreUnit = m.Benchmark.ScoreUnit,
+				Mean = m.Mean,
+				Comparison = m.Benchmark.ScoreComparison,
+			};
+		}
+
 		public Task<PagedResult<BenchmarkStatisticsPreviewDto>> GetPagedPreviewsAsync(
 			QueryRequest queryRequest,
 			CancellationToken cancellationToken = default
@@ -116,21 +132,7 @@ namespace Elpida.Backend.Services
 		{
 			return GetPagedProjectionsAsync(
 				queryRequest,
-				m => new BenchmarkStatisticsPreviewDto
-				{
-					Id = m.Id,
-					CpuVendor = m.Cpu.Vendor,
-					CpuBrand = m.Cpu.Brand,
-					CpuCores = m.Topology.TotalPhysicalCores,
-					CpuLogicalCores = m.Topology.TotalLogicalCores,
-					BenchmarkName = m.Benchmark.Name,
-					BenchmarkUuid = m.Benchmark.Uuid,
-					SampleSize = m.SampleSize,
-					TopologyHash = m.Topology.TopologyHash,
-					BenchmarkScoreUnit = m.Benchmark.ScoreUnit,
-					Mean = m.Mean,
-					Comparison = m.Benchmark.ScoreComparison,
-				},
+				GetPreviewConstructionExpression(),
 				cancellationToken
 			);
 		}
@@ -145,7 +147,6 @@ namespace Elpida.Backend.Services
 				{
 					Id = dto.Id,
 					CpuId = dto.Cpu.Id,
-					TopologyId = dto.Topology.Id,
 					BenchmarkId = dto.Benchmark.Id,
 					Max = dto.Max,
 					Mean = dto.Mean,
@@ -163,7 +164,6 @@ namespace Elpida.Backend.Services
 		{
 			return StatisticsExpressions
 				.Concat(_cpuService.GetFilters<BenchmarkStatisticsModel, CpuModel>(m => m.Cpu))
-				.Concat(_topologyService.GetFilters<BenchmarkStatisticsModel, TopologyModel>(m => m.Topology))
 				.Concat(_benchmarkService.GetFilters<BenchmarkStatisticsModel, BenchmarkModel>(m => m.Benchmark));
 		}
 
@@ -174,7 +174,6 @@ namespace Elpida.Backend.Services
 				Id = model.Id,
 				Cpu = model.Cpu.ToDto(),
 				Benchmark = model.Benchmark.ToDto(),
-				Topology = model.Topology.ToDto(),
 				Max = model.Max,
 				Mean = model.Mean,
 				Min = model.Min,
@@ -216,13 +215,13 @@ namespace Elpida.Backend.Services
 
 		private async Task<BenchmarkStatisticsModel> GetStatisticsModelAsync(
 			long benchmarkId,
-			long topologyId,
+			long cpuId,
 			CancellationToken cancellationToken
 		)
 		{
 			var stats = await Repository.GetSingleAsync(
 				t => t.BenchmarkId == benchmarkId
-				     && t.TopologyId == topologyId,
+				     && t.CpuId == cpuId,
 				cancellationToken
 			);
 
@@ -231,12 +230,10 @@ namespace Elpida.Backend.Services
 				return stats;
 			}
 
-			var topology = await _topologyService.GetSingleAsync(topologyId, cancellationToken);
 			stats = new BenchmarkStatisticsModel
 			{
 				Id = 0,
-				CpuId = topology.CpuId,
-				TopologyId = topologyId,
+				CpuId = cpuId,
 				BenchmarkId = benchmarkId,
 			};
 

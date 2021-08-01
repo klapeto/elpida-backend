@@ -27,7 +27,7 @@ using Elpida.Backend.Services.Abstractions.Dtos;
 namespace Elpida.Backend.Services.Abstractions.Interfaces
 {
 	public interface IService<TDto>
-		where TDto : FountationDto
+		where TDto : FoundationDto
 	{
 		Task<TDto> GetSingleAsync(long id, CancellationToken cancellationToken = default);
 

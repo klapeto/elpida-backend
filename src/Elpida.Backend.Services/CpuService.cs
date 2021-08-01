@@ -42,9 +42,9 @@ namespace Elpida.Backend.Services
 
 		private static IEnumerable<FilterExpression> CpuExpressions { get; } = new List<FilterExpression>
 		{
-			CreateFilter("cpuBrand", model => model.Brand),
+			CreateFilter("cpuBrand", model => model.ModelName),
 			CreateFilter("cpuVendor", model => model.Vendor),
-			CreateFilter("cpuFrequency", model => model.Frequency),
+			CreateFilter("cpuFrequency", model => model.Frequency)
 		};
 
 		public Task<PagedResult<CpuPreviewDto>> GetPagedPreviewsAsync(
@@ -58,7 +58,7 @@ namespace Elpida.Backend.Services
 				{
 					Id = m.Id,
 					Vendor = m.Vendor,
-					Brand = m.Brand,
+					ModelName = m.ModelName,
 					TopologiesCount = m.Topologies.Count,
 					TaskStatisticsCount = m.BenchmarkStatistics.Count,
 				},
@@ -72,7 +72,8 @@ namespace Elpida.Backend.Services
 				new CpuModel
 				{
 					Id = dto.Id,
-					Brand = dto.Brand,
+					Architecture = dto.Architecture,
+					ModelName = dto.ModelName,
 					Caches = JsonConvert.SerializeObject(dto.Caches),
 					Features = JsonConvert.SerializeObject(dto.Features),
 					Frequency = dto.Frequency,
@@ -98,7 +99,7 @@ namespace Elpida.Backend.Services
 			var additionalInfo = JsonConvert.SerializeObject(dto.AdditionalInfo);
 			return model =>
 				model.Vendor == dto.Vendor
-				&& model.Brand == dto.Brand
+				&& model.ModelName == dto.ModelName
 				&& model.AdditionalInfo == additionalInfo;
 		}
 	}

@@ -37,7 +37,7 @@ namespace Elpida.Backend.Services
 	public abstract class Service<TDto, TModel, TRepository> : IService<TDto>
 		where TModel : Entity
 		where TRepository : IRepository<TModel>
-		where TDto : FountationDto
+		where TDto : FoundationDto
 	{
 		protected Service(TRepository repository, ILockFactory lockFactory)
 		{
@@ -143,7 +143,7 @@ namespace Elpida.Backend.Services
 			CancellationToken cancellationToken
 		)
 			where TFModel : Entity
-			where TFDto : FountationDto
+			where TFDto : FoundationDto
 		{
 			var newDto = await service.GetOrAddAsync(dto, cancellationToken);
 			return (await repository.GetSingleAsync(newDto.Id, cancellationToken))!;
@@ -177,7 +177,7 @@ namespace Elpida.Backend.Services
 			return Task.CompletedTask;
 		}
 
-		protected async Task<PagedResult<TProjection>> GetPagedProjectionsAsync<TProjection>(
+		protected Task<PagedResult<TProjection>> GetPagedProjectionsAsync<TProjection>(
 			QueryRequest queryRequest,
 			Expression<Func<TModel, TProjection>> constructionExpression,
 			CancellationToken cancellationToken = default
@@ -185,20 +185,54 @@ namespace Elpida.Backend.Services
 		{
 			var expressionBuilder = new QueryExpressionBuilder(GetLambdaFilters());
 
-			var result = await Repository.GetPagedProjectionAsync(
-				queryRequest.PageRequest.Next,
-				queryRequest.PageRequest.Count,
-				constructionExpression,
+			return GetPagedProjectionsByPageAsync(
+				queryRequest.PageRequest,
 				queryRequest.Descending,
-				queryRequest.PageRequest.TotalCount == 0,
 				expressionBuilder.GetOrderBy<TModel>(queryRequest),
 				expressionBuilder.Build<TModel>(queryRequest.Filters),
+				constructionExpression,
 				cancellationToken
 			);
 
-			queryRequest.PageRequest.TotalCount = result.TotalCount;
+			// var result = await Repository.GetPagedProjectionAsync(
+			// 	queryRequest.PageRequest.Next,
+			// 	queryRequest.PageRequest.Count,
+			// 	constructionExpression,
+			// 	queryRequest.Descending,
+			// 	queryRequest.PageRequest.TotalCount == 0,
+			// 	expressionBuilder.GetOrderBy<TModel>(queryRequest),
+			// 	expressionBuilder.Build<TModel>(queryRequest.Filters),
+			// 	cancellationToken
+			// );
+			//
+			// queryRequest.PageRequest.TotalCount = result.TotalCount;
+			//
+			// return new PagedResult<TProjection>(result.Items.ToList(), queryRequest.PageRequest);
+		}
 
-			return new PagedResult<TProjection>(result.Items.ToList(), queryRequest.PageRequest);
+		protected async Task<PagedResult<TProjection>> GetPagedProjectionsByPageAsync<TProjection>(
+			PageRequest pageRequest,
+			bool descending,
+			Expression<Func<TModel, object>>? orderBy,
+			IEnumerable<Expression<Func<TModel, bool>>>? filters,
+			Expression<Func<TModel, TProjection>> constructionExpression,
+			CancellationToken cancellationToken = default
+		)
+		{
+			var result = await Repository.GetPagedProjectionAsync(
+				pageRequest.Next,
+				pageRequest.Count,
+				constructionExpression,
+				descending,
+				pageRequest.TotalCount == 0,
+				orderBy,
+				filters,
+				cancellationToken
+			);
+
+			pageRequest.TotalCount = result.TotalCount;
+
+			return new PagedResult<TProjection>(result.Items.ToList(), pageRequest);
 		}
 
 		private static ParameterExpression GetParameterExpression(Expression expression)

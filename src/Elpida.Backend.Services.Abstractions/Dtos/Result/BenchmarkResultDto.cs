@@ -23,7 +23,7 @@ using Elpida.Backend.Services.Abstractions.Dtos.Benchmark;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 {
-	public class BenchmarkResultDto : FountationDto
+	public class BenchmarkResultDto : FoundationDto
 	{
 		public Guid Uuid { get; set; }
 

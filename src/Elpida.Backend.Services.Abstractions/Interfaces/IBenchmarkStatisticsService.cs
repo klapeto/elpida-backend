@@ -27,7 +27,7 @@ namespace Elpida.Backend.Services.Abstractions.Interfaces
 	{
 		Task UpdateTaskStatisticsAsync(
 			long benchmarkId,
-			long topologyId,
+			long cpuId,
 			CancellationToken cancellationToken = default
 		);
 

@@ -21,14 +21,33 @@ using System.Collections.Generic;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Task
 {
+	/// <summary>
+	/// Details of data used by a Task.
+	/// </summary>
 	public class DataSpecificationDto
 	{
+		/// <summary>
+		/// The name of the data.
+		/// </summary>
+		/// <example>Allocated data</example>
 		public string Name { get; set; } = string.Empty;
 
+		/// <summary>
+		/// The description of the data.
+		/// </summary>
+		/// <example>The memory that was allocated.</example>
 		public string Description { get; set; } = string.Empty;
 
+		/// <summary>
+		/// The unit that describes this data.
+		/// </summary>
+		/// <example>Bytes</example>
 		public string Unit { get; set; } = string.Empty;
 
+		/// <summary>
+		/// The required property names that this data has to carry in order
+		/// to be valid.
+		/// </summary>
 		public IList<string> RequiredProperties { get; set; } = new List<string>();
 	}
 }

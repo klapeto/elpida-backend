@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using Elpida.Backend.Data.Abstractions.Models.Benchmark;
+using Elpida.Backend.Data.Abstractions.Models.Cpu;
 using Elpida.Backend.Data.Abstractions.Models.Elpida;
 using Elpida.Backend.Data.Abstractions.Models.Os;
 using Elpida.Backend.Data.Abstractions.Models.Topology;
@@ -39,6 +40,10 @@ namespace Elpida.Backend.Data.Abstractions.Models.Result
 		public long TopologyId { get; set; }
 
 		public TopologyModel Topology { get; set; } = null!;
+
+		public long CpuId { get; set; }
+
+		public CpuModel Cpu { get; set; } = null!;
 
 		public long BenchmarkId { get; set; }
 

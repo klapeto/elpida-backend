@@ -40,8 +40,8 @@ namespace Elpida.Backend.Services.Extensions.Task
 				{
 					Name = taskModel.ResultName,
 					Description = taskModel.ResultDescription,
-					Aggregation = taskModel.ResultAggregation,
-					Type = taskModel.ResultType,
+					Aggregation = (AggregationType)taskModel.ResultAggregation,
+					Type = (ResultType)taskModel.ResultType,
 					Unit = taskModel.ResultUnit,
 				},
 			};

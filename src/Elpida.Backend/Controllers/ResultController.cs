@@ -29,8 +29,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Elpida.Backend.Controllers
 {
 	[ApiController]
-	[ApiVersion("1")]
-	[Route("api/v{version:apiVersion}/[controller]")]
+	[Route("api/v1/[controller]")]
 	public class ResultController : ControllerBase
 	{
 		private readonly IBenchmarkResultsService _benchmarkResultsService;
@@ -45,14 +44,14 @@ namespace Elpida.Backend.Controllers
 		[Consumes(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		public async Task<IActionResult> PostNewResult(
 			[FromBody] ResultDto resultDto,
-			ApiVersion apiVersion,
 			CancellationToken cancellationToken
 		)
 		{
 			var result = await _benchmarkResultsService.GetOrAddAsync(resultDto, cancellationToken);
-			return CreatedAtRoute(nameof(GetSingleResult), new { id = result.Id, version = $"{apiVersion}" }, null);
+			return CreatedAtRoute(nameof(GetSingleResult), new { id = result.Id, version = "v1" }, null);
 		}
 
 		[HttpGet("{id}", Name = nameof(GetSingleResult))]
@@ -87,7 +86,7 @@ namespace Elpida.Backend.Controllers
 			);
 		}
 
-		[HttpPost("search")]
+		[HttpPost("Search")]
 		[Produces("application/json")]
 		[Consumes("application/json")]
 		[ProducesResponseType(StatusCodes.Status200OK)]

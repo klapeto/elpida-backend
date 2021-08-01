@@ -6,4 +6,8 @@
         <LangVersion>default</LangVersion>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Elpida.Backend.Common\Elpida.Backend.Common.csproj" />
+    </ItemGroup>
+
 </Project>

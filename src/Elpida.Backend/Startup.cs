@@ -18,6 +18,8 @@
  */
 
 using System;
+using System.IO;
+using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -34,11 +36,14 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Net.Http.Headers;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Elpida.Backend
 {
@@ -103,9 +108,26 @@ namespace Elpida.Backend
 			);
 
 			services.Configure<ApiKeys>(Configuration.GetSection("ApiKeys"));
-			services.AddApiVersioning();
 
 			services.AddCors();
+
+			services.AddSwaggerGen(
+				c =>
+				{
+					c.SwaggerDoc("v1", new OpenApiInfo { Title = "Elpida HTTP Rest Api", Version = "1" });
+
+					foreach (var assemblyName in Assembly.GetEntryAssembly()
+						.GetReferencedAssemblies()
+						.Where(a => a.Name.Contains("Elpida"))
+						.Concat(new[] { Assembly.GetEntryAssembly().GetName() }))
+					{
+						var docFile = $"{assemblyName.Name}.xml";
+
+						var filePath = Path.Combine(AppContext.BaseDirectory, docFile);
+						c.IncludeXmlComments(filePath);
+					}
+				}
+			);
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -141,6 +163,10 @@ namespace Elpida.Backend
 			app.UseAuthorization();
 
 			app.UseEndpoints(endpoints => endpoints.MapControllers());
+
+			app.UseSwagger();
+
+			app.UseSwaggerUI(c => { c.SwaggerEndpoint("v1/swagger.json", "Elpida HTTP Rest Api V1"); });
 		}
 
 		private static async Task ErrorHandler(HttpContext context)

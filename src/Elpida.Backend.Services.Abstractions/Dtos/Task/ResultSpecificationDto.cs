@@ -19,16 +19,37 @@
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Task
 {
+	/// <summary>
+	/// Details of the result of a Task.
+	/// </summary>
 	public class ResultSpecificationDto
 	{
+		/// <summary>
+		/// The name of the result.
+		/// </summary>
+		/// <example>Allocation rate</example>
 		public string Name { get; set; } = string.Empty;
 
+		/// <summary>
+		/// The description of the result.
+		/// </summary>
+		/// <example>The rate the cpu can allocate memory.</example>
 		public string Description { get; set; } = string.Empty;
 
+		/// <summary>
+		/// The unit of the result.
+		/// </summary>
+		/// <example>B/s</example>
 		public string Unit { get; set; } = string.Empty;
 
-		public int Aggregation { get; set; }
+		/// <summary>
+		/// The type of aggregation for this result.
+		/// </summary>
+		public AggregationType Aggregation { get; set; }
 
-		public int Type { get; set; }
+		/// <summary>
+		/// The type of this result.
+		/// </summary>
+		public ResultType Type { get; set; }
 	}
 }

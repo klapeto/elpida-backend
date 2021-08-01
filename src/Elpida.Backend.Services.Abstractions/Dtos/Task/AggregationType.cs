@@ -17,10 +17,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-namespace Elpida.Backend.Services.Abstractions.Dtos
+namespace Elpida.Backend.Services.Abstractions.Dtos.Task
 {
-	public class FountationDto
+	/// <summary>
+	/// Aggregation modes for calculating result for multiple threads.
+	/// </summary>
+	public enum AggregationType
 	{
-		public long Id { get; set; }
+		/// <summary>
+		/// All results are added.
+		/// </summary>
+		Accumulative,
+
+		/// <summary>
+		/// All results are averaged.
+		/// </summary>
+		Average
 	}
 }

@@ -19,14 +19,30 @@
 
 namespace Elpida.Backend.Services.Abstractions
 {
+	/// <summary>
+	/// Details for a query.
+	/// </summary>
 	public class QueryRequest
 	{
+		/// <summary>
+		/// Whether the elements returned should be ordered descending.
+		/// </summary>
 		public bool Descending { get; set; }
 
+		/// <summary>
+		/// The data field to be used to order the search results.
+		/// </summary>
+		/// <example>benchmarkName</example>
 		public string OrderBy { get; set; } = string.Empty;
 
+		/// <summary>
+		/// The page of the search results to return.
+		/// </summary>
 		public PageRequest PageRequest { get; set; } = new ();
 
+		/// <summary>
+		/// The list of data filters to apply to the search.
+		/// </summary>
 		public QueryInstance[]? Filters { get; set; }
 	}
 }

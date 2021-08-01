@@ -43,7 +43,6 @@ namespace Elpida.Backend.Services
 
 		private static IEnumerable<FilterExpression> FilterExpressions { get; } = new List<FilterExpression>
 		{
-			CreateFilter("machines", model => model.TotalMachines),
 			CreateFilter("cpuPackages", model => model.TotalPackages),
 			CreateFilter("cpuNumaNodes", model => model.TotalNumaNodes),
 			CreateFilter("cpuCores", model => model.TotalPhysicalCores),
@@ -62,9 +61,8 @@ namespace Elpida.Backend.Services
 					Id = m.Id,
 					CpuId = m.CpuId,
 					CpuVendor = m.Cpu.Vendor,
-					CpuBrand = m.Cpu.Brand,
+					CpuModelName = m.Cpu.ModelName,
 					TotalDepth = m.TotalDepth,
-					TotalMachines = m.TotalMachines,
 					TotalPackages = m.TotalPackages,
 					TotalNumaNodes = m.TotalNumaNodes,
 					TotalPhysicalCores = m.TotalPhysicalCores,
@@ -90,7 +88,6 @@ namespace Elpida.Backend.Services
 					TotalDepth = dto.TotalDepth,
 					TotalLogicalCores = dto.TotalLogicalCores,
 					TotalPhysicalCores = dto.TotalPhysicalCores,
-					TotalMachines = dto.TotalMachines,
 					TotalNumaNodes = dto.TotalNumaNodes,
 					TotalPackages = dto.TotalPackages,
 					Root = serializedRoot,
@@ -110,10 +107,44 @@ namespace Elpida.Backend.Services
 
 		protected override Expression<Func<TopologyModel, bool>> GetCreationBypassCheckExpression(TopologyDto dto)
 		{
+			SanitizeNode(dto.Root);
 			var topologyHash = GetTopologyHash(dto);
 			return t =>
 				t.CpuId == dto.CpuId
 				&& t.TopologyHash == topologyHash;
+		}
+
+		private static void SanitizeNode(CpuNodeDto node)
+		{
+			if (node.Children != null)
+			{
+				foreach (var child in node.Children)
+				{
+					SanitizeNode(child);
+				}
+			}
+
+			if (node.MemoryChildren != null)
+			{
+				foreach (var child in node.MemoryChildren)
+				{
+					SanitizeNode(child);
+				}
+			}
+
+			switch ((ProcessorNodeType)node.NodeType)
+			{
+				case ProcessorNodeType.L1DCache:
+				case ProcessorNodeType.L1ICache:
+				case ProcessorNodeType.L2DCache:
+				case ProcessorNodeType.L2ICache:
+				case ProcessorNodeType.L3DCache:
+				case ProcessorNodeType.L4Cache:
+				case ProcessorNodeType.L5Cache:
+					return;
+			}
+
+			node.Value = null;
 		}
 
 		private static string GetTopologyHash(TopologyDto dto, string? serializedRoot = null)

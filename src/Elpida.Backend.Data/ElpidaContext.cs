@@ -82,6 +82,9 @@ namespace Elpida.Backend.Data
 				.HasOne(m => m.Topology);
 
 			modelBuilder.Entity<BenchmarkResultModel>()
+				.HasOne(m => m.Cpu);
+
+			modelBuilder.Entity<BenchmarkResultModel>()
 				.HasOne(m => m.Benchmark);
 
 			modelBuilder.Entity<CpuModel>()
@@ -94,9 +97,6 @@ namespace Elpida.Backend.Data
 
 			modelBuilder.Entity<BenchmarkStatisticsModel>()
 				.HasOne(m => m.Cpu);
-
-			modelBuilder.Entity<BenchmarkStatisticsModel>()
-				.HasOne(m => m.Topology);
 
 			modelBuilder.Entity<BenchmarkStatisticsModel>()
 				.HasOne(m => m.Benchmark);

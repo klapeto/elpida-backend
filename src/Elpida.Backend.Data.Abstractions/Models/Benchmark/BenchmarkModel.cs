@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using Elpida.Backend.Common;
 
 namespace Elpida.Backend.Data.Abstractions.Models.Benchmark
 {
@@ -30,7 +31,7 @@ namespace Elpida.Backend.Data.Abstractions.Models.Benchmark
 
 		public string ScoreUnit { get; set; } = default!;
 
-		public int ScoreComparison { get; set; }
+		public ValueComparison ScoreComparison { get; set; }
 
 		public IList<BenchmarkTaskModel> Tasks { get; set; } = default!;
 	}

@@ -38,7 +38,6 @@ namespace Elpida.Backend.Data
 		{
 			return queryable
 				.Include(m => m.Cpu)
-				.Include(m => m.Topology)
 				.Include(m => m.Benchmark);
 		}
 

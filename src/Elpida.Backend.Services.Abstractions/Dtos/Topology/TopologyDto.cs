@@ -22,13 +22,13 @@ using System;
 namespace Elpida.Backend.Services.Abstractions.Dtos.Topology
 {
 	[Serializable]
-	public class TopologyDto : FountationDto
+	public class TopologyDto : FoundationDto
 	{
 		public long CpuId { get; set; }
 
-		public string CpuVendor { get; set; } = default!;
+		public string? CpuVendor { get; set; }
 
-		public string CpuBrand { get; set; } = default!;
+		public string? CpuModelName { get; set; }
 
 		public int TotalLogicalCores { get; set; }
 
@@ -37,8 +37,6 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Topology
 		public int TotalNumaNodes { get; set; }
 
 		public int TotalPackages { get; set; }
-
-		public int TotalMachines { get; set; }
 
 		public int TotalDepth { get; set; }
 

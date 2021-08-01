@@ -23,7 +23,7 @@ using Elpida.Backend.Services.Abstractions.Dtos.Elpida;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 {
-	public class ResultDto : FountationDto
+	public class ResultDto : FoundationDto
 	{
 		public DateTime TimeStamp { get; set; }
 

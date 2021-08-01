@@ -84,7 +84,7 @@ namespace Elpida.Backend.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Brand")
+                    b.Property<string>("Architecture")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -98,6 +98,10 @@ namespace Elpida.Backend.Migrations
 
                     b.Property<long>("Frequency")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("ModelName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("Smt")
                         .HasColumnType("INTEGER");
@@ -178,6 +182,9 @@ namespace Elpida.Backend.Migrations
                     b.Property<long>("BenchmarkId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<long>("CpuId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<long>("ElpidaId")
                         .HasColumnType("INTEGER");
 
@@ -226,6 +233,8 @@ namespace Elpida.Backend.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BenchmarkId");
+
+                    b.HasIndex("CpuId");
 
                     b.HasIndex("ElpidaId");
 
@@ -342,16 +351,11 @@ namespace Elpida.Backend.Migrations
                     b.Property<double>("Tau")
                         .HasColumnType("REAL");
 
-                    b.Property<long>("TopologyId")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("Id");
 
                     b.HasIndex("BenchmarkId");
 
                     b.HasIndex("CpuId");
-
-                    b.HasIndex("TopologyId");
 
                     b.ToTable("BenchmarkStatistics");
                 });
@@ -443,9 +447,6 @@ namespace Elpida.Backend.Migrations
                     b.Property<int>("TotalLogicalCores")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("TotalMachines")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("TotalNumaNodes")
                         .HasColumnType("INTEGER");
 
@@ -489,6 +490,12 @@ namespace Elpida.Backend.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Elpida.Backend.Data.Abstractions.Models.Cpu.CpuModel", "Cpu")
+                        .WithMany()
+                        .HasForeignKey("CpuId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Elpida.Backend.Data.Abstractions.Models.Elpida.ElpidaModel", "Elpida")
                         .WithMany()
                         .HasForeignKey("ElpidaId")
@@ -508,6 +515,8 @@ namespace Elpida.Backend.Migrations
                         .IsRequired();
 
                     b.Navigation("Benchmark");
+
+                    b.Navigation("Cpu");
 
                     b.Navigation("Elpida");
 
@@ -565,17 +574,9 @@ namespace Elpida.Backend.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Elpida.Backend.Data.Abstractions.Models.Topology.TopologyModel", "Topology")
-                        .WithMany()
-                        .HasForeignKey("TopologyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Benchmark");
 
                     b.Navigation("Cpu");
-
-                    b.Navigation("Topology");
                 });
 
             modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Topology.TopologyModel", b =>

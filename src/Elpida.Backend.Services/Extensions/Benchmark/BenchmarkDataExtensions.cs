@@ -38,9 +38,9 @@ namespace Elpida.Backend.Services.Extensions.Benchmark
 					Comparison = benchmarkModel.ScoreComparison,
 					Unit = benchmarkModel.ScoreUnit,
 				},
-				Tasks = benchmarkModel.Tasks
+				Tasks = benchmarkModel.Tasks?
 					.Select(t => t.ToDto())
-					.ToList(),
+					.ToList()!,
 			};
 		}
 

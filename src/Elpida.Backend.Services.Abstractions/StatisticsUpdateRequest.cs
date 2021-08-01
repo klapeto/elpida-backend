@@ -23,13 +23,13 @@ namespace Elpida.Backend.Services.Abstractions
 {
 	public class StatisticsUpdateRequest
 	{
-		public StatisticsUpdateRequest(long topologyId, long benchmarkId)
+		public StatisticsUpdateRequest(long cpuId, long benchmarkId)
 		{
-			TopologyId = topologyId;
+			CpuId = cpuId;
 			BenchmarkId = benchmarkId;
 		}
 
-		public long TopologyId { get; }
+		public long CpuId { get; }
 
 		public long BenchmarkId { get; }
 
@@ -50,12 +50,12 @@ namespace Elpida.Backend.Services.Abstractions
 
 		public override int GetHashCode()
 		{
-			return HashCode.Combine(TopologyId, BenchmarkId);
+			return HashCode.Combine(CpuId, BenchmarkId);
 		}
 
 		private bool Equals(StatisticsUpdateRequest other)
 		{
-			return TopologyId == other.TopologyId && BenchmarkId == other.BenchmarkId;
+			return CpuId == other.CpuId && BenchmarkId == other.BenchmarkId;
 		}
 	}
 }

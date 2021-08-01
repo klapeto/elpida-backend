@@ -24,7 +24,7 @@ using Elpida.Backend.Services.Abstractions.Dtos.Topology;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Statistics
 {
-	public class BenchmarkStatisticsDto : FountationDto
+	public class BenchmarkStatisticsDto : FoundationDto
 	{
 		public CpuDto Cpu { get; set; } = default!;
 

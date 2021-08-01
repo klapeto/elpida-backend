@@ -39,7 +39,7 @@ namespace Elpida.Backend.Data
 
 		public Task<long> GetCountWithScoreBetween(
 			long benchmarkId,
-			long topologyId,
+			long cpuId,
 			double min,
 			double max,
 			CancellationToken cancellationToken = default
@@ -48,7 +48,7 @@ namespace Elpida.Backend.Data
 			return Collection
 				.Where(
 					s => s.BenchmarkId == benchmarkId
-					     && s.TopologyId == topologyId
+					     && s.CpuId == cpuId
 					     && s.Score >= min
 					     && s.Score < max
 				)
@@ -111,7 +111,8 @@ namespace Elpida.Backend.Data
 				.Include(model => model.TaskResults)
 				.ThenInclude(model => model.Task)
 				.Include(model => model.Topology)
-				.ThenInclude(model => model.Cpu);
+				.ThenInclude(model => model.Cpu)
+				.Include(model => model.Cpu);
 		}
 	}
 }

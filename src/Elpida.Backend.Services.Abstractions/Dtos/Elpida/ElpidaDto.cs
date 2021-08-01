@@ -19,7 +19,7 @@
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Elpida
 {
-	public class ElpidaDto : FountationDto
+	public class ElpidaDto : FoundationDto
 	{
 		public VersionDto Version { get; set; } = new VersionDto();
 

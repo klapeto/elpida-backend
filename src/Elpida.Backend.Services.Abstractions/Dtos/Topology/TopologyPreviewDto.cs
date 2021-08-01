@@ -19,13 +19,13 @@
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Topology
 {
-	public class TopologyPreviewDto : FountationDto
+	public class TopologyPreviewDto : FoundationDto
 	{
 		public long CpuId { get; set; }
 
 		public string CpuVendor { get; set; } = default!;
 
-		public string CpuBrand { get; set; } = default!;
+		public string CpuModelName { get; set; } = default!;
 
 		public int TotalLogicalCores { get; set; }
 
@@ -34,8 +34,6 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Topology
 		public int TotalNumaNodes { get; set; }
 
 		public int TotalPackages { get; set; }
-
-		public int TotalMachines { get; set; }
 
 		public int TotalDepth { get; set; }
 

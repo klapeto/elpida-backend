@@ -26,11 +26,15 @@ namespace Elpida.Backend.Validators
 	{
 		public CpuValidator()
 		{
+			RuleFor(dto => dto.Architecture)
+				.NotEmpty()
+				.MaximumLength(20);
+
 			RuleFor(dto => dto.Vendor)
 				.NotEmpty()
 				.MaximumLength(50);
 
-			RuleFor(dto => dto.Brand)
+			RuleFor(dto => dto.ModelName)
 				.MaximumLength(50);
 
 			RuleFor(dto => dto.Frequency)

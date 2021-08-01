@@ -129,7 +129,7 @@ namespace Elpida.Backend.Services
 							currentRequest = _updateRequests.Take();
 							benchmarkStatisticsService.UpdateTaskStatisticsAsync(
 									currentRequest.BenchmarkId,
-									currentRequest.TopologyId,
+									currentRequest.CpuId,
 									_cancellationTokenSource.Token
 								)
 								.GetAwaiter()

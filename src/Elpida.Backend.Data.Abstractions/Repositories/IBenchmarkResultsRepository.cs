@@ -29,7 +29,7 @@ namespace Elpida.Backend.Data.Abstractions.Repositories
 	{
 		Task<long> GetCountWithScoreBetween(
 			long benchmarkId,
-			long topologyId,
+			long cpuId,
 			double min,
 			double max,
 			CancellationToken cancellationToken = default
@@ -37,7 +37,7 @@ namespace Elpida.Backend.Data.Abstractions.Repositories
 
 		Task<BasicStatisticsModel> GetStatisticsAsync(
 			long benchmarkId,
-			long topologyId,
+			long cpuId,
 			CancellationToken cancellationToken = default
 		);
 	}

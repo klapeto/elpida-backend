@@ -1,7 +1,7 @@
 /*
  * Elpida HTTP Rest API
  *
- * Copyright (C) 2020 Ioannis Panagiotopoulos
+ * Copyright (C) 2021 Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,19 +17,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System;
-
-namespace Elpida.Backend.Services.Abstractions.Dtos.Cpu
+namespace Elpida.Backend.Common
 {
-	[Serializable]
-	public class CpuCacheDto
+	public enum ValueComparison
 	{
-		public string Name { get; set; } = string.Empty;
-
-		public string Associativity { get; set; } = string.Empty;
-
-		public long Size { get; set; }
-
-		public int LineSize { get; set; }
+		Lower,
+		Greater,
 	}
 }

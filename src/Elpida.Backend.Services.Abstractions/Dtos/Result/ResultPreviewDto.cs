@@ -21,9 +21,11 @@ using System;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 {
-	public class ResultPreviewDto : FountationDto
+	public class ResultPreviewDto : FoundationDto
 	{
-		public string Name { get; set; } = string.Empty;
+		public Guid BenchmarkUuid { get; set; }
+
+		public string BenchmarkName { get; set; } = string.Empty;
 
 		public DateTime TimeStamp { get; set; }
 

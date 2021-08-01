@@ -18,14 +18,15 @@
  */
 
 using System;
+using Elpida.Backend.Common;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Statistics
 {
-	public class BenchmarkStatisticsPreviewDto : FountationDto
+	public class BenchmarkStatisticsPreviewDto : FoundationDto
 	{
 		public string CpuVendor { get; set; } = default!;
 
-		public string CpuBrand { get; set; } = default!;
+		public string CpuModelName { get; set; } = default!;
 
 		public string BenchmarkName { get; set; } = default!;
 
@@ -33,16 +34,10 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Statistics
 
 		public Guid BenchmarkUuid { get; set; }
 
-		public int CpuCores { get; set; }
-
-		public int CpuLogicalCores { get; set; }
-
-		public string TopologyHash { get; set; } = default!;
-
 		public double Mean { get; set; }
 
 		public long SampleSize { get; set; }
 
-		public int Comparison { get; set; }
+		public ValueComparison Comparison { get; set; }
 	}
 }

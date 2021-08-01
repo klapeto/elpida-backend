@@ -27,8 +27,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Elpida.Backend.Controllers
 {
 	[ApiController]
-	[ApiVersion("1")]
-	[Route("api/v{version:apiVersion}/[controller]")]
+	[Route("api/v1/[controller]")]
 	public class BenchmarkStatisticsController : ControllerBase
 	{
 		private readonly IBenchmarkStatisticsService _benchmarkStatisticsService;
@@ -36,20 +35,6 @@ namespace Elpida.Backend.Controllers
 		public BenchmarkStatisticsController(IBenchmarkStatisticsService benchmarkStatisticsService)
 		{
 			_benchmarkStatisticsService = benchmarkStatisticsService;
-		}
-
-		[HttpGet("{id}", Name = nameof(GetSingleStatistic))]
-		[Produces("application/json")]
-		[ProducesResponseType(StatusCodes.Status200OK)]
-		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public async Task<IActionResult> GetSingleStatistic([FromRoute] string id, CancellationToken cancellationToken)
-		{
-			if (long.TryParse(id, out var lid))
-			{
-				return Ok(await _benchmarkStatisticsService.GetSingleAsync(lid, cancellationToken));
-			}
-
-			return BadRequest("Id must be an Integer number");
 		}
 
 		[HttpGet]
@@ -69,6 +54,20 @@ namespace Elpida.Backend.Controllers
 					cancellationToken
 				)
 			);
+		}
+
+		[HttpGet("{id}", Name = nameof(GetSingleStatistic))]
+		[Produces("application/json")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<IActionResult> GetSingleStatistic([FromRoute] string id, CancellationToken cancellationToken)
+		{
+			if (long.TryParse(id, out var lid))
+			{
+				return Ok(await _benchmarkStatisticsService.GetSingleAsync(lid, cancellationToken));
+			}
+
+			return BadRequest("Id must be an Integer number");
 		}
 
 		[HttpPost("Search")]

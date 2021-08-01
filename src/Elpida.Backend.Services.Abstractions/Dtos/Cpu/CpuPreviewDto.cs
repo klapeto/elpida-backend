@@ -19,11 +19,11 @@
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Cpu
 {
-	public class CpuPreviewDto : FountationDto
+	public class CpuPreviewDto : FoundationDto
 	{
 		public string Vendor { get; set; } = default!;
 
-		public string Brand { get; set; } = default!;
+		public string ModelName { get; set; } = default!;
 
 		public int TopologiesCount { get; set; }
 

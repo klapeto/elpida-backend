@@ -19,7 +19,7 @@
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Os
 {
-	public class OsDto : FountationDto
+	public class OsDto : FoundationDto
 	{
 		public string Category { get; set; } = string.Empty;
 
