@@ -20,12 +20,16 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Services.Abstractions;
+using Elpida.Backend.Services.Abstractions.Dtos.Statistics;
 using Elpida.Backend.Services.Abstractions.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Elpida.Backend.Controllers
 {
+	/// <summary>
+	///     Controller for accessing benchmark/cpu statistics.
+	/// </summary>
 	[ApiController]
 	[Route("api/v1/[controller]")]
 	public class BenchmarkStatisticsController : ControllerBase
@@ -37,53 +41,71 @@ namespace Elpida.Backend.Controllers
 			_benchmarkStatisticsService = benchmarkStatisticsService;
 		}
 
+		/// <summary>
+		///     Get all the benchmark/cpu statistics with paging.
+		/// </summary>
+		/// <param name="pageRequest">The page request.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <returns>The page of benchmark/cpu statistics requested.</returns>
+		/// <response code="200">The returned page of the benchmark/cpu statistics previews.</response>
+		/// <response code="400">The request data was invalid.</response>
 		[HttpGet]
 		[Produces("application/json")]
 		[Consumes("application/json")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<IActionResult> GetPaged(
+		public Task<PagedResult<BenchmarkStatisticsPreviewDto>> GetPaged(
 			[FromQuery] PageRequest pageRequest,
 			CancellationToken cancellationToken
 		)
 		{
-			return Ok(
-				await _benchmarkStatisticsService.GetPagedPreviewsAsync(
-					new QueryRequest { PageRequest = pageRequest },
-					cancellationToken
-				)
+			return _benchmarkStatisticsService.GetPagedPreviewsAsync(
+				new QueryRequest { PageRequest = pageRequest },
+				cancellationToken
 			);
 		}
 
-		[HttpGet("{id}", Name = nameof(GetSingleStatistic))]
+		/// <summary>
+		///     Get the full details of a single benchmark/cpu statistic.
+		/// </summary>
+		/// <param name="id">The id of the benchmark/cpu statistic to get.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <returns>The benchmark/cpu statistics details.</returns>
+		/// <response code="200">The returned data of the benchmark/cpu statistics.</response>
+		/// <response code="404">The benchmark/cpu statistics with this id was not found.</response>
+		[HttpGet("{id:long}", Name = nameof(GetSingleStatistic))]
 		[Produces("application/json")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public async Task<IActionResult> GetSingleStatistic([FromRoute] string id, CancellationToken cancellationToken)
+		public Task<BenchmarkStatisticsDto> GetSingleStatistic(
+			[FromRoute] long id,
+			CancellationToken cancellationToken
+		)
 		{
-			if (long.TryParse(id, out var lid))
-			{
-				return Ok(await _benchmarkStatisticsService.GetSingleAsync(lid, cancellationToken));
-			}
-
-			return BadRequest("Id must be an Integer number");
+			return _benchmarkStatisticsService.GetSingleAsync(id, cancellationToken);
 		}
 
+		/// <summary>
+		///     Search for benchmark/cpu statistics with the provided criteria.
+		/// </summary>
+		/// <param name="queryRequest">The query request.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <returns>The page of benchmark/cpu statistics previews that the search yielded.</returns>
+		/// <response code="200">The returned page of the benchmark/cpu statistics previews that the search yielded.</response>
+		/// <response code="400">The request data was invalid.</response>
 		[HttpPost("Search")]
 		[Produces("application/json")]
 		[Consumes("application/json")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<IActionResult> Search(
+		public Task<PagedResult<BenchmarkStatisticsPreviewDto>> Search(
 			[FromBody] QueryRequest queryRequest,
 			CancellationToken cancellationToken
 		)
 		{
 			QueryRequestUtilities.PreprocessQuery(queryRequest);
 
-			return Ok(await _benchmarkStatisticsService.GetPagedPreviewsAsync(queryRequest, cancellationToken));
+			return _benchmarkStatisticsService.GetPagedPreviewsAsync(queryRequest, cancellationToken);
 		}
 	}
 }

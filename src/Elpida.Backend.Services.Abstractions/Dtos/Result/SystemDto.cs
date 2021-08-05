@@ -23,16 +23,34 @@ using Elpida.Backend.Services.Abstractions.Dtos.Topology;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 {
+	/// <summary>
+	///     Details of a system.
+	/// </summary>
 	public class SystemDto
 	{
-		public CpuDto Cpu { get; set; } = new CpuDto();
+		/// <summary>
+		///     The Cpu of this system.
+		/// </summary>
+		public CpuDto Cpu { get; set; } = new ();
 
-		public OsDto Os { get; set; } = new OsDto();
+		/// <summary>
+		///     The operating system of this system.
+		/// </summary>
+		public OsDto Os { get; set; } = new ();
 
-		public TopologyDto Topology { get; set; } = new TopologyDto();
+		/// <summary>
+		///     The topology of this system.
+		/// </summary>
+		public TopologyDto Topology { get; set; } = new ();
 
-		public MemoryDto Memory { get; set; } = new MemoryDto();
+		/// <summary>
+		///     The memory details of this system.
+		/// </summary>
+		public MemoryDto Memory { get; set; } = new ();
 
-		public TimingDto Timing { get; set; } = new TimingDto();
+		/// <summary>
+		///     Timing details of this system.
+		/// </summary>
+		public TimingDto Timing { get; set; } = new ();
 	}
 }

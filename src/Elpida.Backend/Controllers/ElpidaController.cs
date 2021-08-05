@@ -20,12 +20,16 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Services.Abstractions;
+using Elpida.Backend.Services.Abstractions.Dtos.Elpida;
 using Elpida.Backend.Services.Abstractions.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Elpida.Backend.Controllers
 {
+	/// <summary>
+	///     Controller for accessing Elpida versions.
+	/// </summary>
 	[ApiController]
 	[Route("api/v1/[controller]")]
 	public class ElpidaController : ControllerBase
@@ -37,48 +41,68 @@ namespace Elpida.Backend.Controllers
 			_elpidaService = elpidaService;
 		}
 
+		/// <summary>
+		///     Get all the Elpida versions with paging.
+		/// </summary>
+		/// <param name="pageRequest">The page request.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <returns>The page of Elpida versions requested.</returns>
+		/// <response code="200">The returned page of the Elpida versions previews.</response>
+		/// <response code="400">The request data was invalid.</response>
 		[HttpGet]
 		[Produces("application/json")]
 		[Consumes("application/json")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<IActionResult> GetPaged(
+		public Task<PagedResult<ElpidaDto>> GetPaged(
 			[FromQuery] PageRequest pageRequest,
 			CancellationToken cancellationToken
 		)
 		{
-			return Ok(
-				await _elpidaService.GetPagedAsync(
-					new QueryRequest { PageRequest = pageRequest },
-					cancellationToken
-				)
+			return _elpidaService.GetPagedAsync(
+				new QueryRequest { PageRequest = pageRequest },
+				cancellationToken
 			);
 		}
 
+		/// <summary>
+		///     Get the full details of a single Elpida version.
+		/// </summary>
+		/// <param name="id">The id of the Elpida version to get.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <returns>The Elpida version details.</returns>
+		/// <response code="200">The returned data of the Elpida version.</response>
+		/// <response code="404">The Elpida version with this id was not found.</response>
 		[HttpGet("{id:long}")]
 		[Produces("application/json")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public async Task<IActionResult> GetSingle([FromRoute] long id, CancellationToken cancellationToken)
+		public Task<ElpidaDto> GetSingle([FromRoute] long id, CancellationToken cancellationToken)
 		{
-			return Ok(await _elpidaService.GetSingleAsync(id, cancellationToken));
+			return _elpidaService.GetSingleAsync(id, cancellationToken);
 		}
 
+		/// <summary>
+		///     Search for Elpida versions with the provided criteria.
+		/// </summary>
+		/// <param name="queryRequest">The query request.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <returns>The page of Elpida version previews that the search yielded.</returns>
+		/// <response code="200">The returned page of the Elpida version previews that the search yielded.</response>
+		/// <response code="400">The request data was invalid.</response>
 		[HttpPost("Search")]
 		[Produces("application/json")]
 		[Consumes("application/json")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<IActionResult> Search(
+		public Task<PagedResult<ElpidaDto>> Search(
 			[FromBody] QueryRequest queryRequest,
 			CancellationToken cancellationToken
 		)
 		{
 			QueryRequestUtilities.PreprocessQuery(queryRequest);
 
-			return Ok(await _elpidaService.GetPagedAsync(queryRequest, cancellationToken));
+			return _elpidaService.GetPagedAsync(queryRequest, cancellationToken);
 		}
 	}
 }

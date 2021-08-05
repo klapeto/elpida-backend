@@ -21,12 +21,24 @@ using System;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Statistics
 {
+	/// <summary>
+	///     Represents a frequency class for a benchmark statistics.
+	/// </summary>
 	public class FrequencyClassDto
 	{
+		/// <summary>
+		///     The low value for this class.
+		/// </summary>
 		public double Low { get; set; }
 
+		/// <summary>
+		///     The high value for this class.
+		/// </summary>
 		public double High { get; set; }
 
+		/// <summary>
+		///     How many samples this class has.
+		/// </summary>
 		public long Count { get; set; }
 
 		public override bool Equals(object? obj)

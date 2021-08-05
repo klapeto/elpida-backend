@@ -30,9 +30,6 @@ namespace Elpida.Backend.Validators
 				.NotEmpty()
 				.MaximumLength(100);
 
-			RuleFor(dto => dto.NodeType)
-				.GreaterThanOrEqualTo(0);
-
 			RuleFor(dto => dto.Value)
 				.GreaterThanOrEqualTo(0);
 

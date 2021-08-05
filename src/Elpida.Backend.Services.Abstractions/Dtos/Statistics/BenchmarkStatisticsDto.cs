@@ -20,32 +20,62 @@
 using System.Collections.Generic;
 using Elpida.Backend.Services.Abstractions.Dtos.Benchmark;
 using Elpida.Backend.Services.Abstractions.Dtos.Cpu;
-using Elpida.Backend.Services.Abstractions.Dtos.Topology;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Statistics
 {
+	/// <summary>
+	///     Statistics for a benchmark/cpu combination.
+	/// </summary>
 	public class BenchmarkStatisticsDto : FoundationDto
 	{
+		/// <summary>
+		///     The Cpu this statistic represents.
+		/// </summary>
 		public CpuDto Cpu { get; set; } = default!;
 
+		/// <summary>
+		///     The Benchmark this statistic represents.
+		/// </summary>
 		public BenchmarkDto Benchmark { get; set; } = default!;
 
-		public TopologyDto Topology { get; set; } = default!;
-
+		/// <summary>
+		///     The sample size for this benchmark/cpu combination.
+		/// </summary>
 		public long SampleSize { get; set; }
 
+		/// <summary>
+		///     The maximum score for this benchmark/cpu combination.
+		/// </summary>
 		public double Max { get; set; }
 
+		/// <summary>
+		///     The minimum score for this benchmark/cpu combination.
+		/// </summary>
 		public double Min { get; set; }
 
+		/// <summary>
+		///     The mean score for this benchmark/cpu combination.
+		/// </summary>
 		public double Mean { get; set; }
 
+		/// <summary>
+		///     The standard deviation of the score for this benchmark/cpu combination.
+		/// </summary>
 		public double StandardDeviation { get; set; }
 
+		/// <summary>
+		///     The tau of the score for this benchmark/cpu combination.
+		/// </summary>
 		public double Tau { get; set; }
 
+		/// <summary>
+		///     The margin of error of the score for this benchmark/cpu combination.
+		/// </summary>
 		public double MarginOfError { get; set; }
 
-		public List<FrequencyClassDto> Classes { get; set; } = new List<FrequencyClassDto>();
+		/// <summary>
+		///     The frequency classes benchmark/cpu combination.
+		/// </summary>
+		public List<FrequencyClassDto> Classes { get; set; } = new ();
 	}
 }

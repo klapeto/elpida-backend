@@ -19,6 +19,9 @@
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Elpida
 {
+	/// <summary>
+	///     Details of a version.
+	/// </summary>
 	public class VersionDto
 	{
 		public int Major { get; set; }

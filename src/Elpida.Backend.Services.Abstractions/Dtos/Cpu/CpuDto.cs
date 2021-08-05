@@ -22,23 +22,53 @@ using System.Collections.Generic;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Cpu
 {
+	/// <summary>
+	///     Details for a Cpu.
+	/// </summary>
 	[Serializable]
 	public class CpuDto : FoundationDto
 	{
+		/// <summary>
+		///     The architecture of this Cpu.
+		/// </summary>
+		/// <example>ARM</example>
 		public string Architecture { get; set; } = string.Empty;
 
+		/// <summary>
+		///     The vendor of this Cpu.
+		/// </summary>
+		/// <example>ARM</example>
 		public string Vendor { get; set; } = string.Empty;
 
+		/// <summary>
+		///     The model name of this Cpu.
+		/// </summary>
+		/// <example>Cortex A7</example>
 		public string ModelName { get; set; } = string.Empty;
 
+		/// <summary>
+		///     The frequency of this Cpu.
+		/// </summary>
 		public long Frequency { get; set; }
 
+		/// <summary>
+		///     Whether this cpu supports Simultaneously Mutli Threading.
+		/// </summary>
 		public bool Smt { get; set; }
 
+		/// <summary>
+		///     Additional cpu specific information of this Cpu.
+		/// </summary>
 		public IDictionary<string, string> AdditionalInfo { get; set; } = new Dictionary<string, string>();
 
+		/// <summary>
+		///     The caches of this cpu.
+		/// </summary>
 		public IList<CpuCacheDto> Caches { get; set; } = new List<CpuCacheDto>();
 
+		/// <summary>
+		///     Features that this Cpu supports.
+		/// </summary>
 		public IList<string> Features { get; set; } = new List<string>();
 	}
 }

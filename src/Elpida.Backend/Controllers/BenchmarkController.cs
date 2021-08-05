@@ -28,7 +28,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Elpida.Backend.Controllers
 {
 	/// <summary>
-	/// Controller for accessing Benchmarks.
+	///     Controller for accessing Benchmarks.
 	/// </summary>
 	[ApiController]
 	[Route("api/v1/[controller]")]
@@ -42,7 +42,7 @@ namespace Elpida.Backend.Controllers
 		}
 
 		/// <summary>
-		/// Get all the Benchmark previews with paging.
+		///     Get all the Benchmark previews with paging.
 		/// </summary>
 		/// <param name="pageRequest">The page request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -54,19 +54,19 @@ namespace Elpida.Backend.Controllers
 		[Consumes("application/json")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<PagedResult<BenchmarkPreviewDto>> GetPaged(
+		public Task<PagedResult<BenchmarkPreviewDto>> GetPaged(
 			[FromQuery] PageRequest pageRequest,
 			CancellationToken cancellationToken
 		)
 		{
-			return await _benchmarkService.GetPagedPreviewsAsync(
-					new QueryRequest { PageRequest = pageRequest },
-					cancellationToken
-				);
+			return _benchmarkService.GetPagedPreviewsAsync(
+				new QueryRequest { PageRequest = pageRequest },
+				cancellationToken
+			);
 		}
 
 		/// <summary>
-		/// Get the full details of a single Benchmark.
+		///     Get the full details of a single Benchmark.
 		/// </summary>
 		/// <param name="id">The id of the Benchmark to get.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -77,13 +77,13 @@ namespace Elpida.Backend.Controllers
 		[Produces("application/json")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public async Task<BenchmarkDto> GetSingle([FromRoute] long id, CancellationToken cancellationToken)
+		public Task<BenchmarkDto> GetSingle([FromRoute] long id, CancellationToken cancellationToken)
 		{
-			return await _benchmarkService.GetSingleAsync(id, cancellationToken);
+			return _benchmarkService.GetSingleAsync(id, cancellationToken);
 		}
 
 		/// <summary>
-		/// Search for Benchmarks with the provided criteria.
+		///     Search for Benchmarks with the provided criteria.
 		/// </summary>
 		/// <param name="queryRequest">The query request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -95,14 +95,14 @@ namespace Elpida.Backend.Controllers
 		[Consumes("application/json")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<PagedResult<BenchmarkPreviewDto>> Search(
+		public Task<PagedResult<BenchmarkPreviewDto>> Search(
 			[FromBody] QueryRequest queryRequest,
 			CancellationToken cancellationToken
 		)
 		{
 			QueryRequestUtilities.PreprocessQuery(queryRequest);
 
-			return await _benchmarkService.GetPagedPreviewsAsync(queryRequest, cancellationToken);
+			return _benchmarkService.GetPagedPreviewsAsync(queryRequest, cancellationToken);
 		}
 	}
 }

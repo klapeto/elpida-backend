@@ -21,15 +21,32 @@ using System;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Cpu
 {
+	/// <summary>
+	///     Details of a Cpu cache.
+	/// </summary>
 	[Serializable]
 	public class CpuCacheDto
 	{
+		/// <summary>
+		///     The name of this cache.
+		/// </summary>
+		/// <example>L1D</example>
 		public string Name { get; set; } = string.Empty;
 
+		/// <summary>
+		///     The associativity of this cache.
+		/// </summary>
+		/// <example>8-Way</example>
 		public string Associativity { get; set; } = string.Empty;
 
+		/// <summary>
+		///     The size of the cache in bytes.
+		/// </summary>
 		public long Size { get; set; }
 
+		/// <summary>
+		///     The size of the line.
+		/// </summary>
 		public int LineSize { get; set; }
 	}
 }

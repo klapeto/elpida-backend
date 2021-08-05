@@ -21,25 +21,57 @@ using System;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Topology
 {
+	/// <summary>
+	///     Details of a Cpu topology.
+	/// </summary>
 	[Serializable]
 	public class TopologyDto : FoundationDto
 	{
+		/// <summary>
+		///     The id of the Cpu this topology belongs.
+		/// </summary>
 		public long CpuId { get; set; }
 
+		/// <summary>
+		///     The cpu vendor of this topology.
+		/// </summary>
+		/// <example>ARM</example>
 		public string? CpuVendor { get; set; }
 
+		/// <summary>
+		///     The cpu model name of this topology
+		/// </summary>
+		/// <example>Cortex A7</example>
 		public string? CpuModelName { get; set; }
 
+		/// <summary>
+		///     The total logical cores of this topology.
+		/// </summary>
 		public int TotalLogicalCores { get; set; }
 
+		/// <summary>
+		///     The total physical cores of this topology.
+		/// </summary>
 		public int TotalPhysicalCores { get; set; }
 
+		/// <summary>
+		///     The total numa nodes of this topology.
+		/// </summary>
 		public int TotalNumaNodes { get; set; }
 
+		/// <summary>
+		///     The total cpu packages of this topology.
+		/// </summary>
 		public int TotalPackages { get; set; }
 
+		/// <summary>
+		///     Total depth of this topology.
+		/// </summary>
 		public int TotalDepth { get; set; }
 
-		public CpuNodeDto Root { get; set; } = new CpuNodeDto();
+		/// <summary>
+		///     The first cpu node of this topology.
+		/// </summary>
+		public CpuNodeDto Root { get; set; } = new ();
 	}
 }

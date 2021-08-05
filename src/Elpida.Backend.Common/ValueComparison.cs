@@ -19,9 +19,19 @@
 
 namespace Elpida.Backend.Common
 {
+	/// <summary>
+	///     Value comparison type.
+	/// </summary>
 	public enum ValueComparison
 	{
+		/// <summary>
+		///     Lower values means better.
+		/// </summary>
 		Lower,
+
+		/// <summary>
+		///     Greater values mean better.
+		/// </summary>
 		Greater,
 	}
 }

@@ -42,19 +42,41 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Topology
 		Unknown,
 	}
 
+	/// <summary>
+	///     Details of a cpu node.
+	/// </summary>
 	[Serializable]
 	public class CpuNodeDto
 	{
-		public int NodeType { get; set; }
+		/// <summary>
+		///     The cpu node type.
+		/// </summary>
+		public ProcessorNodeType NodeType { get; set; }
 
+		/// <summary>
+		///     The name of this node.
+		/// </summary>
+		/// <example>Core</example>
 		public string Name { get; set; } = string.Empty;
 
+		/// <summary>
+		///     The index assigned by the Operating System.
+		/// </summary>
 		public long? OsIndex { get; set; }
 
+		/// <summary>
+		///     A value representing the size of the node.
+		/// </summary>
 		public long? Value { get; set; }
 
+		/// <summary>
+		///     The child nodes of this node.
+		/// </summary>
 		public IList<CpuNodeDto>? Children { get; set; }
 
+		/// <summary>
+		///     The memory child nodes of this node.
+		/// </summary>
 		public IList<CpuNodeDto>? MemoryChildren { get; set; }
 	}
 }

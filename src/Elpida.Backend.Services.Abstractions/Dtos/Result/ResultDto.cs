@@ -23,16 +23,34 @@ using Elpida.Backend.Services.Abstractions.Dtos.Elpida;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 {
+	/// <summary>
+	///     Details of a Benchmark Result.
+	/// </summary>
 	public class ResultDto : FoundationDto
 	{
+		/// <summary>
+		///     The date and time this result was posted.
+		/// </summary>
 		public DateTime TimeStamp { get; set; }
 
+		/// <summary>
+		///     The Cpu Affinity used by this Benchmark Result.
+		/// </summary>
 		public IList<long> Affinity { get; set; } = new List<long>();
 
-		public ElpidaDto Elpida { get; set; } = new ElpidaDto();
+		/// <summary>
+		///     The Elpida Version that this result was produced from.
+		/// </summary>
+		public ElpidaDto Elpida { get; set; } = new ();
 
-		public SystemDto System { get; set; } = new SystemDto();
+		/// <summary>
+		///     The system details for this result.
+		/// </summary>
+		public SystemDto System { get; set; } = new ();
 
-		public BenchmarkResultDto Result { get; set; } = new BenchmarkResultDto();
+		/// <summary>
+		///     The benchmark result details.
+		/// </summary>
+		public BenchmarkResultDto Result { get; set; } = new ();
 	}
 }

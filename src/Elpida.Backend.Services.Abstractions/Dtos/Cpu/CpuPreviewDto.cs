@@ -19,14 +19,31 @@
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Cpu
 {
+	/// <summary>
+	///     Represents a Cpu.
+	/// </summary>
 	public class CpuPreviewDto : FoundationDto
 	{
+		/// <summary>
+		///     The vendor name of the cpu.
+		/// </summary>
+		/// <example>ARM</example>
 		public string Vendor { get; set; } = default!;
 
+		/// <summary>
+		///     The model name of the cpu.
+		/// </summary>
+		/// <example>Cortex A7</example>
 		public string ModelName { get; set; } = default!;
 
+		/// <summary>
+		///     The number of topologies this cpu has.
+		/// </summary>
 		public int TopologiesCount { get; set; }
 
+		/// <summary>
+		///     The number of
+		/// </summary>
 		public int TaskStatisticsCount { get; set; }
 	}
 }

@@ -19,12 +19,27 @@
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Os
 {
+	/// <summary>
+	///     Details of an Operating System.
+	/// </summary>
 	public class OsDto : FoundationDto
 	{
+		/// <summary>
+		///     The category of the Operating System.
+		/// </summary>
+		/// <example>GNU/Linux</example>
 		public string Category { get; set; } = string.Empty;
 
+		/// <summary>
+		///     The name of the Operating System.
+		/// </summary>
+		/// <example>Ubuntu</example>
 		public string Name { get; set; } = string.Empty;
 
+		/// <summary>
+		///     The version of the Operating System.
+		/// </summary>
+		/// <example>21.04</example>
 		public string Version { get; set; } = string.Empty;
 	}
 }

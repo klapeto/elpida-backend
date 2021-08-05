@@ -22,22 +22,53 @@ using Elpida.Backend.Common;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Statistics
 {
+	/// <summary>
+	///     Preview data for Benchmark statistics.
+	/// </summary>
 	public class BenchmarkStatisticsPreviewDto : FoundationDto
 	{
+		/// <summary>
+		///     The cpu vendor for this statistic.
+		/// </summary>
+		/// <example>ARM</example>
 		public string CpuVendor { get; set; } = default!;
 
+		/// <summary>
+		///     The cpu model name for this statistic.
+		/// </summary>
+		/// <example>Cortex A7</example>
 		public string CpuModelName { get; set; } = default!;
 
+		/// <summary>
+		///     The benchmark name for this statistic.
+		/// </summary>
+		/// <example>Memory read bandwidth</example>
 		public string BenchmarkName { get; set; } = default!;
 
+		/// <summary>
+		///     The benchmark score unit for this statistic.
+		/// </summary>
+		/// <example>B/s</example>
 		public string BenchmarkScoreUnit { get; set; } = default!;
 
+		/// <summary>
+		///     The benchmark UUID for this statistic.
+		/// </summary>
 		public Guid BenchmarkUuid { get; set; }
 
+		/// <summary>
+		///     The benchmark statistic mean score.
+		/// </summary>
 		public double Mean { get; set; }
 
+		/// <summary>
+		///     The sample size for this benchmark.
+		/// </summary>
 		public long SampleSize { get; set; }
 
+		/// <summary>
+		///     The value comparison type for this benchmark.
+		/// </summary>
 		public ValueComparison Comparison { get; set; }
 	}
 }

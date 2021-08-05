@@ -19,10 +19,19 @@
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Elpida
 {
+	/// <summary>
+	///     Details of an Elpida version.
+	/// </summary>
 	public class ElpidaDto : FoundationDto
 	{
-		public VersionDto Version { get; set; } = new VersionDto();
+		/// <summary>
+		///     The Elpida version.
+		/// </summary>
+		public VersionDto Version { get; set; } = new ();
 
-		public CompilerDto Compiler { get; set; } = new CompilerDto();
+		/// <summary>
+		///     The compiler details that built Elpida.
+		/// </summary>
+		public CompilerDto Compiler { get; set; } = new ();
 	}
 }

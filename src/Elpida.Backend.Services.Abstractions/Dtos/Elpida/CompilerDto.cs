@@ -19,10 +19,21 @@
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Elpida
 {
+	/// <summary>
+	///     Details of a compiler.
+	/// </summary>
 	public class CompilerDto
 	{
+		/// <summary>
+		///     The name of the compiler.
+		/// </summary>
+		/// <example>GNU</example>
 		public string Name { get; set; } = string.Empty;
 
+		/// <summary>
+		///     The version of the compiler.
+		/// </summary>
+		/// <example>10.0</example>
 		public string Version { get; set; } = string.Empty;
 	}
 }
