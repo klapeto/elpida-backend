@@ -23,7 +23,7 @@ using Elpida.Backend.Services.Abstractions;
 
 namespace Elpida.Backend
 {
-	public static class QueryRequestUtilities
+	internal static class QueryRequestUtilities
 	{
 		public static void PreprocessQuery(QueryRequest queryRequest)
 		{

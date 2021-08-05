@@ -33,11 +33,11 @@ namespace Elpida.Backend.Validators
 			RuleFor(dto => dto.Description)
 				.MaximumLength(250);
 
-			// RuleFor(dto => dto.Aggregation)
-			// 	.GreaterThanOrEqualTo(0);
-			//
-			// RuleFor(dto => dto.Type)
-			// 	.GreaterThanOrEqualTo(0);
+			RuleFor(dto => dto.Aggregation)
+				.IsInEnum();
+
+			RuleFor(dto => dto.Type)
+				.IsInEnum();
 
 			RuleFor(dto => dto.Unit)
 				.NotEmpty();

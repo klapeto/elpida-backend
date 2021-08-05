@@ -27,7 +27,7 @@ using Microsoft.Extensions.Options;
 namespace Elpida.Backend
 {
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-	public class ApiKeyAuthenticationAttribute : Attribute, IAsyncActionFilter
+	internal class ApiKeyAuthenticationAttribute : Attribute, IAsyncActionFilter
 	{
 		private const string ApiKeyHeaderName = "api_key";
 

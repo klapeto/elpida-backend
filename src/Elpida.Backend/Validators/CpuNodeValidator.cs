@@ -30,6 +30,9 @@ namespace Elpida.Backend.Validators
 				.NotEmpty()
 				.MaximumLength(100);
 
+			RuleFor(dto => dto.NodeType)
+				.IsInEnum();
+
 			RuleFor(dto => dto.Value)
 				.GreaterThanOrEqualTo(0);
 
