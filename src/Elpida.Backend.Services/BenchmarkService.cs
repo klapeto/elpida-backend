@@ -52,18 +52,6 @@ namespace Elpida.Backend.Services
 			CreateFilter("benchmarkName", model => model.Name),
 		};
 
-		public async Task<BenchmarkDto> GetSingleAsync(Guid uuid, CancellationToken cancellationToken = default)
-		{
-			var model = await Repository.GetSingleAsync(b => b.Uuid == uuid, cancellationToken);
-
-			if (model == null)
-			{
-				throw new NotFoundException("Benchmark was not found.", uuid);
-			}
-
-			return model.ToDto();
-		}
-
 		public Task<PagedResult<BenchmarkPreviewDto>> GetPagedPreviewsAsync(
 			QueryRequest queryRequest,
 			CancellationToken cancellationToken = default

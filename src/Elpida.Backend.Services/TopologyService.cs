@@ -132,7 +132,7 @@ namespace Elpida.Backend.Services
 				}
 			}
 
-			switch ((ProcessorNodeType)node.NodeType)
+			switch (node.NodeType)
 			{
 				case ProcessorNodeType.L1DCache:
 				case ProcessorNodeType.L1ICache:

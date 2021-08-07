@@ -23,16 +23,35 @@ using Elpida.Backend.Services.Abstractions.Dtos.Benchmark;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 {
+	/// <summary>
+	///     Details of a benchmark result.
+	/// </summary>
 	public class BenchmarkResultDto : FoundationDto
 	{
+		/// <summary>
+		///     The UUID of the Benchmark.
+		/// </summary>
 		public Guid Uuid { get; set; }
 
+		/// <summary>
+		///     The name of the benchmark.
+		/// </summary>
+		/// <example>DRAM Latency.</example>
 		public string Name { get; set; } = string.Empty;
 
-		public BenchmarkScoreSpecificationDto ScoreSpecification { get; set; } = new BenchmarkScoreSpecificationDto();
+		/// <summary>
+		///     The benchmark score specification.
+		/// </summary>
+		public BenchmarkScoreSpecificationDto ScoreSpecification { get; set; } = new ();
 
+		/// <summary>
+		///     The score of the benchmark.
+		/// </summary>
 		public double Score { get; set; }
 
+		/// <summary>
+		///     The specific Task results.
+		/// </summary>
 		public IList<TaskResultDto> TaskResults { get; set; } = new List<TaskResultDto>();
 	}
 }

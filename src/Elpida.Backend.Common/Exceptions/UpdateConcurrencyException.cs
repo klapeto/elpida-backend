@@ -23,15 +23,6 @@ namespace Elpida.Backend.Common.Exceptions
 {
 	public class UpdateConcurrencyException : Exception
 	{
-		public UpdateConcurrencyException()
-		{
-		}
-
-		public UpdateConcurrencyException(string message)
-			: base(message)
-		{
-		}
-
 		public UpdateConcurrencyException(string message, Exception innerException)
 			: base(message, innerException)
 		{

@@ -22,17 +22,17 @@ using System;
 namespace Elpida.Backend.Services.Abstractions.Dtos.Benchmark
 {
 	/// <summary>
-	/// A data preview for a Benchmark.
+	///     A data preview for a Benchmark.
 	/// </summary>
 	public class BenchmarkPreviewDto : FoundationDto
 	{
 		/// <summary>
-		/// The UUID of the Benchmark this preview represents.
+		///     The UUID of the Benchmark this preview represents.
 		/// </summary>
 		public Guid Uuid { get; set; }
 
 		/// <summary>
-		/// The name of the Benchmark this preview represents.
+		///     The name of the Benchmark this preview represents.
 		/// </summary>
 		/// <example>Test Benchmark</example>
 		public string Name { get; set; } = string.Empty;

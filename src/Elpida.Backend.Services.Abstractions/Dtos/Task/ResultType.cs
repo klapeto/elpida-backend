@@ -20,18 +20,18 @@
 namespace Elpida.Backend.Services.Abstractions.Dtos.Task
 {
 	/// <summary>
-	/// Result type.
+	///     Result type.
 	/// </summary>
 	public enum ResultType
 	{
 		/// <summary>
-		/// Result is a ratio to time (eg. Pixel/s).
+		///     Result is a ratio to time (eg. Pixel/s).
 		/// </summary>
 		Throughput,
 
 		/// <summary>
-		/// The result is a raw value (eg. seconds).
+		///     The result is a raw value (eg. seconds).
 		/// </summary>
-		Raw
-	};
+		Raw,
+	}
 }

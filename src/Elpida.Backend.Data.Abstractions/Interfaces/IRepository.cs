@@ -28,15 +28,9 @@ using Elpida.Backend.Data.Abstractions.Models;
 namespace Elpida.Backend.Data.Abstractions.Interfaces
 {
 	public interface IRepository<TEntity>
-	    where TEntity : Entity
+		where TEntity : Entity
 	{
 		Task<TEntity?> GetSingleAsync(long id, CancellationToken cancellationToken = default);
-
-		Task<TReturnEntity> GetSingleAsync<TReturnEntity>(
-			long id,
-			Expression<Func<TEntity, TReturnEntity>> constructionExpression,
-			CancellationToken cancellationToken = default
-		);
 
 		Task<TEntity?> GetSingleAsync(
 			Expression<Func<TEntity, bool>> filters,
@@ -63,23 +57,6 @@ namespace Elpida.Backend.Data.Abstractions.Interfaces
 			bool calculateTotalCount = false,
 			Expression<Func<TEntity, TOrderKey>>? orderBy = null,
 			IEnumerable<Expression<Func<TEntity, bool>>>? filters = null,
-			CancellationToken cancellationToken = default
-		);
-
-		Task<PagedQueryResult<TReturnEntity>> GetPagedGroupProjectionAsync<TOrderKey, TGroupBy, TReturnEntity>(
-			int from,
-			int count,
-			Expression<Func<IGrouping<TGroupBy, TEntity>, TReturnEntity>> constructionExpression,
-			Expression<Func<TEntity, TGroupBy>> groupBy,
-			bool descending = false,
-			bool calculateTotalCount = false,
-			Expression<Func<TEntity, TOrderKey>>? orderBy = null,
-			IEnumerable<Expression<Func<TEntity, bool>>>? filters = null,
-			CancellationToken cancellationToken = default
-		);
-
-		Task<List<TEntity>> GetMultipleAsync(
-			IEnumerable<Expression<Func<TEntity, bool>>> filters,
 			CancellationToken cancellationToken = default
 		);
 

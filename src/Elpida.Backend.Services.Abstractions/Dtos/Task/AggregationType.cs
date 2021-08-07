@@ -20,18 +20,18 @@
 namespace Elpida.Backend.Services.Abstractions.Dtos.Task
 {
 	/// <summary>
-	/// Aggregation modes for calculating result for multiple threads.
+	///     Aggregation modes for calculating result for multiple threads.
 	/// </summary>
 	public enum AggregationType
 	{
 		/// <summary>
-		/// All results are added.
+		///     All results are added.
 		/// </summary>
 		Accumulative,
 
 		/// <summary>
-		/// All results are averaged.
+		///     All results are averaged.
 		/// </summary>
-		Average
+		Average,
 	}
 }

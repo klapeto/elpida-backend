@@ -20,12 +20,12 @@
 namespace Elpida.Backend.Services.Abstractions.Dtos
 {
 	/// <summary>
-	/// An entity with an Id.
+	///     An entity with an Id.
 	/// </summary>
 	public class FoundationDto
 	{
 		/// <summary>
-		/// The id of this entity.
+		///     The id of this entity.
 		/// </summary>
 		public long Id { get; set; }
 	}

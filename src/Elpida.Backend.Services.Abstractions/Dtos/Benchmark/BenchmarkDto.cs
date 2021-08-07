@@ -23,28 +23,28 @@ using System.Collections.Generic;
 namespace Elpida.Backend.Services.Abstractions.Dtos.Benchmark
 {
 	/// <summary>
-	/// The details of a Benchmark.
+	///     The details of a Benchmark.
 	/// </summary>
 	public class BenchmarkDto : FoundationDto
 	{
 		/// <summary>
-		/// The UUID of this Benchmark.
+		///     The UUID of this Benchmark.
 		/// </summary>
 		public Guid Uuid { get; set; }
 
 		/// <summary>
-		/// The name of this Benchmark.
+		///     The name of this Benchmark.
 		/// </summary>
 		/// <example>Test Benchmark.</example>
 		public string Name { get; set; } = string.Empty;
 
 		/// <summary>
-		/// The score specification details of this Benchmark.
+		///     The score specification details of this Benchmark.
 		/// </summary>
 		public BenchmarkScoreSpecificationDto ScoreSpecification { get; set; } = new ();
 
 		/// <summary>
-		/// The task specifications details of this Benchmark.
+		///     The task specifications details of this Benchmark.
 		/// </summary>
 		public IList<BenchmarkTaskDto> Tasks { get; set; } = new List<BenchmarkTaskDto>();
 	}

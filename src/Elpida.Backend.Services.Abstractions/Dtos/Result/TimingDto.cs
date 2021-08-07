@@ -19,22 +19,49 @@
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 {
+	/// <summary>
+	///     Details of timing of a system.
+	/// </summary>
 	public class TimingDto
 	{
+		/// <summary>
+		///     How many seconds a thread notify() takes.
+		/// </summary>
 		public double NotifyOverhead { get; set; }
 
+		/// <summary>
+		///     How many seconds a thread wakeup takes.
+		/// </summary>
 		public double WakeupOverhead { get; set; }
 
+		/// <summary>
+		///     How many extra seconds sleep() takes apart from the actual sleep time.
+		/// </summary>
 		public double SleepOverhead { get; set; }
 
+		/// <summary>
+		///     How many seconds a thread now() takes.
+		/// </summary>
 		public double NowOverhead { get; set; }
 
+		/// <summary>
+		///     How many seconds a thread mutex lock takes.
+		/// </summary>
 		public double LockOverhead { get; set; }
 
+		/// <summary>
+		///     How many seconds a bare loop takes.
+		/// </summary>
 		public double LoopOverhead { get; set; }
 
+		/// <summary>
+		///     How many seconds a thread join() takes apart from wait the time.
+		/// </summary>
 		public double JoinOverhead { get; set; }
 
+		/// <summary>
+		///     The minimum time a benchmark can take.
+		/// </summary>
 		public double TargetTime { get; set; }
 	}
 }

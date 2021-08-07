@@ -23,20 +23,16 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Elpida.Backend.Common;
 using Elpida.Backend.Common.Lock;
 using Elpida.Backend.Data.Abstractions.Models.Benchmark;
 using Elpida.Backend.Data.Abstractions.Models.Cpu;
 using Elpida.Backend.Data.Abstractions.Models.Statistics;
-using Elpida.Backend.Data.Abstractions.Models.Topology;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services.Abstractions;
-using Elpida.Backend.Services.Abstractions.Dtos.Benchmark;
 using Elpida.Backend.Services.Abstractions.Dtos.Statistics;
 using Elpida.Backend.Services.Abstractions.Interfaces;
 using Elpida.Backend.Services.Extensions.Benchmark;
 using Elpida.Backend.Services.Extensions.Cpu;
-using Elpida.Backend.Services.Extensions.Topology;
 using Elpida.Backend.Services.Utilities;
 using Newtonsoft.Json;
 
@@ -109,22 +105,6 @@ namespace Elpida.Backend.Services
 			await Repository.SaveChangesAsync(cancellationToken);
 		}
 
-		private static Expression<Func<BenchmarkStatisticsModel, BenchmarkStatisticsPreviewDto>> GetPreviewConstructionExpression()
-		{
-			return m => new BenchmarkStatisticsPreviewDto
-			{
-				Id = m.Id,
-				CpuVendor = m.Cpu.Vendor,
-				CpuModelName = m.Cpu.ModelName,
-				BenchmarkName = m.Benchmark.Name,
-				BenchmarkUuid = m.Benchmark.Uuid,
-				SampleSize = m.SampleSize,
-				BenchmarkScoreUnit = m.Benchmark.ScoreUnit,
-				Mean = m.Mean,
-				Comparison = m.Benchmark.ScoreComparison,
-			};
-		}
-
 		public Task<PagedResult<BenchmarkStatisticsPreviewDto>> GetPagedPreviewsAsync(
 			QueryRequest queryRequest,
 			CancellationToken cancellationToken = default
@@ -182,6 +162,23 @@ namespace Elpida.Backend.Services
 				StandardDeviation = model.StandardDeviation,
 				MarginOfError = model.MarginOfError,
 				Classes = JsonConvert.DeserializeObject<List<FrequencyClassDto>>(model.FrequencyClasses),
+			};
+		}
+
+		private static Expression<Func<BenchmarkStatisticsModel, BenchmarkStatisticsPreviewDto>>
+			GetPreviewConstructionExpression()
+		{
+			return m => new BenchmarkStatisticsPreviewDto
+			{
+				Id = m.Id,
+				CpuVendor = m.Cpu.Vendor,
+				CpuModelName = m.Cpu.ModelName,
+				BenchmarkName = m.Benchmark.Name,
+				BenchmarkUuid = m.Benchmark.Uuid,
+				SampleSize = m.SampleSize,
+				BenchmarkScoreUnit = m.Benchmark.ScoreUnit,
+				Mean = m.Mean,
+				Comparison = m.Benchmark.ScoreComparison,
 			};
 		}
 

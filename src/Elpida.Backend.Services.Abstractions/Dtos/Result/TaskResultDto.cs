@@ -21,22 +21,49 @@ using Elpida.Backend.Services.Abstractions.Dtos.Task;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 {
+	/// <summary>
+	///     Details of a Task result.
+	/// </summary>
 	public class TaskResultDto : TaskDto
 	{
+		/// <summary>
+		///     The id of the Task this result belongs.
+		/// </summary>
 		public long TaskId { get; set; }
 
+		/// <summary>
+		///     The id of the Benchmark this result belongs..
+		/// </summary>
 		public long BenchmarkResultId { get; set; }
 
+		/// <summary>
+		///     The id of the Cpu this result belongs.
+		/// </summary>
 		public long CpuId { get; set; }
 
+		/// <summary>
+		///     The id of the Topology this result belongs.
+		/// </summary>
 		public long TopologyId { get; set; }
 
+		/// <summary>
+		///     The value of the result.
+		/// </summary>
 		public double Value { get; set; }
 
+		/// <summary>
+		///     The total time this task run.
+		/// </summary>
 		public double Time { get; set; }
 
+		/// <summary>
+		///     How much data this task received as input.
+		/// </summary>
 		public long InputSize { get; set; }
 
-		public TaskRunStatisticsDto Statistics { get; set; } = new TaskRunStatisticsDto();
+		/// <summary>
+		///     The result statistics.
+		/// </summary>
+		public TaskRunStatisticsDto Statistics { get; set; } = new ();
 	}
 }

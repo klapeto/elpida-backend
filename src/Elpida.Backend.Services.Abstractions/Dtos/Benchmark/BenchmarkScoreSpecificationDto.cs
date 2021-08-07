@@ -22,18 +22,18 @@ using Elpida.Backend.Common;
 namespace Elpida.Backend.Services.Abstractions.Dtos.Benchmark
 {
 	/// <summary>
-	/// Specification details for a Benchmark score.
+	///     Specification details for a Benchmark score.
 	/// </summary>
 	public class BenchmarkScoreSpecificationDto
 	{
 		/// <summary>
-		/// The uint of this Benchmark's score.
+		///     The uint of this Benchmark's score.
 		/// </summary>
 		/// <example>Pixels/s</example>
 		public string Unit { get; set; } = default!;
 
 		/// <summary>
-		/// The comparison type of this Benchmark's score.
+		///     The comparison type of this Benchmark's score.
 		/// </summary>
 		public ValueComparison Comparison { get; set; }
 	}

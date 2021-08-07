@@ -51,16 +51,6 @@ namespace Elpida.Backend.Common.Lock.Redis
 			_factory?.Dispose();
 		}
 
-		public IDisposable Acquire(string name)
-		{
-			return _factory.CreateLock(
-				name,
-				TimeSpan.FromMilliseconds(_redisOptions.ExpireTimeout),
-				TimeSpan.FromMilliseconds(_redisOptions.WaitTimeout),
-				TimeSpan.FromMilliseconds(_redisOptions.RetryInterval)
-			);
-		}
-
 		public async Task<IDisposable> AcquireAsync(string name, CancellationToken cancellationToken = default)
 		{
 			return await _factory.CreateLockAsync(

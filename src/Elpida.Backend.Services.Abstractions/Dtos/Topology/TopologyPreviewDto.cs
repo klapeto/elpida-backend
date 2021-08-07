@@ -19,24 +19,56 @@
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Topology
 {
+	/// <summary>
+	///     A preview of a topology.
+	/// </summary>
 	public class TopologyPreviewDto : FoundationDto
 	{
+		/// <summary>
+		///     The id of the cpu this topology belongs.
+		/// </summary>
 		public long CpuId { get; set; }
 
+		/// <summary>
+		///     The vendor of the cpu this topology belongs.
+		/// </summary>
+		/// <example>ARM</example>
 		public string CpuVendor { get; set; } = default!;
 
+		/// <summary>
+		///     The cpu model name of the cpu this topology belongs.
+		/// </summary>
+		/// <example>Cortex A7</example>
 		public string CpuModelName { get; set; } = default!;
 
+		/// <summary>
+		///     The total logical cores of this topology.
+		/// </summary>
 		public int TotalLogicalCores { get; set; }
 
+		/// <summary>
+		///     The total physical cores of this topology.
+		/// </summary>
 		public int TotalPhysicalCores { get; set; }
 
+		/// <summary>
+		///     The numa nodes of this topology.
+		/// </summary>
 		public int TotalNumaNodes { get; set; }
 
+		/// <summary>
+		///     The total packages of this topology.
+		/// </summary>
 		public int TotalPackages { get; set; }
 
+		/// <summary>
+		///     The total depth of this topology.
+		/// </summary>
 		public int TotalDepth { get; set; }
 
+		/// <summary>
+		///     The hash of this topology.
+		/// </summary>
 		public string Hash { get; set; } = default!;
 	}
 }

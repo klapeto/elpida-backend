@@ -50,18 +50,6 @@ namespace Elpida.Backend.Data
 				.FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
 		}
 
-		public Task<TReturnEntity> GetSingleAsync<TReturnEntity>(
-			long id,
-			Expression<Func<TEntity, TReturnEntity>> constructionExpression,
-			CancellationToken cancellationToken = default
-		)
-		{
-			return ProcessGetSingle(Collection.AsQueryable())
-				.Where(e => e.Id == id)
-				.Select(constructionExpression)
-				.FirstOrDefaultAsync(cancellationToken);
-		}
-
 		public async Task<TEntity?> GetSingleAsync(
 			Expression<Func<TEntity, bool>> filters,
 			CancellationToken cancellationToken = default
@@ -99,38 +87,6 @@ namespace Elpida.Backend.Data
 			);
 		}
 
-		public async Task<PagedQueryResult<TReturnEntity>> GetPagedGroupProjectionAsync<TOrderKey, TGroupBy,
-			TReturnEntity>(
-			int from,
-			int count,
-			Expression<Func<IGrouping<TGroupBy, TEntity>, TReturnEntity>> constructionExpression,
-			Expression<Func<TEntity, TGroupBy>> groupBy,
-			bool descending = false,
-			bool calculateTotalCount = false,
-			Expression<Func<TEntity, TOrderKey>>? orderBy = null,
-			IEnumerable<Expression<Func<TEntity, bool>>>? filters = null,
-			CancellationToken cancellationToken = default
-		)
-		{
-			var (totalCount, query) = await PreprocessQueryAsync(
-				ProcessGetMultiplePaged(Collection.AsQueryable()),
-				from,
-				count,
-				descending,
-				calculateTotalCount,
-				orderBy,
-				filters,
-				cancellationToken
-			);
-
-			var results = await query
-				.GroupBy(groupBy)
-				.Select(constructionExpression)
-				.ToListAsync(cancellationToken);
-
-			return new PagedQueryResult<TReturnEntity>(totalCount, results);
-		}
-
 		public async Task<PagedQueryResult<TReturnEntity>> GetPagedProjectionAsync<TOrderKey, TReturnEntity>(
 			int from,
 			int count,
@@ -158,19 +114,6 @@ namespace Elpida.Backend.Data
 				.ToListAsync(cancellationToken);
 
 			return new PagedQueryResult<TReturnEntity>(totalCount, results);
-		}
-
-		public Task<List<TEntity>> GetMultipleAsync(
-			IEnumerable<Expression<Func<TEntity, bool>>> filters,
-			CancellationToken cancellationToken = default
-		)
-		{
-			var result = ProcessGetMultiplePaged(Collection.AsQueryable())
-				.AsNoTracking();
-
-			result = filters.Aggregate(result, (current, filter) => current.Where(filter));
-
-			return result.ToListAsync(cancellationToken);
 		}
 
 		public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -209,7 +152,7 @@ namespace Elpida.Backend.Data
 			IEnumerable<Expression<Func<TCollectionEntity, bool>>>? filters = null,
 			CancellationToken cancellationToken = default
 		)
-		    where TCollectionEntity : Entity
+			where TCollectionEntity : Entity
 		{
 			if (from < 0)
 			{

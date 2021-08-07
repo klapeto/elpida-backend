@@ -19,10 +19,19 @@
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 {
+	/// <summary>
+	///     Details of the memory of a system.
+	/// </summary>
 	public class MemoryDto
 	{
+		/// <summary>
+		///     The total size of the memory.
+		/// </summary>
 		public long TotalSize { get; set; }
 
+		/// <summary>
+		///     The page size of this system.
+		/// </summary>
 		public long PageSize { get; set; }
 	}
 }

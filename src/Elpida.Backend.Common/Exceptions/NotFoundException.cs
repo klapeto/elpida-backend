@@ -23,17 +23,6 @@ namespace Elpida.Backend.Common.Exceptions
 {
 	public class NotFoundException : Exception
 	{
-		public NotFoundException(string id)
-		{
-			Id = id;
-		}
-
-		public NotFoundException(string message, string id)
-			: base(message)
-		{
-			Id = id;
-		}
-
 		public NotFoundException(string message, long id)
 			: base(message)
 		{

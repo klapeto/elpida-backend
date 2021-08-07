@@ -44,7 +44,7 @@ namespace Elpida.Backend.Services
 		{
 			CreateFilter("cpuBrand", model => model.ModelName),
 			CreateFilter("cpuVendor", model => model.Vendor),
-			CreateFilter("cpuFrequency", model => model.Frequency)
+			CreateFilter("cpuFrequency", model => model.Frequency),
 		};
 
 		public Task<PagedResult<CpuPreviewDto>> GetPagedPreviewsAsync(

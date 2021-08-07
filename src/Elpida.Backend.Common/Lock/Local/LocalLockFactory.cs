@@ -29,6 +29,11 @@ namespace Elpida.Backend.Common.Lock.Local
 		private readonly object _locker = new ();
 		private readonly Dictionary<string, LocalLock> _locks = new ();
 
+		public Task<IDisposable> AcquireAsync(string name, CancellationToken cancellationToken = default)
+		{
+			return Task.Run(() => Acquire(name), cancellationToken);
+		}
+
 		public IDisposable Acquire(string name)
 		{
 			LocalLock? returnLock;
@@ -44,11 +49,6 @@ namespace Elpida.Backend.Common.Lock.Local
 			returnLock.Acquire();
 
 			return returnLock;
-		}
-
-		public Task<IDisposable> AcquireAsync(string name, CancellationToken cancellationToken = default)
-		{
-			return Task.Run(() => Acquire(name), cancellationToken);
 		}
 	}
 }

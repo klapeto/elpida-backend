@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Services.Abstractions.Dtos.Benchmark;
@@ -26,8 +25,6 @@ namespace Elpida.Backend.Services.Abstractions.Interfaces
 {
 	public interface IBenchmarkService : IService<BenchmarkDto>
 	{
-		Task<BenchmarkDto> GetSingleAsync(Guid uuid, CancellationToken cancellationToken = default);
-
 		Task<PagedResult<BenchmarkPreviewDto>> GetPagedPreviewsAsync(
 			QueryRequest queryRequest,
 			CancellationToken cancellationToken = default

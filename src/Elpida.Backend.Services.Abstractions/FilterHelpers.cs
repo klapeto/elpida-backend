@@ -48,7 +48,7 @@ namespace Elpida.Backend.Services.Abstractions
 				[Comparison.Less] = "l",
 			};
 
-		public static HashSet<string> NumberComparisons { get; } = new HashSet<string>
+		public static HashSet<string> NumberComparisons { get; } = new()
 		{
 			ComparisonMap[Comparison.Equal],
 			ComparisonMap[Comparison.GreaterEqual],
@@ -57,7 +57,7 @@ namespace Elpida.Backend.Services.Abstractions
 			ComparisonMap[Comparison.Less],
 		};
 
-		public static HashSet<string> StringComparisons { get; } = new HashSet<string>
+		public static HashSet<string> StringComparisons { get; } = new()
 		{
 			ComparisonMap[Comparison.Equal],
 			ComparisonMap[Comparison.NotEqual],

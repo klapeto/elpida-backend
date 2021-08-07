@@ -21,8 +21,17 @@ using System.Collections.Generic;
 
 namespace Elpida.Backend.Services.Abstractions
 {
+	/// <summary>
+	///     A page of results.
+	/// </summary>
+	/// <typeparam name="T">The underlying type of the items of the page.</typeparam>
 	public class PagedResult<T>
 	{
+		/// <summary>
+		///     Initializes a new instance of the <see cref="PagedResult{T}" /> class.
+		/// </summary>
+		/// <param name="list">The collection of the items.</param>
+		/// <param name="pageRequest">The previous page.</param>
 		public PagedResult(IList<T> list, PageRequest pageRequest)
 		{
 			Count = list.Count;
@@ -33,17 +42,24 @@ namespace Elpida.Backend.Services.Abstractions
 				: null;
 		}
 
+		/// <summary>
+		///     The actual list of the items.
+		/// </summary>
 		public IList<T> List { get; set; }
 
+		/// <summary>
+		///     The count of the items this page has.
+		/// </summary>
 		public int Count { get; set; }
 
+		/// <summary>
+		///     The total count of items.
+		/// </summary>
 		public long TotalCount { get; set; }
 
+		/// <summary>
+		///     The next page to request the next items.
+		/// </summary>
 		public PageRequest? NextPage { get; set; }
-
-		public static PagedResult<T> Empty()
-		{
-			return new PagedResult<T>(new List<T>(), new PageRequest());
-		}
 	}
 }

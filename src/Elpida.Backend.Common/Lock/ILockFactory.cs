@@ -25,8 +25,6 @@ namespace Elpida.Backend.Common.Lock
 {
 	public interface ILockFactory
 	{
-		IDisposable Acquire(string name);
-
 		Task<IDisposable> AcquireAsync(string name, CancellationToken cancellationToken = default);
 	}
 }

@@ -193,21 +193,6 @@ namespace Elpida.Backend.Services
 				constructionExpression,
 				cancellationToken
 			);
-
-			// var result = await Repository.GetPagedProjectionAsync(
-			// 	queryRequest.PageRequest.Next,
-			// 	queryRequest.PageRequest.Count,
-			// 	constructionExpression,
-			// 	queryRequest.Descending,
-			// 	queryRequest.PageRequest.TotalCount == 0,
-			// 	expressionBuilder.GetOrderBy<TModel>(queryRequest),
-			// 	expressionBuilder.Build<TModel>(queryRequest.Filters),
-			// 	cancellationToken
-			// );
-			//
-			// queryRequest.PageRequest.TotalCount = result.TotalCount;
-			//
-			// return new PagedResult<TProjection>(result.Items.ToList(), queryRequest.PageRequest);
 		}
 
 		protected async Task<PagedResult<TProjection>> GetPagedProjectionsByPageAsync<TProjection>(

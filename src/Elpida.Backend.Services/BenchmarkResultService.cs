@@ -109,7 +109,7 @@ namespace Elpida.Backend.Services
 					BenchmarkUuid = m.Benchmark.Uuid,
 					BenchmarkName = m.Benchmark.Name,
 					CpuVendor = m.Topology.Cpu.Vendor,
-					CpuBrand = m.Topology.Cpu.ModelName,
+					CpuModelName = m.Topology.Cpu.ModelName,
 					CpuCores = m.Topology.TotalPhysicalCores,
 					CpuLogicalCores = m.Topology.TotalLogicalCores,
 					CpuFrequency = m.Topology.Cpu.Frequency,

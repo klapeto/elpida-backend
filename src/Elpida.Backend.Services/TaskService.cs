@@ -46,18 +46,6 @@ namespace Elpida.Backend.Services
 			CreateFilter("taskName", model => model.Name),
 		};
 
-		public async Task<TaskDto> GetSingleAsync(Guid uuid, CancellationToken cancellationToken = default)
-		{
-			var model = await Repository.GetSingleAsync(b => b.Uuid == uuid, cancellationToken);
-
-			if (model == null)
-			{
-				throw new NotFoundException("Task was not found.", uuid);
-			}
-
-			return model.ToDto();
-		}
-
 		protected override IEnumerable<FilterExpression> GetFilterExpressions()
 		{
 			return ResultFilters;

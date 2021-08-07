@@ -179,19 +179,8 @@ namespace Elpida.Backend
 					context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
 					await context.Response.WriteAsync($"{ae.Message}: '{ae.ParamName}'");
 					break;
-				case ConflictException ce:
-					context.Response.StatusCode = (int)HttpStatusCode.Conflict;
-					await context.Response.WriteAsync($"Conflict detected for id: '{ce.Id}' Reason: {ce.Message}");
-					break;
 				case NotFoundException _:
 					context.Response.StatusCode = (int)HttpStatusCode.NotFound;
-					break;
-				case CorruptedRecordException cre:
-					context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-					await context.Response.WriteAsync(
-						$"The requested record is corrupted!. Please report this to Elpida Backend repository along with this id: {cre.Id}"
-					);
-
 					break;
 				default:
 					context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
