@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2021  Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-using Elpida.Backend.Services.Extensions;
+using Elpida.Backend.Common.Extensions;
 using NUnit.Framework;
 
 namespace Elpida.Backend.Services.Tests
@@ -28,9 +28,9 @@ namespace Elpida.Backend.Services.Tests
 		[Test]
 		public void Success()
 		{
-			Assert.AreEqual("3112FCA8571B", new byte[] {0x31, 0x12, 0xFC, 0xA8, 0x57, 0x1B}.ToHexString());
-			
-			Assert.AreEqual("CD84ACF04891", new byte[] {0xCD, 0x84, 0xAC, 0xF0, 0x48, 0x91}.ToHexString());
+			Assert.AreEqual("3112FCA8571B", new byte[] { 0x31, 0x12, 0xFC, 0xA8, 0x57, 0x1B }.ToHexString());
+
+			Assert.AreEqual("CD84ACF04891", new byte[] { 0xCD, 0x84, 0xAC, 0xF0, 0x48, 0x91 }.ToHexString());
 		}
 	}
 }

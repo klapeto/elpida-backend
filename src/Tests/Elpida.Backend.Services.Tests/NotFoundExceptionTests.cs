@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2020  Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,8 +18,7 @@
  */
 
 using System;
-using Elpida.Backend.Services.Abstractions;
-using Elpida.Backend.Services.Abstractions.Exceptions;
+using Elpida.Backend.Common.Exceptions;
 using NUnit.Framework;
 
 namespace Elpida.Backend.Services.Tests
@@ -29,10 +28,19 @@ namespace Elpida.Backend.Services.Tests
 		[Test]
 		public void Id_Valid()
 		{
-			var id = Guid.NewGuid().ToString("N");
-			var ex = new NotFoundException(id);
+			var id = Guid.NewGuid();
+			var ex = new NotFoundException("This item was not found", id);
 
-			Assert.AreEqual(id, ex.Id);
+			Assert.AreEqual(id.ToString(), ex.Id);
+		}
+
+		[Test]
+		public void Id_Long_Valid()
+		{
+			const long id = 512L;
+			var ex = new NotFoundException("This item was not found", id);
+
+			Assert.AreEqual(id.ToString(), ex.Id);
 		}
 	}
 }

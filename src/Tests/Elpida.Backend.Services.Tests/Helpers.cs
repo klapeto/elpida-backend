@@ -1,6 +1,6 @@
 /*
  * Elpida HTTP Rest API
- *   
+ *
  * Copyright (C) 2020  Ioannis Panagiotopoulos
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,17 +20,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Elpida.Backend.Data.Abstractions.Models.Result;
-using Elpida.Backend.Services.Abstractions.Dtos.Result;
-using Elpida.Backend.Services.Abstractions.Dtos.Topology;
 using NUnit.Framework;
 
 namespace Elpida.Backend.Services.Tests
 {
 	public static class Helpers
 	{
-		public static bool AssertCollectionsAreEqual<T, R>(IEnumerable<T> ea, IEnumerable<R> eb,
-			Func<T, R, bool> assertion)
+		public static bool AssertCollectionsAreEqual<T, R>(
+			IEnumerable<T> ea,
+			IEnumerable<R> eb,
+			Func<T, R, bool> assertion
+		)
 		{
 			var a = ea.ToArray();
 			var b = eb.ToArray();
@@ -40,7 +40,10 @@ namespace Elpida.Backend.Services.Tests
 			// ReSharper disable once LoopCanBeConvertedToQuery
 			for (var i = 0; i < a.Length; i++)
 			{
-				if (!assertion(a[i], b[i])) return false;
+				if (!assertion(a[i], b[i]))
+				{
+					return false;
+				}
 			}
 
 			return true;
