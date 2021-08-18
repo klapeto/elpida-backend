@@ -87,7 +87,7 @@ namespace Elpida.Backend.Services.Tests
 			var lockFactory = new Mock<ILockFactory>(MockBehavior.Strict);
 
 			var service = new DummyService(repo.Object, lockFactory.Object);
-			var builder = new QueryExpressionBuilder(service.GetFilters());
+			var builder = new QueryExpressionBuilder(service.GetImplementedFilters());
 
 			var query = CreateQuery();
 
@@ -284,6 +284,147 @@ namespace Elpida.Backend.Services.Tests
 			repo.Verify(r => r.SaveChangesAsync(default), Times.Once);
 		}
 
+		[Test]
+		public async Task GetOrAddAsync_BypassCheck_NoExisting_DoesAdd()
+		{
+			var repo = new Mock<IDummyRepository>(MockBehavior.Strict);
+			var lockFactory = new Mock<ILockFactory>(MockBehavior.Strict);
+			var lockMock = new Mock<IDisposable>(MockBehavior.Strict);
+
+			Expression<Func<DummyModel, bool>> bypassCheck = m => true;
+
+			var service = new DummyService(repo.Object, lockFactory.Object, bypassCheck);
+
+			var dto = new DummyDto
+			{
+				Data = "hahah",
+				Id = 5,
+			};
+
+			const int actualId = 8;
+
+			repo.Setup(r => r.CreateAsync(It.Is<DummyModel>(m => m.Id == 0 && m.Data == dto.Data), default))
+				.ReturnsAsync(
+					new DummyModel
+					{
+						Id = actualId,
+						Data = dto.Data,
+					}
+				);
+
+			lockMock.Setup(l => l.Dispose());
+
+			lockFactory.Setup(l => l.AcquireAsync(nameof(DummyService), default))
+				.ReturnsAsync(lockMock.Object);
+
+			repo.Setup(r => r.GetSingleAsync(bypassCheck, default))
+				.ReturnsAsync((DummyModel)null!);
+
+			repo.Setup(r => r.SaveChangesAsync(default))
+				.Returns(Task.CompletedTask);
+
+			var obj = await service.GetOrAddAsync(dto);
+
+			Assert.NotNull(obj);
+			Assert.AreEqual(actualId, obj.Id);
+			Assert.AreEqual(dto.Data, obj.Data);
+
+			repo.Verify(r => r.GetSingleAsync(bypassCheck, default), Times.Exactly(2));
+			repo.Verify(
+				r => r.CreateAsync(It.Is<DummyModel>(m => m.Id == 0 && m.Data == dto.Data), default),
+				Times.Once
+			);
+
+			repo.Verify(r => r.SaveChangesAsync(default), Times.Once);
+
+			lockFactory.Verify(l => l.AcquireAsync(nameof(DummyService), default), Times.Once);
+			lockMock.Verify(l => l.Dispose(), Times.Once);
+		}
+
+		[Test]
+		public async Task GetOrAddAsync_BypassCheck_ExistingFirst_DoesNotAdd()
+		{
+			var repo = new Mock<IDummyRepository>(MockBehavior.Strict);
+			var lockFactory = new Mock<ILockFactory>(MockBehavior.Strict);
+
+			Expression<Func<DummyModel, bool>> bypassCheck = m => true;
+
+			var service = new DummyService(repo.Object, lockFactory.Object, bypassCheck);
+
+			var dto = new DummyDto
+			{
+				Data = "hahah",
+				Id = 5,
+			};
+
+			const int actualId = 8;
+
+			repo.Setup(r => r.GetSingleAsync(bypassCheck, default))
+				.ReturnsAsync(
+					new DummyModel
+					{
+						Id = actualId,
+						Data = dto.Data,
+					}
+				);
+
+			var obj = await service.GetOrAddAsync(dto);
+
+			Assert.NotNull(obj);
+			Assert.AreEqual(actualId, obj.Id);
+			Assert.AreEqual(dto.Data, obj.Data);
+
+			repo.Verify(r => r.GetSingleAsync(bypassCheck, default), Times.Once);
+		}
+
+		[Test]
+		public async Task GetOrAddAsync_BypassCheck_DoubleLockCheck_DoesNotAdd()
+		{
+			var repo = new Mock<IDummyRepository>(MockBehavior.Strict);
+			var lockFactory = new Mock<ILockFactory>(MockBehavior.Strict);
+			var lockMock = new Mock<IDisposable>(MockBehavior.Strict);
+
+			var bypassCalls = 0;
+			Expression<Func<DummyModel, bool>> bypassCheck = m => true;
+
+			var service = new DummyService(repo.Object, lockFactory.Object, bypassCheck);
+
+			var dto = new DummyDto
+			{
+				Data = "hahah",
+				Id = 5,
+			};
+
+			const int actualId = 8;
+
+			lockMock.Setup(l => l.Dispose());
+
+			lockFactory.Setup(l => l.AcquireAsync(nameof(DummyService), default))
+				.ReturnsAsync(lockMock.Object);
+
+			repo.Setup(r => r.GetSingleAsync(bypassCheck, default))
+				.ReturnsAsync(
+					() => bypassCalls++ > 0
+						? new DummyModel
+						{
+							Id = actualId,
+							Data = dto.Data,
+						}
+						: null
+				);
+
+			var obj = await service.GetOrAddAsync(dto);
+
+			Assert.NotNull(obj);
+			Assert.AreEqual(actualId, obj.Id);
+			Assert.AreEqual(dto.Data, obj.Data);
+
+			repo.Verify(r => r.GetSingleAsync(bypassCheck, default), Times.Exactly(2));
+
+			lockFactory.Verify(l => l.AcquireAsync(nameof(DummyService), default), Times.Once);
+			lockMock.Verify(l => l.Dispose(), Times.Once);
+		}
+
 		private static List<DummyModel> CreateReturnModels()
 		{
 			return new ()
@@ -323,6 +464,37 @@ namespace Elpida.Backend.Services.Tests
 					},
 				},
 			};
+		}
+
+		[Test]
+		public void GetFilters_WrongModel_ThrowsArgumentExceptionException()
+		{
+			var repo = new Mock<IDummyRepository>(MockBehavior.Strict);
+			var lockFactory = new Mock<ILockFactory>(MockBehavior.Strict);
+
+			var service = new DummyService(repo.Object, lockFactory.Object);
+
+			Assert.Throws<ArgumentException>(() => service.GetFilters<DummyModel, string>(m => m.Data).ToArray());
+		}
+
+		[Test]
+		public void GetFilters_Success()
+		{
+			var repo = new Mock<IDummyRepository>(MockBehavior.Strict);
+			var lockFactory = new Mock<ILockFactory>(MockBehavior.Strict);
+
+			var service = new DummyService(repo.Object, lockFactory.Object);
+
+			var filters = service.GetFilters<DummyModelParent, DummyModel>(m => m.Child)
+				.ToArray();
+
+			Assert.AreEqual(filters.Length, 2);
+
+			Assert.AreEqual(filters.First().Expression.ToString(), "m.Child.Id");
+			Assert.AreEqual(filters.First().Name, "id");
+			
+			Assert.AreEqual(filters.Last().Expression.ToString(), "m.Child.Data");
+			Assert.AreEqual(filters.Last().Name, "data");
 		}
 	}
 }
