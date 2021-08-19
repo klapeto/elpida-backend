@@ -60,12 +60,7 @@ namespace Elpida.Backend.Services
 			_benchmarkService = benchmarkService;
 		}
 
-		private static IEnumerable<FilterExpression> StatisticsExpressions { get; } = new List<FilterExpression>
-		{
-			CreateFilter("cpuId", model => model.CpuId),
-			CreateFilter("benchmarkId", model => model.BenchmarkId),
-			CreateFilter("benchmarkScoreMean", model => model.Mean),
-		};
+		private static FilterExpression[]? StatisticsExpressions { get; set; }
 
 		public async Task UpdateTaskStatisticsAsync(
 			long benchmarkId,
@@ -142,9 +137,24 @@ namespace Elpida.Backend.Services
 
 		protected override IEnumerable<FilterExpression> GetFilterExpressions()
 		{
-			return StatisticsExpressions
-				.Concat(_cpuService.GetFilters<BenchmarkStatisticsModel, CpuModel>(m => m.Cpu))
-				.Concat(_benchmarkService.GetFilters<BenchmarkStatisticsModel, BenchmarkModel>(m => m.Benchmark));
+			if (StatisticsExpressions != null)
+			{
+				return StatisticsExpressions;
+			}
+
+			StatisticsExpressions = new[]
+				{
+					CreateFilter("cpuId", model => model.CpuId),
+					CreateFilter("benchmarkId", model => model.BenchmarkId),
+					CreateFilter("benchmarkScoreMean", model => model.Mean),
+				}
+				.Concat(_cpuService.ConstructCustomFilters<BenchmarkStatisticsModel, CpuModel>(m => m.Cpu))
+				.Concat(
+					_benchmarkService.ConstructCustomFilters<BenchmarkStatisticsModel, BenchmarkModel>(m => m.Benchmark)
+				)
+				.ToArray();
+
+			return StatisticsExpressions;
 		}
 
 		protected override BenchmarkStatisticsDto ToDto(BenchmarkStatisticsModel model)

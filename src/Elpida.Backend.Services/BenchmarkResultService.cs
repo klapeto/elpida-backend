@@ -25,7 +25,6 @@ using System.Threading.Tasks;
 using Elpida.Backend.Common.Exceptions;
 using Elpida.Backend.Common.Lock;
 using Elpida.Backend.Data.Abstractions.Models.Benchmark;
-using Elpida.Backend.Data.Abstractions.Models.Cpu;
 using Elpida.Backend.Data.Abstractions.Models.Elpida;
 using Elpida.Backend.Data.Abstractions.Models.Os;
 using Elpida.Backend.Data.Abstractions.Models.Result;
@@ -89,11 +88,7 @@ namespace Elpida.Backend.Services
 			_statisticsUpdaterService = statisticsUpdaterService;
 		}
 
-		private static IEnumerable<FilterExpression> ResultFilters { get; } = new List<FilterExpression>
-		{
-			CreateFilter("memorySize", model => model.MemorySize),
-			CreateFilter("timeStamp", model => model.TimeStamp),
-		};
+		private static FilterExpression[]? ResultFilters { get; set; }
 
 		public Task<PagedResult<ResultPreviewDto>> GetPagedPreviewsAsync(
 			QueryRequest queryRequest,
@@ -127,12 +122,26 @@ namespace Elpida.Backend.Services
 
 		protected override IEnumerable<FilterExpression> GetFilterExpressions()
 		{
-			return ResultFilters
-				.Concat(_cpuService.GetFilters<BenchmarkResultModel, CpuModel>(m => m.Topology.Cpu))
-				.Concat(_topologyService.GetFilters<BenchmarkResultModel, TopologyModel>(m => m.Topology))
-				.Concat(_elpidaService.GetFilters<BenchmarkResultModel, ElpidaModel>(m => m.Elpida))
-				.Concat(_osService.GetFilters<BenchmarkResultModel, OsModel>(m => m.Os))
-				.Concat(_benchmarkService.GetFilters<BenchmarkResultModel, BenchmarkModel>(m => m.Benchmark));
+			if (ResultFilters != null)
+			{
+				return ResultFilters;
+			}
+
+			ResultFilters = new[]
+				{
+					CreateFilter("memorySize", model => model.MemorySize),
+					CreateFilter("timeStamp", model => model.TimeStamp),
+				}
+				.Concat(_topologyService.ConstructCustomFilters<BenchmarkResultModel, TopologyModel>(m => m.Topology))
+				.Concat(_elpidaService.ConstructCustomFilters<BenchmarkResultModel, ElpidaModel>(m => m.Elpida))
+				.Concat(_osService.ConstructCustomFilters<BenchmarkResultModel, OsModel>(m => m.Os))
+				.Concat(
+					_benchmarkService.ConstructCustomFilters<BenchmarkResultModel, BenchmarkModel>(m => m.Benchmark)
+				)
+				.Distinct()
+				.ToArray();
+
+			return ResultFilters;
 		}
 
 		protected override ResultDto ToDto(BenchmarkResultModel model)

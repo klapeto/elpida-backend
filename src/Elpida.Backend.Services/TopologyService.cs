@@ -19,11 +19,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Common.Extensions;
 using Elpida.Backend.Common.Lock;
+using Elpida.Backend.Data.Abstractions.Models.Cpu;
 using Elpida.Backend.Data.Abstractions.Models.Topology;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services.Abstractions;
@@ -36,18 +38,15 @@ namespace Elpida.Backend.Services
 {
 	public class TopologyService : Service<TopologyDto, TopologyModel, ITopologyRepository>, ITopologyService
 	{
-		public TopologyService(ITopologyRepository topologyRepository, ILockFactory lockFactory)
+		private readonly ICpuService _cpuService;
+
+		public TopologyService(ITopologyRepository topologyRepository, ICpuService cpuService, ILockFactory lockFactory)
 			: base(topologyRepository, lockFactory)
 		{
+			_cpuService = cpuService;
 		}
 
-		private static IEnumerable<FilterExpression> FilterExpressions { get; } = new List<FilterExpression>
-		{
-			CreateFilter("cpuPackages", model => model.TotalPackages),
-			CreateFilter("cpuNumaNodes", model => model.TotalNumaNodes),
-			CreateFilter("cpuCores", model => model.TotalPhysicalCores),
-			CreateFilter("cpuLogicalCores", model => model.TotalLogicalCores),
-		};
+		private static FilterExpression[]? FilterExpressions { get; set; }
 
 		public Task<PagedResult<TopologyPreviewDto>> GetPagedPreviewsAsync(
 			QueryRequest queryRequest,
@@ -97,6 +96,21 @@ namespace Elpida.Backend.Services
 
 		protected override IEnumerable<FilterExpression> GetFilterExpressions()
 		{
+			if (FilterExpressions != null)
+			{
+				return FilterExpressions;
+			}
+
+			FilterExpressions = new[]
+				{
+					CreateFilter("cpuPackages", model => model.TotalPackages),
+					CreateFilter("cpuNumaNodes", model => model.TotalNumaNodes),
+					CreateFilter("cpuCores", model => model.TotalPhysicalCores),
+					CreateFilter("cpuLogicalCores", model => model.TotalLogicalCores),
+				}
+				.Concat(_cpuService.ConstructCustomFilters<TopologyModel, CpuModel>(m => m.Cpu))
+				.ToArray();
+
 			return FilterExpressions;
 		}
 

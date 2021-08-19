@@ -474,7 +474,7 @@ namespace Elpida.Backend.Services.Tests
 
 			var service = new DummyService(repo.Object, lockFactory.Object);
 
-			Assert.Throws<ArgumentException>(() => service.GetFilters<DummyModel, string>(m => m.Data).ToArray());
+			Assert.Throws<ArgumentException>(() => service.ConstructCustomFilters<DummyModel, string>(m => m.Data).ToArray());
 		}
 
 		[Test]
@@ -485,7 +485,7 @@ namespace Elpida.Backend.Services.Tests
 
 			var service = new DummyService(repo.Object, lockFactory.Object);
 
-			var filters = service.GetFilters<DummyModelParent, DummyModel>(m => m.Child)
+			var filters = service.ConstructCustomFilters<DummyModelParent, DummyModel>(m => m.Child)
 				.ToArray();
 
 			Assert.AreEqual(filters.Length, 2);

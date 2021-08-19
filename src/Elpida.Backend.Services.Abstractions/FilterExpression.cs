@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+using System;
 using System.Linq.Expressions;
 
 namespace Elpida.Backend.Services.Abstractions
@@ -32,5 +33,25 @@ namespace Elpida.Backend.Services.Abstractions
 		public string Name { get; }
 
 		public MemberExpression Expression { get; }
+
+		public override bool Equals(object? obj)
+		{
+			if (obj is FilterExpression expression)
+			{
+				return expression.Name == Name;
+			}
+
+			return false;
+		}
+
+		public override int GetHashCode()
+		{
+			return HashCode.Combine(Name);
+		}
+
+		protected bool Equals(FilterExpression other)
+		{
+			return Name == other.Name;
+		}
 	}
 }

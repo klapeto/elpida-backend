@@ -47,7 +47,7 @@ namespace Elpida.Backend.Services
 			_taskRepository = taskRepository;
 		}
 
-		private static IEnumerable<FilterExpression> BenchmarkExpressions { get; } = new List<FilterExpression>
+		private static IEnumerable<FilterExpression> BenchmarkExpressions { get; } = new[]
 		{
 			CreateFilter("benchmarkName", model => model.Name),
 		};

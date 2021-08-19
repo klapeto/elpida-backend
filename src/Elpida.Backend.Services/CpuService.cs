@@ -42,7 +42,7 @@ namespace Elpida.Backend.Services
 
 		private static IEnumerable<FilterExpression> CpuExpressions { get; } = new List<FilterExpression>
 		{
-			CreateFilter("cpuBrand", model => model.ModelName),
+			CreateFilter("cpuModelName", model => model.ModelName),
 			CreateFilter("cpuVendor", model => model.Vendor),
 			CreateFilter("cpuFrequency", model => model.Frequency),
 		};

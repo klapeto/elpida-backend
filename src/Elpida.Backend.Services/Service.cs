@@ -109,19 +109,19 @@ namespace Elpida.Backend.Services
 			}
 		}
 
-		public IEnumerable<FilterExpression> GetFilters<T, TR>(Expression<Func<T, TR>> baseExpression)
+		public IEnumerable<FilterExpression> ConstructCustomFilters<T, TR>(Expression<Func<T, TR>> baseExpression)
 		{
 			if (typeof(TR) != typeof(TModel))
 			{
 				throw new ArgumentException($"The type of the TR is not of type: {typeof(TModel).Name}");
 			}
 
-			var baseBody = baseExpression.Body;
+			var baseBody = (MemberExpression)baseExpression.Body;
 			foreach (var filter in GetFilterExpressions())
 			{
 				yield return new FilterExpression(
 					filter.Name,
-					Expression.MakeMemberAccess(baseBody, filter.Expression.Member)
+					GenerateMemberExpression(baseBody, filter.Expression)
 				);
 			}
 		}
@@ -218,6 +218,26 @@ namespace Elpida.Backend.Services
 			pageRequest.TotalCount = result.TotalCount;
 
 			return new PagedResult<TProjection>(result.Items.ToList(), pageRequest);
+		}
+
+		private static MemberExpression GenerateMemberExpression(MemberExpression baseBody, Expression memberExpression)
+		{
+			var members = new Stack<MemberExpression>();
+
+			while (memberExpression.NodeType == ExpressionType.MemberAccess)
+			{
+				members.Push((MemberExpression)memberExpression);
+				memberExpression = ((MemberExpression)memberExpression).Expression;
+			}
+
+			var returnExpression = baseBody;
+
+			while (members.Any())
+			{
+				returnExpression = Expression.MakeMemberAccess(returnExpression, members.Pop().Member);
+			}
+
+			return returnExpression;
 		}
 
 		private static ParameterExpression GetParameterExpression(Expression expression)
