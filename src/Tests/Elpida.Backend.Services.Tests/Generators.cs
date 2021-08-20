@@ -1,27 +1,26 @@
-/*
- * Elpida HTTP Rest API
- *   
- * Copyright (C) 2020  Ioannis Panagiotopoulos
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
+// =========================================================================
+//
+// Elpida HTTP Rest API
+//
+// Copyright (C) 2021 Ioannis Panagiotopoulos
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =========================================================================
 
 using System;
 using System.Collections.Generic;
-using Elpida.Backend.Data.Abstractions.Models.Benchmark;
 using Elpida.Backend.Data.Abstractions.Models.Cpu;
-using Elpida.Backend.Data.Abstractions.Models.Result;
 using Elpida.Backend.Data.Abstractions.Models.Task;
 using Elpida.Backend.Data.Abstractions.Models.Topology;
 using Elpida.Backend.Services.Abstractions.Dtos.Cpu;
@@ -37,7 +36,7 @@ namespace Elpida.Backend.Services.Tests
 	{
 		public static TaskModel CreateNewTaskModel()
 		{
-			return new()
+			return new ()
 			{
 				Id = 131,
 				Description = "sdfsdf",
@@ -59,84 +58,9 @@ namespace Elpida.Backend.Services.Tests
 			};
 		}
 
-		// public static ResultPreviewModel CreateResultPreviewModel(long id)
-		// {
-		// 	return new ResultPreviewModel
-		// 	{
-		// 		Id = id,
-		// 		Name = "Test Benchmark",
-		// 		CpuBrand = "AMD",
-		// 		CpuCores = 12,
-		// 		CpuFrequency = 1654645646,
-		// 		MemorySize = 565565656,
-		// 		OsName = "Windows",
-		// 		OsVersion = "XP",
-		// 		TimeStamp = DateTime.UtcNow,
-		// 		CpuLogicalCores = 24,
-		// 		ElpidaVersionBuild = 6564,
-		// 		ElpidaVersionMajor = 1,
-		// 		ElpidaVersionMinor = 5,
-		// 		ElpidaVersionRevision = 6,
-		// 	};
-		// }
-
-		// public static BenchmarkResultModel CreateNewResultModel(long id)
-		// {
-		// 	return new()
-		// 	{
-		// 		Id = id,
-		// 		TimeStamp = DateTime.UtcNow,
-		// 		Affinity = "[1,2,3]",
-		// 		Benchmark = new BenchmarkModel
-		// 		{
-		// 			Id = 123,
-		// 			Name = "Memeory Read",
-		// 			Uuid = Guid.NewGuid(),
-		// 		},
-		// 		Topology = CreateNewTopology(),
-		// 		ElpidaVersionBuild = 131,
-		// 		ElpidaVersionMajor = 153,
-		// 		ElpidaVersionMinor = 1564,
-		// 		ElpidaVersionRevision = 1354,
-		// 		CompilerName = "GCC",
-		// 		CompilerVersion = "10.0.0",
-		// 		JoinOverhead = 0.23,
-		// 		LockOverhead = 021,
-		// 		LoopOverhead = 3213,
-		// 		NotifyOverhead = 12365,
-		// 		NowOverhead = 6132,
-		// 		SleepOverhead = 1566,
-		// 		TargetTime = 4684,
-		// 		WakeupOverhead = 5644,
-		// 		MemorySize = 616584,
-		// 		OsCategory = "Linux",
-		// 		OsName = "Windows",
-		// 		OsVersion = "1.12",
-		// 		PageSize = 32513,
-		// 		TaskResults = new List<TaskResultModel>
-		// 		{
-		// 			new()
-		// 			{
-		// 				Id = 464,
-		// 				Time = 255.0,
-		// 				Value = 656566.0,
-		// 				InputSize = 56665,
-		// 				Max = 141635,
-		// 				Mean = 52452,
-		// 				Min = 5465,
-		// 				StandardDeviation = 5464,
-		// 				Tau = 465,
-		// 				SampleSize = 54454,
-		// 				MarginOfError = 4441,
-		// 				Task = CreateNewTaskModel(),
-		// 			},
-		// 		},
-		// 	};
-		// }
-
 		public static CpuModel CreateNewCpuModel()
 		{
-			return new()
+			return new ()
 			{
 				ModelName = "Sdsf",
 				Caches = "[]",
@@ -151,7 +75,7 @@ namespace Elpida.Backend.Services.Tests
 
 		public static TopologyModel CreateNewTopology()
 		{
-			return new()
+			return new ()
 			{
 				Id = 4654,
 				Root = "null",
@@ -165,7 +89,7 @@ namespace Elpida.Backend.Services.Tests
 
 		public static ResultDto CreateNewResultDto()
 		{
-			return new()
+			return new ()
 			{
 				Id = 4556,
 				Affinity = new List<long> { 5, 3, 1 },
@@ -189,7 +113,7 @@ namespace Elpida.Backend.Services.Tests
 					Name = "Memory Read Bandwidth",
 					TaskResults = new List<TaskResultDto>
 					{
-						new()
+						new ()
 						{
 							Description = "Read Bandwidth",
 							Name = "Read Bandwidth",
@@ -251,7 +175,7 @@ namespace Elpida.Backend.Services.Tests
 						ModelName = "AMD",
 						Caches = new List<CpuCacheDto>
 						{
-							new()
+							new ()
 							{
 								Associativity = "Full",
 								Name = "L0",
@@ -282,7 +206,7 @@ namespace Elpida.Backend.Services.Tests
 						{
 							Children = new List<CpuNodeDto>
 							{
-								new()
+								new ()
 								{
 									Children = new List<CpuNodeDto>(),
 									Name = "Core",
@@ -294,7 +218,7 @@ namespace Elpida.Backend.Services.Tests
 							},
 							MemoryChildren = new List<CpuNodeDto>
 							{
-								new()
+								new ()
 								{
 									Children = new List<CpuNodeDto>(),
 									Name = "NUMA",
@@ -303,7 +227,7 @@ namespace Elpida.Backend.Services.Tests
 									NodeType = ProcessorNodeType.NumaNode,
 									OsIndex = 1,
 								},
-								new()
+								new ()
 								{
 									Children = new List<CpuNodeDto>(),
 									Name = "NUMA2",
