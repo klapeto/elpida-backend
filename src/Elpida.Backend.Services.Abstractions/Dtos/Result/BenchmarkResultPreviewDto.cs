@@ -25,7 +25,7 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 	/// <summary>
 	///     A preview of a Benchmark result.
 	/// </summary>
-	public class ResultPreviewDto : FoundationDto
+	public class BenchmarkResultPreviewDto : FoundationDto
 	{
 		/// <summary>
 		///     The UUID of the benchmark.
@@ -106,5 +106,16 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 		///     The memory size of the system that run the benchmark.
 		/// </summary>
 		public long MemorySize { get; set; }
+
+		/// <summary>
+		///     The benchmark score unit.
+		/// </summary>
+		/// <example>B/s</example>
+		public string BenchmarkScoreUnit { get; set; } = default!;
+
+		/// <summary>
+		///     The benchmark score
+		/// </summary>
+		public double Score { get; set; }
 	}
 }

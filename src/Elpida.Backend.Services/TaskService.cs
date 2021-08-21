@@ -31,6 +31,7 @@ using Elpida.Backend.Services.Abstractions;
 using Elpida.Backend.Services.Abstractions.Dtos.Task;
 using Elpida.Backend.Services.Abstractions.Interfaces;
 using Elpida.Backend.Services.Extensions.Task;
+using Elpida.Backend.Services.Utilities;
 using Newtonsoft.Json;
 
 namespace Elpida.Backend.Services
@@ -44,8 +45,20 @@ namespace Elpida.Backend.Services
 
 		private static IEnumerable<FilterExpression> ResultFilters { get; } = new List<FilterExpression>
 		{
-			CreateFilter("taskName", model => model.Name),
+			FiltersTransformer.CreateFilter<TaskModel, string>("taskName", model => model.Name),
 		};
+
+		public async Task<TaskDto> GetSingleAsync(Guid uuid, CancellationToken cancellationToken = default)
+		{
+			var task = await Repository.GetSingleAsync(m => m.Uuid == uuid, cancellationToken);
+
+			if (task == null)
+			{
+				throw new NotFoundException("Task was not found.", uuid);
+			}
+
+			return ToDto(task);
+		}
 
 		protected override IEnumerable<FilterExpression> GetFilterExpressions()
 		{

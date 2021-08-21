@@ -18,13 +18,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Elpida.Backend.Services.Abstractions.Interfaces
+namespace Elpida.Backend.Data.Abstractions.Interfaces
 {
-	public interface IStatisticsUpdaterService
+	public interface ITransaction : IDisposable
 	{
-		Task EnqueueUpdateAsync(StatisticsUpdateRequest request, CancellationToken cancellationToken = default);
+		Task CommitAsync(CancellationToken cancellationToken = default);
+
+		Task RollbackAsync(CancellationToken cancellationToken = default);
 	}
 }

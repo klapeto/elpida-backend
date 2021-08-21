@@ -52,14 +52,14 @@ namespace Elpida.Backend.DataUpdater
 				}
 			);
 
-			services.AddScoped<IBenchmarkResultsService, BenchmarkResultService>();
-			services.AddScoped<IBenchmarkService, BenchmarkService>();
-			services.AddScoped<ICpuService, CpuService>();
-			services.AddScoped<IElpidaService, ElpidaService>();
-			services.AddScoped<IOsService, OsService>();
-			services.AddScoped<IBenchmarkStatisticsService, BenchmarkStatisticsService>();
-			services.AddScoped<ITaskService, TaskService>();
-			services.AddScoped<ITopologyService, TopologyService>();
+			services.AddTransient<IBenchmarkResultsService, BenchmarkResultService>();
+			services.AddTransient<IBenchmarkService, BenchmarkService>();
+			services.AddTransient<ICpuService, CpuService>();
+			services.AddTransient<IElpidaService, ElpidaService>();
+			services.AddTransient<IOsService, OsService>();
+			services.AddTransient<IBenchmarkStatisticsService, BenchmarkStatisticsService>();
+			services.AddTransient<ITaskService, TaskService>();
+			services.AddTransient<ITopologyService, TopologyService>();
 
 			var redisOptions = Configuration.GetSection("Redis");
 			if (redisOptions.Exists())
@@ -71,9 +71,6 @@ namespace Elpida.Backend.DataUpdater
 			{
 				services.AddLocalLocks();
 			}
-
-			services.AddSingleton<StatisticsUpdaterService>();
-			services.AddSingleton<IStatisticsUpdaterService>(x => x.GetRequiredService<StatisticsUpdaterService>());
 
 			services.AddTransient<IBenchmarkResultsRepository, BenchmarkResultsRepository>();
 			services.AddTransient<ICpuRepository, CpuRepository>();
@@ -95,11 +92,6 @@ namespace Elpida.Backend.DataUpdater
 			);
 
 			ServiceProvider = services.BuildServiceProvider();
-
-			ServiceProvider.GetRequiredService<StatisticsUpdaterService>()
-				.StartAsync(CancellationToken.None)
-				.GetAwaiter()
-				.GetResult();
 		}
 
 		public IServiceProvider ServiceProvider { get; }
@@ -108,10 +100,7 @@ namespace Elpida.Backend.DataUpdater
 
 		public void Dispose()
 		{
-			ServiceProvider.GetRequiredService<StatisticsUpdaterService>()
-				.StopAsync(CancellationToken.None)
-				.GetAwaiter()
-				.GetResult();
+			
 		}
 	}
 }

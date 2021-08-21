@@ -35,7 +35,7 @@ namespace Elpida.Backend.Services.Extensions.Result
 {
 	public static class ResultDataExtensions
 	{
-		public static ResultDto ToDto(this BenchmarkResultModel benchmarkResultModel)
+		public static BenchmarkResultDto ToDto(this BenchmarkResultModel benchmarkResultModel)
 		{
 			return new ()
 			{
@@ -43,57 +43,53 @@ namespace Elpida.Backend.Services.Extensions.Result
 				Id = benchmarkResultModel.Id,
 				Elpida = benchmarkResultModel.Elpida.ToDto(),
 				Affinity = JsonConvert.DeserializeObject<List<long>>(benchmarkResultModel.Affinity),
-				Result = new BenchmarkResultDto
+				Uuid = benchmarkResultModel.Benchmark.Uuid,
+				Name = benchmarkResultModel.Benchmark.Name,
+				ScoreSpecification = new BenchmarkScoreSpecificationDto
 				{
-					Id = benchmarkResultModel.Benchmark.Id,
-					Uuid = benchmarkResultModel.Benchmark.Uuid,
-					Name = benchmarkResultModel.Benchmark.Name,
-					ScoreSpecification = new BenchmarkScoreSpecificationDto
-					{
-						Unit = benchmarkResultModel.Benchmark.ScoreUnit,
-						Comparison = benchmarkResultModel.Benchmark.ScoreComparison,
-					},
-					Score = benchmarkResultModel.Score,
-					TaskResults = benchmarkResultModel.TaskResults
-						.OrderBy(m => m.Order)
-						.Select(
-							r => new TaskResultDto
-							{
-								Id = r.Task.Id,
-								Uuid = r.Task.Uuid,
-								Name = r.Task.Name,
-								CpuId = benchmarkResultModel.Cpu.Id,
-								TopologyId = benchmarkResultModel.Topology.Id,
-								TaskId = r.Task.Id,
-								BenchmarkResultId = benchmarkResultModel.Id,
-								Description = r.Task.Description,
-								Input = r.Task.CreateInputSpecDto(),
-								Output = r.Task.CreateOutputSpecDto(),
-								Result = new ResultSpecificationDto
-								{
-									Name = r.Task.ResultName,
-									Description = r.Task.ResultDescription,
-									Aggregation = (AggregationType)r.Task.ResultAggregation,
-									Type = (ResultType)r.Task.ResultType,
-									Unit = r.Task.ResultUnit,
-								},
-								Statistics = new TaskRunStatisticsDto
-								{
-									Max = r.Max,
-									Mean = r.Mean,
-									Min = r.Min,
-									Sd = r.StandardDeviation,
-									Tau = r.Tau,
-									SampleSize = r.SampleSize,
-									MarginOfError = r.MarginOfError,
-								},
-								Time = r.Time,
-								Value = r.Value,
-								InputSize = r.InputSize,
-							}
-						)
-						.ToList(),
+					Unit = benchmarkResultModel.Benchmark.ScoreUnit,
+					Comparison = benchmarkResultModel.Benchmark.ScoreComparison,
 				},
+				Score = benchmarkResultModel.Score,
+				TaskResults = benchmarkResultModel.TaskResults
+					.OrderBy(m => m.Order)
+					.Select(
+						r => new TaskResultDto
+						{
+							Id = r.Task.Id,
+							Uuid = r.Task.Uuid,
+							Name = r.Task.Name,
+							CpuId = benchmarkResultModel.Cpu.Id,
+							TopologyId = benchmarkResultModel.Topology.Id,
+							TaskId = r.Task.Id,
+							BenchmarkResultId = benchmarkResultModel.Id,
+							Description = r.Task.Description,
+							Input = r.Task.CreateInputSpecDto(),
+							Output = r.Task.CreateOutputSpecDto(),
+							Result = new ResultSpecificationDto
+							{
+								Name = r.Task.ResultName,
+								Description = r.Task.ResultDescription,
+								Aggregation = (AggregationType)r.Task.ResultAggregation,
+								Type = (ResultType)r.Task.ResultType,
+								Unit = r.Task.ResultUnit,
+							},
+							Statistics = new TaskRunStatisticsDto
+							{
+								Max = r.Max,
+								Mean = r.Mean,
+								Min = r.Min,
+								Sd = r.StandardDeviation,
+								Tau = r.Tau,
+								SampleSize = r.SampleSize,
+								MarginOfError = r.MarginOfError,
+							},
+							Time = r.Time,
+							Value = r.Value,
+							InputSize = r.InputSize,
+						}
+					)
+					.ToList(),
 				System = new SystemDto
 				{
 					Cpu = benchmarkResultModel.Cpu.ToDto(),

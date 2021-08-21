@@ -25,6 +25,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Common.Lock;
 using Elpida.Backend.Services.Abstractions;
+using Elpida.Backend.Services.Utilities;
 
 namespace Elpida.Backend.Services.Tests
 {
@@ -40,13 +41,13 @@ namespace Elpida.Backend.Services.Tests
 
 		public IReadOnlyDictionary<string, LambdaExpression> GetImplementedFilters()
 		{
-			return GetLambdaFilters();
+			return new Dictionary<string, LambdaExpression>();
 		}
 
 		protected override IEnumerable<FilterExpression> GetFilterExpressions()
 		{
-			yield return CreateFilter("id", m => m.Id);
-			yield return CreateFilter("data", m => m.Data);
+			yield return FiltersTransformer.CreateFilter<DummyModel, long>("id", m => m.Id);
+			yield return FiltersTransformer.CreateFilter<DummyModel, string>("data", m => m.Data);
 		}
 
 		protected override Expression<Func<DummyModel, bool>>? GetCreationBypassCheckExpression(DummyDto dto)

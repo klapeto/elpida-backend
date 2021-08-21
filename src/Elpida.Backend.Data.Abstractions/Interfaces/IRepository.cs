@@ -61,5 +61,7 @@ namespace Elpida.Backend.Data.Abstractions.Interfaces
 		);
 
 		Task SaveChangesAsync(CancellationToken cancellationToken = default);
+
+		Task<ITransaction> BeginTransactionAsync(CancellationToken cancellationToken = default);
 	}
 }

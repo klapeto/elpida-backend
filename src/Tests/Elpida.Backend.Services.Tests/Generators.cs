@@ -87,7 +87,7 @@ namespace Elpida.Backend.Services.Tests
 			};
 		}
 
-		public static ResultDto CreateNewResultDto()
+		public static BenchmarkResultDto CreateNewResultDto()
 		{
 			return new ()
 			{
@@ -108,52 +108,50 @@ namespace Elpida.Backend.Services.Tests
 						Revision = 1,
 					},
 				},
-				Result = new BenchmarkResultDto
+
+				Name = "Memory Read Bandwidth",
+				TaskResults = new List<TaskResultDto>
 				{
-					Name = "Memory Read Bandwidth",
-					TaskResults = new List<TaskResultDto>
+					new ()
 					{
-						new ()
+						Description = "Read Bandwidth",
+						Name = "Read Bandwidth",
+						Id = 12,
+						Input = new DataSpecificationDto
 						{
-							Description = "Read Bandwidth",
-							Name = "Read Bandwidth",
-							Id = 12,
-							Input = new DataSpecificationDto
-							{
-								Name = "Ll;sf",
-								Description = "dsfdsf",
-								Unit = "lols",
-								RequiredProperties = new List<string> { "lo" },
-							},
-							Output = new DataSpecificationDto
-							{
-								Name = "Lfsdfl;sf",
-								Description = "dsdfssfdsf",
-								Unit = "losdfsls",
-								RequiredProperties = new List<string> { "lo", "sdfsdf" },
-							},
-							Result = new ResultSpecificationDto
-							{
-								Aggregation = AggregationType.Average,
-								Description = "sadfsdfdsfsd",
-								Name = "sdfsdfsf",
-								Type = ResultType.Raw,
-								Unit = "lsdfgvb",
-							},
-							Uuid = Guid.NewGuid(),
-							Time = 255.0,
-							Value = 656566.0,
-							InputSize = 56665,
-							Statistics = new TaskRunStatisticsDto
-							{
-								Max = 15165,
-								Mean = 6454,
-								Min = 541541,
-								Sd = 145,
-								Tau = 154465,
-								SampleSize = 4654456,
-								MarginOfError = 211564,
-							},
+							Name = "Ll;sf",
+							Description = "dsfdsf",
+							Unit = "lols",
+							RequiredProperties = new List<string> { "lo" },
+						},
+						Output = new DataSpecificationDto
+						{
+							Name = "Lfsdfl;sf",
+							Description = "dsdfssfdsf",
+							Unit = "losdfsls",
+							RequiredProperties = new List<string> { "lo", "sdfsdf" },
+						},
+						Result = new ResultSpecificationDto
+						{
+							Aggregation = AggregationType.Average,
+							Description = "sadfsdfdsfsd",
+							Name = "sdfsdfsf",
+							Type = ResultType.Raw,
+							Unit = "lsdfgvb",
+						},
+						Uuid = Guid.NewGuid(),
+						Time = 255.0,
+						Value = 656566.0,
+						InputSize = 56665,
+						Statistics = new TaskRunStatisticsDto
+						{
+							Max = 15165,
+							Mean = 6454,
+							Min = 541541,
+							Sd = 145,
+							Tau = 154465,
+							SampleSize = 4654456,
+							MarginOfError = 211564,
 						},
 					},
 				},

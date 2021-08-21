@@ -18,11 +18,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Elpida.Backend.Services.Abstractions.Dtos.Task;
 
 namespace Elpida.Backend.Services.Abstractions.Interfaces
 {
 	public interface ITaskService : IService<TaskDto>
 	{
+		Task<TaskDto> GetSingleAsync(Guid uuid, CancellationToken cancellationToken = default);
 	}
 }

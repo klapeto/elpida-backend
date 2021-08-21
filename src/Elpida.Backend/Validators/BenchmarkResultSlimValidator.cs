@@ -18,31 +18,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using Elpida.Backend.Services.Abstractions.Dtos.Result;
+using Elpida.Backend.Services.Abstractions.Dtos.Result.Batch;
 using FluentValidation;
 
 namespace Elpida.Backend.Validators
 {
-	public class ResultValidator : AbstractValidator<ResultDto>
+	public class BenchmarkResultSlimValidator : AbstractValidator<BenchmarkResultSlimDto>
 	{
-		public ResultValidator()
+		public BenchmarkResultSlimValidator()
 		{
-			RuleFor(dto => dto.Id)
-				.Empty();
-
 			RuleFor(dto => dto.Affinity)
 				.NotEmpty();
 
-			RuleFor(dto => dto.TimeStamp)
-				.Empty();
+			RuleFor(dto => dto.Timestamp)
+				.NotEmpty();
 
-			RuleFor(dto => dto.Elpida)
-				.NotNull();
+			RuleFor(dto => dto.Uuid)
+				.NotEmpty();
 
-			RuleFor(dto => dto.Result)
-				.NotNull();
-
-			RuleFor(dto => dto.System)
+			RuleFor(dto => dto.TaskResults)
 				.NotNull();
 		}
 	}

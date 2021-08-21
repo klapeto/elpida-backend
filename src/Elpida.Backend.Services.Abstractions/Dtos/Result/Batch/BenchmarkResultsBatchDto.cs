@@ -19,27 +19,15 @@
 // =========================================================================
 
 using System;
-using System.Collections.Generic;
-using Elpida.Backend.Services.Abstractions.Dtos.Benchmark;
 using Elpida.Backend.Services.Abstractions.Dtos.Elpida;
 
-namespace Elpida.Backend.Services.Abstractions.Dtos.Result
+namespace Elpida.Backend.Services.Abstractions.Dtos.Result.Batch
 {
 	/// <summary>
-	///     Details of a Benchmark Result.
+	///     Contains multiple benchmark results from a system.
 	/// </summary>
-	public class BenchmarkResultDto : FoundationDto
+	public class BenchmarkResultsBatchDto : FoundationDto
 	{
-		/// <summary>
-		///     The date and time this result was posted.
-		/// </summary>
-		public DateTime TimeStamp { get; set; }
-
-		/// <summary>
-		///     The Cpu Affinity used by this Benchmark Result.
-		/// </summary>
-		public IList<long> Affinity { get; set; } = new List<long>();
-
 		/// <summary>
 		///     The Elpida Version that this result was produced from.
 		/// </summary>
@@ -51,29 +39,8 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 		public SystemDto System { get; set; } = new ();
 
 		/// <summary>
-		///     The score of the benchmark.
+		///     The benchmark results.
 		/// </summary>
-		public double Score { get; set; }
-
-		/// <summary>
-		///     The UUID of this Benchmark.
-		/// </summary>
-		public Guid Uuid { get; set; }
-
-		/// <summary>
-		///     The name of this Benchmark.
-		/// </summary>
-		/// <example>Test Benchmark.</example>
-		public string Name { get; set; } = string.Empty;
-
-		/// <summary>
-		///     The score specification details of this Benchmark.
-		/// </summary>
-		public BenchmarkScoreSpecificationDto ScoreSpecification { get; set; } = new ();
-
-		/// <summary>
-		///     The specific Task results.
-		/// </summary>
-		public IList<TaskResultDto> TaskResults { get; set; } = new List<TaskResultDto>();
+		public BenchmarkResultSlimDto[] BenchmarkResults { get; set; } = Array.Empty<BenchmarkResultSlimDto>();
 	}
 }

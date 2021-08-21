@@ -20,38 +20,37 @@
 
 using System;
 using System.Collections.Generic;
-using Elpida.Backend.Services.Abstractions.Dtos.Elpida;
 
-namespace Elpida.Backend.Services.Abstractions.Dtos.Result
+namespace Elpida.Backend.Services.Abstractions.Dtos.Result.Batch
 {
 	/// <summary>
-	///     Details of a Benchmark Result.
+	///     Describes a single benchmark result.
 	/// </summary>
-	public class ResultDto : FoundationDto
+	public class BenchmarkResultSlimDto
 	{
 		/// <summary>
-		///     The date and time this result was posted.
+		///     The Uuid of the benchmark.
 		/// </summary>
-		public DateTime TimeStamp { get; set; }
+		public Guid Uuid { get; set; }
 
 		/// <summary>
-		///     The Cpu Affinity used by this Benchmark Result.
+		///     The timestamp of this benchmark run.
 		/// </summary>
-		public IList<long> Affinity { get; set; } = new List<long>();
+		public DateTime Timestamp { get; set; }
 
 		/// <summary>
-		///     The Elpida Version that this result was produced from.
+		///     The affinity used for this benchmark run.
 		/// </summary>
-		public ElpidaDto Elpida { get; set; } = new ();
+		public long[] Affinity { get; set; } = Array.Empty<long>();
 
 		/// <summary>
-		///     The system details for this result.
+		///     The score of this benchmark run.
 		/// </summary>
-		public SystemDto System { get; set; } = new ();
+		public double Score { get; set; }
 
 		/// <summary>
-		///     The benchmark result details.
+		///     The specific task results.
 		/// </summary>
-		public BenchmarkResultDto Result { get; set; } = new ();
+		public IList<TaskResultSlimDto> TaskResults { get; set; } = new List<TaskResultSlimDto>();
 	}
 }

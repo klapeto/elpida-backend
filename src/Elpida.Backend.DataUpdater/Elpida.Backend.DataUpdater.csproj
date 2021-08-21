@@ -28,15 +28,37 @@
         </Content>
         <None Remove="ResultData\Raspberry Pi 4 Model B Rev 1.4-1623693265.json" />
         <None Remove="ResultData\Cortex-A72-1624056541.json" />
-        <Content Include="ResultData\Cortex-A72-1624056541.json">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
         <None Remove="ResultData\Cortex-A72-1624054193.json" />
-        <Content Include="ResultData\Cortex-A72-1624054193.json">
+        <None Remove="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1624137042.json" />
+        <None Remove="ResultData\Intel(R) Core(TM) i9-10900K CPU @ 3.70GHz-1629493458.json" />
+        <None Remove="ResultData\Intel(R) Core(TM) i9-10900K CPU @ 3.70GHz-1629493766.json" />
+        <None Remove="ResultData\Intel(R) Core(TM) i9-10900K CPU @ 3.70GHz-1629495479.json" />
+        <None Remove="ResultData\Intel(R) Core(TM) i9-10900K CPU @ 3.70GHz-1629495232.json" />
+        <None Remove="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629495153.json" />
+        <None Remove="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629493875.json" />
+        <None Remove="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629493597.json" />
+        <None Remove="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1629569043.json" />
+        <Content Include="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1629569043.json">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
-        <None Remove="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1624137042.json" />
-        <Content Include="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1624137042.json">
+        <None Remove="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1629573068.json" />
+        <Content Include="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1629573068.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1629573447.json" />
+        <Content Include="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1629573447.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1629573286.json" />
+        <Content Include="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1629573286.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1629574301.json" />
+        <Content Include="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1629574301.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1629574895.json" />
+        <Content Include="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1629574895.json">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
     </ItemGroup>
@@ -65,6 +87,10 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Elpida.Backend.Data.Abstractions\Elpida.Backend.Data.Abstractions.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="ResultData" />
     </ItemGroup>
 
 </Project>

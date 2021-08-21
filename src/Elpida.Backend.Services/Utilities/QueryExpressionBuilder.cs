@@ -35,6 +35,29 @@ namespace Elpida.Backend.Services.Utilities
 			_availableExpressions = availableExpressions;
 		}
 
+		public QueryExpressionBuilder(IEnumerable<FilterExpression> filters)
+		{
+			_availableExpressions = filters.ToDictionary(
+				p => p.Name,
+				p => Expression.Lambda(p.Expression, GetParameterExpression(p.Expression))
+			);
+		}
+
+		private static ParameterExpression GetParameterExpression(Expression expression)
+		{
+			while (expression.NodeType == ExpressionType.MemberAccess)
+			{
+				expression = ((MemberExpression)expression).Expression;
+			}
+
+			if (expression.NodeType != ExpressionType.Parameter)
+			{
+				throw new ArgumentException("Expression does not contain parameter");
+			}
+
+			return (ParameterExpression)expression;
+		}
+
 		public IEnumerable<Expression<Func<T, bool>>> Build<T>(IEnumerable<QueryInstance>? queryInstances)
 		{
 			if (queryInstances == null)

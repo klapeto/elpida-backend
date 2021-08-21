@@ -30,6 +30,7 @@ using Elpida.Backend.Services.Abstractions;
 using Elpida.Backend.Services.Abstractions.Dtos.Elpida;
 using Elpida.Backend.Services.Abstractions.Interfaces;
 using Elpida.Backend.Services.Extensions.Elpida;
+using Elpida.Backend.Services.Utilities;
 
 namespace Elpida.Backend.Services
 {
@@ -42,12 +43,12 @@ namespace Elpida.Backend.Services
 
 		private static IEnumerable<FilterExpression> ElpidaExpressions { get; } = new List<FilterExpression>
 		{
-			CreateFilter("compilerName", model => model.CompilerName),
-			CreateFilter("compilerVersion", model => model.CompilerVersion),
-			CreateFilter("buildVersion", model => model.VersionBuild),
-			CreateFilter("revisionVersion", model => model.VersionRevision),
-			CreateFilter("minorVersion", model => model.VersionMinor),
-			CreateFilter("majorVersion", model => model.VersionMajor),
+			FiltersTransformer.CreateFilter<ElpidaModel, string>("compilerName", model => model.CompilerName),
+			FiltersTransformer.CreateFilter<ElpidaModel, string>("compilerVersion", model => model.CompilerVersion),
+			FiltersTransformer.CreateFilter<ElpidaModel, int>("buildVersion", model => model.VersionBuild),
+			FiltersTransformer.CreateFilter<ElpidaModel, int>("revisionVersion", model => model.VersionRevision),
+			FiltersTransformer.CreateFilter<ElpidaModel, int>("minorVersion", model => model.VersionMinor),
+			FiltersTransformer.CreateFilter<ElpidaModel, int>("majorVersion", model => model.VersionMajor),
 		};
 
 		protected override IEnumerable<FilterExpression> GetFilterExpressions()

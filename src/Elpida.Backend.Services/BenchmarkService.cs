@@ -31,6 +31,7 @@ using Elpida.Backend.Services.Abstractions;
 using Elpida.Backend.Services.Abstractions.Dtos.Benchmark;
 using Elpida.Backend.Services.Abstractions.Interfaces;
 using Elpida.Backend.Services.Extensions.Benchmark;
+using Elpida.Backend.Services.Utilities;
 
 namespace Elpida.Backend.Services
 {
@@ -50,7 +51,7 @@ namespace Elpida.Backend.Services
 
 		private static IEnumerable<FilterExpression> BenchmarkExpressions { get; } = new[]
 		{
-			CreateFilter("benchmarkName", model => model.Name),
+			FiltersTransformer.CreateFilter<BenchmarkModel, string>("benchmarkName", model => model.Name),
 		};
 
 		public Task<PagedResult<BenchmarkPreviewDto>> GetPagedPreviewsAsync(
@@ -58,7 +59,9 @@ namespace Elpida.Backend.Services
 			CancellationToken cancellationToken = default
 		)
 		{
-			return GetPagedProjectionsAsync(
+			return QueryUtilities.GetPagedProjectionsAsync(
+				Repository,
+				GetFilterExpressions(),
 				queryRequest,
 				m => new BenchmarkPreviewDto
 				{
@@ -68,6 +71,18 @@ namespace Elpida.Backend.Services
 				},
 				cancellationToken
 			);
+		}
+
+		public async Task<BenchmarkDto> GetSingleAsync(Guid uuid, CancellationToken cancellationToken = default)
+		{
+			var benchmark = await Repository.GetSingleAsync(m => m.Uuid == uuid, cancellationToken);
+
+			if (benchmark == null)
+			{
+				throw new NotFoundException("Benchmark was not found.", uuid);
+			}
+
+			return ToDto(benchmark);
 		}
 
 		protected override async Task<BenchmarkModel> ProcessDtoAndCreateModelAsync(

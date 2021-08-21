@@ -69,6 +69,8 @@ namespace Elpida.Backend.Services
 			CancellationToken cancellationToken = default
 		)
 		{
+			using var transaction = await Repository.BeginTransactionAsync(cancellationToken);
+
 			var stats = await GetStatisticsModelAsync(benchmarkId, cpuId, cancellationToken);
 
 			var basicStatistics =
@@ -85,13 +87,13 @@ namespace Elpida.Backend.Services
 			var actualClasses = GetDefaultClasses(stats.SampleSize, stats.Min, stats.Max)
 				.ToArray();
 
-			foreach (var cls in actualClasses)
+			foreach (var frequencyClass in actualClasses)
 			{
-				cls.Count = await _benchmarkResultsRepository.GetCountWithScoreBetween(
+				frequencyClass.Count = await _benchmarkResultsRepository.GetCountWithScoreBetween(
 					stats.BenchmarkId,
 					stats.CpuId,
-					cls.Low,
-					cls.High,
+					frequencyClass.Low,
+					frequencyClass.High,
 					cancellationToken
 				);
 			}
@@ -99,6 +101,8 @@ namespace Elpida.Backend.Services
 			stats.FrequencyClasses = JsonConvert.SerializeObject(actualClasses);
 
 			await Repository.SaveChangesAsync(cancellationToken);
+
+			await transaction.CommitAsync(cancellationToken);
 		}
 
 		public Task<PagedResult<BenchmarkStatisticsPreviewDto>> GetPagedPreviewsAsync(
@@ -106,7 +110,9 @@ namespace Elpida.Backend.Services
 			CancellationToken cancellationToken = default
 		)
 		{
-			return GetPagedProjectionsAsync(
+			return QueryUtilities.GetPagedProjectionsAsync(
+				Repository,
+				GetFilterExpressions(),
 				queryRequest,
 				GetPreviewConstructionExpression(),
 				cancellationToken
@@ -145,9 +151,15 @@ namespace Elpida.Backend.Services
 
 			StatisticsExpressions = new[]
 				{
-					CreateFilter("cpuId", model => model.CpuId),
-					CreateFilter("benchmarkId", model => model.BenchmarkId),
-					CreateFilter("benchmarkScoreMean", model => model.Mean),
+					FiltersTransformer.CreateFilter<BenchmarkStatisticsModel, long>("cpuId", model => model.CpuId),
+					FiltersTransformer.CreateFilter<BenchmarkStatisticsModel, long>(
+						"benchmarkId",
+						model => model.BenchmarkId
+					),
+					FiltersTransformer.CreateFilter<BenchmarkStatisticsModel, double>(
+						"benchmarkScoreMean",
+						model => model.Mean
+					),
 				}
 				.Concat(_cpuService.ConstructCustomFilters<BenchmarkStatisticsModel, CpuModel>(m => m.Cpu))
 				.Concat(

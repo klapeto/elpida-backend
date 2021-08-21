@@ -30,6 +30,7 @@ using Elpida.Backend.Services.Abstractions;
 using Elpida.Backend.Services.Abstractions.Dtos.Cpu;
 using Elpida.Backend.Services.Abstractions.Interfaces;
 using Elpida.Backend.Services.Extensions.Cpu;
+using Elpida.Backend.Services.Utilities;
 using Newtonsoft.Json;
 
 namespace Elpida.Backend.Services
@@ -43,9 +44,9 @@ namespace Elpida.Backend.Services
 
 		private static IEnumerable<FilterExpression> CpuExpressions { get; } = new List<FilterExpression>
 		{
-			CreateFilter("cpuModelName", model => model.ModelName),
-			CreateFilter("cpuVendor", model => model.Vendor),
-			CreateFilter("cpuFrequency", model => model.Frequency),
+			FiltersTransformer.CreateFilter<CpuModel, string>("cpuModelName", model => model.ModelName),
+			FiltersTransformer.CreateFilter<CpuModel, string>("cpuVendor", model => model.Vendor),
+			FiltersTransformer.CreateFilter<CpuModel, long>("cpuFrequency", model => model.Frequency),
 		};
 
 		public Task<PagedResult<CpuPreviewDto>> GetPagedPreviewsAsync(
@@ -53,7 +54,9 @@ namespace Elpida.Backend.Services
 			CancellationToken cancellationToken = default
 		)
 		{
-			return GetPagedProjectionsAsync(
+			return QueryUtilities.GetPagedProjectionsAsync(
+				Repository,
+				GetFilterExpressions(),
 				queryRequest,
 				m => new CpuPreviewDto
 				{

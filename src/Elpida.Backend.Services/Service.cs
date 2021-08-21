@@ -20,7 +20,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -62,26 +61,18 @@ namespace Elpida.Backend.Services
 			return ToDto(entity);
 		}
 
-		public async Task<PagedResult<TDto>> GetPagedAsync(
+		public Task<PagedResult<TDto>> GetPagedAsync(
 			QueryRequest queryRequest,
 			CancellationToken cancellationToken = default
 		)
 		{
-			var expressionBuilder = new QueryExpressionBuilder(GetLambdaFilters());
-
-			var result = await Repository.GetMultiplePagedAsync(
-				queryRequest.PageRequest.Next,
-				queryRequest.PageRequest.Count,
-				queryRequest.Descending,
-				queryRequest.PageRequest.TotalCount == 0,
-				expressionBuilder.GetOrderBy<TModel>(queryRequest),
-				expressionBuilder.Build<TModel>(queryRequest.Filters),
+			return QueryUtilities.GetPagedAsync(
+				Repository,
+				GetFilterExpressions(),
+				queryRequest,
+				ToDto,
 				cancellationToken
 			);
-
-			queryRequest.PageRequest.TotalCount = result.TotalCount;
-
-			return new PagedResult<TDto>(result.Items.Select(ToDto).ToList(), queryRequest.PageRequest);
 		}
 
 		public virtual async Task<TDto> GetOrAddAsync(TDto dto, CancellationToken cancellationToken = default)
@@ -112,29 +103,7 @@ namespace Elpida.Backend.Services
 
 		public IEnumerable<FilterExpression> ConstructCustomFilters<T, TR>(Expression<Func<T, TR>> baseExpression)
 		{
-			if (typeof(TR) != typeof(TModel))
-			{
-				throw new ArgumentException($"The type of the TR is not of type: {typeof(TModel).Name}");
-			}
-
-			var baseBody = (MemberExpression)baseExpression.Body;
-			foreach (var filter in GetFilterExpressions())
-			{
-				yield return new FilterExpression(
-					filter.Name,
-					GenerateMemberExpression(baseBody, filter.Expression)
-				);
-			}
-		}
-
-		protected static FilterExpression CreateFilter<T>(string name, Expression<Func<TModel, T>> expression)
-		{
-			if (expression.Body.NodeType != ExpressionType.MemberAccess)
-			{
-				throw new InvalidOperationException("The expression body must be member access of the model");
-			}
-
-			return new FilterExpression(name.ToLowerInvariant(), (MemberExpression)expression.Body);
+			return FiltersTransformer.ConstructCustomFilters(baseExpression, GetFilterExpressions());
 		}
 
 		protected static async Task<TFModel> GetOrAddForeignDto<TFDto, TFModel>(
@@ -148,15 +117,6 @@ namespace Elpida.Backend.Services
 		{
 			var newDto = await service.GetOrAddAsync(dto, cancellationToken);
 			return (await repository.GetSingleAsync(newDto.Id, cancellationToken))!;
-		}
-
-		protected IReadOnlyDictionary<string, LambdaExpression> GetLambdaFilters()
-		{
-			return GetFilterExpressions()
-				.ToDictionary(
-					p => p.Name,
-					p => Expression.Lambda(p.Expression, GetParameterExpression(p.Expression))
-				);
 		}
 
 		protected abstract TDto ToDto(TModel model);
@@ -178,84 +138,6 @@ namespace Elpida.Backend.Services
 			return Task.CompletedTask;
 		}
 
-		protected Task<PagedResult<TProjection>> GetPagedProjectionsAsync<TProjection>(
-			QueryRequest queryRequest,
-			Expression<Func<TModel, TProjection>> constructionExpression,
-			CancellationToken cancellationToken = default
-		)
-		{
-			var expressionBuilder = new QueryExpressionBuilder(GetLambdaFilters());
-
-			return GetPagedProjectionsByPageAsync(
-				queryRequest.PageRequest,
-				queryRequest.Descending,
-				expressionBuilder.GetOrderBy<TModel>(queryRequest),
-				expressionBuilder.Build<TModel>(queryRequest.Filters),
-				constructionExpression,
-				cancellationToken
-			);
-		}
-
-		protected async Task<PagedResult<TProjection>> GetPagedProjectionsByPageAsync<TProjection>(
-			PageRequest pageRequest,
-			bool descending,
-			Expression<Func<TModel, object>>? orderBy,
-			IEnumerable<Expression<Func<TModel, bool>>>? filters,
-			Expression<Func<TModel, TProjection>> constructionExpression,
-			CancellationToken cancellationToken = default
-		)
-		{
-			var result = await Repository.GetPagedProjectionAsync(
-				pageRequest.Next,
-				pageRequest.Count,
-				constructionExpression,
-				descending,
-				pageRequest.TotalCount == 0,
-				orderBy,
-				filters,
-				cancellationToken
-			);
-
-			pageRequest.TotalCount = result.TotalCount;
-
-			return new PagedResult<TProjection>(result.Items.ToList(), pageRequest);
-		}
-
-		private static MemberExpression GenerateMemberExpression(MemberExpression baseBody, Expression memberExpression)
-		{
-			var members = new Stack<MemberExpression>();
-
-			while (memberExpression.NodeType == ExpressionType.MemberAccess)
-			{
-				members.Push((MemberExpression)memberExpression);
-				memberExpression = ((MemberExpression)memberExpression).Expression;
-			}
-
-			var returnExpression = baseBody;
-
-			while (members.Any())
-			{
-				returnExpression = Expression.MakeMemberAccess(returnExpression, members.Pop().Member);
-			}
-
-			return returnExpression;
-		}
-
-		private static ParameterExpression GetParameterExpression(Expression expression)
-		{
-			while (expression.NodeType == ExpressionType.MemberAccess)
-			{
-				expression = ((MemberExpression)expression).Expression;
-			}
-
-			if (expression.NodeType != ExpressionType.Parameter)
-			{
-				throw new ArgumentException("Expression does not contain parameter");
-			}
-
-			return (ParameterExpression)expression;
-		}
-
 		private async Task<TDto> DoAddAsync(TDto dto, CancellationToken cancellationToken)
 		{
 			var entity = await ProcessDtoAndCreateModelAsync(dto, cancellationToken);
@@ -267,7 +149,7 @@ namespace Elpida.Backend.Services
 			dto = ToDto(entity);
 
 			await OnEntityCreatedAsync(dto, entity, cancellationToken);
-
+			
 			return dto;
 		}
 	}

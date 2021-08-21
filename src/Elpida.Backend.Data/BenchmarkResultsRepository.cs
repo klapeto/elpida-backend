@@ -58,13 +58,13 @@ namespace Elpida.Backend.Data
 
 		public async Task<BasicStatisticsModel> GetStatisticsAsync(
 			long benchmarkId,
-			long topologyId,
+			long cpuId,
 			CancellationToken cancellationToken = default
 		)
 		{
 			var baseQuery = Collection
 				.AsNoTracking()
-				.Where(m => m.TopologyId == topologyId && m.BenchmarkId == benchmarkId)
+				.Where(m => m.CpuId == cpuId && m.BenchmarkId == benchmarkId)
 				.GroupBy(m => m.BenchmarkId);
 
 			var result = await baseQuery

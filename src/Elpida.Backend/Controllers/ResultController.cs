@@ -18,11 +18,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
+using System.Linq;
 using System.Net.Mime;
 using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Services.Abstractions;
 using Elpida.Backend.Services.Abstractions.Dtos.Result;
+using Elpida.Backend.Services.Abstractions.Dtos.Result.Batch;
 using Elpida.Backend.Services.Abstractions.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -46,7 +48,7 @@ namespace Elpida.Backend.Controllers
 		/// <summary>
 		///     Creates a new Benchmark Result.
 		/// </summary>
-		/// <param name="resultDto">The result data.</param>
+		/// <param name="benchmarkResultDto">The result data.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <returns>The url to access the created result.</returns>
 		/// <response code="201">The result was successfully created.</response>
@@ -59,12 +61,12 @@ namespace Elpida.Backend.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		public async Task<IActionResult> PostNewResult(
-			[FromBody] ResultDto resultDto,
+			[FromBody] BenchmarkResultsBatchDto benchmarkResultDto,
 			CancellationToken cancellationToken
 		)
 		{
-			var result = await _benchmarkResultsService.GetOrAddAsync(resultDto, cancellationToken);
-			return CreatedAtRoute(nameof(GetSingleResult), new { id = result.Id, version = "v1" }, null);
+			var result = await _benchmarkResultsService.AddBatchAsync(benchmarkResultDto, cancellationToken);
+			return CreatedAtRoute(nameof(GetSingleResult), new { id = result.First(), version = "v1" }, null);
 		}
 
 		/// <summary>
@@ -80,7 +82,7 @@ namespace Elpida.Backend.Controllers
 		[Consumes("application/json")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public Task<PagedResult<ResultPreviewDto>> GetPaged(
+		public Task<PagedResult<BenchmarkResultPreviewDto>> GetPaged(
 			[FromQuery] PageRequest pageRequest,
 			CancellationToken cancellationToken
 		)
@@ -102,7 +104,7 @@ namespace Elpida.Backend.Controllers
 		[HttpGet("{id:long}", Name = nameof(GetSingleResult))]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public Task<ResultDto> GetSingleResult([FromRoute] long id, CancellationToken cancellationToken)
+		public Task<BenchmarkResultDto> GetSingleResult([FromRoute] long id, CancellationToken cancellationToken)
 		{
 			return _benchmarkResultsService.GetSingleAsync(id, cancellationToken);
 		}
@@ -120,7 +122,7 @@ namespace Elpida.Backend.Controllers
 		[Consumes("application/json")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public Task<PagedResult<ResultPreviewDto>> Search(
+		public Task<PagedResult<BenchmarkResultPreviewDto>> Search(
 			[FromBody] QueryRequest queryRequest,
 			CancellationToken cancellationToken
 		)

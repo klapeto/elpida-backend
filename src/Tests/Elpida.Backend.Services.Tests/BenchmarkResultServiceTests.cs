@@ -49,22 +49,22 @@ namespace Elpida.Backend.Services.Tests
 				BenchmarkService = new Mock<IBenchmarkService>(MockBehavior.Strict);
 				LockFactory = new Mock<ILockFactory>(MockBehavior.Strict);
 
-				Service = new BenchmarkResultService(
-					BenchmarkResultRepo.Object,
-					StatisticsService.Object,
-					CpuRepo.Object,
-					BenchmarkRepo.Object,
-					TopologyRepo.Object,
-					ElpidaRepo.Object,
-					OsRepo.Object,
-					TaskRepo.Object,
-					CpuService.Object,
-					TopologyService.Object,
-					ElpidaService.Object,
-					OsService.Object,
-					BenchmarkService.Object,
-					LockFactory.Object
-				);
+				// Service = new BenchmarkResultService(
+				// 	BenchmarkResultRepo.Object,
+				// 	StatisticsService.Object,
+				// 	CpuRepo.Object,
+				// 	BenchmarkRepo.Object,
+				// 	TopologyRepo.Object,
+				// 	ElpidaRepo.Object,
+				// 	OsRepo.Object,
+				// 	TaskRepo.Object,
+				// 	CpuService.Object,
+				// 	TopologyService.Object,
+				// 	ElpidaService.Object,
+				// 	OsService.Object,
+				// 	BenchmarkService.Object,
+				// 	LockFactory.Object
+				// );
 			}
 
 			public Mock<IBenchmarkResultsRepository> BenchmarkResultRepo { get; }

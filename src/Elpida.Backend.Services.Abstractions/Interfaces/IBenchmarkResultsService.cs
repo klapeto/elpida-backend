@@ -18,17 +18,34 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Services.Abstractions.Dtos.Result;
+using Elpida.Backend.Services.Abstractions.Dtos.Result.Batch;
 
 namespace Elpida.Backend.Services.Abstractions.Interfaces
 {
-	public interface IBenchmarkResultsService : IService<ResultDto>
+	public interface IBenchmarkResultsService
 	{
-		Task<PagedResult<ResultPreviewDto>> GetPagedPreviewsAsync(
+		Task<PagedResult<BenchmarkResultPreviewDto>> GetPagedPreviewsAsync(
 			QueryRequest queryRequest,
 			CancellationToken cancellationToken = default
 		);
+
+		Task<BenchmarkResultDto> GetSingleAsync(long id, CancellationToken cancellationToken = default);
+
+		Task<long> AddAsync(
+			long cpuId,
+			long topologyId,
+			long osId,
+			long elpidaId,
+			BenchmarkResultSlimDto benchmarkResult,
+			MemoryDto memory,
+			TimingDto timing,
+			CancellationToken cancellationToken = default
+		);
+
+		Task<IList<long>> AddBatchAsync(BenchmarkResultsBatchDto batch, CancellationToken cancellationToken = default);
 	}
 }

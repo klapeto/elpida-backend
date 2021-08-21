@@ -27,7 +27,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Data;
 using Elpida.Backend.Services.Abstractions.Dtos.Benchmark;
-using Elpida.Backend.Services.Abstractions.Dtos.Result;
+using Elpida.Backend.Services.Abstractions.Dtos.Result.Batch;
 using Elpida.Backend.Services.Abstractions.Dtos.Task;
 using Elpida.Backend.Services.Abstractions.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
@@ -38,8 +38,7 @@ namespace Elpida.Backend.DataUpdater
 {
 	internal static class Program
 	{
-		private static long _resultsAddedCount;
-		private static long _resultsProcessedCount;
+		private static long _batchesProcessedCount;
 
 		private static async Task Main(string[] args)
 		{
@@ -55,8 +54,7 @@ namespace Elpida.Backend.DataUpdater
 			Directory.CreateDirectory(targetDirectory);
 			try
 			{
-				await SplitFiles(serviceProvider, "ResultData", targetDirectory);
-				await UpdateDbAsync(serviceProvider, "BenchmarkData", targetDirectory);
+				await UpdateDbAsync(serviceProvider, "BenchmarkData", "ResultData");
 
 				baseLogger.LogInformation("All operations completed successfully");
 			}
@@ -65,62 +63,6 @@ namespace Elpida.Backend.DataUpdater
 				baseLogger.LogInformation("Deleting temporary directory for split files: {Directory}", targetDirectory);
 				Directory.Delete(targetDirectory, true);
 			}
-		}
-
-		private static async Task SplitFiles(
-			IServiceProvider serviceProvider,
-			string sourceDirectory,
-			string targetDirectory
-		)
-		{
-			using var scope = serviceProvider.CreateScope();
-			serviceProvider = scope.ServiceProvider;
-
-			var logger = serviceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("File splitter");
-
-			var filesProduced = 0;
-			var filesRead = 0;
-			logger.LogInformation("Begin splitting files");
-			var stopWatch = Stopwatch.StartNew();
-			await ParallelExecutor.ParallelExecAsync(
-				Directory.EnumerateFiles(sourceDirectory),
-				async (file, token) =>
-				{
-					var resultData =
-						JsonConvert.DeserializeObject<List<ResultDto>?>(await File.ReadAllTextAsync(file, token));
-
-					if (resultData == null)
-					{
-						return;
-					}
-
-					Interlocked.Increment(ref filesRead);
-
-					file = Path.GetFileName(file);
-
-					await ParallelExecutor.ParallelExecAsync(
-						resultData,
-						async (dto, ct) =>
-						{
-							var id = Interlocked.Increment(ref filesProduced);
-							await File.WriteAllTextAsync(
-								Path.Combine(targetDirectory, $"{file}_{id}.json"),
-								JsonConvert.SerializeObject(new[] { dto }),
-								ct
-							);
-						},
-						token
-					);
-				}
-			);
-
-			stopWatch.Stop();
-			logger.LogInformation(
-				"Split complete. {FilesRead} files were split into {FilesSplit} and took {Time} ",
-				filesRead,
-				filesProduced,
-				stopWatch.Elapsed
-			);
 		}
 
 		private static async Task UpdateDbAsync(
@@ -152,7 +94,7 @@ namespace Elpida.Backend.DataUpdater
 
 		private static async Task ProcessResultAsync(
 			IServiceProvider serviceProvider,
-			ResultDto resultDto,
+			BenchmarkResultsBatchDto benchmarkResultBatchDto,
 			CancellationToken cancellationToken
 		)
 		{
@@ -160,20 +102,13 @@ namespace Elpida.Backend.DataUpdater
 
 			try
 			{
-				Interlocked.Increment(ref _resultsProcessedCount);
 				var resultService = serviceProvider.GetRequiredService<IBenchmarkResultsService>();
-				logger.LogTrace(
-					"Seeding result: '{Name}': '{Uuid}'",
-					resultDto.Result.Name,
-					resultDto.Result.Uuid
-				);
 
-				await resultService.GetOrAddAsync(resultDto, cancellationToken);
-				var currentResults = Interlocked.Increment(ref _resultsAddedCount);
-				if (currentResults % 500 == 0)
-				{
-					logger.LogInformation("Added so far: {Added}", currentResults);
-				}
+				await resultService.AddBatchAsync(benchmarkResultBatchDto, cancellationToken);
+
+				Interlocked.Add(ref _batchesProcessedCount, benchmarkResultBatchDto.BenchmarkResults.Length);
+
+				logger.LogInformation("Added: {Added}", benchmarkResultBatchDto.BenchmarkResults.Length);
 			}
 			catch (Exception e)
 			{
@@ -229,7 +164,7 @@ namespace Elpida.Backend.DataUpdater
 			var logger = serviceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("Results seeder");
 
 			await TimeProcedure(
-				ParallelExecutor.ProcessFilesInDirectoryAsync<ResultDto>(
+				ParallelExecutor.ProcessFilesInDirectoryAsync<BenchmarkResultsBatchDto>(
 					resultsDirectory,
 					serviceProvider,
 					ProcessResultAsync
@@ -239,8 +174,8 @@ namespace Elpida.Backend.DataUpdater
 
 			logger.LogInformation(
 				"Results processed: {Processed}. Results successfully added: {Added}",
-				_resultsProcessedCount,
-				_resultsAddedCount
+				_batchesProcessedCount,
+				_batchesProcessedCount
 			);
 		}
 

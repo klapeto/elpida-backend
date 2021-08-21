@@ -132,6 +132,11 @@ namespace Elpida.Backend.Data
 			}
 		}
 
+		public Task<ITransaction> BeginTransactionAsync(CancellationToken cancellationToken = default)
+		{
+			return EntityTransaction.CreateAsync(Context, cancellationToken);
+		}
+
 		protected virtual IQueryable<TEntity> ProcessGetSingle(IQueryable<TEntity> queryable)
 		{
 			return queryable;

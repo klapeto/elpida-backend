@@ -24,7 +24,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Common.Exceptions;
-using Elpida.Backend.Common.Lock;
 using Elpida.Backend.Data.Abstractions.Models.Benchmark;
 using Elpida.Backend.Data.Abstractions.Models.Elpida;
 using Elpida.Backend.Data.Abstractions.Models.Os;
@@ -33,72 +32,59 @@ using Elpida.Backend.Data.Abstractions.Models.Topology;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services.Abstractions;
 using Elpida.Backend.Services.Abstractions.Dtos.Result;
+using Elpida.Backend.Services.Abstractions.Dtos.Result.Batch;
 using Elpida.Backend.Services.Abstractions.Interfaces;
 using Elpida.Backend.Services.Extensions.Result;
+using Elpida.Backend.Services.Utilities;
 using Newtonsoft.Json;
 
 namespace Elpida.Backend.Services
 {
-	public class BenchmarkResultService
-		: Service<ResultDto, BenchmarkResultModel, IBenchmarkResultsRepository>,
-			IBenchmarkResultsService
+	public class BenchmarkResultService : IBenchmarkResultsService
 	{
-		private readonly IBenchmarkRepository _benchmarkRepository;
+		private readonly IBenchmarkResultsRepository _benchmarkResultsRepository;
 		private readonly IBenchmarkService _benchmarkService;
-		private readonly ICpuRepository _cpuRepository;
-
+		private readonly IBenchmarkStatisticsService _benchmarkStatisticsService;
 		private readonly ICpuService _cpuService;
-		private readonly IElpidaRepository _elpidaRepository;
 		private readonly IElpidaService _elpidaService;
-		private readonly IOsRepository _osRepository;
+
 		private readonly IOsService _osService;
-		private readonly IStatisticsUpdaterService _statisticsUpdaterService;
-		private readonly ITaskRepository _taskRepository;
-		private readonly ITopologyRepository _topologyRepository;
+		private readonly ITaskService _taskService;
 		private readonly ITopologyService _topologyService;
 
 		public BenchmarkResultService(
 			IBenchmarkResultsRepository benchmarkResultsRepository,
-			IStatisticsUpdaterService statisticsUpdaterService,
-			ICpuRepository cpuRepository,
-			IBenchmarkRepository benchmarkRepository,
-			ITopologyRepository topologyRepository,
-			IElpidaRepository elpidaRepository,
-			IOsRepository osRepository,
-			ITaskRepository taskRepository,
 			ICpuService cpuService,
 			ITopologyService topologyService,
 			IElpidaService elpidaService,
 			IOsService osService,
 			IBenchmarkService benchmarkService,
-			ILockFactory lockFactory
+			ITaskService taskService,
+			IBenchmarkStatisticsService benchmarkStatisticsService
 		)
-			: base(benchmarkResultsRepository, lockFactory)
 		{
-			_cpuRepository = cpuRepository;
-			_benchmarkRepository = benchmarkRepository;
-			_topologyRepository = topologyRepository;
-			_elpidaRepository = elpidaRepository;
-			_osRepository = osRepository;
-			_taskRepository = taskRepository;
+			_taskService = taskService;
+			_benchmarkStatisticsService = benchmarkStatisticsService;
 			_cpuService = cpuService;
 			_topologyService = topologyService;
 			_elpidaService = elpidaService;
 			_osService = osService;
 			_benchmarkService = benchmarkService;
-			_statisticsUpdaterService = statisticsUpdaterService;
+			_benchmarkResultsRepository = benchmarkResultsRepository;
 		}
 
 		private static FilterExpression[]? ResultFilters { get; set; }
 
-		public Task<PagedResult<ResultPreviewDto>> GetPagedPreviewsAsync(
+		public Task<PagedResult<BenchmarkResultPreviewDto>> GetPagedPreviewsAsync(
 			QueryRequest queryRequest,
 			CancellationToken cancellationToken = default
 		)
 		{
-			return GetPagedProjectionsAsync(
+			return QueryUtilities.GetPagedProjectionsAsync(
+				_benchmarkResultsRepository,
+				GetFilterExpressions(),
 				queryRequest,
-				m => new ResultPreviewDto
+				m => new BenchmarkResultPreviewDto
 				{
 					Id = m.Id,
 					TimeStamp = m.TimeStamp,
@@ -121,103 +107,66 @@ namespace Elpida.Backend.Services
 			);
 		}
 
-		protected override IEnumerable<FilterExpression> GetFilterExpressions()
+		public async Task<BenchmarkResultDto> GetSingleAsync(long id, CancellationToken cancellationToken = default)
 		{
-			if (ResultFilters != null)
+			var entity = await _benchmarkResultsRepository.GetSingleAsync(id, cancellationToken);
+
+			if (entity == null)
 			{
-				return ResultFilters;
+				throw new NotFoundException($"{nameof(BenchmarkResultDto)} was not found", id);
 			}
 
-			ResultFilters = new[]
-				{
-					CreateFilter("memorySize", model => model.MemorySize),
-					CreateFilter("timeStamp", model => model.TimeStamp),
-				}
-				.Concat(_topologyService.ConstructCustomFilters<BenchmarkResultModel, TopologyModel>(m => m.Topology))
-				.Concat(_elpidaService.ConstructCustomFilters<BenchmarkResultModel, ElpidaModel>(m => m.Elpida))
-				.Concat(_osService.ConstructCustomFilters<BenchmarkResultModel, OsModel>(m => m.Os))
-				.Concat(
-					_benchmarkService.ConstructCustomFilters<BenchmarkResultModel, BenchmarkModel>(m => m.Benchmark)
-				)
-				.Distinct()
-				.ToArray();
-
-			return ResultFilters;
+			return entity.ToDto();
 		}
 
-		protected override ResultDto ToDto(BenchmarkResultModel model)
-		{
-			return model.ToDto();
-		}
-
-		protected override async Task<BenchmarkResultModel> ProcessDtoAndCreateModelAsync(
-			ResultDto dto,
-			CancellationToken cancellationToken
+		public async Task<long> AddAsync(
+			long cpuId,
+			long topologyId,
+			long osId,
+			long elpidaId,
+			BenchmarkResultSlimDto benchmarkResult,
+			MemoryDto memory,
+			TimingDto timing,
+			CancellationToken cancellationToken = default
 		)
 		{
-			var benchmark = await _benchmarkRepository
-				.GetSingleAsync(b => b.Uuid == dto.Result.Uuid, cancellationToken);
-
-			if (benchmark == null)
-			{
-				throw new NotFoundException("Benchmark was not found", dto.Result.Uuid);
-			}
-
-			var cpu = await GetOrAddForeignDto(_cpuRepository, _cpuService, dto.System.Cpu, cancellationToken);
-
-			dto.System.Topology.CpuId = cpu.Id;
-
-			var topology = await GetOrAddForeignDto(
-				_topologyRepository,
-				_topologyService,
-				dto.System.Topology,
-				cancellationToken
-			);
-
-			dto.System.Topology.Id = topology.Id;
-			dto.System.Cpu.Id = cpu.Id;
-
-			var elpida = await GetOrAddForeignDto(_elpidaRepository, _elpidaService, dto.Elpida, cancellationToken);
-			var os = await GetOrAddForeignDto(_osRepository, _osService, dto.System.Os, cancellationToken);
+			var benchmark = await _benchmarkService
+				.GetSingleAsync(benchmarkResult.Uuid, cancellationToken);
 
 			var model = new BenchmarkResultModel
 			{
-				Benchmark = benchmark,
-				Elpida = elpida,
-				Topology = topology,
-				Cpu = cpu,
-				Os = os,
-				Affinity = JsonConvert.SerializeObject(dto.Affinity),
-				JoinOverhead = dto.System.Timing.JoinOverhead,
-				LockOverhead = dto.System.Timing.LockOverhead,
-				LoopOverhead = dto.System.Timing.LoopOverhead,
-				NotifyOverhead = dto.System.Timing.NotifyOverhead,
-				NowOverhead = dto.System.Timing.NowOverhead,
-				SleepOverhead = dto.System.Timing.SleepOverhead,
-				TargetTime = dto.System.Timing.TargetTime,
-				WakeupOverhead = dto.System.Timing.WakeupOverhead,
-				MemorySize = dto.System.Memory.TotalSize,
-				PageSize = dto.System.Memory.PageSize,
-				Score = dto.Result.Score,
+				BenchmarkId = benchmark.Id,
+				ElpidaId = elpidaId,
+				TopologyId = topologyId,
+				OsId = osId,
+				CpuId = cpuId,
+				Affinity = JsonConvert.SerializeObject(benchmarkResult.Affinity),
+				JoinOverhead = timing.JoinOverhead,
+				LockOverhead = timing.LockOverhead,
+				LoopOverhead = timing.LoopOverhead,
+				NotifyOverhead = timing.NotifyOverhead,
+				NowOverhead = timing.NowOverhead,
+				SleepOverhead = timing.SleepOverhead,
+				TargetTime = timing.TargetTime,
+				WakeupOverhead = timing.WakeupOverhead,
+				MemorySize = memory.TotalSize,
+				PageSize = memory.PageSize,
+				Score = benchmarkResult.Score,
 				TaskResults = new List<TaskResultModel>(),
 				TimeStamp = DateTime.UtcNow,
 			};
 
 			var order = 0;
-			foreach (var taskResult in dto.Result.TaskResults)
+			foreach (var taskResult in benchmarkResult.TaskResults)
 			{
-				var task = await _taskRepository.GetSingleAsync(t => t.Uuid == taskResult.Uuid, cancellationToken);
-				if (task == null)
-				{
-					throw new NotFoundException("Task was not found", taskResult.Uuid);
-				}
+				var task = await _taskService.GetSingleAsync(taskResult.Uuid, cancellationToken);
 
 				model.TaskResults.Add(
 					new TaskResultModel
 					{
-						Cpu = cpu,
-						Task = task,
-						Topology = topology,
+						CpuId = cpuId,
+						TaskId = task.Id,
+						TopologyId = topologyId,
 						BenchmarkResult = model,
 						Max = taskResult.Statistics.Max,
 						Mean = taskResult.Statistics.Mean,
@@ -234,19 +183,76 @@ namespace Elpida.Backend.Services
 				);
 			}
 
-			return model;
+			model.Id = 0;
+			model = await _benchmarkResultsRepository.CreateAsync(model, cancellationToken);
+
+			await _benchmarkResultsRepository.SaveChangesAsync(cancellationToken);
+
+			await _benchmarkStatisticsService.UpdateTaskStatisticsAsync(benchmark.Id, cpuId, cancellationToken);
+
+			return model.Id;
 		}
 
-		protected override Task OnEntityCreatedAsync(
-			ResultDto dto,
-			BenchmarkResultModel entity,
-			CancellationToken cancellationToken
+		public async Task<IList<long>> AddBatchAsync(
+			BenchmarkResultsBatchDto batch,
+			CancellationToken cancellationToken = default
 		)
 		{
-			return _statisticsUpdaterService.EnqueueUpdateAsync(
-				new StatisticsUpdateRequest(dto.System.Cpu.Id, dto.Result.Id),
-				cancellationToken
-			);
+			var cpu = await _cpuService.GetOrAddAsync(batch.System.Cpu, cancellationToken);
+			batch.System.Topology.CpuId = cpu.Id;
+			var topology = await _topologyService.GetOrAddAsync(batch.System.Topology, cancellationToken);
+			var os = await _osService.GetOrAddAsync(batch.System.Os, cancellationToken);
+			var elpida = await _elpidaService.GetOrAddAsync(batch.Elpida, cancellationToken);
+
+			var ids = new List<long>();
+
+			foreach (var benchmarkResult in batch.BenchmarkResults)
+			{
+				ids.Add(
+					await AddAsync(
+						cpu.Id,
+						topology.Id,
+						os.Id,
+						elpida.Id,
+						benchmarkResult,
+						batch.System.Memory,
+						batch.System.Timing,
+						cancellationToken
+					)
+				);
+			}
+
+			return ids;
+		}
+
+		private IEnumerable<FilterExpression> GetFilterExpressions()
+		{
+			if (ResultFilters != null)
+			{
+				return ResultFilters;
+			}
+
+			ResultFilters = new[]
+				{
+					FiltersTransformer.CreateFilter<BenchmarkResultModel, long>(
+						"memorySize",
+						model => model.MemorySize
+					),
+					FiltersTransformer.CreateFilter<BenchmarkResultModel, DateTime>(
+						"timeStamp",
+						model => model.TimeStamp
+					),
+				}
+				.Concat(_topologyService.ConstructCustomFilters<BenchmarkResultModel, TopologyModel>(m => m.Topology))
+				.Concat(_elpidaService.ConstructCustomFilters<BenchmarkResultModel, ElpidaModel>(m => m.Elpida))
+				.Concat(_osService.ConstructCustomFilters<BenchmarkResultModel, OsModel>(m => m.Os))
+				.Concat(
+					_benchmarkService.ConstructCustomFilters<BenchmarkResultModel, BenchmarkModel>(m => m.Benchmark)
+				)
+				.Distinct()
+				.ToArray();
+
+			return ResultFilters;
 		}
 	}
 }

@@ -30,6 +30,7 @@ using Elpida.Backend.Services.Abstractions;
 using Elpida.Backend.Services.Abstractions.Dtos.Os;
 using Elpida.Backend.Services.Abstractions.Interfaces;
 using Elpida.Backend.Services.Extensions.Os;
+using Elpida.Backend.Services.Utilities;
 
 namespace Elpida.Backend.Services
 {
@@ -37,9 +38,9 @@ namespace Elpida.Backend.Services
 	{
 		private static readonly IEnumerable<FilterExpression> OsFilters = new List<FilterExpression>
 		{
-			CreateFilter("osCategory", model => model.Category),
-			CreateFilter("osName", model => model.Name),
-			CreateFilter("osVersion", model => model.Version),
+			FiltersTransformer.CreateFilter<OsModel, string>("osCategory", model => model.Category),
+			FiltersTransformer.CreateFilter<OsModel, string>("osName", model => model.Name),
+			FiltersTransformer.CreateFilter<OsModel, string>("osVersion", model => model.Version),
 		};
 
 		public OsService(IOsRepository osRepository, ILockFactory lockFactory)

@@ -33,6 +33,7 @@ using Elpida.Backend.Services.Abstractions;
 using Elpida.Backend.Services.Abstractions.Dtos.Topology;
 using Elpida.Backend.Services.Abstractions.Interfaces;
 using Elpida.Backend.Services.Extensions.Topology;
+using Elpida.Backend.Services.Utilities;
 using Newtonsoft.Json;
 
 namespace Elpida.Backend.Services
@@ -54,7 +55,9 @@ namespace Elpida.Backend.Services
 			CancellationToken cancellationToken = default
 		)
 		{
-			return GetPagedProjectionsAsync(
+			return QueryUtilities.GetPagedProjectionsAsync(
+				Repository,
+				GetFilterExpressions(),
 				queryRequest,
 				m => new TopologyPreviewDto
 				{
@@ -104,10 +107,10 @@ namespace Elpida.Backend.Services
 
 			FilterExpressions = new[]
 				{
-					CreateFilter("cpuPackages", model => model.TotalPackages),
-					CreateFilter("cpuNumaNodes", model => model.TotalNumaNodes),
-					CreateFilter("cpuCores", model => model.TotalPhysicalCores),
-					CreateFilter("cpuLogicalCores", model => model.TotalLogicalCores),
+					FiltersTransformer.CreateFilter<TopologyModel, int>("cpuPackages", model => model.TotalPackages),
+					FiltersTransformer.CreateFilter<TopologyModel, int>("cpuNumaNodes", model => model.TotalNumaNodes),
+					FiltersTransformer.CreateFilter<TopologyModel, int>("cpuCores", model => model.TotalPhysicalCores),
+					FiltersTransformer.CreateFilter<TopologyModel, int>("cpuLogicalCores", model => model.TotalLogicalCores),
 				}
 				.Concat(_cpuService.ConstructCustomFilters<TopologyModel, CpuModel>(m => m.Cpu))
 				.ToArray();

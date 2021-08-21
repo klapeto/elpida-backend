@@ -55,11 +55,11 @@ namespace Elpida.Backend.DataUpdater
 				Directory.EnumerateFiles(directory),
 				async (file, ct) =>
 				{
-					var data = JsonConvert.DeserializeObject<List<T>?>(await File.ReadAllTextAsync(file, ct));
+					var data = JsonConvert.DeserializeObject<T?>(await File.ReadAllTextAsync(file, ct));
 
 					if (data != null)
 					{
-						await ProcessItemsAsync(data, serviceProvider, itemProcessor, ct);
+						await ProcessItemsAsync(new[] { data }, serviceProvider, itemProcessor, ct);
 					}
 				},
 				cancellationToken
