@@ -27,7 +27,7 @@ using NUnit.Framework;
 namespace Elpida.Backend.Services.Tests
 {
 	[TestFixture]
-	public class BenchmarkResultServiceTests
+	internal class BenchmarkResultServiceTests
 	{
 		private class Pack
 		{
@@ -40,8 +40,7 @@ namespace Elpida.Backend.Services.Tests
 				ElpidaRepo = new Mock<IElpidaRepository>(MockBehavior.Strict);
 				OsRepo = new Mock<IOsRepository>(MockBehavior.Strict);
 				TaskRepo = new Mock<ITaskRepository>(MockBehavior.Strict);
-
-				StatisticsService = new Mock<IStatisticsUpdaterService>(MockBehavior.Strict);
+				
 				CpuService = new Mock<ICpuService>(MockBehavior.Strict);
 				TopologyService = new Mock<ITopologyService>(MockBehavior.Strict);
 				ElpidaService = new Mock<IElpidaService>(MockBehavior.Strict);
@@ -80,8 +79,6 @@ namespace Elpida.Backend.Services.Tests
 			public Mock<IOsRepository> OsRepo { get; }
 
 			public Mock<ITaskRepository> TaskRepo { get; }
-
-			public Mock<IStatisticsUpdaterService> StatisticsService { get; }
 
 			public Mock<ICpuService> CpuService { get; }
 

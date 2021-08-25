@@ -18,11 +18,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using Elpida.Backend.Data.Abstractions.Interfaces;
+using Elpida.Backend.Services.Abstractions.Dtos;
 
-namespace Elpida.Backend.Services.Tests
+namespace Elpida.Backend.Services.Tests.Helpers
 {
-	public interface IDummyRepository : IRepository<DummyModel>
+	internal class DummyDto : FoundationDto
 	{
+		public string Data { get; set; }
 	}
 }

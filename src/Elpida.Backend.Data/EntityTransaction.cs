@@ -31,7 +31,7 @@ namespace Elpida.Backend.Data
 	{
 		private readonly IDbContextTransaction _transaction;
 
-		public EntityTransaction(IDbContextTransaction transaction)
+		private EntityTransaction(IDbContextTransaction transaction)
 		{
 			_transaction = transaction;
 		}
@@ -42,20 +42,15 @@ namespace Elpida.Backend.Data
 			GC.SuppressFinalize(this);
 		}
 
-		public static Task<ITransaction> CreateAsync(DbContext context, CancellationToken cancellationToken = default)
-		{
-			return context.Database.BeginTransactionAsync(cancellationToken)
-				.ContinueWith(c => (ITransaction)new EntityTransaction(c.Result), cancellationToken);
-		}
-
 		public Task CommitAsync(CancellationToken cancellationToken = default)
 		{
 			return _transaction.CommitAsync(cancellationToken);
 		}
 
-		public Task RollbackAsync(CancellationToken cancellationToken = default)
+		public static Task<ITransaction> CreateAsync(DbContext context, CancellationToken cancellationToken = default)
 		{
-			return _transaction.RollbackAsync(cancellationToken);
+			return context.Database.BeginTransactionAsync(cancellationToken)
+				.ContinueWith(c => (ITransaction)new EntityTransaction(c.Result), cancellationToken);
 		}
 	}
 }

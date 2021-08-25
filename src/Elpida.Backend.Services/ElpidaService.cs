@@ -23,7 +23,6 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Elpida.Backend.Common.Lock;
 using Elpida.Backend.Data.Abstractions.Models.Elpida;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services.Abstractions;
@@ -36,8 +35,8 @@ namespace Elpida.Backend.Services
 {
 	public class ElpidaService : Service<ElpidaDto, ElpidaModel, IElpidaRepository>, IElpidaService
 	{
-		public ElpidaService(IElpidaRepository elpidaRepository, ILockFactory lockFactory)
-			: base(elpidaRepository, lockFactory)
+		public ElpidaService(IElpidaRepository elpidaRepository)
+			: base(elpidaRepository)
 		{
 		}
 

@@ -18,22 +18,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
+using Elpida.Backend.Data.Abstractions.Interfaces;
 
-namespace Elpida.Backend.Services.Tests
+namespace Elpida.Backend.Services.Tests.Helpers
 {
-	internal class ExpressionEqualityComparer<T> : IEqualityComparer<Expression<Func<T, bool>>>
+	public interface IDummyRepository : IRepository<DummyModel>
 	{
-		public bool Equals(Expression<Func<T, bool>> x, Expression<Func<T, bool>> y)
-		{
-			return x.ToString() == y.ToString();
-		}
-
-		public int GetHashCode(Expression<Func<T, bool>> obj)
-		{
-			return obj.GetHashCode();
-		}
 	}
 }

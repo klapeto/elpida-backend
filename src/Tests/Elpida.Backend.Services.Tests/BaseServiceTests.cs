@@ -24,9 +24,10 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Elpida.Backend.Common.Exceptions;
-using Elpida.Backend.Common.Lock;
 using Elpida.Backend.Data.Abstractions;
+using Elpida.Backend.Data.Abstractions.Interfaces;
 using Elpida.Backend.Services.Abstractions;
+using Elpida.Backend.Services.Tests.Helpers;
 using Elpida.Backend.Services.Utilities;
 using Moq;
 using NUnit.Framework;
@@ -34,13 +35,12 @@ using NUnit.Framework;
 namespace Elpida.Backend.Services.Tests
 {
 	[TestFixture]
-	public class BaseServiceTests
+	internal class BaseServiceTests
 	{
 		[Test]
 		public async Task GetSingleAsync_ExistingId_ReturnsObject()
 		{
 			var repo = new Mock<IDummyRepository>(MockBehavior.Strict);
-			var lockFactory = new Mock<ILockFactory>(MockBehavior.Strict);
 
 			const long id = 5;
 
@@ -53,7 +53,7 @@ namespace Elpida.Backend.Services.Tests
 					}
 				);
 
-			var service = new DummyService(repo.Object, lockFactory.Object);
+			var service = new DummyService(repo.Object);
 
 			var obj = await service.GetSingleAsync(id);
 
@@ -66,14 +66,12 @@ namespace Elpida.Backend.Services.Tests
 		public void GetSingleAsync_NonExistingId_ReturnsObject()
 		{
 			var repo = new Mock<IDummyRepository>(MockBehavior.Strict);
-			var lockFactory = new Mock<ILockFactory>(MockBehavior.Strict);
-
 			const long id = 5;
 
 			repo.Setup(r => r.GetSingleAsync(id, default))
 				.ReturnsAsync((DummyModel)null);
 
-			var service = new DummyService(repo.Object, lockFactory.Object);
+			var service = new DummyService(repo.Object);
 
 			Assert.ThrowsAsync<NotFoundException>(() => service.GetSingleAsync(id));
 
@@ -84,9 +82,8 @@ namespace Elpida.Backend.Services.Tests
 		public async Task GetPagedAsync_ValidQuery_ReturnsObjects()
 		{
 			var repo = new Mock<IDummyRepository>(MockBehavior.Strict);
-			var lockFactory = new Mock<ILockFactory>(MockBehavior.Strict);
 
-			var service = new DummyService(repo.Object, lockFactory.Object);
+			var service = new DummyService(repo.Object);
 			var builder = new QueryExpressionBuilder(service.GetImplementedFilters());
 
 			var query = CreateQuery();
@@ -150,14 +147,75 @@ namespace Elpida.Backend.Services.Tests
 		}
 
 		[Test]
+		public async Task GetPagedAsyncBasic_ValidQuery_ReturnsObjects()
+		{
+			var repo = new Mock<IDummyRepository>(MockBehavior.Strict);
+
+			var service = new DummyBasicService(repo.Object);
+
+			var query = new QueryRequest
+			{
+				Descending = false,
+				PageRequest = new PageRequest
+				{
+					Next = 12,
+					Count = 2,
+					TotalCount = 0,
+				},
+			};
+
+			const int totalCount = 20;
+
+			var returnItems = CreateReturnModels();
+
+			repo.Setup(
+					r => r.GetMultiplePagedAsync(
+						query.PageRequest.Next,
+						query.PageRequest.Count,
+						query.Descending,
+						true,
+						It.Is<Expression<Func<DummyModel, object>>>(x => x == null),
+						It.Is<IEnumerable<Expression<Func<DummyModel, bool>>>>(x => !x.Any()),
+						default
+					)
+				)
+				.ReturnsAsync(new PagedQueryResult<DummyModel>(totalCount, returnItems));
+
+			var obj = await service.GetPagedAsync(query);
+
+			Assert.NotNull(obj);
+
+			Assert.AreEqual(returnItems.Count, obj.Count);
+			Assert.AreEqual(totalCount, obj.TotalCount);
+
+			for (var i = 0; i < returnItems.Count; i++)
+			{
+				Assert.AreEqual(returnItems[i].Id, obj.List[i].Id);
+				Assert.AreEqual(returnItems[i].Data, obj.List[i].Data);
+			}
+
+			repo.Verify(
+				r => r.GetMultiplePagedAsync(
+					query.PageRequest.Next,
+					query.PageRequest.Count,
+					query.Descending,
+					true,
+					It.Is<Expression<Func<DummyModel, object>>>(x => x == null),
+					It.Is<IEnumerable<Expression<Func<DummyModel, bool>>>>(x => !x.Any()),
+					default
+				),
+				Times.Once
+			);
+		}
+
+		[Test]
 		[TestCase(true)]
 		[TestCase(false)]
 		public async Task GetPagedAsync_Descending_CallsRepoWithCorrectValue(bool descending)
 		{
 			var repo = new Mock<IDummyRepository>(MockBehavior.Strict);
-			var lockFactory = new Mock<ILockFactory>(MockBehavior.Strict);
 
-			var service = new DummyService(repo.Object, lockFactory.Object);
+			var service = new DummyService(repo.Object);
 
 			var query = CreateQuery();
 
@@ -201,9 +259,8 @@ namespace Elpida.Backend.Services.Tests
 		public async Task GetPagedAsync_TotalCount_CalculatedWhenNeeded(int totalCount, bool valuePassed, int expected)
 		{
 			var repo = new Mock<IDummyRepository>(MockBehavior.Strict);
-			var lockFactory = new Mock<ILockFactory>(MockBehavior.Strict);
 
-			var service = new DummyService(repo.Object, lockFactory.Object);
+			var service = new DummyService(repo.Object);
 
 			var query = CreateQuery();
 
@@ -243,12 +300,52 @@ namespace Elpida.Backend.Services.Tests
 		}
 
 		[Test]
+		public async Task GetOrAddAsyncBasic_NoBypassChecks_Success()
+		{
+			var repo = new Mock<IDummyRepository>(MockBehavior.Strict);
+
+			var service = new DummyBasicService(repo.Object);
+
+			var dto = new DummyDto
+			{
+				Data = "hahah",
+				Id = 5,
+			};
+
+			const int actualId = 8;
+
+			repo.Setup(r => r.CreateAsync(It.Is<DummyModel>(m => m.Id == 0 && m.Data == dto.Data), default))
+				.ReturnsAsync(
+					new DummyModel
+					{
+						Id = actualId,
+						Data = dto.Data,
+					}
+				);
+
+			repo.Setup(r => r.SaveChangesAsync(default))
+				.Returns(Task.CompletedTask);
+
+			var obj = await service.GetOrAddAsync(dto);
+
+			Assert.NotNull(obj);
+			Assert.AreEqual(actualId, obj.Id);
+			Assert.AreEqual(dto.Data, obj.Data);
+
+			repo.Verify(
+				r => r.CreateAsync(It.Is<DummyModel>(m => m.Id == 0 && m.Data == dto.Data), default),
+				Times.Once
+			);
+
+			repo.Verify(r => r.SaveChangesAsync(default), Times.Once);
+		}
+
+		[Test]
 		public async Task GetOrAddAsync_NoBypassChecks_Success()
 		{
 			var repo = new Mock<IDummyRepository>(MockBehavior.Strict);
-			var lockFactory = new Mock<ILockFactory>(MockBehavior.Strict);
 
-			var service = new DummyService(repo.Object, lockFactory.Object);
+			var service = new DummyService(repo.Object);
 
 			var dto = new DummyDto
 			{
@@ -288,12 +385,11 @@ namespace Elpida.Backend.Services.Tests
 		public async Task GetOrAddAsync_BypassCheck_NoExisting_DoesAdd()
 		{
 			var repo = new Mock<IDummyRepository>(MockBehavior.Strict);
-			var lockFactory = new Mock<ILockFactory>(MockBehavior.Strict);
-			var lockMock = new Mock<IDisposable>(MockBehavior.Strict);
+			var transactionMock = new Mock<ITransaction>(MockBehavior.Strict);
 
 			Expression<Func<DummyModel, bool>> bypassCheck = m => true;
 
-			var service = new DummyService(repo.Object, lockFactory.Object, bypassCheck);
+			var service = new DummyService(repo.Object, bypassCheck);
 
 			var dto = new DummyDto
 			{
@@ -302,6 +398,9 @@ namespace Elpida.Backend.Services.Tests
 			};
 
 			const int actualId = 8;
+
+			repo.Setup(r => r.BeginTransactionAsync(default))
+				.ReturnsAsync(transactionMock.Object);
 
 			repo.Setup(r => r.CreateAsync(It.Is<DummyModel>(m => m.Id == 0 && m.Data == dto.Data), default))
 				.ReturnsAsync(
@@ -312,10 +411,9 @@ namespace Elpida.Backend.Services.Tests
 					}
 				);
 
-			lockMock.Setup(l => l.Dispose());
-
-			lockFactory.Setup(l => l.AcquireAsync(nameof(DummyService), default))
-				.ReturnsAsync(lockMock.Object);
+			transactionMock.Setup(t => t.Dispose());
+			transactionMock.Setup(t => t.CommitAsync(default))
+				.Returns(Task.CompletedTask);
 
 			repo.Setup(r => r.GetSingleAsync(bypassCheck, default))
 				.ReturnsAsync((DummyModel)null!);
@@ -329,7 +427,7 @@ namespace Elpida.Backend.Services.Tests
 			Assert.AreEqual(actualId, obj.Id);
 			Assert.AreEqual(dto.Data, obj.Data);
 
-			repo.Verify(r => r.GetSingleAsync(bypassCheck, default), Times.Exactly(2));
+			repo.Verify(r => r.GetSingleAsync(bypassCheck, default), Times.Once);
 			repo.Verify(
 				r => r.CreateAsync(It.Is<DummyModel>(m => m.Id == 0 && m.Data == dto.Data), default),
 				Times.Once
@@ -337,19 +435,19 @@ namespace Elpida.Backend.Services.Tests
 
 			repo.Verify(r => r.SaveChangesAsync(default), Times.Once);
 
-			lockFactory.Verify(l => l.AcquireAsync(nameof(DummyService), default), Times.Once);
-			lockMock.Verify(l => l.Dispose(), Times.Once);
+			transactionMock.Verify(t => t.Dispose(), Times.Once);
+			transactionMock.Verify(t => t.CommitAsync(default), Times.Once);
 		}
 
 		[Test]
 		public async Task GetOrAddAsync_BypassCheck_ExistingFirst_DoesNotAdd()
 		{
 			var repo = new Mock<IDummyRepository>(MockBehavior.Strict);
-			var lockFactory = new Mock<ILockFactory>(MockBehavior.Strict);
+			var transactionMock = new Mock<ITransaction>(MockBehavior.Strict);
 
 			Expression<Func<DummyModel, bool>> bypassCheck = m => true;
 
-			var service = new DummyService(repo.Object, lockFactory.Object, bypassCheck);
+			var service = new DummyService(repo.Object, bypassCheck);
 
 			var dto = new DummyDto
 			{
@@ -368,6 +466,11 @@ namespace Elpida.Backend.Services.Tests
 					}
 				);
 
+			repo.Setup(r => r.BeginTransactionAsync(default))
+				.ReturnsAsync(transactionMock.Object);
+
+			transactionMock.Setup(t => t.Dispose());
+
 			var obj = await service.GetOrAddAsync(dto);
 
 			Assert.NotNull(obj);
@@ -378,51 +481,34 @@ namespace Elpida.Backend.Services.Tests
 		}
 
 		[Test]
-		public async Task GetOrAddAsync_BypassCheck_DoubleLockCheck_DoesNotAdd()
+		public void GetFilters_WrongModel_ThrowsArgumentExceptionException()
 		{
 			var repo = new Mock<IDummyRepository>(MockBehavior.Strict);
-			var lockFactory = new Mock<ILockFactory>(MockBehavior.Strict);
-			var lockMock = new Mock<IDisposable>(MockBehavior.Strict);
 
-			var bypassCalls = 0;
-			Expression<Func<DummyModel, bool>> bypassCheck = m => true;
+			var service = new DummyService(repo.Object);
 
-			var service = new DummyService(repo.Object, lockFactory.Object, bypassCheck);
+			Assert.Throws<ArgumentException>(
+				() => service.ConstructCustomFilters<DummyModel, string>(m => m.Data).ToArray()
+			);
+		}
 
-			var dto = new DummyDto
-			{
-				Data = "hahah",
-				Id = 5,
-			};
+		[Test]
+		public void GetFilters_Success()
+		{
+			var repo = new Mock<IDummyRepository>(MockBehavior.Strict);
 
-			const int actualId = 8;
+			var service = new DummyService(repo.Object);
 
-			lockMock.Setup(l => l.Dispose());
+			var filters = service.ConstructCustomFilters<DummyModelParent, DummyModel>(m => m.Child)
+				.ToArray();
 
-			lockFactory.Setup(l => l.AcquireAsync(nameof(DummyService), default))
-				.ReturnsAsync(lockMock.Object);
+			Assert.AreEqual(filters.Length, 2);
 
-			repo.Setup(r => r.GetSingleAsync(bypassCheck, default))
-				.ReturnsAsync(
-					() => bypassCalls++ > 0
-						? new DummyModel
-						{
-							Id = actualId,
-							Data = dto.Data,
-						}
-						: null
-				);
+			Assert.AreEqual(filters.First().Expression.ToString(), "m.Child.Id");
+			Assert.AreEqual(filters.First().Name, "id");
 
-			var obj = await service.GetOrAddAsync(dto);
-
-			Assert.NotNull(obj);
-			Assert.AreEqual(actualId, obj.Id);
-			Assert.AreEqual(dto.Data, obj.Data);
-
-			repo.Verify(r => r.GetSingleAsync(bypassCheck, default), Times.Exactly(2));
-
-			lockFactory.Verify(l => l.AcquireAsync(nameof(DummyService), default), Times.Once);
-			lockMock.Verify(l => l.Dispose(), Times.Once);
+			Assert.AreEqual(filters.Last().Expression.ToString(), "m.Child.Data");
+			Assert.AreEqual(filters.Last().Name, "data");
 		}
 
 		private static List<DummyModel> CreateReturnModels()
@@ -464,37 +550,6 @@ namespace Elpida.Backend.Services.Tests
 					},
 				},
 			};
-		}
-
-		[Test]
-		public void GetFilters_WrongModel_ThrowsArgumentExceptionException()
-		{
-			var repo = new Mock<IDummyRepository>(MockBehavior.Strict);
-			var lockFactory = new Mock<ILockFactory>(MockBehavior.Strict);
-
-			var service = new DummyService(repo.Object, lockFactory.Object);
-
-			Assert.Throws<ArgumentException>(() => service.ConstructCustomFilters<DummyModel, string>(m => m.Data).ToArray());
-		}
-
-		[Test]
-		public void GetFilters_Success()
-		{
-			var repo = new Mock<IDummyRepository>(MockBehavior.Strict);
-			var lockFactory = new Mock<ILockFactory>(MockBehavior.Strict);
-
-			var service = new DummyService(repo.Object, lockFactory.Object);
-
-			var filters = service.ConstructCustomFilters<DummyModelParent, DummyModel>(m => m.Child)
-				.ToArray();
-
-			Assert.AreEqual(filters.Length, 2);
-
-			Assert.AreEqual(filters.First().Expression.ToString(), "m.Child.Id");
-			Assert.AreEqual(filters.First().Name, "id");
-			
-			Assert.AreEqual(filters.Last().Expression.ToString(), "m.Child.Data");
-			Assert.AreEqual(filters.Last().Name, "data");
 		}
 	}
 }

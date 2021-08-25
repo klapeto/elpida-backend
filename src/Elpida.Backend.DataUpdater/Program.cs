@@ -42,7 +42,7 @@ namespace Elpida.Backend.DataUpdater
 
 		private static async Task Main(string[] args)
 		{
-			using var servicesConfiguration = new ServicesConfigurator(args);
+			var servicesConfiguration = new ServicesConfigurator(args);
 			using var scope = servicesConfiguration.ServiceProvider.CreateScope();
 			var serviceProvider = scope.ServiceProvider;
 

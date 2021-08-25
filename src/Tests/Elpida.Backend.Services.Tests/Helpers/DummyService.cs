@@ -21,27 +21,24 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Threading;
-using System.Threading.Tasks;
-using Elpida.Backend.Common.Lock;
 using Elpida.Backend.Services.Abstractions;
 using Elpida.Backend.Services.Utilities;
 
-namespace Elpida.Backend.Services.Tests
+namespace Elpida.Backend.Services.Tests.Helpers
 {
-	public class DummyService : Service<DummyDto, DummyModel, IDummyRepository>
+	internal class DummyService : DummyBasicService
 	{
 		private readonly Expression<Func<DummyModel, bool>>? _bypassCheck;
 
-		public DummyService(IDummyRepository repository, ILockFactory lockFactory, Expression<Func<DummyModel, bool>>? bypassCheck = null)
-			: base(repository, lockFactory)
+		public DummyService(IDummyRepository repository, Expression<Func<DummyModel, bool>>? bypassCheck = null)
+			: base(repository)
 		{
 			_bypassCheck = bypassCheck;
 		}
 
-		public IReadOnlyDictionary<string, LambdaExpression> GetImplementedFilters()
+		public IEnumerable<FilterExpression> GetImplementedFilters()
 		{
-			return new Dictionary<string, LambdaExpression>();
+			return GetFilterExpressions();
 		}
 
 		protected override IEnumerable<FilterExpression> GetFilterExpressions()
@@ -53,29 +50,6 @@ namespace Elpida.Backend.Services.Tests
 		protected override Expression<Func<DummyModel, bool>>? GetCreationBypassCheckExpression(DummyDto dto)
 		{
 			return _bypassCheck;
-		}
-
-		protected override DummyDto ToDto(DummyModel model)
-		{
-			return new ()
-			{
-				Id = model.Id,
-				Data = model.Data,
-			};
-		}
-
-		protected override Task<DummyModel> ProcessDtoAndCreateModelAsync(
-			DummyDto dto,
-			CancellationToken cancellationToken
-		)
-		{
-			return Task.FromResult(
-				new DummyModel
-				{
-					Id = dto.Id,
-					Data = dto.Data,
-				}
-			);
 		}
 	}
 }

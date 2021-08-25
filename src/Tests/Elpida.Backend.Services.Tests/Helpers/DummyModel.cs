@@ -20,13 +20,8 @@
 
 using Elpida.Backend.Data.Abstractions.Models;
 
-namespace Elpida.Backend.Services.Tests
+namespace Elpida.Backend.Services.Tests.Helpers
 {
-	public class DummyModelParent : Entity
-	{
-		public DummyModel Child { get; set; }
-	}
-
 	public class DummyModel : Entity
 	{
 		public string Data { get; set; }

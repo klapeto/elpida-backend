@@ -24,7 +24,8 @@ using NUnit.Framework;
 
 namespace Elpida.Backend.Services.Tests
 {
-	public class NotFoundExceptionTests
+	[TestFixture]
+	internal class NotFoundExceptionTests
 	{
 		[Test]
 		public void Id_Valid()

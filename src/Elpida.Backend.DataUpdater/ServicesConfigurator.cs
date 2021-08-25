@@ -19,9 +19,6 @@
 // =========================================================================
 
 using System;
-using System.Threading;
-using Elpida.Backend.Common.Lock;
-using Elpida.Backend.Common.Lock.Redis;
 using Elpida.Backend.Data;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services;
@@ -33,7 +30,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Elpida.Backend.DataUpdater
 {
-	internal class ServicesConfigurator : IDisposable
+	internal class ServicesConfigurator
 	{
 		public ServicesConfigurator(string[] args)
 		{
@@ -61,17 +58,6 @@ namespace Elpida.Backend.DataUpdater
 			services.AddTransient<ITaskService, TaskService>();
 			services.AddTransient<ITopologyService, TopologyService>();
 
-			var redisOptions = Configuration.GetSection("Redis");
-			if (redisOptions.Exists())
-			{
-				services.AddRedisLocks();
-				services.Configure<RedisOptions>(redisOptions);
-			}
-			else
-			{
-				services.AddLocalLocks();
-			}
-
 			services.AddTransient<IBenchmarkResultsRepository, BenchmarkResultsRepository>();
 			services.AddTransient<ICpuRepository, CpuRepository>();
 			services.AddTransient<ITopologyRepository, TopologyRepository>();
@@ -86,7 +72,7 @@ namespace Elpida.Backend.DataUpdater
 				{
 					builder.UseSqlite(
 						Configuration.GetConnectionString("Local"),
-						optionsBuilder => optionsBuilder.CommandTimeout(60)
+						c => c.CommandTimeout(60)
 					);
 				}
 			);
@@ -97,10 +83,5 @@ namespace Elpida.Backend.DataUpdater
 		public IServiceProvider ServiceProvider { get; }
 
 		public IConfigurationRoot Configuration { get; }
-
-		public void Dispose()
-		{
-			
-		}
 	}
 }

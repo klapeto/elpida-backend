@@ -18,36 +18,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using NUnit.Framework;
+using Elpida.Backend.Data.Abstractions.Models;
 
-namespace Elpida.Backend.Services.Tests
+namespace Elpida.Backend.Services.Tests.Helpers
 {
-	public static class Helpers
+	internal class DummyModelParent : Entity
 	{
-		public static bool AssertCollectionsAreEqual<T, R>(
-			IEnumerable<T> ea,
-			IEnumerable<R> eb,
-			Func<T, R, bool> assertion
-		)
-		{
-			var a = ea.ToArray();
-			var b = eb.ToArray();
-
-			Assert.True(a.Length == b.Length);
-
-			// ReSharper disable once LoopCanBeConvertedToQuery
-			for (var i = 0; i < a.Length; i++)
-			{
-				if (!assertion(a[i], b[i]))
-				{
-					return false;
-				}
-			}
-
-			return true;
-		}
+		public DummyModel Child { get; set; }
 	}
 }

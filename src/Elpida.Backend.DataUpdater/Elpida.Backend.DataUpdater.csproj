@@ -61,6 +61,70 @@
         <Content Include="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1629574895.json">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
+        <None Remove="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1629577986.json" />
+        <Content Include="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1629577986.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629741763.json" />
+        <Content Include="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629741763.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629742331.json" />
+        <Content Include="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629742331.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629742905.json" />
+        <Content Include="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629742905.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629743476.json" />
+        <Content Include="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629743476.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629744075.json" />
+        <Content Include="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629744075.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629744680.json" />
+        <Content Include="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629744680.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629745291.json" />
+        <Content Include="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629745291.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629745838.json" />
+        <Content Include="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629745838.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629746411.json" />
+        <Content Include="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629746411.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629746993.json" />
+        <Content Include="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629746993.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629747598.json" />
+        <Content Include="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629747598.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629748542.json" />
+        <Content Include="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629748542.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629749144.json" />
+        <Content Include="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629749144.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="ResultData\Intel(R) Core(TM) i9-10900K CPU @ 3.70GHz-1629575871.json" />
+        <Content Include="ResultData\Intel(R) Core(TM) i9-10900K CPU @ 3.70GHz-1629575871.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="ResultData\Intel(R) Core(TM) i9-10900K CPU @ 3.70GHz-1629590894.json" />
+        <Content Include="ResultData\Intel(R) Core(TM) i9-10900K CPU @ 3.70GHz-1629590894.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
 
 

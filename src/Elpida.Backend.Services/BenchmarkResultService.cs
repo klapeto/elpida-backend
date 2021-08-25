@@ -98,6 +98,8 @@ namespace Elpida.Backend.Services
 					MemorySize = m.MemorySize,
 					OsName = m.Os.Name,
 					OsVersion = m.Os.Version,
+					Score = m.Score,
+					BenchmarkScoreUnit = m.Benchmark.ScoreUnit,
 					ElpidaVersionBuild = m.Elpida.VersionBuild,
 					ElpidaVersionMajor = m.Elpida.VersionMajor,
 					ElpidaVersionMinor = m.Elpida.VersionMinor,

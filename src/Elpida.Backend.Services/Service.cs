@@ -24,7 +24,6 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Common.Exceptions;
-using Elpida.Backend.Common.Lock;
 using Elpida.Backend.Data.Abstractions.Interfaces;
 using Elpida.Backend.Data.Abstractions.Models;
 using Elpida.Backend.Services.Abstractions;
@@ -39,13 +38,10 @@ namespace Elpida.Backend.Services
 		where TRepository : IRepository<TModel>
 		where TDto : FoundationDto
 	{
-		protected Service(TRepository repository, ILockFactory lockFactory)
+		protected Service(TRepository repository)
 		{
 			Repository = repository;
-			LockFactory = lockFactory;
 		}
-
-		protected ILockFactory LockFactory { get; }
 
 		protected TRepository Repository { get; }
 
@@ -80,8 +76,10 @@ namespace Elpida.Backend.Services
 			var bypassExpression = GetCreationBypassCheckExpression(dto);
 			if (bypassExpression == null)
 			{
-				return await DoAddAsync(dto, cancellationToken);
+				return await DoAddAsync(dto, null, cancellationToken);
 			}
+
+			using var transaction = await Repository.BeginTransactionAsync(cancellationToken);
 
 			var entity = await Repository.GetSingleAsync(bypassExpression, cancellationToken);
 			if (entity != null)
@@ -89,34 +87,12 @@ namespace Elpida.Backend.Services
 				return ToDto(entity);
 			}
 
-			using (await LockFactory.AcquireAsync(GetType().Name, cancellationToken))
-			{
-				entity = await Repository.GetSingleAsync(bypassExpression, cancellationToken);
-				if (entity != null)
-				{
-					return ToDto(entity);
-				}
-
-				return await DoAddAsync(dto, cancellationToken);
-			}
+			return await DoAddAsync(dto, transaction, cancellationToken);
 		}
 
 		public IEnumerable<FilterExpression> ConstructCustomFilters<T, TR>(Expression<Func<T, TR>> baseExpression)
 		{
 			return FiltersTransformer.ConstructCustomFilters(baseExpression, GetFilterExpressions());
-		}
-
-		protected static async Task<TFModel> GetOrAddForeignDto<TFDto, TFModel>(
-			IRepository<TFModel> repository,
-			IService<TFDto> service,
-			TFDto dto,
-			CancellationToken cancellationToken
-		)
-			where TFModel : Entity
-			where TFDto : FoundationDto
-		{
-			var newDto = await service.GetOrAddAsync(dto, cancellationToken);
-			return (await repository.GetSingleAsync(newDto.Id, cancellationToken))!;
 		}
 
 		protected abstract TDto ToDto(TModel model);
@@ -133,12 +109,7 @@ namespace Elpida.Backend.Services
 			return null;
 		}
 
-		protected virtual Task OnEntityCreatedAsync(TDto dto, TModel entity, CancellationToken cancellationToken)
-		{
-			return Task.CompletedTask;
-		}
-
-		private async Task<TDto> DoAddAsync(TDto dto, CancellationToken cancellationToken)
+		private async Task<TDto> DoAddAsync(TDto dto, ITransaction? transaction, CancellationToken cancellationToken)
 		{
 			var entity = await ProcessDtoAndCreateModelAsync(dto, cancellationToken);
 			entity.Id = 0;
@@ -146,11 +117,12 @@ namespace Elpida.Backend.Services
 
 			await Repository.SaveChangesAsync(cancellationToken);
 
-			dto = ToDto(entity);
+			if (transaction != null)
+			{
+				await transaction.CommitAsync(cancellationToken);
+			}
 
-			await OnEntityCreatedAsync(dto, entity, cancellationToken);
-			
-			return dto;
+			return ToDto(entity);
 		}
 	}
 }

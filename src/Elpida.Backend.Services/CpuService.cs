@@ -23,7 +23,6 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Elpida.Backend.Common.Lock;
 using Elpida.Backend.Data.Abstractions.Models.Cpu;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services.Abstractions;
@@ -37,8 +36,8 @@ namespace Elpida.Backend.Services
 {
 	public class CpuService : Service<CpuDto, CpuModel, ICpuRepository>, ICpuService
 	{
-		public CpuService(ICpuRepository cpuRepository, ILockFactory lockFactory)
-			: base(cpuRepository, lockFactory)
+		public CpuService(ICpuRepository cpuRepository)
+			: base(cpuRepository)
 		{
 		}
 

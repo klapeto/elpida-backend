@@ -25,7 +25,6 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Common.Extensions;
-using Elpida.Backend.Common.Lock;
 using Elpida.Backend.Data.Abstractions.Models.Cpu;
 using Elpida.Backend.Data.Abstractions.Models.Topology;
 using Elpida.Backend.Data.Abstractions.Repositories;
@@ -42,8 +41,8 @@ namespace Elpida.Backend.Services
 	{
 		private readonly ICpuService _cpuService;
 
-		public TopologyService(ITopologyRepository topologyRepository, ICpuService cpuService, ILockFactory lockFactory)
-			: base(topologyRepository, lockFactory)
+		public TopologyService(ITopologyRepository topologyRepository, ICpuService cpuService)
+			: base(topologyRepository)
 		{
 			_cpuService = cpuService;
 		}
@@ -110,7 +109,10 @@ namespace Elpida.Backend.Services
 					FiltersTransformer.CreateFilter<TopologyModel, int>("cpuPackages", model => model.TotalPackages),
 					FiltersTransformer.CreateFilter<TopologyModel, int>("cpuNumaNodes", model => model.TotalNumaNodes),
 					FiltersTransformer.CreateFilter<TopologyModel, int>("cpuCores", model => model.TotalPhysicalCores),
-					FiltersTransformer.CreateFilter<TopologyModel, int>("cpuLogicalCores", model => model.TotalLogicalCores),
+					FiltersTransformer.CreateFilter<TopologyModel, int>(
+						"cpuLogicalCores",
+						model => model.TotalLogicalCores
+					),
 				}
 				.Concat(_cpuService.ConstructCustomFilters<TopologyModel, CpuModel>(m => m.Cpu))
 				.ToArray();

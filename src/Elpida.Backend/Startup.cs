@@ -63,7 +63,7 @@ namespace Elpida.Backend
 					configuration =>
 					{
 						configuration.ImplicitlyValidateChildProperties = true;
-						configuration.RegisterValidatorsFromAssemblyContaining<ResultValidator>();
+						configuration.RegisterValidatorsFromAssemblyContaining<BenchmarkResultSlimValidator>();
 					}
 				);
 
@@ -75,12 +75,6 @@ namespace Elpida.Backend
 			services.AddScoped<IBenchmarkStatisticsService, BenchmarkStatisticsService>();
 			services.AddScoped<ITaskService, TaskService>();
 			services.AddScoped<ITopologyService, TopologyService>();
-
-			AddLocking(services);
-
-			services.AddSingleton<StatisticsUpdaterService>();
-			services.AddSingleton<IStatisticsUpdaterService>(x => x.GetRequiredService<StatisticsUpdaterService>());
-			services.AddHostedService(x => x.GetRequiredService<StatisticsUpdaterService>());
 
 			services.AddTransient<IBenchmarkResultsRepository, BenchmarkResultsRepository>();
 			services.AddTransient<ICpuRepository, CpuRepository>();
@@ -186,20 +180,6 @@ namespace Elpida.Backend
 				default:
 					context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 					break;
-			}
-		}
-
-		private void AddLocking(IServiceCollection services)
-		{
-			var redisOptions = Configuration.GetSection("Redis");
-			if (redisOptions.Exists())
-			{
-				services.AddRedisLocks();
-				services.Configure<RedisOptions>(redisOptions);
-			}
-			else
-			{
-				services.AddLocalLocks();
 			}
 		}
 	}

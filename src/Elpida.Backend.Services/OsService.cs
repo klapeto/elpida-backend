@@ -23,7 +23,6 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Elpida.Backend.Common.Lock;
 using Elpida.Backend.Data.Abstractions.Models.Os;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services.Abstractions;
@@ -43,8 +42,8 @@ namespace Elpida.Backend.Services
 			FiltersTransformer.CreateFilter<OsModel, string>("osVersion", model => model.Version),
 		};
 
-		public OsService(IOsRepository osRepository, ILockFactory lockFactory)
-			: base(osRepository, lockFactory)
+		public OsService(IOsRepository osRepository)
+			: base(osRepository)
 		{
 		}
 

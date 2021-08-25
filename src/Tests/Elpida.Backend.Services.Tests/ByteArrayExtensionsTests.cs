@@ -24,7 +24,7 @@ using NUnit.Framework;
 namespace Elpida.Backend.Services.Tests
 {
 	[TestFixture]
-	public class ByteArrayExtensionsTests
+	internal class ByteArrayExtensionsTests
 	{
 		[Test]
 		public void Success()

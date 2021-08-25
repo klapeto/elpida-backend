@@ -24,7 +24,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Elpida.Backend.Common.Lock;
 using Elpida.Backend.Data.Abstractions.Models.Benchmark;
 using Elpida.Backend.Data.Abstractions.Models.Cpu;
 using Elpida.Backend.Data.Abstractions.Models.Statistics;
@@ -51,10 +50,9 @@ namespace Elpida.Backend.Services
 			IBenchmarkService benchmarkService,
 			IBenchmarkStatisticsRepository benchmarkStatisticsRepository,
 			ICpuService cpuService,
-			IBenchmarkResultsRepository benchmarkResultsRepository,
-			ILockFactory lockFactory
+			IBenchmarkResultsRepository benchmarkResultsRepository
 		)
-			: base(benchmarkStatisticsRepository, lockFactory)
+			: base(benchmarkStatisticsRepository)
 		{
 			_cpuService = cpuService;
 			_benchmarkResultsRepository = benchmarkResultsRepository;

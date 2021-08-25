@@ -32,7 +32,7 @@ using Elpida.Backend.Services.Abstractions.Dtos.Topology;
 
 namespace Elpida.Backend.Services.Tests
 {
-	public static class Generators
+	internal static class Generators
 	{
 		public static TaskModel CreateNewTaskModel()
 		{
