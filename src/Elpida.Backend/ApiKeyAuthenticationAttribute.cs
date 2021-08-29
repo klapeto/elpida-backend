@@ -32,7 +32,7 @@ namespace Elpida.Backend
 	{
 		private const string ApiKeyHeaderName = "api_key";
 
-		public string KeyName { get; set; }
+		public string KeyName { get; set; } = string.Empty;
 
 		public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
 		{

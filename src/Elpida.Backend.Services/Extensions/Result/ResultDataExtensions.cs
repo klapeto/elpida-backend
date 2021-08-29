@@ -67,6 +67,36 @@ namespace Elpida.Backend.Services.Extensions.Result
 			);
 		}
 
+		public static DataSpecificationDto? CreateInputSpecDto(this TaskModel model)
+		{
+			if (string.IsNullOrWhiteSpace(model.InputName))
+			{
+				return null;
+			}
+
+			return new DataSpecificationDto(
+				model.InputName,
+				model.InputDescription!,
+				model.InputUnit!,
+				JsonConvert.DeserializeObject<string[]>(model.InputProperties!)
+			);
+		}
+
+		public static DataSpecificationDto? CreateOutputSpecDto(this TaskModel model)
+		{
+			if (string.IsNullOrWhiteSpace(model.OutputName))
+			{
+				return null;
+			}
+
+			return new DataSpecificationDto(
+				model.OutputName,
+				model.OutputDescription!,
+				model.OutputUnit!,
+				JsonConvert.DeserializeObject<string[]>(model.OutputProperties!)
+			);
+		}
+
 		private static TaskRunStatisticsDto GetTaskRunStatisticsDto(TaskResultModel model)
 		{
 			return new (
@@ -119,36 +149,6 @@ namespace Elpida.Backend.Services.Extensions.Result
 			);
 
 			return new SystemDto(result.Cpu.ToDto(), result.Os.ToDto(), result.Topology.ToDto(), memory, timing);
-		}
-
-		public static DataSpecificationDto? CreateInputSpecDto(this TaskModel model)
-		{
-			if (string.IsNullOrWhiteSpace(model.InputName))
-			{
-				return null;
-			}
-
-			return new DataSpecificationDto(
-				model.InputName,
-				model.InputDescription!,
-				model.InputUnit!,
-				JsonConvert.DeserializeObject<string[]>(model.InputProperties!)
-			);
-		}
-
-		public static DataSpecificationDto? CreateOutputSpecDto(this TaskModel model)
-		{
-			if (string.IsNullOrWhiteSpace(model.OutputName))
-			{
-				return null;
-			}
-
-			return new DataSpecificationDto(
-				model.OutputName,
-				model.OutputDescription!,
-				model.OutputUnit!,
-				JsonConvert.DeserializeObject<string[]>(model.OutputProperties!)
-			);
 		}
 	}
 }

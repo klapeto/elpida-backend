@@ -25,8 +25,6 @@ using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
 using Elpida.Backend.Common.Exceptions;
-using Elpida.Backend.Common.Lock;
-using Elpida.Backend.Common.Lock.Redis;
 using Elpida.Backend.Data;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services;
@@ -109,10 +107,12 @@ namespace Elpida.Backend
 				{
 					c.SwaggerDoc("v1", new OpenApiInfo { Title = "Elpida HTTP Rest Api", Version = "1" });
 
-					foreach (var assemblyName in Assembly.GetEntryAssembly()
+					var assembly = Assembly.GetExecutingAssembly();
+
+					foreach (var assemblyName in assembly
 						.GetReferencedAssemblies()
-						.Where(a => a.Name.Contains("Elpida"))
-						.Concat(new[] { Assembly.GetEntryAssembly().GetName() }))
+						.Where(a => a.Name?.Contains("Elpida") ?? false)
+						.Concat(new[] { assembly.GetName() }))
 					{
 						var docFile = $"{assemblyName.Name}.xml";
 

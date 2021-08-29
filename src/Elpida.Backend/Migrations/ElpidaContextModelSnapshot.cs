@@ -441,9 +441,6 @@ namespace Elpida.Backend.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("TotalDepth")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("TotalLogicalCores")
                         .HasColumnType("INTEGER");
 

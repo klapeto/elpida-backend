@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Elpida.Backend.Migrations
 {
     [DbContext(typeof(ElpidaContext))]
-    [Migration("20210703204908_InitialCreate")]
+    [Migration("20210829145641_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -442,9 +442,6 @@ namespace Elpida.Backend.Migrations
                     b.Property<string>("TopologyHash")
                         .IsRequired()
                         .HasColumnType("TEXT");
-
-                    b.Property<int>("TotalDepth")
-                        .HasColumnType("INTEGER");
 
                     b.Property<int>("TotalLogicalCores")
                         .HasColumnType("INTEGER");

@@ -69,7 +69,7 @@ namespace Elpida.Backend.Services.Tests
 			const long id = 5;
 
 			repo.Setup(r => r.GetSingleAsync(id, default))
-				.ReturnsAsync((DummyModel)null);
+				.Returns(Task.FromResult((DummyModel?)null));
 
 			var service = new DummyService(repo.Object);
 

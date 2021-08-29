@@ -151,7 +151,6 @@ namespace Elpida.Backend.Migrations
                     TotalPhysicalCores = table.Column<int>(type: "INTEGER", nullable: false),
                     TotalNumaNodes = table.Column<int>(type: "INTEGER", nullable: false),
                     TotalPackages = table.Column<int>(type: "INTEGER", nullable: false),
-                    TotalDepth = table.Column<int>(type: "INTEGER", nullable: false),
                     Root = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>

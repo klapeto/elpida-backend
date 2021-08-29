@@ -191,7 +191,12 @@ namespace Elpida.Backend.Services
 		)
 		{
 			var cpu = await _cpuService.GetOrAddAsync(batch.System.Cpu, cancellationToken);
-			var topology = await _topologyService.GetOrAddTopologyAsync(cpu.Id, batch.System.Topology, cancellationToken);
+			var topology = await _topologyService.GetOrAddTopologyAsync(
+				cpu.Id,
+				batch.System.Topology,
+				cancellationToken
+			);
+
 			var os = await _osService.GetOrAddAsync(batch.System.Os, cancellationToken);
 			var elpida = await _elpidaService.GetOrAddAsync(batch.Elpida, cancellationToken);
 

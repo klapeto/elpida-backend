@@ -24,6 +24,6 @@ namespace Elpida.Backend.Services.Tests.Helpers
 {
 	internal class DummyModelParent : Entity
 	{
-		public DummyModel Child { get; set; }
+		public DummyModel Child { get; set; } = new ();
 	}
 }

@@ -18,12 +18,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
+using System;
 using Elpida.Backend.Data.Abstractions.Models;
 
 namespace Elpida.Backend.Services.Tests.Helpers
 {
 	public class DummyModel : Entity
 	{
-		public string Data { get; set; }
+		public string Data { get; set; } = string.Empty;
 	}
 }

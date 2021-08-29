@@ -26,9 +26,9 @@ namespace Elpida.Backend.Services.Tests
 {
 	internal class ExpressionEqualityComparer<T> : IEqualityComparer<Expression<Func<T, bool>>>
 	{
-		public bool Equals(Expression<Func<T, bool>> x, Expression<Func<T, bool>> y)
+		public bool Equals(Expression<Func<T, bool>>? x, Expression<Func<T, bool>>? y)
 		{
-			return x.ToString() == y.ToString();
+			return x?.ToString() == y?.ToString();
 		}
 
 		public int GetHashCode(Expression<Func<T, bool>> obj)

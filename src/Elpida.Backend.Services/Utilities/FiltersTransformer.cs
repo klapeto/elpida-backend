@@ -60,7 +60,7 @@ namespace Elpida.Backend.Services.Utilities
 			while (memberExpression.NodeType == ExpressionType.MemberAccess)
 			{
 				members.Push((MemberExpression)memberExpression);
-				memberExpression = ((MemberExpression)memberExpression).Expression;
+				memberExpression = ((MemberExpression)memberExpression).Expression!;
 			}
 
 			var returnExpression = baseBody;

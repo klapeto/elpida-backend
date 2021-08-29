@@ -38,21 +38,6 @@ namespace Elpida.Backend.Services.Utilities
 			);
 		}
 
-		private static ParameterExpression GetParameterExpression(Expression expression)
-		{
-			while (expression.NodeType == ExpressionType.MemberAccess)
-			{
-				expression = ((MemberExpression)expression).Expression;
-			}
-
-			if (expression.NodeType != ExpressionType.Parameter)
-			{
-				throw new ArgumentException("Expression does not contain parameter");
-			}
-
-			return (ParameterExpression)expression;
-		}
-
 		public IEnumerable<Expression<Func<T, bool>>> Build<T>(IEnumerable<FilterInstance>? queryInstances)
 		{
 			if (queryInstances == null)
@@ -121,7 +106,22 @@ namespace Elpida.Backend.Services.Utilities
 			);
 		}
 
-		private Expression<Func<T, bool>>? GetFilter<T>(FilterInstance? instance, LambdaExpression fieldPart)
+		private static ParameterExpression GetParameterExpression(Expression expression)
+		{
+			while (expression.NodeType == ExpressionType.MemberAccess)
+			{
+				expression = ((MemberExpression)expression).Expression!;
+			}
+
+			if (expression.NodeType != ExpressionType.Parameter)
+			{
+				throw new ArgumentException("Expression does not contain parameter");
+			}
+
+			return (ParameterExpression)expression;
+		}
+
+		private static Expression<Func<T, bool>>? GetFilter<T>(FilterInstance? instance, LambdaExpression fieldPart)
 		{
 			if (instance == null)
 			{
