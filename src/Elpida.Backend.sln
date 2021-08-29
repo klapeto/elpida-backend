@@ -20,6 +20,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elpida.Backend.DataUpdater"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elpida.Backend.Common", "Elpida.Backend.Common\Elpida.Backend.Common.csproj", "{9C6DEC57-DDD2-42C3-82CD-F44A4189882B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elpida.Backend.Tests", "Tests\Elpida.Backend.Tests\Elpida.Backend.Tests.csproj", "{B022182E-FF1F-4CEB-84A4-0256518BAD6F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,9 +64,14 @@ Global
 		{9C6DEC57-DDD2-42C3-82CD-F44A4189882B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C6DEC57-DDD2-42C3-82CD-F44A4189882B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9C6DEC57-DDD2-42C3-82CD-F44A4189882B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B022182E-FF1F-4CEB-84A4-0256518BAD6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B022182E-FF1F-4CEB-84A4-0256518BAD6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B022182E-FF1F-4CEB-84A4-0256518BAD6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B022182E-FF1F-4CEB-84A4-0256518BAD6F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{32FFEBFE-216B-4023-A58E-FAFB7315BD80} = {5BB95D0B-CD12-46E4-A6AA-DEE50004B40B}
 		{9EFDD817-8DA5-423A-9CAC-472286E2FFA9} = {5BB95D0B-CD12-46E4-A6AA-DEE50004B40B}
+		{B022182E-FF1F-4CEB-84A4-0256518BAD6F} = {5BB95D0B-CD12-46E4-A6AA-DEE50004B40B}
 	EndGlobalSection
 EndGlobal

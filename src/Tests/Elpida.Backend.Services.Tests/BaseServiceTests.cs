@@ -507,7 +507,7 @@ namespace Elpida.Backend.Services.Tests
 
 		private static QueryRequest CreateQuery(long totalCount = 0, bool descending = false)
 		{
-			var filters = new[] { new FilterInstance("data", "lol", "eq") };
+			var filters = new[] { new FilterInstance("data", "lol", "equal") };
 			return new QueryRequest(new PageRequest(12, 2, totalCount), filters, "data", descending);
 		}
 	}

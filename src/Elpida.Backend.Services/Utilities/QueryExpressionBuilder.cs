@@ -136,11 +136,11 @@ namespace Elpida.Backend.Services.Utilities
 
 			if (instance.Value is string str && !DateTime.TryParse(str, out _))
 			{
-				if (instance.Comp != null)
+				if (instance.Comparison != null)
 				{
 					if (
-						FilterMaps.StringComparisons.Contains(instance.Comp)
-						&& ComparisonExpressions.ExpressionFactories.TryGetValue(instance.Comp, out var factory))
+						FilterMaps.StringComparisons.Contains(instance.Comparison)
+						&& ComparisonExpressions.ExpressionFactories.TryGetValue(instance.Comparison, out var factory))
 					{
 						middlePart = factory(left, right);
 					}
@@ -162,10 +162,10 @@ namespace Elpida.Backend.Services.Utilities
 			}
 			else
 			{
-				if (instance.Comp != null)
+				if (instance.Comparison != null)
 				{
-					if (FilterMaps.NumberComparisons.Contains(instance.Comp)
-					    && ComparisonExpressions.ExpressionFactories.TryGetValue(instance.Comp, out var factory))
+					if (FilterMaps.NumberComparisons.Contains(instance.Comparison)
+					    && ComparisonExpressions.ExpressionFactories.TryGetValue(instance.Comparison, out var factory))
 					{
 						middlePart = factory(left, right);
 					}

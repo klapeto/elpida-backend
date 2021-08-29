@@ -61,7 +61,7 @@ namespace Elpida.Backend
 					configuration =>
 					{
 						configuration.ImplicitlyValidateChildProperties = true;
-						configuration.RegisterValidatorsFromAssemblyContaining<BenchmarkResultSlimValidator>();
+						configuration.RegisterValidatorsFromAssemblyContaining<BenchmarkResultSlimDtoValidator>();
 					}
 				);
 

@@ -19,7 +19,6 @@
 // =========================================================================
 
 using System;
-using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 using Elpida.Backend.Services.Abstractions;
@@ -45,31 +44,30 @@ namespace Elpida.Backend
 
 		private static FilterInstance ConvertValues(FilterInstance instance)
 		{
-			if (instance.Value == null)
-			{
-				return instance;
-			}
-
 			var element = (JsonElement)instance.Value;
 			switch (element.ValueKind)
 			{
 				case JsonValueKind.String:
 					return DateTime.TryParse(element.GetString(), out var date)
-						? new FilterInstance(instance.Name, date, instance.Comp)
-						: new FilterInstance(instance.Name, element.GetString(), instance.Comp);
+						? new FilterInstance(instance.Name, date, instance.Comparison)
+						: new FilterInstance(
+							instance.Name,
+							element.GetString() ?? throw new ArgumentException("The filter value cannot be null"),
+							instance.Comparison
+						);
 				case JsonValueKind.Number:
-					return new FilterInstance(instance.Name, element.GetDouble(), instance.Comp);
+					return new FilterInstance(instance.Name, element.GetDouble(), instance.Comparison);
 				case JsonValueKind.False:
 				case JsonValueKind.True:
-					return new FilterInstance(instance.Name, element.GetBoolean(), instance.Comp);
-				case JsonValueKind.Null:
-				case JsonValueKind.Undefined:
-					return new FilterInstance(instance.Name, null, instance.Comp);
+					return new FilterInstance(instance.Name, element.GetBoolean(), instance.Comparison);
 				case JsonValueKind.Object:
 				case JsonValueKind.Array:
 					return instance;
 				default:
-					throw new ArgumentOutOfRangeException(nameof(instance), $"The JSON member type of '{element.ValueKind}' is not acceptable");
+					throw new ArgumentOutOfRangeException(
+						nameof(instance),
+						$"The JSON member type of '{element.ValueKind}' is not acceptable"
+					);
 			}
 		}
 	}

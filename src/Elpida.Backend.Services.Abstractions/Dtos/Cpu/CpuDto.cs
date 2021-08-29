@@ -46,9 +46,9 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Cpu
 			string modelName,
 			long frequency,
 			bool smt,
-			IDictionary<string, string> additionalInfo,
-			CpuCacheDto[] caches,
-			string[] features
+			IDictionary<string, string>? additionalInfo,
+			CpuCacheDto[]? caches,
+			string[]? features
 		)
 			: base(id)
 		{
@@ -93,16 +93,16 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Cpu
 		/// <summary>
 		///     Additional cpu specific information of this Cpu.
 		/// </summary>
-		public IDictionary<string, string> AdditionalInfo { get; }
+		public IDictionary<string, string>? AdditionalInfo { get; }
 
 		/// <summary>
 		///     The caches of this cpu.
 		/// </summary>
-		public CpuCacheDto[] Caches { get; }
+		public CpuCacheDto[]? Caches { get; }
 
 		/// <summary>
 		///     Features that this Cpu supports.
 		/// </summary>
-		public string[] Features { get; }
+		public string[]? Features { get; }
 	}
 }

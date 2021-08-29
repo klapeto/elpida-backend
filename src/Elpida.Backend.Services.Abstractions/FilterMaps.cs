@@ -33,14 +33,14 @@ namespace Elpida.Backend.Services.Abstractions
 		public static IReadOnlyDictionary<FilterComparison, string> ComparisonMap { get; } =
 			new Dictionary<FilterComparison, string>
 			{
-				[FilterComparison.Equal] = "eq",
-				[FilterComparison.NotEqual] = "neq",
-				[FilterComparison.Contains] = "c",
-				[FilterComparison.NotContain] = "nc",
-				[FilterComparison.GreaterEqual] = "ge",
-				[FilterComparison.Greater] = "g",
-				[FilterComparison.LessEqual] = "le",
-				[FilterComparison.Less] = "l",
+				[FilterComparison.Equal] = "equal",
+				[FilterComparison.NotEqual] = "not-equal",
+				[FilterComparison.Contains] = "contain",
+				[FilterComparison.NotContain] = "not-contain",
+				[FilterComparison.GreaterEqual] = "greater-equal",
+				[FilterComparison.Greater] = "greater",
+				[FilterComparison.LessEqual] = "less-equal",
+				[FilterComparison.Less] = "less",
 			};
 
 		/// <summary>

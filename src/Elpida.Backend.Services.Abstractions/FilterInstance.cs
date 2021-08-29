@@ -30,12 +30,12 @@ namespace Elpida.Backend.Services.Abstractions
 		/// </summary>
 		/// <param name="name">The name of the field to filter.</param>
 		/// <param name="value">The value of the filter.</param>
-		/// <param name="comp">The comparison that the filter should do.</param>
-		public FilterInstance(string name, object? value, string? comp)
+		/// <param name="comparison">The comparison that the filter should do.</param>
+		public FilterInstance(string name, object value, string comparison)
 		{
 			Name = name;
 			Value = value;
-			Comp = comp;
+			Comparison = comparison;
 		}
 
 		/// <summary>
@@ -48,12 +48,12 @@ namespace Elpida.Backend.Services.Abstractions
 		///     The value this criteria.
 		/// </summary>
 		/// <example>Allocate Memory</example>
-		public object? Value { get; }
+		public object Value { get; }
 
 		/// <summary>
 		///     The comparison to use on the field and the value.
 		/// </summary>
-		/// <example>eq</example>
-		public string? Comp { get; }
+		/// <example>equal</example>
+		public string Comparison { get; }
 	}
 }
