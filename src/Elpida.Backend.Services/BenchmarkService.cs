@@ -24,7 +24,6 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Common.Exceptions;
-using Elpida.Backend.Common.Lock;
 using Elpida.Backend.Data.Abstractions.Models.Benchmark;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services.Abstractions;
@@ -62,12 +61,7 @@ namespace Elpida.Backend.Services
 				Repository,
 				GetFilterExpressions(),
 				queryRequest,
-				m => new BenchmarkPreviewDto
-				{
-					Id = m.Id,
-					Name = m.Name,
-					Uuid = m.Uuid,
-				},
+				m => new BenchmarkPreviewDto(m.Id, m.Uuid, m.Name),
 				cancellationToken
 			);
 		}

@@ -23,53 +23,83 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Topology
 	/// <summary>
 	///     A preview of a topology.
 	/// </summary>
-	public class TopologyPreviewDto : FoundationDto
+	public sealed class TopologyPreviewDto : FoundationDto
 	{
+		/// <summary>
+		///     Initializes a new instance of the <see cref="TopologyPreviewDto" /> class.
+		/// </summary>
+		/// <param name="id">The id of the Topology.</param>
+		/// <param name="cpuId">The id of the cpu this topology belongs.</param>
+		/// <param name="cpuVendor">The vendor of the cpu this topology belongs.</param>
+		/// <param name="cpuModelName">The cpu model name of the cpu this topology belongs.</param>
+		/// <param name="totalLogicalCores">The total logical cores of this topology.</param>
+		/// <param name="totalPhysicalCores">The total physical cores of this topology.</param>
+		/// <param name="totalNumaNodes">The numa nodes of this topology.</param>
+		/// <param name="totalPackages">The total packages of this topology.</param>
+		/// <param name="hash">The hash of this topology.</param>
+		public TopologyPreviewDto(
+			long id,
+			long cpuId,
+			string cpuVendor,
+			string cpuModelName,
+			int totalLogicalCores,
+			int totalPhysicalCores,
+			int totalNumaNodes,
+			int totalPackages,
+			string hash
+		)
+			: base(id)
+		{
+			CpuId = cpuId;
+			CpuVendor = cpuVendor;
+			CpuModelName = cpuModelName;
+			TotalLogicalCores = totalLogicalCores;
+			TotalPhysicalCores = totalPhysicalCores;
+			TotalNumaNodes = totalNumaNodes;
+			TotalPackages = totalPackages;
+			Hash = hash;
+		}
+
 		/// <summary>
 		///     The id of the cpu this topology belongs.
 		/// </summary>
-		public long CpuId { get; set; }
+		public long CpuId { get; }
 
 		/// <summary>
 		///     The vendor of the cpu this topology belongs.
 		/// </summary>
 		/// <example>ARM</example>
-		public string CpuVendor { get; set; } = default!;
+		public string CpuVendor { get; }
 
 		/// <summary>
 		///     The cpu model name of the cpu this topology belongs.
 		/// </summary>
 		/// <example>Cortex A7</example>
-		public string CpuModelName { get; set; } = default!;
+		public string CpuModelName { get; }
 
 		/// <summary>
 		///     The total logical cores of this topology.
 		/// </summary>
-		public int TotalLogicalCores { get; set; }
+		public int TotalLogicalCores { get; }
 
 		/// <summary>
 		///     The total physical cores of this topology.
 		/// </summary>
-		public int TotalPhysicalCores { get; set; }
+		public int TotalPhysicalCores { get; }
 
 		/// <summary>
 		///     The numa nodes of this topology.
 		/// </summary>
-		public int TotalNumaNodes { get; set; }
+		public int TotalNumaNodes { get; }
 
 		/// <summary>
 		///     The total packages of this topology.
 		/// </summary>
-		public int TotalPackages { get; set; }
-
-		/// <summary>
-		///     The total depth of this topology.
-		/// </summary>
-		public int TotalDepth { get; set; }
+		public int TotalPackages { get; }
 
 		/// <summary>
 		///     The hash of this topology.
 		/// </summary>
-		public string Hash { get; set; } = default!;
+		public string Hash { get; }
 	}
 }

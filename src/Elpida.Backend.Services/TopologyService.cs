@@ -58,19 +58,36 @@ namespace Elpida.Backend.Services
 				Repository,
 				GetFilterExpressions(),
 				queryRequest,
-				m => new TopologyPreviewDto
-				{
-					Id = m.Id,
-					CpuId = m.CpuId,
-					CpuVendor = m.Cpu.Vendor,
-					CpuModelName = m.Cpu.ModelName,
-					TotalDepth = m.TotalDepth,
-					TotalPackages = m.TotalPackages,
-					TotalNumaNodes = m.TotalNumaNodes,
-					TotalPhysicalCores = m.TotalPhysicalCores,
-					TotalLogicalCores = m.TotalLogicalCores,
-					Hash = m.TopologyHash,
-				},
+				m => new TopologyPreviewDto(
+					m.Id,
+					m.CpuId,
+					m.Cpu.Vendor,
+					m.Cpu.ModelName,
+					m.TotalLogicalCores,
+					m.TotalPhysicalCores,
+					m.TotalNumaNodes,
+					m.TotalPackages,
+					m.TopologyHash
+				),
+				cancellationToken
+			);
+		}
+
+		public async Task<TopologyDto> GetOrAddTopologyAsync(long cpuId, TopologyDto topology, CancellationToken cancellationToken = default)
+		{
+			var cpu = await _cpuService.GetSingleAsync(cpuId, cancellationToken);
+			return await GetOrAddAsync(
+				new TopologyDto(
+					0,
+					cpuId,
+					cpu.Vendor,
+					cpu.ModelName,
+					topology.TotalLogicalCores,
+					topology.TotalPhysicalCores,
+					topology.TotalNumaNodes,
+					topology.TotalPackages,
+					topology.Root
+				),
 				cancellationToken
 			);
 		}
@@ -87,7 +104,6 @@ namespace Elpida.Backend.Services
 					Id = dto.Id,
 					CpuId = dto.CpuId,
 					TopologyHash = GetTopologyHash(dto, serializedRoot),
-					TotalDepth = dto.TotalDepth,
 					TotalLogicalCores = dto.TotalLogicalCores,
 					TotalPhysicalCores = dto.TotalPhysicalCores,
 					TotalNumaNodes = dto.TotalNumaNodes,
@@ -127,44 +143,10 @@ namespace Elpida.Backend.Services
 
 		protected override Expression<Func<TopologyModel, bool>> GetCreationBypassCheckExpression(TopologyDto dto)
 		{
-			SanitizeNode(dto.Root);
 			var topologyHash = GetTopologyHash(dto);
 			return t =>
 				t.CpuId == dto.CpuId
 				&& t.TopologyHash == topologyHash;
-		}
-
-		private static void SanitizeNode(CpuNodeDto node)
-		{
-			if (node.Children != null)
-			{
-				foreach (var child in node.Children)
-				{
-					SanitizeNode(child);
-				}
-			}
-
-			if (node.MemoryChildren != null)
-			{
-				foreach (var child in node.MemoryChildren)
-				{
-					SanitizeNode(child);
-				}
-			}
-
-			switch (node.NodeType)
-			{
-				case ProcessorNodeType.L1DCache:
-				case ProcessorNodeType.L1ICache:
-				case ProcessorNodeType.L2DCache:
-				case ProcessorNodeType.L2ICache:
-				case ProcessorNodeType.L3DCache:
-				case ProcessorNodeType.L4Cache:
-				case ProcessorNodeType.L5Cache:
-					return;
-			}
-
-			node.Value = null;
 		}
 
 		private static string GetTopologyHash(TopologyDto dto, string? serializedRoot = null)

@@ -27,22 +27,15 @@ namespace Elpida.Backend.Services.Extensions.Elpida
 	{
 		public static ElpidaDto ToDto(this ElpidaModel elpidaModel)
 		{
-			return new ()
-			{
-				Id = elpidaModel.Id,
-				Compiler = new CompilerDto
-				{
-					Name = elpidaModel.CompilerName,
-					Version = elpidaModel.CompilerVersion,
-				},
-				Version = new VersionDto
-				{
-					Major = elpidaModel.VersionMajor,
-					Minor = elpidaModel.VersionMinor,
-					Revision = elpidaModel.VersionRevision,
-					Build = elpidaModel.VersionBuild,
-				},
-			};
+			return new (
+				elpidaModel.Id,
+				new VersionDto(
+					elpidaModel.VersionMajor,
+					elpidaModel.VersionMinor,
+					elpidaModel.VersionRevision,
+					elpidaModel.VersionBuild
+				),
+				new CompilerDto(elpidaModel.CompilerName, elpidaModel.CompilerVersion));
 		}
 	}
 }

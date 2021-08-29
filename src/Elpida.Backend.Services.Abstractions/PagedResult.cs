@@ -19,6 +19,7 @@
 // =========================================================================
 
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Elpida.Backend.Services.Abstractions
 {
@@ -26,41 +27,43 @@ namespace Elpida.Backend.Services.Abstractions
 	///     A page of results.
 	/// </summary>
 	/// <typeparam name="T">The underlying type of the items of the page.</typeparam>
-	public class PagedResult<T>
+	public sealed class PagedResult<T>
 	{
 		/// <summary>
 		///     Initializes a new instance of the <see cref="PagedResult{T}" /> class.
 		/// </summary>
-		/// <param name="list">The collection of the items.</param>
+		/// <param name="items">The collection of the items.</param>
 		/// <param name="pageRequest">The previous page.</param>
-		public PagedResult(IList<T> list, PageRequest pageRequest)
+		public PagedResult(IEnumerable<T> items, PageRequest pageRequest)
 		{
-			Count = list.Count;
-			List = list;
+			Items = items.ToArray();
+			Count = Items.Length;
+
 			TotalCount = pageRequest.TotalCount;
-			NextPage = list.Count == pageRequest.Count
-				? new PageRequest { Count = pageRequest.Count, Next = pageRequest.Next + list.Count }
+
+			NextPage = Items.Length == pageRequest.Count
+				? new PageRequest(pageRequest.Next + Items.Length, pageRequest.Count, pageRequest.TotalCount)
 				: null;
 		}
 
 		/// <summary>
 		///     The actual list of the items.
 		/// </summary>
-		public IList<T> List { get; set; }
+		public T[] Items { get; }
 
 		/// <summary>
 		///     The count of the items this page has.
 		/// </summary>
-		public int Count { get; set; }
+		public int Count { get; }
 
 		/// <summary>
 		///     The total count of items.
 		/// </summary>
-		public long TotalCount { get; set; }
+		public long TotalCount { get; }
 
 		/// <summary>
 		///     The next page to request the next items.
 		/// </summary>
-		public PageRequest? NextPage { get; set; }
+		public PageRequest? NextPage { get; }
 	}
 }

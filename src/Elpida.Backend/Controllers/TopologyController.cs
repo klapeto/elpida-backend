@@ -61,7 +61,7 @@ namespace Elpida.Backend.Controllers
 		)
 		{
 			return _topologyService.GetPagedPreviewsAsync(
-				new QueryRequest { PageRequest = pageRequest },
+				new QueryRequest(pageRequest, null, null, false),
 				cancellationToken
 			);
 		}
@@ -101,9 +101,7 @@ namespace Elpida.Backend.Controllers
 			CancellationToken cancellationToken
 		)
 		{
-			QueryRequestUtilities.PreprocessQuery(queryRequest);
-
-			return _topologyService.GetPagedPreviewsAsync(queryRequest, cancellationToken);
+			return _topologyService.GetPagedPreviewsAsync(QueryRequestUtilities.PreProcessQuery(queryRequest), cancellationToken);
 		}
 	}
 }

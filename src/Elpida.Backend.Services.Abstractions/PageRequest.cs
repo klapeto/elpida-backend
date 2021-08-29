@@ -23,7 +23,7 @@ namespace Elpida.Backend.Services.Abstractions
 	/// <summary>
 	///     A request for paged collection of objects.
 	/// </summary>
-	public class PageRequest
+	public sealed class PageRequest
 	{
 		/// <summary>
 		///     The maximum count that a page can have.
@@ -31,16 +31,29 @@ namespace Elpida.Backend.Services.Abstractions
 		public const int MaxCount = 500;
 
 		/// <summary>
+		///     Initializes a new instance of the <see cref="PageRequest" /> class.
+		/// </summary>
+		/// <param name="next">The items that should be skipped.</param>
+		/// <param name="count">How many items should be returned.</param>
+		/// <param name="totalCount">The total count of items.</param>
+		public PageRequest(int next, int count, long totalCount)
+		{
+			Next = next;
+			Count = count;
+			TotalCount = totalCount;
+		}
+
+		/// <summary>
 		///     The number of objects to skip.
 		/// </summary>
 		/// <example>0</example>
-		public int Next { get; set; }
+		public int Next { get; }
 
 		/// <summary>
 		///     The number of objects the page should have.
 		/// </summary>
 		/// <example>10</example>
-		public int Count { get; set; } = 10;
+		public int Count { get; }
 
 		/// <summary>
 		///     The total count of objects. This value is returned from
@@ -53,6 +66,6 @@ namespace Elpida.Backend.Services.Abstractions
 		///     (depending of which is returned).
 		/// </remarks>
 		/// <example>0</example>
-		public long TotalCount { get; set; }
+		public long TotalCount { get; }
 	}
 }

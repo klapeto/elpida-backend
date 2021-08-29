@@ -18,36 +18,48 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using System;
-
 namespace Elpida.Backend.Services.Abstractions.Dtos.Cpu
 {
 	/// <summary>
 	///     Details of a Cpu cache.
 	/// </summary>
-	[Serializable]
-	public class CpuCacheDto
+	public sealed class CpuCacheDto
 	{
+		/// <summary>
+		///     Initializes a new instance of the <see cref="CpuCacheDto" /> class.
+		/// </summary>
+		/// <param name="name">The name of this cache.</param>
+		/// <param name="associativity">The associativity of this cache.</param>
+		/// <param name="size">The size of the cache in bytes.</param>
+		/// <param name="lineSize">The size of the line.</param>
+		public CpuCacheDto(string name, string associativity, long size, int lineSize)
+		{
+			Name = name;
+			Associativity = associativity;
+			Size = size;
+			LineSize = lineSize;
+		}
+
 		/// <summary>
 		///     The name of this cache.
 		/// </summary>
 		/// <example>L1D</example>
-		public string Name { get; set; } = string.Empty;
+		public string Name { get; }
 
 		/// <summary>
 		///     The associativity of this cache.
 		/// </summary>
 		/// <example>8-Way</example>
-		public string Associativity { get; set; } = string.Empty;
+		public string Associativity { get; }
 
 		/// <summary>
 		///     The size of the cache in bytes.
 		/// </summary>
-		public long Size { get; set; }
+		public long Size { get; }
 
 		/// <summary>
 		///     The size of the line.
 		/// </summary>
-		public int LineSize { get; set; }
+		public int LineSize { get; }
 	}
 }

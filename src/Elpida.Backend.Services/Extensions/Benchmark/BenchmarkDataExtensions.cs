@@ -18,6 +18,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
+using System;
 using System.Linq;
 using Elpida.Backend.Data.Abstractions.Models.Benchmark;
 using Elpida.Backend.Services.Abstractions.Dtos.Benchmark;
@@ -29,33 +30,25 @@ namespace Elpida.Backend.Services.Extensions.Benchmark
 	{
 		public static BenchmarkDto ToDto(this BenchmarkModel benchmarkModel)
 		{
-			return new ()
-			{
-				Id = benchmarkModel.Id,
-				Uuid = benchmarkModel.Uuid,
-				Name = benchmarkModel.Name,
-				ScoreSpecification = new BenchmarkScoreSpecificationDto
-				{
-					Comparison = benchmarkModel.ScoreComparison,
-					Unit = benchmarkModel.ScoreUnit,
-				},
-				Tasks = benchmarkModel.Tasks?
-					.Select(t => t.ToDto())
-					.ToList()!,
-			};
+			return new (
+				benchmarkModel.Id,
+				benchmarkModel.Uuid,
+				benchmarkModel.Name,
+				new BenchmarkScoreSpecificationDto(benchmarkModel.ScoreUnit, benchmarkModel.ScoreComparison),
+				benchmarkModel.Tasks?.Select(t => t.ToDto()).ToArray() ?? Array.Empty<BenchmarkTaskDto>()
+			);
 		}
 
 		private static BenchmarkTaskDto ToDto(this BenchmarkTaskModel benchmarkTaskModel)
 		{
-			return new ()
-			{
-				Uuid = benchmarkTaskModel.Task.Uuid,
-				Task = benchmarkTaskModel.Task.ToDto(),
-				CanBeDisabled = benchmarkTaskModel.CanBeDisabled,
-				IterationsToRun = benchmarkTaskModel.IterationsToRun,
-				CanBeMultiThreaded = benchmarkTaskModel.CanBeMultiThreaded,
-				IsCountedOnResults = benchmarkTaskModel.IsCountedOnResults,
-			};
+			return new (
+				benchmarkTaskModel.Task.Uuid,
+				benchmarkTaskModel.Task.ToDto(),
+				benchmarkTaskModel.CanBeMultiThreaded,
+				benchmarkTaskModel.CanBeDisabled,
+				benchmarkTaskModel.IterationsToRun,
+				benchmarkTaskModel.IsCountedOnResults
+			);
 		}
 	}
 }

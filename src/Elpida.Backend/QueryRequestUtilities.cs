@@ -19,6 +19,8 @@
 // =========================================================================
 
 using System;
+using System.Globalization;
+using System.Linq;
 using System.Text.Json;
 using Elpida.Backend.Services.Abstractions;
 
@@ -26,48 +28,48 @@ namespace Elpida.Backend
 {
 	internal static class QueryRequestUtilities
 	{
-		public static void PreprocessQuery(QueryRequest queryRequest)
+		public static QueryRequest PreProcessQuery(QueryRequest queryRequest)
 		{
 			if (queryRequest.Filters == null)
 			{
-				return;
+				return queryRequest;
 			}
 
-			foreach (var queryRequestFilter in queryRequest.Filters)
-			{
-				ConvertValues(queryRequestFilter);
-			}
+			return new QueryRequest(
+				queryRequest.PageRequest,
+				queryRequest.Filters.Select(ConvertValues).ToArray(),
+				queryRequest.OrderBy,
+				queryRequest.Descending
+			);
 		}
 
-		private static void ConvertValues(QueryInstance instance)
+		private static FilterInstance ConvertValues(FilterInstance instance)
 		{
 			if (instance.Value == null)
 			{
-				return;
+				return instance;
 			}
 
 			var element = (JsonElement)instance.Value;
 			switch (element.ValueKind)
 			{
 				case JsonValueKind.String:
-					instance.Value = element.GetString();
-					break;
+					return DateTime.TryParse(element.GetString(), out var date)
+						? new FilterInstance(instance.Name, date, instance.Comp)
+						: new FilterInstance(instance.Name, element.GetString(), instance.Comp);
 				case JsonValueKind.Number:
-					instance.Value = element.GetDouble();
-					break;
+					return new FilterInstance(instance.Name, element.GetDouble(), instance.Comp);
 				case JsonValueKind.False:
 				case JsonValueKind.True:
-					instance.Value = element.GetBoolean();
-					break;
+					return new FilterInstance(instance.Name, element.GetBoolean(), instance.Comp);
 				case JsonValueKind.Null:
 				case JsonValueKind.Undefined:
-					instance.Value = null;
-					break;
+					return new FilterInstance(instance.Name, null, instance.Comp);
 				case JsonValueKind.Object:
 				case JsonValueKind.Array:
-					break;
+					return instance;
 				default:
-					throw new ArgumentOutOfRangeException();
+					throw new ArgumentOutOfRangeException(nameof(instance), $"The JSON member type of '{element.ValueKind}' is not acceptable");
 			}
 		}
 	}

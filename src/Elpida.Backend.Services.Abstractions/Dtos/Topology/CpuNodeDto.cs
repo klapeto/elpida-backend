@@ -18,66 +18,85 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using System;
-using System.Collections.Generic;
-
 namespace Elpida.Backend.Services.Abstractions.Dtos.Topology
 {
-	public enum ProcessorNodeType
-	{
-		Machine,
-		Package,
-		NumaNode,
-		Group,
-		Die,
-		Core,
-		L1ICache,
-		L1DCache,
-		L2ICache,
-		L2DCache,
-		L3ICache,
-		L3DCache,
-		L4Cache,
-		L5Cache,
-		ExecutionUnit,
-		Unknown,
-	}
-
 	/// <summary>
 	///     Details of a cpu node.
 	/// </summary>
-	[Serializable]
-	public class CpuNodeDto
+	public sealed class CpuNodeDto
 	{
+		/// <summary>
+		///     Initializes a new instance of the <see cref="CpuNodeDto" /> class.
+		/// </summary>
+		/// <param name="nodeType">The cpu node type.</param>
+		/// <param name="name">The name of this node.</param>
+		/// <param name="osIndex">The index assigned by the Operating System.</param>
+		/// <param name="value">A value representing the size of the node.</param>
+		/// <param name="children">The child nodes of this node.</param>
+		/// <param name="memoryChildren">The memory child nodes of this node.</param>
+		public CpuNodeDto(
+			ProcessorNodeType nodeType,
+			string name,
+			long? osIndex,
+			long? value,
+			CpuNodeDto[]? children,
+			CpuNodeDto[]? memoryChildren
+		)
+		{
+			NodeType = nodeType;
+			Name = name;
+			OsIndex = osIndex;
+			Value = GetSanitizedValue(value);
+			Children = children;
+			MemoryChildren = memoryChildren;
+		}
+
 		/// <summary>
 		///     The cpu node type.
 		/// </summary>
-		public ProcessorNodeType NodeType { get; set; }
+		public ProcessorNodeType NodeType { get; }
 
 		/// <summary>
 		///     The name of this node.
 		/// </summary>
 		/// <example>Core</example>
-		public string Name { get; set; } = string.Empty;
+		public string Name { get; }
 
 		/// <summary>
 		///     The index assigned by the Operating System.
 		/// </summary>
-		public long? OsIndex { get; set; }
+		public long? OsIndex { get; }
 
 		/// <summary>
 		///     A value representing the size of the node.
 		/// </summary>
-		public long? Value { get; set; }
+		public long? Value { get; }
 
 		/// <summary>
 		///     The child nodes of this node.
 		/// </summary>
-		public IList<CpuNodeDto>? Children { get; set; }
+		public CpuNodeDto[]? Children { get; }
 
 		/// <summary>
 		///     The memory child nodes of this node.
 		/// </summary>
-		public IList<CpuNodeDto>? MemoryChildren { get; set; }
+		public CpuNodeDto[]? MemoryChildren { get; }
+
+		private long? GetSanitizedValue(long? value)
+		{
+			switch (NodeType)
+			{
+				case ProcessorNodeType.L1DCache:
+				case ProcessorNodeType.L1ICache:
+				case ProcessorNodeType.L2DCache:
+				case ProcessorNodeType.L2ICache:
+				case ProcessorNodeType.L3DCache:
+				case ProcessorNodeType.L4Cache:
+				case ProcessorNodeType.L5Cache:
+					return value;
+				default:
+					return null;
+			}
+		}
 	}
 }

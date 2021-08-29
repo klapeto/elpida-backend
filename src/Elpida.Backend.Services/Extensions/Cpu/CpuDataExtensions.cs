@@ -27,20 +27,19 @@ namespace Elpida.Backend.Services.Extensions.Cpu
 {
 	public static class CpuDataExtensions
 	{
-		public static CpuDto ToDto(this CpuModel model)
+		public static CpuDto ToDto(this CpuModel cpuModel)
 		{
-			return new ()
-			{
-				Id = model.Id,
-				Architecture = model.Architecture,
-				ModelName = model.ModelName,
-				Caches = JsonConvert.DeserializeObject<List<CpuCacheDto>>(model.Caches),
-				Features = JsonConvert.DeserializeObject<List<string>>(model.Features),
-				Frequency = model.Frequency,
-				Smt = model.Smt,
-				Vendor = model.Vendor,
-				AdditionalInfo = JsonConvert.DeserializeObject<Dictionary<string, string>>(model.AdditionalInfo),
-			};
+			return new (
+				cpuModel.Id,
+				cpuModel.Architecture,
+				cpuModel.Vendor,
+				cpuModel.ModelName,
+				cpuModel.Frequency,
+				cpuModel.Smt,
+				JsonConvert.DeserializeObject<Dictionary<string, string>>(cpuModel.AdditionalInfo),
+				JsonConvert.DeserializeObject<CpuCacheDto[]>(cpuModel.Caches),
+				JsonConvert.DeserializeObject<string[]>(cpuModel.Features)
+			);
 		}
 	}
 }

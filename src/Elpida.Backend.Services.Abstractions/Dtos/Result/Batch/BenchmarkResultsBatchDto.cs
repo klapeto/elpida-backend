@@ -18,7 +18,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using System;
 using Elpida.Backend.Services.Abstractions.Dtos.Elpida;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Result.Batch
@@ -26,21 +25,41 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result.Batch
 	/// <summary>
 	///     Contains multiple benchmark results from a system.
 	/// </summary>
-	public class BenchmarkResultsBatchDto : FoundationDto
+	public sealed class BenchmarkResultsBatchDto : FoundationDto
 	{
+		/// <summary>
+		///     Initializes a new instance of the <see cref="BenchmarkResultsBatchDto" /> class.
+		/// </summary>
+		/// <param name="id">The id of the Batch. (Not used)</param>
+		/// <param name="elpida">The Elpida Version that this result was produced from.</param>
+		/// <param name="system">The system details for this result.</param>
+		/// <param name="benchmarkResults">The benchmark results.</param>
+		public BenchmarkResultsBatchDto(
+			long id,
+			ElpidaDto elpida,
+			SystemDto system,
+			BenchmarkResultSlimDto[] benchmarkResults
+		)
+			: base(id)
+		{
+			Elpida = elpida;
+			System = system;
+			BenchmarkResults = benchmarkResults;
+		}
+
 		/// <summary>
 		///     The Elpida Version that this result was produced from.
 		/// </summary>
-		public ElpidaDto Elpida { get; set; } = new ();
+		public ElpidaDto Elpida { get; }
 
 		/// <summary>
 		///     The system details for this result.
 		/// </summary>
-		public SystemDto System { get; set; } = new ();
+		public SystemDto System { get; }
 
 		/// <summary>
 		///     The benchmark results.
 		/// </summary>
-		public BenchmarkResultSlimDto[] BenchmarkResults { get; set; } = Array.Empty<BenchmarkResultSlimDto>();
+		public BenchmarkResultSlimDto[] BenchmarkResults { get; }
 	}
 }

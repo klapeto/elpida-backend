@@ -63,7 +63,7 @@ namespace Elpida.Backend.Services.Tests
 		}
 
 		[Test]
-		public void GetSingleAsync_NonExistingId_ReturnsObject()
+		public void GetSingleAsync_NonExistingId_ThrowsNotFoundException()
 		{
 			var repo = new Mock<IDummyRepository>(MockBehavior.Strict);
 			const long id = 5;
@@ -121,8 +121,8 @@ namespace Elpida.Backend.Services.Tests
 
 			for (var i = 0; i < returnItems.Count; i++)
 			{
-				Assert.AreEqual(returnItems[i].Id, obj.List[i].Id);
-				Assert.AreEqual(returnItems[i].Data, obj.List[i].Data);
+				Assert.AreEqual(returnItems[i].Id, obj.Items[i].Id);
+				Assert.AreEqual(returnItems[i].Data, obj.Items[i].Data);
 			}
 
 			repo.Verify(
@@ -153,16 +153,12 @@ namespace Elpida.Backend.Services.Tests
 
 			var service = new DummyBasicService(repo.Object);
 
-			var query = new QueryRequest
-			{
-				Descending = false,
-				PageRequest = new PageRequest
-				{
-					Next = 12,
-					Count = 2,
-					TotalCount = 0,
-				},
-			};
+			var query = new QueryRequest(
+				new PageRequest(12, 2, 0),
+				null,
+				null,
+				false
+			);
 
 			const int totalCount = 20;
 
@@ -190,8 +186,8 @@ namespace Elpida.Backend.Services.Tests
 
 			for (var i = 0; i < returnItems.Count; i++)
 			{
-				Assert.AreEqual(returnItems[i].Id, obj.List[i].Id);
-				Assert.AreEqual(returnItems[i].Data, obj.List[i].Data);
+				Assert.AreEqual(returnItems[i].Id, obj.Items[i].Id);
+				Assert.AreEqual(returnItems[i].Data, obj.Items[i].Data);
 			}
 
 			repo.Verify(
@@ -217,9 +213,8 @@ namespace Elpida.Backend.Services.Tests
 
 			var service = new DummyService(repo.Object);
 
-			var query = CreateQuery();
+			var query = CreateQuery(descending: descending);
 
-			query.Descending = descending;
 			const int totalCount = 20;
 
 			var returnItems = CreateReturnModels();
@@ -262,9 +257,7 @@ namespace Elpida.Backend.Services.Tests
 
 			var service = new DummyService(repo.Object);
 
-			var query = CreateQuery();
-
-			query.PageRequest.TotalCount = totalCount;
+			var query = CreateQuery(totalCount);
 
 			var returnItems = CreateReturnModels();
 
@@ -306,11 +299,7 @@ namespace Elpida.Backend.Services.Tests
 
 			var service = new DummyBasicService(repo.Object);
 
-			var dto = new DummyDto
-			{
-				Data = "hahah",
-				Id = 5,
-			};
+			var dto = new DummyDto(5, "hahah");
 
 			const int actualId = 8;
 
@@ -347,11 +336,7 @@ namespace Elpida.Backend.Services.Tests
 
 			var service = new DummyService(repo.Object);
 
-			var dto = new DummyDto
-			{
-				Data = "hahah",
-				Id = 5,
-			};
+			var dto = new DummyDto(5, "hahah");
 
 			const int actualId = 8;
 
@@ -391,11 +376,7 @@ namespace Elpida.Backend.Services.Tests
 
 			var service = new DummyService(repo.Object, bypassCheck);
 
-			var dto = new DummyDto
-			{
-				Data = "hahah",
-				Id = 5,
-			};
+			var dto = new DummyDto(5, "hahah");
 
 			const int actualId = 8;
 
@@ -449,11 +430,7 @@ namespace Elpida.Backend.Services.Tests
 
 			var service = new DummyService(repo.Object, bypassCheck);
 
-			var dto = new DummyDto
-			{
-				Data = "hahah",
-				Id = 5,
-			};
+			var dto = new DummyDto(5, "hahah");
 
 			const int actualId = 8;
 
@@ -528,28 +505,10 @@ namespace Elpida.Backend.Services.Tests
 			};
 		}
 
-		private static QueryRequest CreateQuery()
+		private static QueryRequest CreateQuery(long totalCount = 0, bool descending = false)
 		{
-			return new ()
-			{
-				Descending = false,
-				PageRequest = new PageRequest
-				{
-					Next = 12,
-					Count = 2,
-					TotalCount = 0,
-				},
-				OrderBy = "data",
-				Filters = new[]
-				{
-					new QueryInstance
-					{
-						Comp = "eq",
-						Name = "data",
-						Value = "lol",
-					},
-				},
-			};
+			var filters = new[] { new FilterInstance("data", "lol", "eq") };
+			return new QueryRequest(new PageRequest(12, 2, totalCount), filters, "data", descending);
 		}
 	}
 }

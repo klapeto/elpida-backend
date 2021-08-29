@@ -25,97 +25,86 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 	/// <summary>
 	///     A preview of a Benchmark result.
 	/// </summary>
-	public class BenchmarkResultPreviewDto : FoundationDto
+	public sealed class BenchmarkResultPreviewDto : FoundationDto
 	{
+		/// <summary>
+		///     Initializes a new instance of the <see cref="BenchmarkResultPreviewDto" /> class.
+		/// </summary>
+		/// <param name="id">The id of the Benchmark Result.</param>
+		/// <param name="benchmarkUuid">The UUID of the benchmark.</param>
+		/// <param name="timeStamp">The timestamp of the benchmark.</param>
+		/// <param name="benchmarkName">The name of the benchmark.</param>
+		/// <param name="osName">The operating system name of the system that run the benchmark.</param>
+		/// <param name="cpuVendor">The cpu vendor of the system that run the benchmark.</param>
+		/// <param name="cpuModelName">The cpu model name of the system that run the benchmark.</param>
+		/// <param name="benchmarkScoreUnit">The benchmark score unit.</param>
+		/// <param name="score">The benchmark score.</param>
+		public BenchmarkResultPreviewDto(
+			long id,
+			Guid benchmarkUuid,
+			DateTime timeStamp,
+			string benchmarkName,
+			string osName,
+			string cpuVendor,
+			string cpuModelName,
+			string benchmarkScoreUnit,
+			double score
+		)
+			: base(id)
+		{
+			BenchmarkUuid = benchmarkUuid;
+			BenchmarkName = benchmarkName;
+			TimeStamp = timeStamp;
+			OsName = osName;
+			CpuVendor = cpuVendor;
+			CpuModelName = cpuModelName;
+			BenchmarkScoreUnit = benchmarkScoreUnit;
+			Score = score;
+		}
+
 		/// <summary>
 		///     The UUID of the benchmark.
 		/// </summary>
-		public Guid BenchmarkUuid { get; set; }
+		public Guid BenchmarkUuid { get; }
 
 		/// <summary>
 		///     The name of the benchmark.
 		/// </summary>
 		/// <example>Memory Latency</example>
-		public string BenchmarkName { get; set; } = string.Empty;
+		public string BenchmarkName { get; }
 
 		/// <summary>
-		///     The timestamp of the benchmark when posted.
+		///     The timestamp of the benchmark.
 		/// </summary>
-		public DateTime TimeStamp { get; set; }
-
-		/// <summary>
-		///     The major version of Elpida.
-		/// </summary>
-		public int ElpidaVersionMajor { get; set; }
-
-		/// <summary>
-		///     The minor version of Elpida.
-		/// </summary>
-		public int ElpidaVersionMinor { get; set; }
-
-		/// <summary>
-		///     The revision version of Elpida.
-		/// </summary>
-		public int ElpidaVersionRevision { get; set; }
-
-		/// <summary>
-		///     The build number of Elpida.
-		/// </summary>
-		public int ElpidaVersionBuild { get; set; }
+		public DateTime TimeStamp { get; }
 
 		/// <summary>
 		///     The operating system name of the system that run the benchmark.
 		/// </summary>
 		/// <example>Ubuntu</example>
-		public string OsName { get; set; } = string.Empty;
-
-		/// <summary>
-		///     The operating system version of the system that run the benchmark.
-		/// </summary>
-		/// <example>21.04</example>
-		public string OsVersion { get; set; } = string.Empty;
+		public string OsName { get; }
 
 		/// <summary>
 		///     The cpu vendor of the system that run the benchmark.
 		/// </summary>
 		/// <example>ARM</example>
-		public string CpuVendor { get; set; } = string.Empty;
+		public string CpuVendor { get; }
 
 		/// <summary>
 		///     The cpu model name of the system that run the benchmark.
 		/// </summary>
 		/// <example>Cortex A7</example>
-		public string CpuModelName { get; set; } = string.Empty;
-
-		/// <summary>
-		///     The cpu frequency of the system that run the benchmark.
-		/// </summary>
-		public long CpuFrequency { get; set; }
-
-		/// <summary>
-		///     The cpu core count of the system that run the benchmark.
-		/// </summary>
-		public int CpuCores { get; set; }
-
-		/// <summary>
-		///     The cpu logical cores of the system that run the benchmark.
-		/// </summary>
-		public int CpuLogicalCores { get; set; }
-
-		/// <summary>
-		///     The memory size of the system that run the benchmark.
-		/// </summary>
-		public long MemorySize { get; set; }
+		public string CpuModelName { get; }
 
 		/// <summary>
 		///     The benchmark score unit.
 		/// </summary>
 		/// <example>B/s</example>
-		public string BenchmarkScoreUnit { get; set; } = default!;
+		public string BenchmarkScoreUnit { get; }
 
 		/// <summary>
-		///     The benchmark score
+		///     The benchmark score.
 		/// </summary>
-		public double Score { get; set; }
+		public double Score { get; }
 	}
 }

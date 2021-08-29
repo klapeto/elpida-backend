@@ -19,7 +19,6 @@
 // =========================================================================
 
 using System;
-using System.Collections.Generic;
 using Elpida.Backend.Services.Abstractions.Dtos.Benchmark;
 using Elpida.Backend.Services.Abstractions.Dtos.Elpida;
 
@@ -28,52 +27,90 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 	/// <summary>
 	///     Details of a Benchmark Result.
 	/// </summary>
-	public class BenchmarkResultDto : FoundationDto
+	public sealed class BenchmarkResultDto : FoundationDto
 	{
+		/// <summary>
+		///     Initializes a new instance of the <see cref="BenchmarkResultDto" /> class.
+		/// </summary>
+		/// <param name="id">The id of the Benchmark Result.</param>
+		/// <param name="timeStamp">The date and time this result was posted.</param>
+		/// <param name="uuid">The UUID of this Benchmark.</param>
+		/// <param name="name">The name of this Benchmark.</param>
+		/// <param name="affinity">The Cpu Affinity used by this Benchmark Result.</param>
+		/// <param name="elpida">The Elpida Version that this result was produced from.</param>
+		/// <param name="system">The system details for this result.</param>
+		/// <param name="score">The score of the benchmark.</param>
+		/// <param name="scoreSpecification">The score specification details of this Benchmark.</param>
+		/// <param name="taskResults">The specific Task results.</param>
+		public BenchmarkResultDto(
+			long id,
+			DateTime timeStamp,
+			Guid uuid,
+			string name,
+			long[] affinity,
+			ElpidaDto elpida,
+			SystemDto system,
+			double score,
+			BenchmarkScoreSpecificationDto scoreSpecification,
+			TaskResultDto[] taskResults
+		)
+			: base(id)
+		{
+			TimeStamp = timeStamp;
+			Affinity = affinity;
+			Elpida = elpida;
+			System = system;
+			Score = score;
+			Uuid = uuid;
+			Name = name;
+			ScoreSpecification = scoreSpecification;
+			TaskResults = taskResults;
+		}
+
 		/// <summary>
 		///     The date and time this result was posted.
 		/// </summary>
-		public DateTime TimeStamp { get; set; }
+		public DateTime TimeStamp { get; }
 
 		/// <summary>
 		///     The Cpu Affinity used by this Benchmark Result.
 		/// </summary>
-		public IList<long> Affinity { get; set; } = new List<long>();
+		public long[] Affinity { get; }
 
 		/// <summary>
 		///     The Elpida Version that this result was produced from.
 		/// </summary>
-		public ElpidaDto Elpida { get; set; } = new ();
+		public ElpidaDto Elpida { get; }
 
 		/// <summary>
 		///     The system details for this result.
 		/// </summary>
-		public SystemDto System { get; set; } = new ();
+		public SystemDto System { get; }
 
 		/// <summary>
 		///     The score of the benchmark.
 		/// </summary>
-		public double Score { get; set; }
+		public double Score { get; }
 
 		/// <summary>
 		///     The UUID of this Benchmark.
 		/// </summary>
-		public Guid Uuid { get; set; }
+		public Guid Uuid { get; }
 
 		/// <summary>
 		///     The name of this Benchmark.
 		/// </summary>
 		/// <example>Test Benchmark.</example>
-		public string Name { get; set; } = string.Empty;
+		public string Name { get; }
 
 		/// <summary>
 		///     The score specification details of this Benchmark.
 		/// </summary>
-		public BenchmarkScoreSpecificationDto ScoreSpecification { get; set; } = new ();
+		public BenchmarkScoreSpecificationDto ScoreSpecification { get; }
 
 		/// <summary>
 		///     The specific Task results.
 		/// </summary>
-		public IList<TaskResultDto> TaskResults { get; set; } = new List<TaskResultDto>();
+		public TaskResultDto[] TaskResults { get; }
 	}
 }

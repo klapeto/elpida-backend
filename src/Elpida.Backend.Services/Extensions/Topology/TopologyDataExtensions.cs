@@ -28,19 +28,17 @@ namespace Elpida.Backend.Services.Extensions.Topology
 	{
 		public static TopologyDto ToDto(this TopologyModel topologyModel)
 		{
-			return new ()
-			{
-				Id = topologyModel.Id,
-				CpuId = topologyModel.CpuId,
-				CpuVendor = topologyModel.Cpu.Vendor,
-				CpuModelName = topologyModel.Cpu.ModelName,
-				TotalDepth = topologyModel.TotalDepth,
-				TotalLogicalCores = topologyModel.TotalLogicalCores,
-				TotalPhysicalCores = topologyModel.TotalPhysicalCores,
-				TotalNumaNodes = topologyModel.TotalNumaNodes,
-				TotalPackages = topologyModel.TotalPackages,
-				Root = JsonConvert.DeserializeObject<CpuNodeDto>(topologyModel.Root),
-			};
+			return new (
+				topologyModel.Id,
+				topologyModel.CpuId,
+				topologyModel.Cpu.Vendor,
+				topologyModel.Cpu.ModelName,
+				topologyModel.TotalLogicalCores,
+				topologyModel.TotalPhysicalCores,
+				topologyModel.TotalNumaNodes,
+				topologyModel.TotalPackages,
+				JsonConvert.DeserializeObject<CpuNodeDto>(topologyModel.Root)
+			);
 		}
 	}
 }

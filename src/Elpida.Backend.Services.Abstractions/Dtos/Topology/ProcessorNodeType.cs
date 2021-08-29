@@ -18,29 +18,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-namespace Elpida.Backend.Services.Abstractions
+namespace Elpida.Backend.Services.Abstractions.Dtos.Topology
 {
-	/// <summary>
-	///     Details of a criteria for a search.
-	/// </summary>
-	public class QueryInstance
+	public enum ProcessorNodeType
 	{
-		/// <summary>
-		///     The name of the field this criteria applies.
-		/// </summary>
-		/// <example>benchmarkName</example>
-		public string Name { get; set; } = string.Empty;
-
-		/// <summary>
-		///     The value this criteria.
-		/// </summary>
-		/// <example>Allocate Memory</example>
-		public object? Value { get; set; }
-
-		/// <summary>
-		///     The comparison to use on the field and the value.
-		/// </summary>
-		/// <example>eq</example>
-		public string? Comp { get; set; } = string.Empty;
+		Machine,
+		Package,
+		NumaNode,
+		Group,
+		Die,
+		Core,
+		L1ICache,
+		L1DCache,
+		L2ICache,
+		L2DCache,
+		L3ICache,
+		L3DCache,
+		L4Cache,
+		L5Cache,
+		ExecutionUnit,
+		Unknown,
 	}
 }

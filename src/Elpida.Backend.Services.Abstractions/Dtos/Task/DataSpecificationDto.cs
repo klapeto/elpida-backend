@@ -18,37 +18,50 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using System.Collections.Generic;
-
 namespace Elpida.Backend.Services.Abstractions.Dtos.Task
 {
 	/// <summary>
 	///     Details of data used by a Task.
 	/// </summary>
-	public class DataSpecificationDto
+	public sealed class DataSpecificationDto
 	{
+		/// <summary>
+		///     Initializes a new instance of the <see cref="DataSpecificationDto" /> class.
+		/// </summary>
+		/// <param name="name">The name of the data.</param>
+		/// <param name="description">The description of the data.</param>
+		/// <param name="unit">The unit that describes this data.</param>
+		/// <param name="requiredProperties">The required property names that this data has to carry in order to be valid.</param>
+		public DataSpecificationDto(string name, string description, string unit, string[] requiredProperties)
+		{
+			Name = name;
+			Description = description;
+			Unit = unit;
+			RequiredProperties = requiredProperties;
+		}
+
 		/// <summary>
 		///     The name of the data.
 		/// </summary>
 		/// <example>Allocated data.</example>
-		public string Name { get; set; } = string.Empty;
+		public string Name { get; }
 
 		/// <summary>
 		///     The description of the data.
 		/// </summary>
 		/// <example>The memory that was allocated.</example>
-		public string Description { get; set; } = string.Empty;
+		public string Description { get; }
 
 		/// <summary>
 		///     The unit that describes this data.
 		/// </summary>
 		/// <example>Bytes.</example>
-		public string Unit { get; set; } = string.Empty;
+		public string Unit { get; }
 
 		/// <summary>
 		///     The required property names that this data has to carry in order
 		///     to be valid.
 		/// </summary>
-		public IList<string> RequiredProperties { get; set; } = new List<string>();
+		public string[] RequiredProperties { get; }
 	}
 }

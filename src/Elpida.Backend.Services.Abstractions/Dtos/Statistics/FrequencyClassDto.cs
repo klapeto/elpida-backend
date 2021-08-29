@@ -25,22 +25,35 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Statistics
 	/// <summary>
 	///     Represents a frequency class for a benchmark statistics.
 	/// </summary>
-	public class FrequencyClassDto
+	public sealed class FrequencyClassDto
 	{
+		/// <summary>
+		///     Initializes a new instance of the <see cref="FrequencyClassDto" /> class.
+		/// </summary>
+		/// <param name="low">The low value for this class.</param>
+		/// <param name="high">The high value for this class.</param>
+		/// <param name="count">How many samples this class has.</param>
+		public FrequencyClassDto(double low, double high, long count)
+		{
+			Low = low;
+			High = high;
+			Count = count;
+		}
+
 		/// <summary>
 		///     The low value for this class.
 		/// </summary>
-		public double Low { get; set; }
+		public double Low { get; }
 
 		/// <summary>
 		///     The high value for this class.
 		/// </summary>
-		public double High { get; set; }
+		public double High { get; }
 
 		/// <summary>
 		///     How many samples this class has.
 		/// </summary>
-		public long Count { get; set; }
+		public long Count { get; }
 
 		public override bool Equals(object? obj)
 		{
@@ -67,7 +80,7 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Statistics
 			return $"{{ {Low:r} - {High:r} }}";
 		}
 
-		protected bool Equals(FrequencyClassDto other)
+		private bool Equals(FrequencyClassDto other)
 		{
 			return Low.Equals(other.Low) && High.Equals(other.High);
 		}

@@ -23,27 +23,47 @@ namespace Elpida.Backend.Services.Abstractions
 	/// <summary>
 	///     Details for a query.
 	/// </summary>
-	public class QueryRequest
+	public sealed class QueryRequest
 	{
+		/// <summary>
+		///     Initializes a new instance of the <see cref="QueryRequest" /> class.
+		/// </summary>
+		/// <param name="pageRequest">The page to request.</param>
+		/// <param name="filters">The query filters.</param>
+		/// <param name="orderBy">The field that the results should be sorted.</param>
+		/// <param name="descending">Whether the sorting should be descending.</param>
+		public QueryRequest(
+			PageRequest pageRequest,
+			FilterInstance[]? filters,
+			string? orderBy,
+			bool descending
+		)
+		{
+			Descending = descending;
+			OrderBy = orderBy;
+			PageRequest = pageRequest;
+			Filters = filters;
+		}
+
 		/// <summary>
 		///     Whether the elements returned should be ordered descending.
 		/// </summary>
-		public bool Descending { get; set; }
+		public bool Descending { get; }
 
 		/// <summary>
 		///     The data field to be used to order the search results.
 		/// </summary>
 		/// <example>benchmarkName</example>
-		public string OrderBy { get; set; } = string.Empty;
+		public string? OrderBy { get; }
 
 		/// <summary>
 		///     The page of the search results to return.
 		/// </summary>
-		public PageRequest PageRequest { get; set; } = new ();
+		public PageRequest PageRequest { get; }
 
 		/// <summary>
 		///     The list of data filters to apply to the search.
 		/// </summary>
-		public QueryInstance[]? Filters { get; set; }
+		public FilterInstance[]? Filters { get; }
 	}
 }

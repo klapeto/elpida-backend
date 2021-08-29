@@ -19,34 +19,56 @@
 // =========================================================================
 
 using System;
-using System.Collections.Generic;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Benchmark
 {
 	/// <summary>
 	///     The details of a Benchmark.
 	/// </summary>
-	public class BenchmarkDto : FoundationDto
+	public sealed class BenchmarkDto : FoundationDto
 	{
 		/// <summary>
-		///     The UUID of this Benchmark.
+		///     Initializes a new instance of the <see cref="BenchmarkDto" /> class.
 		/// </summary>
-		public Guid Uuid { get; set; }
+		/// <param name="id">The id of the Benchmark.</param>
+		/// <param name="uuid">The UUID of the Benchmark.</param>
+		/// <param name="name">The name of the</param>
+		/// <param name="scoreSpecification">The score specification details of the Benchmark.</param>
+		/// <param name="tasks">The task specifications details of the Benchmark.</param>
+		public BenchmarkDto(
+			long id,
+			Guid uuid,
+			string name,
+			BenchmarkScoreSpecificationDto scoreSpecification,
+			BenchmarkTaskDto[] tasks
+		)
+			: base(id)
+		{
+			Uuid = uuid;
+			Name = name;
+			ScoreSpecification = scoreSpecification;
+			Tasks = tasks;
+		}
 
 		/// <summary>
-		///     The name of this Benchmark.
+		///     The UUID of the Benchmark.
+		/// </summary>
+		public Guid Uuid { get; }
+
+		/// <summary>
+		///     The name of the Benchmark.
 		/// </summary>
 		/// <example>Test Benchmark.</example>
-		public string Name { get; set; } = string.Empty;
+		public string Name { get; }
 
 		/// <summary>
-		///     The score specification details of this Benchmark.
+		///     The score specification details of the Benchmark.
 		/// </summary>
-		public BenchmarkScoreSpecificationDto ScoreSpecification { get; set; } = new ();
+		public BenchmarkScoreSpecificationDto ScoreSpecification { get; }
 
 		/// <summary>
-		///     The task specifications details of this Benchmark.
+		///     The task specifications details of the Benchmark.
 		/// </summary>
-		public IList<BenchmarkTaskDto> Tasks { get; set; } = new List<BenchmarkTaskDto>();
+		public BenchmarkTaskDto[] Tasks { get; }
 	}
 }

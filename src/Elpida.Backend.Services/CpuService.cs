@@ -57,14 +57,7 @@ namespace Elpida.Backend.Services
 				Repository,
 				GetFilterExpressions(),
 				queryRequest,
-				m => new CpuPreviewDto
-				{
-					Id = m.Id,
-					Vendor = m.Vendor,
-					ModelName = m.ModelName,
-					TopologiesCount = m.Topologies.Count,
-					TaskStatisticsCount = m.BenchmarkStatistics.Count,
-				},
+				m => new CpuPreviewDto(m.Id, m.Vendor, m.ModelName, m.Topologies.Count, m.BenchmarkStatistics.Count),
 				cancellationToken
 			);
 		}

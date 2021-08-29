@@ -18,45 +18,51 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using System;
-
 namespace Elpida.Backend.Services.Abstractions
 {
-	public class StatisticsUpdateRequest
+	/// <summary>
+	///     A filter comparison type.
+	/// </summary>
+	public enum FilterComparison
 	{
-		public StatisticsUpdateRequest(long cpuId, long benchmarkId)
-		{
-			CpuId = cpuId;
-			BenchmarkId = benchmarkId;
-		}
+		/// <summary>
+		///     The value must be equal.
+		/// </summary>
+		Equal,
 
-		public long CpuId { get; }
+		/// <summary>
+		///     The value must not be equal.
+		/// </summary>
+		NotEqual,
 
-		public long BenchmarkId { get; }
+		/// <summary>
+		///     The value must contain.
+		/// </summary>
+		Contains,
 
-		public override bool Equals(object? obj)
-		{
-			if (ReferenceEquals(null, obj))
-			{
-				return false;
-			}
+		/// <summary>
+		///     The value must not contain.
+		/// </summary>
+		NotContain,
 
-			if (ReferenceEquals(this, obj))
-			{
-				return true;
-			}
+		/// <summary>
+		///     The value must be greater or equal.
+		/// </summary>
+		GreaterEqual,
 
-			return obj.GetType() == GetType() && Equals((StatisticsUpdateRequest)obj);
-		}
+		/// <summary>
+		///     The value must be greater.
+		/// </summary>
+		Greater,
 
-		public override int GetHashCode()
-		{
-			return HashCode.Combine(CpuId, BenchmarkId);
-		}
+		/// <summary>
+		///     The value must be less or equal.
+		/// </summary>
+		LessEqual,
 
-		private bool Equals(StatisticsUpdateRequest other)
-		{
-			return CpuId == other.CpuId && BenchmarkId == other.BenchmarkId;
-		}
+		/// <summary>
+		///     The value must be less.
+		/// </summary>
+		Less,
 	}
 }

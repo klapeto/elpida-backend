@@ -27,31 +27,48 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 	/// <summary>
 	///     Details of a system.
 	/// </summary>
-	public class SystemDto
+	public sealed class SystemDto
 	{
+		/// <summary>
+		///     Initializes a new instance of the <see cref="SystemDto" /> class.
+		/// </summary>
+		/// <param name="cpu">The Cpu of this system.</param>
+		/// <param name="os">The operating system of this system.</param>
+		/// <param name="topology">The topology of this system.</param>
+		/// <param name="memory">The memory details of this system.</param>
+		/// <param name="timing">Timing details of this system.</param>
+		public SystemDto(CpuDto cpu, OsDto os, TopologyDto topology, MemoryDto memory, TimingDto timing)
+		{
+			Cpu = cpu;
+			Os = os;
+			Topology = topology;
+			Memory = memory;
+			Timing = timing;
+		}
+
 		/// <summary>
 		///     The Cpu of this system.
 		/// </summary>
-		public CpuDto Cpu { get; set; } = new ();
+		public CpuDto Cpu { get; }
 
 		/// <summary>
 		///     The operating system of this system.
 		/// </summary>
-		public OsDto Os { get; set; } = new ();
+		public OsDto Os { get; }
 
 		/// <summary>
 		///     The topology of this system.
 		/// </summary>
-		public TopologyDto Topology { get; set; } = new ();
+		public TopologyDto Topology { get; }
 
 		/// <summary>
 		///     The memory details of this system.
 		/// </summary>
-		public MemoryDto Memory { get; set; } = new ();
+		public MemoryDto Memory { get; }
 
 		/// <summary>
 		///     Timing details of this system.
 		/// </summary>
-		public TimingDto Timing { get; set; } = new ();
+		public TimingDto Timing { get; }
 	}
 }

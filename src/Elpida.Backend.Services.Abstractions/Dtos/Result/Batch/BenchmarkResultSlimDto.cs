@@ -19,38 +19,60 @@
 // =========================================================================
 
 using System;
-using System.Collections.Generic;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Result.Batch
 {
 	/// <summary>
 	///     Describes a single benchmark result.
 	/// </summary>
-	public class BenchmarkResultSlimDto
+	public sealed class BenchmarkResultSlimDto
 	{
+		/// <summary>
+		///     Initializes a new instance of the <see cref="BenchmarkResultSlimDto" /> class.
+		/// </summary>
+		/// <param name="uuid">The Uuid of the benchmark.</param>
+		/// <param name="timestamp">The timestamp of this benchmark run.</param>
+		/// <param name="affinity">The affinity used for this benchmark run.</param>
+		/// <param name="score">The score of this benchmark run.</param>
+		/// <param name="taskResults">The specific task results.</param>
+		public BenchmarkResultSlimDto(
+			Guid uuid,
+			DateTime timestamp,
+			long[] affinity,
+			double score,
+			TaskResultSlimDto[] taskResults
+		)
+		{
+			Uuid = uuid;
+			Timestamp = timestamp;
+			Affinity = affinity;
+			Score = score;
+			TaskResults = taskResults;
+		}
+
 		/// <summary>
 		///     The Uuid of the benchmark.
 		/// </summary>
-		public Guid Uuid { get; set; }
+		public Guid Uuid { get; }
 
 		/// <summary>
 		///     The timestamp of this benchmark run.
 		/// </summary>
-		public DateTime Timestamp { get; set; }
+		public DateTime Timestamp { get; }
 
 		/// <summary>
 		///     The affinity used for this benchmark run.
 		/// </summary>
-		public long[] Affinity { get; set; } = Array.Empty<long>();
+		public long[] Affinity { get; }
 
 		/// <summary>
 		///     The score of this benchmark run.
 		/// </summary>
-		public double Score { get; set; }
+		public double Score { get; }
 
 		/// <summary>
 		///     The specific task results.
 		/// </summary>
-		public IList<TaskResultSlimDto> TaskResults { get; set; } = new List<TaskResultSlimDto>();
+		public TaskResultSlimDto[] TaskResults { get; }
 	}
 }

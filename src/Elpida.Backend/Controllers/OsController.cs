@@ -61,9 +61,9 @@ namespace Elpida.Backend.Controllers
 		)
 		{
 			return _osService.GetPagedAsync(
-					new QueryRequest { PageRequest = pageRequest },
-					cancellationToken
-				);
+				new QueryRequest(pageRequest, null, null, false),
+				cancellationToken
+			);
 		}
 
 		/// <summary>
@@ -102,9 +102,7 @@ namespace Elpida.Backend.Controllers
 			CancellationToken cancellationToken
 		)
 		{
-			QueryRequestUtilities.PreprocessQuery(queryRequest);
-
-			return _osService.GetPagedAsync(queryRequest, cancellationToken);
+			return _osService.GetPagedAsync(QueryRequestUtilities.PreProcessQuery(queryRequest), cancellationToken);
 		}
 	}
 }

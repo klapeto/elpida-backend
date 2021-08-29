@@ -30,9 +30,6 @@ namespace Elpida.Backend.Validators
 			RuleFor(dto => dto.Root)
 				.NotNull();
 
-			RuleFor(dto => dto.TotalDepth)
-				.GreaterThanOrEqualTo(0);
-
 			RuleFor(dto => dto.TotalPhysicalCores)
 				.GreaterThanOrEqualTo(0);
 

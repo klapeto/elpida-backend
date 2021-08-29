@@ -12,11 +12,7 @@ namespace Elpida.Backend.Services.Tests.Helpers
 
 		protected override DummyDto ToDto(DummyModel model)
 		{
-			return new ()
-			{
-				Id = model.Id,
-				Data = model.Data,
-			};
+			return new (model.Id, model.Data);
 		}
 
 		protected override Task<DummyModel> ProcessDtoAndCreateModelAsync(

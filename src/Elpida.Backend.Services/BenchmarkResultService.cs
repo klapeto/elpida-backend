@@ -84,27 +84,17 @@ namespace Elpida.Backend.Services
 				_benchmarkResultsRepository,
 				GetFilterExpressions(),
 				queryRequest,
-				m => new BenchmarkResultPreviewDto
-				{
-					Id = m.Id,
-					TimeStamp = m.TimeStamp,
-					BenchmarkUuid = m.Benchmark.Uuid,
-					BenchmarkName = m.Benchmark.Name,
-					CpuVendor = m.Topology.Cpu.Vendor,
-					CpuModelName = m.Topology.Cpu.ModelName,
-					CpuCores = m.Topology.TotalPhysicalCores,
-					CpuLogicalCores = m.Topology.TotalLogicalCores,
-					CpuFrequency = m.Topology.Cpu.Frequency,
-					MemorySize = m.MemorySize,
-					OsName = m.Os.Name,
-					OsVersion = m.Os.Version,
-					Score = m.Score,
-					BenchmarkScoreUnit = m.Benchmark.ScoreUnit,
-					ElpidaVersionBuild = m.Elpida.VersionBuild,
-					ElpidaVersionMajor = m.Elpida.VersionMajor,
-					ElpidaVersionMinor = m.Elpida.VersionMinor,
-					ElpidaVersionRevision = m.Elpida.VersionRevision,
-				},
+				m => new BenchmarkResultPreviewDto(
+					m.Id,
+					m.Benchmark.Uuid,
+					m.TimeStamp,
+					m.Benchmark.Name,
+					m.Os.Name,
+					m.Cpu.Vendor,
+					m.Cpu.ModelName,
+					m.Benchmark.ScoreUnit,
+					m.Score
+				),
 				cancellationToken
 			);
 		}
@@ -175,7 +165,7 @@ namespace Elpida.Backend.Services
 						Min = taskResult.Statistics.Min,
 						Tau = taskResult.Statistics.Tau,
 						SampleSize = taskResult.Statistics.SampleSize,
-						StandardDeviation = taskResult.Statistics.Sd,
+						StandardDeviation = taskResult.Statistics.StandardDeviation,
 						MarginOfError = taskResult.Statistics.MarginOfError,
 						InputSize = taskResult.InputSize,
 						Value = taskResult.Value,
@@ -201,8 +191,7 @@ namespace Elpida.Backend.Services
 		)
 		{
 			var cpu = await _cpuService.GetOrAddAsync(batch.System.Cpu, cancellationToken);
-			batch.System.Topology.CpuId = cpu.Id;
-			var topology = await _topologyService.GetOrAddAsync(batch.System.Topology, cancellationToken);
+			var topology = await _topologyService.GetOrAddTopologyAsync(cpu.Id, batch.System.Topology, cancellationToken);
 			var os = await _osService.GetOrAddAsync(batch.System.Os, cancellationToken);
 			var elpida = await _elpidaService.GetOrAddAsync(batch.Elpida, cancellationToken);
 

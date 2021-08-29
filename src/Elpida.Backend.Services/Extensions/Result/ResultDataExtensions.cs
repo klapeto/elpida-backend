@@ -37,114 +37,118 @@ namespace Elpida.Backend.Services.Extensions.Result
 	{
 		public static BenchmarkResultDto ToDto(this BenchmarkResultModel benchmarkResultModel)
 		{
-			return new ()
-			{
-				TimeStamp = benchmarkResultModel.TimeStamp,
-				Id = benchmarkResultModel.Id,
-				Elpida = benchmarkResultModel.Elpida.ToDto(),
-				Affinity = JsonConvert.DeserializeObject<List<long>>(benchmarkResultModel.Affinity),
-				Uuid = benchmarkResultModel.Benchmark.Uuid,
-				Name = benchmarkResultModel.Benchmark.Name,
-				ScoreSpecification = new BenchmarkScoreSpecificationDto
-				{
-					Unit = benchmarkResultModel.Benchmark.ScoreUnit,
-					Comparison = benchmarkResultModel.Benchmark.ScoreComparison,
-				},
-				Score = benchmarkResultModel.Score,
-				TaskResults = benchmarkResultModel.TaskResults
-					.OrderBy(m => m.Order)
-					.Select(
-						r => new TaskResultDto
-						{
-							Id = r.Task.Id,
-							Uuid = r.Task.Uuid,
-							Name = r.Task.Name,
-							CpuId = benchmarkResultModel.Cpu.Id,
-							TopologyId = benchmarkResultModel.Topology.Id,
-							TaskId = r.Task.Id,
-							BenchmarkResultId = benchmarkResultModel.Id,
-							Description = r.Task.Description,
-							Input = r.Task.CreateInputSpecDto(),
-							Output = r.Task.CreateOutputSpecDto(),
-							Result = new ResultSpecificationDto
-							{
-								Name = r.Task.ResultName,
-								Description = r.Task.ResultDescription,
-								Aggregation = (AggregationType)r.Task.ResultAggregation,
-								Type = (ResultType)r.Task.ResultType,
-								Unit = r.Task.ResultUnit,
-							},
-							Statistics = new TaskRunStatisticsDto
-							{
-								Max = r.Max,
-								Mean = r.Mean,
-								Min = r.Min,
-								Sd = r.StandardDeviation,
-								Tau = r.Tau,
-								SampleSize = r.SampleSize,
-								MarginOfError = r.MarginOfError,
-							},
-							Time = r.Time,
-							Value = r.Value,
-							InputSize = r.InputSize,
-						}
-					)
-					.ToList(),
-				System = new SystemDto
-				{
-					Cpu = benchmarkResultModel.Cpu.ToDto(),
-					Os = benchmarkResultModel.Os.ToDto(),
-					Memory = new MemoryDto
-					{
-						PageSize = benchmarkResultModel.PageSize,
-						TotalSize = benchmarkResultModel.MemorySize,
-					},
-					Timing = new TimingDto
-					{
-						JoinOverhead = benchmarkResultModel.JoinOverhead,
-						LockOverhead = benchmarkResultModel.LockOverhead,
-						LoopOverhead = benchmarkResultModel.LoopOverhead,
-						NotifyOverhead = benchmarkResultModel.NotifyOverhead,
-						NowOverhead = benchmarkResultModel.NowOverhead,
-						SleepOverhead = benchmarkResultModel.SleepOverhead,
-						TargetTime = benchmarkResultModel.TargetTime,
-						WakeupOverhead = benchmarkResultModel.WakeupOverhead,
-					},
-					Topology = benchmarkResultModel.Topology.ToDto(),
-				},
-			};
+			var scoreSpec = new BenchmarkScoreSpecificationDto(
+				benchmarkResultModel.Benchmark.ScoreUnit,
+				benchmarkResultModel.Benchmark.ScoreComparison
+			);
+
+			return new BenchmarkResultDto(
+				benchmarkResultModel.Id,
+				benchmarkResultModel.TimeStamp,
+				benchmarkResultModel.Benchmark.Uuid,
+				benchmarkResultModel.Benchmark.Name,
+				JsonConvert.DeserializeObject<long[]>(benchmarkResultModel.Affinity),
+				benchmarkResultModel.Elpida.ToDto(),
+				GetSystem(benchmarkResultModel),
+				benchmarkResultModel.Score,
+				scoreSpec,
+				GetTaskResults(benchmarkResultModel).ToArray()
+			);
 		}
 
-		private static DataSpecificationDto? CreateInputSpecDto(this TaskModel model)
+		public static ResultSpecificationDto GetResultSpecificationDto(this TaskModel model)
+		{
+			return new (
+				model.ResultName,
+				model.ResultDescription,
+				model.ResultUnit,
+				(AggregationType)model.ResultAggregation,
+				(ResultType)model.ResultType
+			);
+		}
+
+		private static TaskRunStatisticsDto GetTaskRunStatisticsDto(TaskResultModel model)
+		{
+			return new (
+				model.SampleSize,
+				model.Max,
+				model.Min,
+				model.Mean,
+				model.StandardDeviation,
+				model.Tau,
+				model.MarginOfError
+			);
+		}
+
+		private static IEnumerable<TaskResultDto> GetTaskResults(BenchmarkResultModel result)
+		{
+			return result.TaskResults
+				.OrderBy(m => m.Order)
+				.Select(
+					r => new TaskResultDto(
+						r.Task.Id,
+						result.Id,
+						result.Cpu.Id,
+						result.Topology.Id,
+						r.Task.Uuid,
+						r.Task.Name,
+						r.Task.Description,
+						GetResultSpecificationDto(r.Task),
+						r.Task.CreateInputSpecDto(),
+						r.Task.CreateOutputSpecDto(),
+						r.Value,
+						r.Time,
+						r.InputSize,
+						GetTaskRunStatisticsDto(r)
+					)
+				);
+		}
+
+		private static SystemDto GetSystem(BenchmarkResultModel result)
+		{
+			var memory = new MemoryDto(result.MemorySize, result.PageSize);
+			var timing = new TimingDto(
+				result.NotifyOverhead,
+				result.WakeupOverhead,
+				result.SleepOverhead,
+				result.NowOverhead,
+				result.LockOverhead,
+				result.LoopOverhead,
+				result.JoinOverhead,
+				result.TargetTime
+			);
+
+			return new SystemDto(result.Cpu.ToDto(), result.Os.ToDto(), result.Topology.ToDto(), memory, timing);
+		}
+
+		public static DataSpecificationDto? CreateInputSpecDto(this TaskModel model)
 		{
 			if (string.IsNullOrWhiteSpace(model.InputName))
 			{
 				return null;
 			}
 
-			return new DataSpecificationDto
-			{
-				Name = model.InputName,
-				Description = model.InputDescription!,
-				Unit = model.InputDescription!,
-				RequiredProperties = JsonConvert.DeserializeObject<List<string>>(model.InputProperties!),
-			};
+			return new DataSpecificationDto(
+				model.InputName,
+				model.InputDescription!,
+				model.InputUnit!,
+				JsonConvert.DeserializeObject<string[]>(model.InputProperties!)
+			);
 		}
 
-		private static DataSpecificationDto? CreateOutputSpecDto(this TaskModel model)
+		public static DataSpecificationDto? CreateOutputSpecDto(this TaskModel model)
 		{
 			if (string.IsNullOrWhiteSpace(model.OutputName))
 			{
 				return null;
 			}
 
-			return new DataSpecificationDto
-			{
-				Name = model.OutputName,
-				Description = model.OutputDescription!,
-				Unit = model.OutputUnit!,
-				RequiredProperties = JsonConvert.DeserializeObject<List<string>>(model.OutputProperties!),
-			};
+			return new DataSpecificationDto(
+				model.OutputName,
+				model.OutputDescription!,
+				model.OutputUnit!,
+				JsonConvert.DeserializeObject<string[]>(model.OutputProperties!)
+			);
 		}
 	}
 }

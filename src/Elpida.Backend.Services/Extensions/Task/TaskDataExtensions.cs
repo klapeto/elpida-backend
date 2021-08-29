@@ -18,10 +18,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using System.Collections.Generic;
 using Elpida.Backend.Data.Abstractions.Models.Task;
 using Elpida.Backend.Services.Abstractions.Dtos.Task;
-using Newtonsoft.Json;
+using Elpida.Backend.Services.Extensions.Result;
 
 namespace Elpida.Backend.Services.Extensions.Task
 {
@@ -29,55 +28,15 @@ namespace Elpida.Backend.Services.Extensions.Task
 	{
 		public static TaskDto ToDto(this TaskModel taskModel)
 		{
-			return new ()
-			{
-				Id = taskModel.Id,
-				Uuid = taskModel.Uuid,
-				Name = taskModel.Name,
-				Description = taskModel.Description,
-				Input = CreateInputSpecDto(taskModel),
-				Output = CreateOutputSpecDto(taskModel),
-				Result = new ResultSpecificationDto
-				{
-					Name = taskModel.ResultName,
-					Description = taskModel.ResultDescription,
-					Aggregation = (AggregationType)taskModel.ResultAggregation,
-					Type = (ResultType)taskModel.ResultType,
-					Unit = taskModel.ResultUnit,
-				},
-			};
-		}
-
-		private static DataSpecificationDto? CreateInputSpecDto(this TaskModel model)
-		{
-			if (string.IsNullOrWhiteSpace(model.InputName))
-			{
-				return null;
-			}
-
-			return new DataSpecificationDto
-			{
-				Name = model.InputName,
-				Description = model.InputDescription!,
-				Unit = model.InputUnit!,
-				RequiredProperties = JsonConvert.DeserializeObject<List<string>>(model.InputProperties!),
-			};
-		}
-
-		private static DataSpecificationDto? CreateOutputSpecDto(this TaskModel model)
-		{
-			if (string.IsNullOrWhiteSpace(model.OutputName))
-			{
-				return null;
-			}
-
-			return new DataSpecificationDto
-			{
-				Name = model.OutputName,
-				Description = model.OutputDescription!,
-				Unit = model.OutputUnit!,
-				RequiredProperties = JsonConvert.DeserializeObject<List<string>>(model.OutputProperties!),
-			};
+			return new (
+				taskModel.Id,
+				taskModel.Uuid,
+				taskModel.Name,
+				taskModel.Description,
+				taskModel.GetResultSpecificationDto(),
+				taskModel.CreateInputSpecDto(),
+				taskModel.CreateOutputSpecDto()
+			);
 		}
 	}
 }

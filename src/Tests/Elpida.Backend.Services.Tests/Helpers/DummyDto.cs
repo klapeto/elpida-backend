@@ -24,6 +24,12 @@ namespace Elpida.Backend.Services.Tests.Helpers
 {
 	internal class DummyDto : FoundationDto
 	{
-		public string Data { get; set; }
+		public DummyDto(long id, string data)
+			: base(id)
+		{
+			Data = data;
+		}
+
+		public string Data { get; }
 	}
 }

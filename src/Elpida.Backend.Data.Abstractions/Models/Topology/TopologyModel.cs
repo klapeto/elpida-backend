@@ -38,8 +38,6 @@ namespace Elpida.Backend.Data.Abstractions.Models.Topology
 
 		public int TotalPackages { get; set; }
 
-		public int TotalDepth { get; set; }
-
 		public string Root { get; set; } = default!;
 	}
 }

@@ -23,14 +23,22 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Elpida
 	/// <summary>
 	///     Details of a version.
 	/// </summary>
-	public class VersionDto
+	public sealed class VersionDto
 	{
-		public int Major { get; set; }
+		public VersionDto(int major, int minor, int revision, int build)
+		{
+			Major = major;
+			Minor = minor;
+			Revision = revision;
+			Build = build;
+		}
 
-		public int Minor { get; set; }
+		public int Major { get; }
 
-		public int Revision { get; set; }
+		public int Minor { get; }
 
-		public int Build { get; set; }
+		public int Revision { get; }
+
+		public int Build { get; }
 	}
 }

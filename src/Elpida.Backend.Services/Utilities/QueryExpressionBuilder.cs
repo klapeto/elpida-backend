@@ -30,11 +30,6 @@ namespace Elpida.Backend.Services.Utilities
 	{
 		private readonly IReadOnlyDictionary<string, LambdaExpression> _availableExpressions;
 
-		public QueryExpressionBuilder(IReadOnlyDictionary<string, LambdaExpression> availableExpressions)
-		{
-			_availableExpressions = availableExpressions;
-		}
-
 		public QueryExpressionBuilder(IEnumerable<FilterExpression> filters)
 		{
 			_availableExpressions = filters.ToDictionary(
@@ -58,7 +53,7 @@ namespace Elpida.Backend.Services.Utilities
 			return (ParameterExpression)expression;
 		}
 
-		public IEnumerable<Expression<Func<T, bool>>> Build<T>(IEnumerable<QueryInstance>? queryInstances)
+		public IEnumerable<Expression<Func<T, bool>>> Build<T>(IEnumerable<FilterInstance>? queryInstances)
 		{
 			if (queryInstances == null)
 			{
@@ -126,7 +121,7 @@ namespace Elpida.Backend.Services.Utilities
 			);
 		}
 
-		private Expression<Func<T, bool>>? GetFilter<T>(QueryInstance? instance, LambdaExpression fieldPart)
+		private Expression<Func<T, bool>>? GetFilter<T>(FilterInstance? instance, LambdaExpression fieldPart)
 		{
 			if (instance == null)
 			{
@@ -144,7 +139,7 @@ namespace Elpida.Backend.Services.Utilities
 				if (instance.Comp != null)
 				{
 					if (
-						FilterHelpers.StringComparisons.Contains(instance.Comp)
+						FilterMaps.StringComparisons.Contains(instance.Comp)
 						&& ComparisonExpressions.ExpressionFactories.TryGetValue(instance.Comp, out var factory))
 					{
 						middlePart = factory(left, right);
@@ -152,7 +147,7 @@ namespace Elpida.Backend.Services.Utilities
 					else
 					{
 						throw new ArgumentException(
-							$"String value filter comparison types can be :[{string.Join(",", FilterHelpers.StringComparisons.Select(s => s))}]"
+							$"String value filter comparison types can be :[{string.Join(",", FilterMaps.StringComparisons.Select(s => s))}]"
 						);
 					}
 				}
@@ -160,7 +155,7 @@ namespace Elpida.Backend.Services.Utilities
 				{
 					var factory =
 						ComparisonExpressions.ExpressionFactories[
-							FilterHelpers.ComparisonMap[FilterHelpers.Comparison.Contains]];
+							FilterMaps.ComparisonMap[FilterComparison.Contains]];
 
 					middlePart = factory(left, right);
 				}
@@ -169,7 +164,7 @@ namespace Elpida.Backend.Services.Utilities
 			{
 				if (instance.Comp != null)
 				{
-					if (FilterHelpers.NumberComparisons.Contains(instance.Comp)
+					if (FilterMaps.NumberComparisons.Contains(instance.Comp)
 					    && ComparisonExpressions.ExpressionFactories.TryGetValue(instance.Comp, out var factory))
 					{
 						middlePart = factory(left, right);
@@ -177,7 +172,7 @@ namespace Elpida.Backend.Services.Utilities
 					else
 					{
 						throw new ArgumentException(
-							$"Numeric value filter comparison types can be :[{string.Join(",", FilterHelpers.NumberComparisons.Select(s => s))}]"
+							$"Numeric value filter comparison types can be :[{string.Join(",", FilterMaps.NumberComparisons.Select(s => s))}]"
 						);
 					}
 				}
@@ -185,7 +180,7 @@ namespace Elpida.Backend.Services.Utilities
 				{
 					middlePart =
 						ComparisonExpressions.ExpressionFactories[
-							FilterHelpers.ComparisonMap[FilterHelpers.Comparison.Equal]](
+							FilterMaps.ComparisonMap[FilterComparison.Equal]](
 							left,
 							right
 						);

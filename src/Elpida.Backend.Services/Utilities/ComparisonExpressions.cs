@@ -34,17 +34,17 @@ namespace Elpida.Backend.Services.Utilities
 		public static IReadOnlyDictionary<string, Func<Expression, Expression, Expression>>
 			ExpressionFactories { get; } = new Dictionary<string, Func<Expression, Expression, Expression>>
 		{
-			[FilterHelpers.ComparisonMap[FilterHelpers.Comparison.Contains]] =
+			[FilterMaps.ComparisonMap[FilterComparison.Contains]] =
 				(left, right) => Expression.Call(left, Contains, right),
 
-			[FilterHelpers.ComparisonMap[FilterHelpers.Comparison.NotContain]] =
+			[FilterMaps.ComparisonMap[FilterComparison.NotContain]] =
 				(left, right) => Expression.Not(Expression.Call(left, Contains, right)),
-			[FilterHelpers.ComparisonMap[FilterHelpers.Comparison.Equal]] = Expression.Equal,
-			[FilterHelpers.ComparisonMap[FilterHelpers.Comparison.NotEqual]] = Expression.NotEqual,
-			[FilterHelpers.ComparisonMap[FilterHelpers.Comparison.Greater]] = Expression.GreaterThan,
-			[FilterHelpers.ComparisonMap[FilterHelpers.Comparison.GreaterEqual]] = Expression.GreaterThanOrEqual,
-			[FilterHelpers.ComparisonMap[FilterHelpers.Comparison.Less]] = Expression.LessThan,
-			[FilterHelpers.ComparisonMap[FilterHelpers.Comparison.LessEqual]] = Expression.LessThanOrEqual,
+			[FilterMaps.ComparisonMap[FilterComparison.Equal]] = Expression.Equal,
+			[FilterMaps.ComparisonMap[FilterComparison.NotEqual]] = Expression.NotEqual,
+			[FilterMaps.ComparisonMap[FilterComparison.Greater]] = Expression.GreaterThan,
+			[FilterMaps.ComparisonMap[FilterComparison.GreaterEqual]] = Expression.GreaterThanOrEqual,
+			[FilterMaps.ComparisonMap[FilterComparison.Less]] = Expression.LessThan,
+			[FilterMaps.ComparisonMap[FilterComparison.LessEqual]] = Expression.LessThanOrEqual,
 		};
 	}
 }

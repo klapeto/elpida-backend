@@ -23,16 +23,27 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 	/// <summary>
 	///     Details of the memory of a system.
 	/// </summary>
-	public class MemoryDto
+	public sealed class MemoryDto
 	{
+		/// <summary>
+		///     Initializes a new instance of the <see cref="MemoryDto" /> class.
+		/// </summary>
+		/// <param name="totalSize">The total size of the memory.</param>
+		/// <param name="pageSize">The page size of this system.</param>
+		public MemoryDto(long totalSize, long pageSize)
+		{
+			TotalSize = totalSize;
+			PageSize = pageSize;
+		}
+
 		/// <summary>
 		///     The total size of the memory.
 		/// </summary>
-		public long TotalSize { get; set; }
+		public long TotalSize { get; }
 
 		/// <summary>
 		///     The page size of this system.
 		/// </summary>
-		public long PageSize { get; set; }
+		public long PageSize { get; }
 	}
 }

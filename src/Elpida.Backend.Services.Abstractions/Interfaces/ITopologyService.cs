@@ -30,5 +30,11 @@ namespace Elpida.Backend.Services.Abstractions.Interfaces
 			QueryRequest queryRequest,
 			CancellationToken cancellationToken = default
 		);
+
+		Task<TopologyDto> GetOrAddTopologyAsync(
+			long cpuId,
+			TopologyDto topology,
+			CancellationToken cancellationToken = default
+		);
 	}
 }

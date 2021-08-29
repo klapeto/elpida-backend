@@ -23,28 +23,51 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Cpu
 	/// <summary>
 	///     Represents a Cpu.
 	/// </summary>
-	public class CpuPreviewDto : FoundationDto
+	public sealed class CpuPreviewDto : FoundationDto
 	{
+		/// <summary>
+		///     Initializes a new instance of the <see cref="CpuPreviewDto" /> class.
+		/// </summary>
+		/// <param name="id">The id of the Cpu.</param>
+		/// <param name="vendor">The vendor name of the cpu.</param>
+		/// <param name="modelName">The model name of the cpu.</param>
+		/// <param name="topologiesCount">The number of topologies this cpu has.</param>
+		/// <param name="benchmarkStatisticsCount">The number of Benchmarks statistics this cpu has.</param>
+		public CpuPreviewDto(
+			long id,
+			string vendor,
+			string modelName,
+			int topologiesCount,
+			int benchmarkStatisticsCount
+		)
+			: base(id)
+		{
+			Vendor = vendor;
+			ModelName = modelName;
+			TopologiesCount = topologiesCount;
+			BenchmarkStatisticsCount = benchmarkStatisticsCount;
+		}
+
 		/// <summary>
 		///     The vendor name of the cpu.
 		/// </summary>
 		/// <example>ARM</example>
-		public string Vendor { get; set; } = default!;
+		public string Vendor { get; }
 
 		/// <summary>
 		///     The model name of the cpu.
 		/// </summary>
 		/// <example>Cortex A7</example>
-		public string ModelName { get; set; } = default!;
+		public string ModelName { get; }
 
 		/// <summary>
 		///     The number of topologies this cpu has.
 		/// </summary>
-		public int TopologiesCount { get; set; }
+		public int TopologiesCount { get; }
 
 		/// <summary>
-		///     The number of
+		///     The number of Benchmarks statistics this cpu has.
 		/// </summary>
-		public int TaskStatisticsCount { get; set; }
+		public int BenchmarkStatisticsCount { get; }
 	}
 }

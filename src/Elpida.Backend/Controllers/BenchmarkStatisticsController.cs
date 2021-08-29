@@ -61,7 +61,7 @@ namespace Elpida.Backend.Controllers
 		)
 		{
 			return _benchmarkStatisticsService.GetPagedPreviewsAsync(
-				new QueryRequest { PageRequest = pageRequest },
+				new QueryRequest(pageRequest, null, null, false),
 				cancellationToken
 			);
 		}
@@ -104,9 +104,7 @@ namespace Elpida.Backend.Controllers
 			CancellationToken cancellationToken
 		)
 		{
-			QueryRequestUtilities.PreprocessQuery(queryRequest);
-
-			return _benchmarkStatisticsService.GetPagedPreviewsAsync(queryRequest, cancellationToken);
+			return _benchmarkStatisticsService.GetPagedPreviewsAsync(QueryRequestUtilities.PreProcessQuery(queryRequest), cancellationToken);
 		}
 	}
 }

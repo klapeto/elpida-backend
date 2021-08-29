@@ -34,9 +34,9 @@ namespace Elpida.Backend.Services.Utilities
 				cancellationToken
 			);
 
-			pageRequest.TotalCount = result.TotalCount;
+			var updatedPage = new PageRequest(pageRequest.Next, pageRequest.Count, result.TotalCount);
 
-			return new PagedResult<TProjection>(result.Items.ToList(), pageRequest);
+			return new PagedResult<TProjection>(result.Items.ToList(), updatedPage);
 		}
 
 		public static Task<PagedResult<TProjection>> GetPagedProjectionsAsync<TProjection, TModel>(
@@ -82,9 +82,9 @@ namespace Elpida.Backend.Services.Utilities
 				cancellationToken
 			);
 
-			queryRequest.PageRequest.TotalCount = result.TotalCount;
+			var updatedPage = new PageRequest(queryRequest.PageRequest.Next, queryRequest.PageRequest.Count, result.TotalCount);
 
-			return new PagedResult<TDto>(result.Items.Select(modelToDtoTransformer).ToList(), queryRequest.PageRequest);
+			return new PagedResult<TDto>(result.Items.Select(modelToDtoTransformer).ToList(), updatedPage);
 		}
 	}
 }

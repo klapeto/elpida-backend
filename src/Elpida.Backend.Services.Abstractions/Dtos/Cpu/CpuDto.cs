@@ -18,7 +18,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using System;
 using System.Collections.Generic;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Cpu
@@ -26,50 +25,84 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Cpu
 	/// <summary>
 	///     Details for a Cpu.
 	/// </summary>
-	[Serializable]
-	public class CpuDto : FoundationDto
+	public sealed class CpuDto : FoundationDto
 	{
+		/// <summary>
+		///     Initializes a new instance of the <see cref="CpuDto" /> class.
+		/// </summary>
+		/// <param name="id">The id of the Cpu.</param>
+		/// <param name="architecture">The architecture of this Cpu.</param>
+		/// <param name="vendor">The vendor of this Cpu.</param>
+		/// <param name="modelName">The model name of this Cpu.</param>
+		/// <param name="frequency">The frequency of this Cpu.</param>
+		/// <param name="smt">Whether this cpu supports Simultaneously Multi Threading.</param>
+		/// <param name="additionalInfo">Additional cpu specific information of this Cpu.</param>
+		/// <param name="caches">The caches of this cpu.</param>
+		/// <param name="features">Features that this Cpu supports.</param>
+		public CpuDto(
+			long id,
+			string architecture,
+			string vendor,
+			string modelName,
+			long frequency,
+			bool smt,
+			IDictionary<string, string> additionalInfo,
+			CpuCacheDto[] caches,
+			string[] features
+		)
+			: base(id)
+		{
+			Architecture = architecture;
+			Vendor = vendor;
+			ModelName = modelName;
+			Frequency = frequency;
+			Smt = smt;
+			AdditionalInfo = additionalInfo;
+			Caches = caches;
+			Features = features;
+		}
+
 		/// <summary>
 		///     The architecture of this Cpu.
 		/// </summary>
 		/// <example>ARM</example>
-		public string Architecture { get; set; } = string.Empty;
+		public string Architecture { get; }
 
 		/// <summary>
 		///     The vendor of this Cpu.
 		/// </summary>
 		/// <example>ARM</example>
-		public string Vendor { get; set; } = string.Empty;
+		public string Vendor { get; }
 
 		/// <summary>
 		///     The model name of this Cpu.
 		/// </summary>
 		/// <example>Cortex A7</example>
-		public string ModelName { get; set; } = string.Empty;
+		public string ModelName { get; }
 
 		/// <summary>
 		///     The frequency of this Cpu.
 		/// </summary>
-		public long Frequency { get; set; }
+		public long Frequency { get; }
 
 		/// <summary>
-		///     Whether this cpu supports Simultaneously Mutli Threading.
+		///     Whether this cpu supports Simultaneously Multi Threading.
 		/// </summary>
-		public bool Smt { get; set; }
+		public bool Smt { get; }
 
 		/// <summary>
 		///     Additional cpu specific information of this Cpu.
 		/// </summary>
-		public IDictionary<string, string> AdditionalInfo { get; set; } = new Dictionary<string, string>();
+		public IDictionary<string, string> AdditionalInfo { get; }
 
 		/// <summary>
 		///     The caches of this cpu.
 		/// </summary>
-		public IList<CpuCacheDto> Caches { get; set; } = new List<CpuCacheDto>();
+		public CpuCacheDto[] Caches { get; }
 
 		/// <summary>
 		///     Features that this Cpu supports.
 		/// </summary>
-		public IList<string> Features { get; set; } = new List<string>();
+		public string[] Features { get; }
 	}
 }

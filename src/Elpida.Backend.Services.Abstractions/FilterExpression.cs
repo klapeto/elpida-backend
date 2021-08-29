@@ -23,16 +23,30 @@ using System.Linq.Expressions;
 
 namespace Elpida.Backend.Services.Abstractions
 {
-	public class FilterExpression
+	/// <summary>
+	///     Provides a couple of a filter name with an expression that will act as a filter.
+	/// </summary>
+	public sealed class FilterExpression
 	{
+		/// <summary>
+		///     Initializes a new instance of the <see cref="FilterExpression" /> class.
+		/// </summary>
+		/// <param name="name">The name of the filter.</param>
+		/// <param name="expression">The expression that will act as the filter.</param>
 		public FilterExpression(string name, MemberExpression expression)
 		{
 			Name = name;
 			Expression = expression;
 		}
 
+		/// <summary>
+		///     Gets the name of the filter.
+		/// </summary>
 		public string Name { get; }
 
+		/// <summary>
+		///     Gets the expression that will act as the filter.
+		/// </summary>
 		public MemberExpression Expression { get; }
 
 		public override bool Equals(object? obj)
@@ -48,11 +62,6 @@ namespace Elpida.Backend.Services.Abstractions
 		public override int GetHashCode()
 		{
 			return HashCode.Combine(Name);
-		}
-
-		protected bool Equals(FilterExpression other)
-		{
-			return Name == other.Name;
 		}
 	}
 }

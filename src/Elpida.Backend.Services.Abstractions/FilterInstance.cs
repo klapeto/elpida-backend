@@ -18,37 +18,42 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using System;
-
-namespace Elpida.Backend.Services.Abstractions.Dtos.Benchmark
+namespace Elpida.Backend.Services.Abstractions
 {
 	/// <summary>
-	///     A data preview for a Benchmark.
+	///     Details of a criteria for a search.
 	/// </summary>
-	public sealed class BenchmarkPreviewDto : FoundationDto
+	public sealed class FilterInstance
 	{
 		/// <summary>
-		///     Initializes a new instance of the <see cref="BenchmarkPreviewDto" /> class.
+		///     Initializes a new instance of the <see cref="FilterInstance" /> class.
 		/// </summary>
-		/// <param name="id">The id if the Benchmark.</param>
-		/// <param name="uuid">The UUID of the Benchmark this preview represents.</param>
-		/// <param name="name">The name of the Benchmark this preview represents.</param>
-		public BenchmarkPreviewDto(long id, Guid uuid, string name)
-			: base(id)
+		/// <param name="name">The name of the field to filter.</param>
+		/// <param name="value">The value of the filter.</param>
+		/// <param name="comp">The comparison that the filter should do.</param>
+		public FilterInstance(string name, object? value, string? comp)
 		{
-			Uuid = uuid;
 			Name = name;
+			Value = value;
+			Comp = comp;
 		}
 
 		/// <summary>
-		///     The UUID of the Benchmark this preview represents.
+		///     The name of the field this criteria applies.
 		/// </summary>
-		public Guid Uuid { get; }
+		/// <example>benchmarkName</example>
+		public string Name { get; }
 
 		/// <summary>
-		///     The name of the Benchmark this preview represents.
+		///     The value this criteria.
 		/// </summary>
-		/// <example>Test Benchmark</example>
-		public string Name { get; }
+		/// <example>Allocate Memory</example>
+		public object? Value { get; }
+
+		/// <summary>
+		///     The comparison to use on the field and the value.
+		/// </summary>
+		/// <example>eq</example>
+		public string? Comp { get; }
 	}
 }
