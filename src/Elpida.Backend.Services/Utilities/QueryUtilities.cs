@@ -80,35 +80,5 @@ namespace Elpida.Backend.Services.Utilities
 				cancellationToken
 			);
 		}
-
-		public static async Task<PagedResult<TDto>> GetPagedAsync<TDto, TModel>(
-			IRepository<TModel> repository,
-			IEnumerable<FilterExpression> availableFilters,
-			QueryRequest queryRequest,
-			Func<TModel, TDto> modelToDtoTransformer,
-			CancellationToken cancellationToken = default
-		)
-			where TModel : Entity
-		{
-			var expressionBuilder = new QueryExpressionBuilder(availableFilters);
-
-			var result = await repository.GetMultiplePagedAsync(
-				queryRequest.PageRequest.Next,
-				queryRequest.PageRequest.Count,
-				queryRequest.Descending,
-				queryRequest.PageRequest.TotalCount == 0,
-				expressionBuilder.GetOrderBy<TModel>(queryRequest),
-				expressionBuilder.Build<TModel>(queryRequest.Filters),
-				cancellationToken
-			);
-
-			var updatedPage = new PageRequest(
-				queryRequest.PageRequest.Next,
-				queryRequest.PageRequest.Count,
-				result.TotalCount
-			);
-
-			return new PagedResult<TDto>(result.Items.Select(modelToDtoTransformer).ToList(), updatedPage);
-		}
 	}
 }

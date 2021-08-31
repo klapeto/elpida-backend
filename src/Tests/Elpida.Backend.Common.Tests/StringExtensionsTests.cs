@@ -18,31 +18,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using System;
-using Elpida.Backend.Common.Exceptions;
+using System.Security.Cryptography;
+using System.Text;
+using Elpida.Backend.Common.Extensions;
 using NUnit.Framework;
 
-namespace Elpida.Backend.Services.Tests
+namespace Elpida.Backend.Common.Tests
 {
 	[TestFixture]
-	internal class NotFoundExceptionTests
+	public class StringExtensionsTests
 	{
 		[Test]
-		public void Id_Valid()
+		public void Success()
 		{
-			var id = Guid.NewGuid();
-			var ex = new NotFoundException("This item was not found", id);
+			const string str = "LOL";
+			using var md5 = MD5.Create();
 
-			Assert.AreEqual(id.ToString(), ex.Id);
-		}
+			var expected = md5.ComputeHash(Encoding.UTF8.GetBytes(str));
 
-		[Test]
-		public void Id_Long_Valid()
-		{
-			const long id = 512L;
-			var ex = new NotFoundException("This item was not found", id);
-
-			Assert.AreEqual(id.ToString(), ex.Id);
+			Assert.AreEqual(expected.ToHexString(), str.ToHashString());
 		}
 	}
 }

@@ -25,13 +25,8 @@ using Elpida.Backend.Services.Abstractions.Dtos.Benchmark;
 
 namespace Elpida.Backend.Services.Abstractions.Interfaces
 {
-	public interface IBenchmarkService : IService<BenchmarkDto>
+	public interface IBenchmarkService : IService<BenchmarkDto, BenchmarkPreviewDto>
 	{
-		Task<PagedResult<BenchmarkPreviewDto>> GetPagedPreviewsAsync(
-			QueryRequest queryRequest,
-			CancellationToken cancellationToken = default
-		);
-
 		Task<BenchmarkDto> GetSingleAsync(Guid uuid, CancellationToken cancellationToken = default);
 	}
 }

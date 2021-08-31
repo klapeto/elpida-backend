@@ -26,26 +26,8 @@ using Elpida.Backend.Services.Abstractions.Dtos.Result.Batch;
 
 namespace Elpida.Backend.Services.Abstractions.Interfaces
 {
-	public interface IBenchmarkResultsService
+	public interface IBenchmarkResultsService : IService<BenchmarkResultDto, BenchmarkResultPreviewDto>
 	{
-		Task<PagedResult<BenchmarkResultPreviewDto>> GetPagedPreviewsAsync(
-			QueryRequest queryRequest,
-			CancellationToken cancellationToken = default
-		);
-
-		Task<BenchmarkResultDto> GetSingleAsync(long id, CancellationToken cancellationToken = default);
-
-		Task<long> AddAsync(
-			long cpuId,
-			long topologyId,
-			long osId,
-			long elpidaId,
-			BenchmarkResultSlimDto benchmarkResult,
-			MemoryDto memory,
-			TimingDto timing,
-			CancellationToken cancellationToken = default
-		);
-
 		Task<IList<long>> AddBatchAsync(BenchmarkResultsBatchDto batch, CancellationToken cancellationToken = default);
 	}
 }

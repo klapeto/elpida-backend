@@ -23,7 +23,7 @@ using FluentValidation;
 
 namespace Elpida.Backend.Validators
 {
-	public class FilterInstanceValidator : AbstractValidator<FilterInstance>
+	internal class FilterInstanceValidator : AbstractValidator<FilterInstance>
 	{
 		public FilterInstanceValidator()
 		{

@@ -23,7 +23,7 @@ using FluentValidation;
 
 namespace Elpida.Backend.Validators
 {
-	public class TopologyDtoValidator : AbstractValidator<TopologyDto>
+	internal class TopologyDtoValidator : AbstractValidator<TopologyDto>
 	{
 		public TopologyDtoValidator()
 		{

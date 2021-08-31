@@ -37,7 +37,8 @@ using Newtonsoft.Json;
 
 namespace Elpida.Backend.Services
 {
-	public class TopologyService : Service<TopologyDto, TopologyModel, ITopologyRepository>, ITopologyService
+	public class TopologyService
+		: Service<TopologyDto, TopologyPreviewDto, TopologyModel, ITopologyRepository>, ITopologyService
 	{
 		private readonly ICpuService _cpuService;
 
@@ -49,31 +50,11 @@ namespace Elpida.Backend.Services
 
 		private static FilterExpression[]? FilterExpressions { get; set; }
 
-		public Task<PagedResult<TopologyPreviewDto>> GetPagedPreviewsAsync(
-			QueryRequest queryRequest,
+		public async Task<TopologyDto> GetOrAddTopologyAsync(
+			long cpuId,
+			TopologyDto topology,
 			CancellationToken cancellationToken = default
 		)
-		{
-			return QueryUtilities.GetPagedProjectionsAsync(
-				Repository,
-				GetFilterExpressions(),
-				queryRequest,
-				m => new TopologyPreviewDto(
-					m.Id,
-					m.CpuId,
-					m.Cpu.Vendor,
-					m.Cpu.ModelName,
-					m.TotalLogicalCores,
-					m.TotalPhysicalCores,
-					m.TotalNumaNodes,
-					m.TotalPackages,
-					m.TopologyHash
-				),
-				cancellationToken
-			);
-		}
-
-		public async Task<TopologyDto> GetOrAddTopologyAsync(long cpuId, TopologyDto topology, CancellationToken cancellationToken = default)
 		{
 			var cpu = await _cpuService.GetSingleAsync(cpuId, cancellationToken);
 			return await GetOrAddAsync(
@@ -89,6 +70,21 @@ namespace Elpida.Backend.Services
 					topology.Root
 				),
 				cancellationToken
+			);
+		}
+
+		protected override Expression<Func<TopologyModel, TopologyPreviewDto>> GetPreviewConstructionExpression()
+		{
+			return m => new TopologyPreviewDto(
+				m.Id,
+				m.CpuId,
+				m.Cpu.Vendor,
+				m.Cpu.ModelName,
+				m.TotalLogicalCores,
+				m.TotalPhysicalCores,
+				m.TotalNumaNodes,
+				m.TotalPackages,
+				m.TopologyHash
 			);
 		}
 

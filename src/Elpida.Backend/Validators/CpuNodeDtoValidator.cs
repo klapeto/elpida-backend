@@ -23,7 +23,7 @@ using FluentValidation;
 
 namespace Elpida.Backend.Validators
 {
-	public class CpuNodeDtoValidator : AbstractValidator<CpuNodeDto>
+	internal class CpuNodeDtoValidator : AbstractValidator<CpuNodeDto>
 	{
 		public CpuNodeDtoValidator()
 		{

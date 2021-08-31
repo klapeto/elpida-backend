@@ -18,23 +18,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using System;
-using System.Threading;
+using Elpida.Backend.Common.Extensions;
+using NUnit.Framework;
 
-namespace Elpida.Backend.Common.Lock.Local
+namespace Elpida.Backend.Common.Tests
 {
-	internal class LocalLock : IDisposable
+	[TestFixture]
+	internal class ByteArrayExtensionsTests
 	{
-		private readonly SemaphoreSlim _semaphore = new (1, 1);
-
-		public void Dispose()
+		[Test]
+		public void Success()
 		{
-			_semaphore.Release();
-		}
+			Assert.AreEqual("3112FCA8571B", new byte[] { 0x31, 0x12, 0xFC, 0xA8, 0x57, 0x1B }.ToHexString());
 
-		public void Acquire()
-		{
-			_semaphore.Wait();
+			Assert.AreEqual("CD84ACF04891", new byte[] { 0xCD, 0x84, 0xAC, 0xF0, 0x48, 0x91 }.ToHexString());
 		}
 	}
 }

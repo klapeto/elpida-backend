@@ -20,6 +20,7 @@
 
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,32 +33,47 @@ namespace Elpida.Backend
 	{
 		private const string ApiKeyHeaderName = "api_key";
 
-		public string KeyName { get; set; } = string.Empty;
-
-		public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+		public ApiKeyAuthenticationAttribute(string keyName)
 		{
-			if (!context.HttpContext.Request.Headers.TryGetValue(ApiKeyHeaderName, out var key))
+			KeyName = keyName;
+		}
+
+		public string KeyName { get; }
+
+		public Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+		{
+			if (IsAuthorized(
+				KeyName,
+				context.HttpContext.Request.Headers,
+				context.HttpContext.RequestServices
+			))
 			{
-				context.Result = new UnauthorizedResult();
-				return;
+				return next();
 			}
 
-			var apiKeys = context.HttpContext.RequestServices.GetRequiredService<IOptions<ApiKeys>>().Value;
+			context.Result = new UnauthorizedResult();
+			return Task.CompletedTask;
+		}
 
-			if (apiKeys.TryGetValue(KeyName, out var validKey))
+		private static bool IsAuthorized(
+			string keyName,
+			IHeaderDictionary headers,
+			IServiceProvider serviceProvider
+		)
+		{
+			if (!headers.TryGetValue(ApiKeyHeaderName, out var key))
 			{
-				if (!validKey.Equals(key))
-				{
-					context.Result = new UnauthorizedResult();
-					return;
-				}
-			}
-			else
-			{
-				throw new ArgumentException("Provided key name does not exist in the configuration!", KeyName);
+				return false;
 			}
 
-			await next();
+			var apiKeys = serviceProvider.GetRequiredService<IOptions<ApiKeys>>().Value;
+
+			if (apiKeys.TryGetValue(keyName, out var validKey))
+			{
+				return validKey.Equals(key);
+			}
+
+			throw new ArgumentException("Provided key name does not exist in the configuration!", keyName);
 		}
 	}
 }

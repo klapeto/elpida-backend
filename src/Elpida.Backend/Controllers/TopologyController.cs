@@ -18,12 +18,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using System.Threading;
-using System.Threading.Tasks;
-using Elpida.Backend.Services.Abstractions;
 using Elpida.Backend.Services.Abstractions.Dtos.Topology;
 using Elpida.Backend.Services.Abstractions.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Elpida.Backend.Controllers
@@ -33,75 +29,11 @@ namespace Elpida.Backend.Controllers
 	/// </summary>
 	[ApiController]
 	[Route("api/v1/[controller]")]
-	public class TopologyController : ControllerBase
+	public class TopologyController : ServiceController<TopologyDto, TopologyPreviewDto, ITopologyService>
 	{
-		private readonly ITopologyService _topologyService;
-
 		public TopologyController(ITopologyService topologyService)
+			: base(topologyService)
 		{
-			_topologyService = topologyService;
-		}
-
-		/// <summary>
-		///     Get all the Cpu Topologies with paging.
-		/// </summary>
-		/// <param name="pageRequest">The page request.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <returns>The page of Cpu Topologies requested.</returns>
-		/// <response code="200">The returned page of the Cpu Topologies previews.</response>
-		/// <response code="400">The request data was invalid.</response>
-		[HttpGet]
-		[Produces("application/json")]
-		[Consumes("application/json")]
-		[ProducesResponseType(StatusCodes.Status200OK)]
-		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public Task<PagedResult<TopologyPreviewDto>> GetPagedPreviews(
-			[FromQuery] PageRequest pageRequest,
-			CancellationToken cancellationToken
-		)
-		{
-			return _topologyService.GetPagedPreviewsAsync(
-				new QueryRequest(pageRequest, null, null, false),
-				cancellationToken
-			);
-		}
-
-		/// <summary>
-		///     Get the full details of a single Cpu Topology.
-		/// </summary>
-		/// <param name="id">The id of the Cpu Topology to get.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <returns>The Cpu Topology details.</returns>
-		/// <response code="200">The returned data of the Cpu Topology.</response>
-		/// <response code="404">The Cpu Topology with this id was not found.</response>
-		[HttpGet("{id:long}")]
-		[Produces("application/json")]
-		[ProducesResponseType(StatusCodes.Status200OK)]
-		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public Task<TopologyDto> GetSingle([FromRoute] long id, CancellationToken cancellationToken)
-		{
-			return _topologyService.GetSingleAsync(id, cancellationToken);
-		}
-
-		/// <summary>
-		///     Search for Cpu Topologies with the provided criteria.
-		/// </summary>
-		/// <param name="queryRequest">The query request.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <returns>The page of Cpu Topology previews that the search yielded.</returns>
-		/// <response code="200">The returned page of the Cpu Topology previews that the search yielded.</response>
-		/// <response code="400">The request data was invalid.</response>
-		[HttpPost("Search")]
-		[Produces("application/json")]
-		[Consumes("application/json")]
-		[ProducesResponseType(StatusCodes.Status200OK)]
-		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public Task<PagedResult<TopologyPreviewDto>> Search(
-			[FromBody] QueryRequest queryRequest,
-			CancellationToken cancellationToken
-		)
-		{
-			return _topologyService.GetPagedPreviewsAsync(QueryRequestUtilities.PreProcessQuery(queryRequest), cancellationToken);
 		}
 	}
 }

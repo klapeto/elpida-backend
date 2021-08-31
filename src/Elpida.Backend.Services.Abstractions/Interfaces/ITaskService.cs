@@ -25,7 +25,7 @@ using Elpida.Backend.Services.Abstractions.Dtos.Task;
 
 namespace Elpida.Backend.Services.Abstractions.Interfaces
 {
-	public interface ITaskService : IService<TaskDto>
+	public interface ITaskService : IService<TaskDto, TaskPreviewDto>
 	{
 		Task<TaskDto> GetSingleAsync(Guid uuid, CancellationToken cancellationToken = default);
 	}

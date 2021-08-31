@@ -23,7 +23,7 @@ using FluentValidation;
 
 namespace Elpida.Backend.Validators
 {
-	public class BenchmarkResultsBatchDtoValidator : AbstractValidator<BenchmarkResultsBatchDto>
+	internal class BenchmarkResultsBatchDtoValidator : AbstractValidator<BenchmarkResultsBatchDto>
 	{
 		public BenchmarkResultsBatchDtoValidator()
 		{

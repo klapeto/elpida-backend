@@ -18,14 +18,31 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using System;
-using System.Threading;
-using System.Threading.Tasks;
+using Elpida.Backend.Controllers;
+using Elpida.Backend.Services.Abstractions.Dtos.Statistics;
+using Elpida.Backend.Services.Abstractions.Interfaces;
+using Elpida.Backend.Services.Tests;
 
-namespace Elpida.Backend.Common.Lock
+namespace Elpida.Backend.Tests.Controllers
 {
-	public interface ILockFactory
+	internal class BenchmarkStatisticsControllerTests
+		: ServiceControllerTests<BenchmarkStatisticsDto, BenchmarkStatisticsPreviewDto, IBenchmarkStatisticsService>
 	{
-		Task<IDisposable> AcquireAsync(string name, CancellationToken cancellationToken = default);
+		protected override
+			ServiceController<BenchmarkStatisticsDto, BenchmarkStatisticsPreviewDto, IBenchmarkStatisticsService>
+			GetController(IBenchmarkStatisticsService service)
+		{
+			return new BenchmarkStatisticsController(service);
+		}
+
+		protected override BenchmarkStatisticsDto NewDummyDto()
+		{
+			return DtoGenerators.NewBenchmarkStatistic();
+		}
+
+		protected override BenchmarkStatisticsPreviewDto NewDummyPreviewDto()
+		{
+			return DtoGenerators.NewBenchmarkStatisticsPreview();
+		}
 	}
 }

@@ -34,7 +34,8 @@ using Elpida.Backend.Services.Utilities;
 
 namespace Elpida.Backend.Services
 {
-	public class BenchmarkService : Service<BenchmarkDto, BenchmarkModel, IBenchmarkRepository>, IBenchmarkService
+	public class BenchmarkService
+		: Service<BenchmarkDto, BenchmarkPreviewDto, BenchmarkModel, IBenchmarkRepository>, IBenchmarkService
 	{
 		private readonly ITaskRepository _taskRepository;
 
@@ -52,20 +53,6 @@ namespace Elpida.Backend.Services
 			FiltersTransformer.CreateFilter<BenchmarkModel, string>("benchmarkName", model => model.Name),
 		};
 
-		public Task<PagedResult<BenchmarkPreviewDto>> GetPagedPreviewsAsync(
-			QueryRequest queryRequest,
-			CancellationToken cancellationToken = default
-		)
-		{
-			return QueryUtilities.GetPagedProjectionsAsync(
-				Repository,
-				GetFilterExpressions(),
-				queryRequest,
-				m => new BenchmarkPreviewDto(m.Id, m.Uuid, m.Name),
-				cancellationToken
-			);
-		}
-
 		public async Task<BenchmarkDto> GetSingleAsync(Guid uuid, CancellationToken cancellationToken = default)
 		{
 			var benchmark = await Repository.GetSingleAsync(m => m.Uuid == uuid, cancellationToken);
@@ -76,6 +63,11 @@ namespace Elpida.Backend.Services
 			}
 
 			return ToDto(benchmark);
+		}
+
+		protected override Expression<Func<BenchmarkModel, BenchmarkPreviewDto>> GetPreviewConstructionExpression()
+		{
+			return m => new BenchmarkPreviewDto(m.Id, m.Uuid, m.Name);
 		}
 
 		protected override async Task<BenchmarkModel> ProcessDtoAndCreateModelAsync(

@@ -22,7 +22,7 @@ using Elpida.Backend.Services.Abstractions.Dtos.Os;
 
 namespace Elpida.Backend.Services.Abstractions.Interfaces
 {
-	public interface IOsService : IService<OsDto>
+	public interface IOsService : IService<OsDto, OsDto>
 	{
 	}
 }

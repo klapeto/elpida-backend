@@ -44,7 +44,7 @@ using Microsoft.OpenApi.Models;
 
 namespace Elpida.Backend
 {
-	public class Startup
+	internal class Startup
 	{
 		public Startup(IConfiguration configuration)
 		{
@@ -159,7 +159,7 @@ namespace Elpida.Backend
 
 			app.UseSwagger();
 
-			app.UseSwaggerUI(c => { c.SwaggerEndpoint("v1/swagger.json", "Elpida HTTP Rest Api V1"); });
+			app.UseSwaggerUI(c => c.SwaggerEndpoint("v1/swagger.json", "Elpida HTTP Rest Api V1"));
 		}
 
 		private static async Task ErrorHandler(HttpContext context)

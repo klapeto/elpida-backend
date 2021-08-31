@@ -18,20 +18,32 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using Elpida.Backend.Common.Extensions;
+using Elpida.Backend.Controllers;
+using Elpida.Backend.Services.Abstractions.Dtos.Topology;
+using Elpida.Backend.Services.Abstractions.Interfaces;
+using Elpida.Backend.Services.Tests;
 using NUnit.Framework;
 
-namespace Elpida.Backend.Services.Tests
+namespace Elpida.Backend.Tests.Controllers
 {
 	[TestFixture]
-	internal class ByteArrayExtensionsTests
+	internal class TopologyControllerTests : ServiceControllerTests<TopologyDto, TopologyPreviewDto, ITopologyService>
 	{
-		[Test]
-		public void Success()
+		protected override ServiceController<TopologyDto, TopologyPreviewDto, ITopologyService> GetController(
+			ITopologyService service
+		)
 		{
-			Assert.AreEqual("3112FCA8571B", new byte[] { 0x31, 0x12, 0xFC, 0xA8, 0x57, 0x1B }.ToHexString());
+			return new TopologyController(service);
+		}
 
-			Assert.AreEqual("CD84ACF04891", new byte[] { 0xCD, 0x84, 0xAC, 0xF0, 0x48, 0x91 }.ToHexString());
+		protected override TopologyDto NewDummyDto()
+		{
+			return DtoGenerators.NewTopology();
+		}
+
+		protected override TopologyPreviewDto NewDummyPreviewDto()
+		{
+			return DtoGenerators.NewTopologyPreviewDto();
 		}
 	}
 }

@@ -39,7 +39,10 @@ using Newtonsoft.Json;
 namespace Elpida.Backend.Services
 {
 	public class BenchmarkStatisticsService
-		: Service<BenchmarkStatisticsDto, BenchmarkStatisticsModel, IBenchmarkStatisticsRepository>,
+		: Service<BenchmarkStatisticsDto,
+				BenchmarkStatisticsPreviewDto,
+				BenchmarkStatisticsModel,
+				IBenchmarkStatisticsRepository>,
 			IBenchmarkStatisticsService
 	{
 		private readonly IBenchmarkResultsRepository _benchmarkResultsRepository;
@@ -104,20 +107,6 @@ namespace Elpida.Backend.Services
 			await Repository.SaveChangesAsync(cancellationToken);
 
 			await transaction.CommitAsync(cancellationToken);
-		}
-
-		public Task<PagedResult<BenchmarkStatisticsPreviewDto>> GetPagedPreviewsAsync(
-			QueryRequest queryRequest,
-			CancellationToken cancellationToken = default
-		)
-		{
-			return QueryUtilities.GetPagedProjectionsAsync(
-				Repository,
-				GetFilterExpressions(),
-				queryRequest,
-				GetPreviewConstructionExpression(),
-				cancellationToken
-			);
 		}
 
 		protected override Task<BenchmarkStatisticsModel> ProcessDtoAndCreateModelAsync(
@@ -188,7 +177,7 @@ namespace Elpida.Backend.Services
 			);
 		}
 
-		private static Expression<Func<BenchmarkStatisticsModel, BenchmarkStatisticsPreviewDto>>
+		protected override Expression<Func<BenchmarkStatisticsModel, BenchmarkStatisticsPreviewDto>>
 			GetPreviewConstructionExpression()
 		{
 			return m => new BenchmarkStatisticsPreviewDto(

@@ -34,7 +34,7 @@ using Newtonsoft.Json;
 
 namespace Elpida.Backend.Services
 {
-	public class CpuService : Service<CpuDto, CpuModel, ICpuRepository>, ICpuService
+	public class CpuService : Service<CpuDto, CpuPreviewDto, CpuModel, ICpuRepository>, ICpuService
 	{
 		public CpuService(ICpuRepository cpuRepository)
 			: base(cpuRepository)
@@ -48,18 +48,9 @@ namespace Elpida.Backend.Services
 			FiltersTransformer.CreateFilter<CpuModel, long>("cpuFrequency", model => model.Frequency),
 		};
 
-		public Task<PagedResult<CpuPreviewDto>> GetPagedPreviewsAsync(
-			QueryRequest queryRequest,
-			CancellationToken cancellationToken = default
-		)
+		protected override Expression<Func<CpuModel, CpuPreviewDto>> GetPreviewConstructionExpression()
 		{
-			return QueryUtilities.GetPagedProjectionsAsync(
-				Repository,
-				GetFilterExpressions(),
-				queryRequest,
-				m => new CpuPreviewDto(m.Id, m.Vendor, m.ModelName, m.Topologies.Count, m.BenchmarkStatistics.Count),
-				cancellationToken
-			);
+			return m => new CpuPreviewDto(m.Id, m.Vendor, m.ModelName, m.Topologies.Count, m.BenchmarkStatistics.Count);
 		}
 
 		protected override Task<CpuModel> ProcessDtoAndCreateModelAsync(CpuDto dto, CancellationToken cancellationToken)

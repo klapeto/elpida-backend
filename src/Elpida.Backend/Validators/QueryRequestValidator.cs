@@ -23,7 +23,7 @@ using FluentValidation;
 
 namespace Elpida.Backend.Validators
 {
-	public class QueryRequestValidator : AbstractValidator<QueryRequest>
+	internal class QueryRequestValidator : AbstractValidator<QueryRequest>
 	{
 		public QueryRequestValidator()
 		{

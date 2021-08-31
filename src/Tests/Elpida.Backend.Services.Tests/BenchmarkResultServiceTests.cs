@@ -18,7 +18,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using Elpida.Backend.Common.Lock;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services.Abstractions.Interfaces;
 using Moq;
@@ -46,7 +45,6 @@ namespace Elpida.Backend.Services.Tests
 				ElpidaService = new Mock<IElpidaService>(MockBehavior.Strict);
 				OsService = new Mock<IOsService>(MockBehavior.Strict);
 				BenchmarkService = new Mock<IBenchmarkService>(MockBehavior.Strict);
-				LockFactory = new Mock<ILockFactory>(MockBehavior.Strict);
 
 				// Service = new BenchmarkResultService(
 				// 	BenchmarkResultRepo.Object,
@@ -89,8 +87,7 @@ namespace Elpida.Backend.Services.Tests
 			public Mock<IOsService> OsService { get; }
 
 			public Mock<IBenchmarkService> BenchmarkService { get; }
-
-			public Mock<ILockFactory> LockFactory { get; }
+			
 
 			public BenchmarkResultService Service { get; }
 		}

@@ -33,7 +33,7 @@ using Elpida.Backend.Services.Utilities;
 
 namespace Elpida.Backend.Services
 {
-	public class ElpidaService : Service<ElpidaDto, ElpidaModel, IElpidaRepository>, IElpidaService
+	public class ElpidaService : Service<ElpidaDto, ElpidaDto, ElpidaModel, IElpidaRepository>, IElpidaService
 	{
 		public ElpidaService(IElpidaRepository elpidaRepository)
 			: base(elpidaRepository)
@@ -58,6 +58,15 @@ namespace Elpida.Backend.Services
 		protected override ElpidaDto ToDto(ElpidaModel model)
 		{
 			return model.ToDto();
+		}
+
+		protected override Expression<Func<ElpidaModel, ElpidaDto>> GetPreviewConstructionExpression()
+		{
+			return m => new ElpidaDto(
+				m.Id,
+				new VersionDto(m.VersionMajor, m.VersionMinor, m.VersionRevision, m.VersionBuild),
+				new CompilerDto(m.CompilerName, m.CompilerVersion)
+			);
 		}
 
 		protected override Task<ElpidaModel> ProcessDtoAndCreateModelAsync(

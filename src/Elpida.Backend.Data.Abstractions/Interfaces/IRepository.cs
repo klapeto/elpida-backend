@@ -39,16 +39,6 @@ namespace Elpida.Backend.Data.Abstractions.Interfaces
 
 		Task<TEntity> CreateAsync(TEntity entity, CancellationToken cancellationToken = default);
 
-		Task<PagedQueryResult<TEntity>> GetMultiplePagedAsync<TOrderKey>(
-			int from,
-			int count,
-			bool descending = false,
-			bool calculateTotalCount = false,
-			Expression<Func<TEntity, TOrderKey>>? orderBy = null,
-			IEnumerable<Expression<Func<TEntity, bool>>>? filters = null,
-			CancellationToken cancellationToken = default
-		);
-
 		Task<PagedQueryResult<TReturnEntity>> GetPagedProjectionAsync<TOrderKey, TReturnEntity>(
 			int from,
 			int count,

@@ -23,7 +23,7 @@ using FluentValidation;
 
 namespace Elpida.Backend.Validators
 {
-	public class OsDtoValidator : AbstractValidator<OsDto>
+	internal class OsDtoValidator : AbstractValidator<OsDto>
 	{
 		public OsDtoValidator()
 		{

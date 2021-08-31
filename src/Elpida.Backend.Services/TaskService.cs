@@ -24,7 +24,6 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Common.Exceptions;
-using Elpida.Backend.Common.Lock;
 using Elpida.Backend.Data.Abstractions.Models.Task;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services.Abstractions;
@@ -36,7 +35,7 @@ using Newtonsoft.Json;
 
 namespace Elpida.Backend.Services
 {
-	public class TaskService : Service<TaskDto, TaskModel, ITaskRepository>, ITaskService
+	public class TaskService : Service<TaskDto, TaskPreviewDto, TaskModel, ITaskRepository>, ITaskService
 	{
 		public TaskService(ITaskRepository taskRepository)
 			: base(taskRepository)
@@ -68,6 +67,11 @@ namespace Elpida.Backend.Services
 		protected override TaskDto ToDto(TaskModel model)
 		{
 			return model.ToDto();
+		}
+
+		protected override Expression<Func<TaskModel, TaskPreviewDto>> GetPreviewConstructionExpression()
+		{
+			return m => new TaskPreviewDto(m.Id, m.Uuid, m.Name, m.ResultUnit);
 		}
 
 		protected override Task<TaskModel> ProcessDtoAndCreateModelAsync(

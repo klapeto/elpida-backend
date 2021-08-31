@@ -23,7 +23,7 @@ using FluentValidation;
 
 namespace Elpida.Backend.Validators
 {
-	public class CpuCacheDtoValidator : AbstractValidator<CpuCacheDto>
+	internal class CpuCacheDtoValidator : AbstractValidator<CpuCacheDto>
 	{
 		public CpuCacheDtoValidator()
 		{

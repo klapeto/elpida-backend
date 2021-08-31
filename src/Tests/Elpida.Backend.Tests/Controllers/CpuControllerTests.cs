@@ -18,26 +18,30 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using Elpida.Backend.Common.Lock.Local;
-using Elpida.Backend.Common.Lock.Redis;
-using Microsoft.Extensions.DependencyInjection;
+using Elpida.Backend.Controllers;
+using Elpida.Backend.Services.Abstractions.Dtos.Cpu;
+using Elpida.Backend.Services.Abstractions.Interfaces;
+using Elpida.Backend.Services.Tests;
+using NUnit.Framework;
 
-namespace Elpida.Backend.Common.Lock
+namespace Elpida.Backend.Tests.Controllers
 {
-	public static class ServicesCollectionExtensions
+	[TestFixture]
+	internal class CpuControllerTests : ServiceControllerTests<CpuDto, CpuPreviewDto, ICpuService>
 	{
-		public static IServiceCollection AddLocalLocks(this IServiceCollection collection)
+		protected override ServiceController<CpuDto, CpuPreviewDto, ICpuService> GetController(ICpuService service)
 		{
-			collection.AddSingleton<ILockFactory, LocalLockFactory>();
-
-			return collection;
+			return new CpuController(service);
 		}
 
-		public static IServiceCollection AddRedisLocks(this IServiceCollection collection)
+		protected override CpuDto NewDummyDto()
 		{
-			collection.AddOptions();
-			collection.AddSingleton<ILockFactory, RedisLockFactory>();
-			return collection;
+			return DtoGenerators.NewCpu();
+		}
+
+		protected override CpuPreviewDto NewDummyPreviewDto()
+		{
+			return DtoGenerators.NewCpuPreview();
 		}
 	}
 }

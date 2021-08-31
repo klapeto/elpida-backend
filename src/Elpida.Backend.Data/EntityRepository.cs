@@ -24,7 +24,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Elpida.Backend.Common.Exceptions;
 using Elpida.Backend.Data.Abstractions;
 using Elpida.Backend.Data.Abstractions.Interfaces;
 using Elpida.Backend.Data.Abstractions.Models;
@@ -66,28 +65,6 @@ namespace Elpida.Backend.Data
 			return Task.FromResult(addedEntity.Entity);
 		}
 
-		public Task<PagedQueryResult<TEntity>> GetMultiplePagedAsync<TOrderKey>(
-			int from,
-			int count,
-			bool descending,
-			bool calculateTotalCount,
-			Expression<Func<TEntity, TOrderKey>>? orderBy,
-			IEnumerable<Expression<Func<TEntity, bool>>>? filters,
-			CancellationToken cancellationToken = default
-		)
-		{
-			return GetPagedProjectionAsync(
-				from,
-				count,
-				m => m,
-				descending,
-				calculateTotalCount,
-				orderBy,
-				filters,
-				cancellationToken
-			);
-		}
-
 		public async Task<PagedQueryResult<TReturnEntity>> GetPagedProjectionAsync<TOrderKey, TReturnEntity>(
 			int from,
 			int count,
@@ -117,24 +94,36 @@ namespace Elpida.Backend.Data
 			return new PagedQueryResult<TReturnEntity>(totalCount, results);
 		}
 
-		public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
+		public Task SaveChangesAsync(CancellationToken cancellationToken = default)
 		{
-			try
-			{
-				await Context.SaveChangesAsync(cancellationToken);
-			}
-			catch (DbUpdateConcurrencyException e)
-			{
-				throw new UpdateConcurrencyException(
-					"Failed to update because another service updated this on the mean time",
-					e
-				);
-			}
+			return Context.SaveChangesAsync(cancellationToken);
 		}
 
 		public Task<ITransaction> BeginTransactionAsync(CancellationToken cancellationToken = default)
 		{
 			return EntityTransaction.CreateAsync(Context, cancellationToken);
+		}
+
+		public Task<PagedQueryResult<TEntity>> GetMultiplePagedAsync<TOrderKey>(
+			int from,
+			int count,
+			bool descending,
+			bool calculateTotalCount,
+			Expression<Func<TEntity, TOrderKey>>? orderBy,
+			IEnumerable<Expression<Func<TEntity, bool>>>? filters,
+			CancellationToken cancellationToken = default
+		)
+		{
+			return GetPagedProjectionAsync(
+				from,
+				count,
+				m => m,
+				descending,
+				calculateTotalCount,
+				orderBy,
+				filters,
+				cancellationToken
+			);
 		}
 
 		protected virtual IQueryable<TEntity> ProcessGetSingle(IQueryable<TEntity> queryable)

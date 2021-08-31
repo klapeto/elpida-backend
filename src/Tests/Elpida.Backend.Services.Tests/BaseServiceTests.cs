@@ -79,7 +79,7 @@ namespace Elpida.Backend.Services.Tests
 		}
 
 		[Test]
-		public async Task GetPagedAsync_ValidQuery_ReturnsObjects()
+		public async Task GetPagedPreviewsAsync_ValidQuery_ReturnsObjects()
 		{
 			var repo = new Mock<IDummyRepository>(MockBehavior.Strict);
 
@@ -90,12 +90,15 @@ namespace Elpida.Backend.Services.Tests
 
 			const int totalCount = 20;
 
-			var returnItems = CreateReturnModels();
+			var returnItems = CreateReturnPreviewDtos();
 
 			repo.Setup(
-					r => r.GetMultiplePagedAsync(
+					r => r.GetPagedProjectionAsync(
 						query.PageRequest.Next,
 						query.PageRequest.Count,
+						It.Is<Expression<Func<DummyModel, DummyPreviewDto>>>(
+							x => x.ToString() == service.GetPreviewConstructionExpressionImpl().ToString()
+						),
 						query.Descending,
 						true,
 						It.Is<Expression<Func<DummyModel, object>>?>(
@@ -110,9 +113,9 @@ namespace Elpida.Backend.Services.Tests
 						default
 					)
 				)
-				.ReturnsAsync(new PagedQueryResult<DummyModel>(totalCount, returnItems));
+				.ReturnsAsync(new PagedQueryResult<DummyPreviewDto>(totalCount, returnItems));
 
-			var obj = await service.GetPagedAsync(query);
+			var obj = await service.GetPagedPreviewsAsync(query);
 
 			Assert.NotNull(obj);
 
@@ -126,9 +129,12 @@ namespace Elpida.Backend.Services.Tests
 			}
 
 			repo.Verify(
-				r => r.GetMultiplePagedAsync(
+				r => r.GetPagedProjectionAsync(
 					query.PageRequest.Next,
 					query.PageRequest.Count,
+					It.Is<Expression<Func<DummyModel, DummyPreviewDto>>>(
+						x => x.ToString() == service.GetPreviewConstructionExpressionImpl().ToString()
+					),
 					query.Descending,
 					true,
 					It.Is<Expression<Func<DummyModel, object>>?>(
@@ -162,22 +168,23 @@ namespace Elpida.Backend.Services.Tests
 
 			const int totalCount = 20;
 
-			var returnItems = CreateReturnModels();
+			var returnItems = CreateReturnPreviewDtos();
 
 			repo.Setup(
-					r => r.GetMultiplePagedAsync(
-						query.PageRequest.Next,
-						query.PageRequest.Count,
+					r => r.GetPagedProjectionAsync(
+						It.IsAny<int>(),
+						It.IsAny<int>(),
+						It.IsAny<Expression<Func<DummyModel, DummyPreviewDto>>>(),
 						query.Descending,
 						true,
-						It.Is<Expression<Func<DummyModel, object>>>(x => x == null),
-						It.Is<IEnumerable<Expression<Func<DummyModel, bool>>>>(x => !x.Any()),
+						It.IsAny<Expression<Func<DummyModel, object>>?>(),
+						It.IsAny<IEnumerable<Expression<Func<DummyModel, bool>>>>(),
 						default
 					)
 				)
-				.ReturnsAsync(new PagedQueryResult<DummyModel>(totalCount, returnItems));
+				.ReturnsAsync(new PagedQueryResult<DummyPreviewDto>(totalCount, returnItems));
 
-			var obj = await service.GetPagedAsync(query);
+			var obj = await service.GetPagedPreviewsAsync(query);
 
 			Assert.NotNull(obj);
 
@@ -191,13 +198,14 @@ namespace Elpida.Backend.Services.Tests
 			}
 
 			repo.Verify(
-				r => r.GetMultiplePagedAsync(
-					query.PageRequest.Next,
-					query.PageRequest.Count,
+				r => r.GetPagedProjectionAsync(
+					It.IsAny<int>(),
+					It.IsAny<int>(),
+					It.IsAny<Expression<Func<DummyModel, DummyPreviewDto>>>(),
 					query.Descending,
 					true,
-					It.Is<Expression<Func<DummyModel, object>>>(x => x == null),
-					It.Is<IEnumerable<Expression<Func<DummyModel, bool>>>>(x => !x.Any()),
+					It.IsAny<Expression<Func<DummyModel, object>>?>(),
+					It.IsAny<IEnumerable<Expression<Func<DummyModel, bool>>>>(),
 					default
 				),
 				Times.Once
@@ -207,7 +215,7 @@ namespace Elpida.Backend.Services.Tests
 		[Test]
 		[TestCase(true)]
 		[TestCase(false)]
-		public async Task GetPagedAsync_Descending_CallsRepoWithCorrectValue(bool descending)
+		public async Task GetPagedPreviewsAsync_Descending_CallsRepoWithCorrectValue(bool descending)
 		{
 			var repo = new Mock<IDummyRepository>(MockBehavior.Strict);
 
@@ -217,12 +225,13 @@ namespace Elpida.Backend.Services.Tests
 
 			const int totalCount = 20;
 
-			var returnItems = CreateReturnModels();
+			var returnItems = CreateReturnPreviewDtos();
 
 			repo.Setup(
-					r => r.GetMultiplePagedAsync(
+					r => r.GetPagedProjectionAsync(
 						It.IsAny<int>(),
 						It.IsAny<int>(),
+						It.IsAny<Expression<Func<DummyModel, DummyPreviewDto>>>(),
 						descending,
 						true,
 						It.IsAny<Expression<Func<DummyModel, object>>?>(),
@@ -230,14 +239,15 @@ namespace Elpida.Backend.Services.Tests
 						default
 					)
 				)
-				.ReturnsAsync(new PagedQueryResult<DummyModel>(totalCount, returnItems));
+				.ReturnsAsync(new PagedQueryResult<DummyPreviewDto>(totalCount, returnItems));
 
-			_ = await service.GetPagedAsync(query);
+			_ = await service.GetPagedPreviewsAsync(query);
 
 			repo.Verify(
-				r => r.GetMultiplePagedAsync(
+				r => r.GetPagedProjectionAsync(
 					It.IsAny<int>(),
 					It.IsAny<int>(),
+					It.IsAny<Expression<Func<DummyModel, DummyPreviewDto>>>(),
 					descending,
 					true,
 					It.IsAny<Expression<Func<DummyModel, object>>?>(),
@@ -259,30 +269,32 @@ namespace Elpida.Backend.Services.Tests
 
 			var query = CreateQuery(totalCount);
 
-			var returnItems = CreateReturnModels();
+			var returnItems = CreateReturnPreviewDtos();
 
 			repo.Setup(
-					r => r.GetMultiplePagedAsync(
+					r => r.GetPagedProjectionAsync(
 						It.IsAny<int>(),
 						It.IsAny<int>(),
-						It.IsAny<bool>(),
+						It.IsAny<Expression<Func<DummyModel, DummyPreviewDto>>>(),
+						query.Descending,
 						valuePassed,
 						It.IsAny<Expression<Func<DummyModel, object>>?>(),
 						It.IsAny<IEnumerable<Expression<Func<DummyModel, bool>>>>(),
 						default
 					)
 				)
-				.ReturnsAsync(new PagedQueryResult<DummyModel>(expected, returnItems));
+				.ReturnsAsync(new PagedQueryResult<DummyPreviewDto>(expected, returnItems));
 
-			var obj = await service.GetPagedAsync(query);
+			var obj = await service.GetPagedPreviewsAsync(query);
 
 			Assert.AreEqual(expected, obj.TotalCount);
 
 			repo.Verify(
-				r => r.GetMultiplePagedAsync(
+				r => r.GetPagedProjectionAsync(
 					It.IsAny<int>(),
 					It.IsAny<int>(),
-					It.IsAny<bool>(),
+					It.IsAny<Expression<Func<DummyModel, DummyPreviewDto>>>(),
+					query.Descending,
 					valuePassed,
 					It.IsAny<Expression<Func<DummyModel, object>>?>(),
 					It.IsAny<IEnumerable<Expression<Func<DummyModel, bool>>>>(),
@@ -488,20 +500,12 @@ namespace Elpida.Backend.Services.Tests
 			Assert.AreEqual(filters.Last().Name, "data");
 		}
 
-		private static List<DummyModel> CreateReturnModels()
+		private static List<DummyPreviewDto> CreateReturnPreviewDtos()
 		{
 			return new ()
 			{
-				new DummyModel
-				{
-					Id = 2,
-					Data = "lol",
-				},
-				new DummyModel
-				{
-					Id = 6,
-					Data = "lol",
-				},
+				new DummyPreviewDto(2, "lol"),
+				new DummyPreviewDto(5, "lolol"),
 			};
 		}
 

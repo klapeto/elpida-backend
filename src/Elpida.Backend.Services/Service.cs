@@ -33,10 +33,11 @@ using Elpida.Backend.Services.Utilities;
 
 namespace Elpida.Backend.Services
 {
-	public abstract class Service<TDto, TModel, TRepository> : IService<TDto>
+	public abstract class Service<TDto, TPreview, TModel, TRepository> : IService<TDto, TPreview>
 		where TModel : Entity
 		where TRepository : IRepository<TModel>
 		where TDto : FoundationDto
+		where TPreview : FoundationDto
 	{
 		protected Service(TRepository repository)
 		{
@@ -57,16 +58,16 @@ namespace Elpida.Backend.Services
 			return ToDto(entity);
 		}
 
-		public Task<PagedResult<TDto>> GetPagedAsync(
+		public Task<PagedResult<TPreview>> GetPagedPreviewsAsync(
 			QueryRequest queryRequest,
 			CancellationToken cancellationToken = default
 		)
 		{
-			return QueryUtilities.GetPagedAsync(
+			return QueryUtilities.GetPagedProjectionsAsync(
 				Repository,
 				GetFilterExpressions(),
 				queryRequest,
-				ToDto,
+				GetPreviewConstructionExpression(),
 				cancellationToken
 			);
 		}
@@ -96,6 +97,8 @@ namespace Elpida.Backend.Services
 		}
 
 		protected abstract TDto ToDto(TModel model);
+
+		protected abstract Expression<Func<TModel, TPreview>> GetPreviewConstructionExpression();
 
 		protected abstract Task<TModel> ProcessDtoAndCreateModelAsync(TDto dto, CancellationToken cancellationToken);
 

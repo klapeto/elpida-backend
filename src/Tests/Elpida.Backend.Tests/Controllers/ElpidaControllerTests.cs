@@ -18,15 +18,30 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using System;
+using Elpida.Backend.Controllers;
+using Elpida.Backend.Services.Abstractions.Dtos.Elpida;
+using Elpida.Backend.Services.Abstractions.Interfaces;
+using Elpida.Backend.Services.Tests;
+using NUnit.Framework;
 
-namespace Elpida.Backend.Common.Exceptions
+namespace Elpida.Backend.Tests.Controllers
 {
-	public class UpdateConcurrencyException : Exception
+	[TestFixture]
+	internal class ElpidaControllerTests : ServiceControllerTests<ElpidaDto, ElpidaDto, IElpidaService>
 	{
-		public UpdateConcurrencyException(string message, Exception innerException)
-			: base(message, innerException)
+		protected override ServiceController<ElpidaDto, ElpidaDto, IElpidaService> GetController(IElpidaService service)
 		{
+			return new ElpidaController(service);
+		}
+
+		protected override ElpidaDto NewDummyDto()
+		{
+			return DtoGenerators.NewElpida();
+		}
+
+		protected override ElpidaDto NewDummyPreviewDto()
+		{
+			return DtoGenerators.NewElpida();
 		}
 	}
 }

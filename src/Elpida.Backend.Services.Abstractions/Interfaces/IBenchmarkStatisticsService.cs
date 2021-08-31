@@ -24,16 +24,11 @@ using Elpida.Backend.Services.Abstractions.Dtos.Statistics;
 
 namespace Elpida.Backend.Services.Abstractions.Interfaces
 {
-	public interface IBenchmarkStatisticsService : IService<BenchmarkStatisticsDto>
+	public interface IBenchmarkStatisticsService : IService<BenchmarkStatisticsDto, BenchmarkStatisticsPreviewDto>
 	{
 		Task UpdateTaskStatisticsAsync(
 			long benchmarkId,
 			long cpuId,
-			CancellationToken cancellationToken = default
-		);
-
-		Task<PagedResult<BenchmarkStatisticsPreviewDto>> GetPagedPreviewsAsync(
-			QueryRequest queryRequest,
 			CancellationToken cancellationToken = default
 		);
 	}

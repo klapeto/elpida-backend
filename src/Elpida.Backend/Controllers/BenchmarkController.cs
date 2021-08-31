@@ -18,12 +18,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using System.Threading;
-using System.Threading.Tasks;
-using Elpida.Backend.Services.Abstractions;
 using Elpida.Backend.Services.Abstractions.Dtos.Benchmark;
 using Elpida.Backend.Services.Abstractions.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Elpida.Backend.Controllers
@@ -33,75 +29,11 @@ namespace Elpida.Backend.Controllers
 	/// </summary>
 	[ApiController]
 	[Route("api/v1/[controller]")]
-	public class BenchmarkController : ControllerBase
+	public class BenchmarkController : ServiceController<BenchmarkDto, BenchmarkPreviewDto, IBenchmarkService>
 	{
-		private readonly IBenchmarkService _benchmarkService;
-
 		public BenchmarkController(IBenchmarkService benchmarkService)
+			: base(benchmarkService)
 		{
-			_benchmarkService = benchmarkService;
-		}
-
-		/// <summary>
-		///     Get all the Benchmark previews with paging.
-		/// </summary>
-		/// <param name="pageRequest">The page request.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <returns>The page of Benchmarks requested.</returns>
-		/// <response code="200">The returned page of the Benchmark previews.</response>
-		/// <response code="400">The request data was invalid.</response>
-		[HttpGet]
-		[Produces("application/json")]
-		[Consumes("application/json")]
-		[ProducesResponseType(StatusCodes.Status200OK)]
-		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public Task<PagedResult<BenchmarkPreviewDto>> GetPaged(
-			[FromQuery] PageRequest pageRequest,
-			CancellationToken cancellationToken
-		)
-		{
-			return _benchmarkService.GetPagedPreviewsAsync(
-				new QueryRequest(pageRequest, null, null, false),
-				cancellationToken
-			);
-		}
-
-		/// <summary>
-		///     Get the full details of a single Benchmark.
-		/// </summary>
-		/// <param name="id">The id of the Benchmark to get.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <returns>The Benchmark details.</returns>
-		/// <response code="200">The returned data of the Benchmark.</response>
-		/// <response code="404">The Benchmark with this id was not found.</response>
-		[HttpGet("{id:long}")]
-		[Produces("application/json")]
-		[ProducesResponseType(StatusCodes.Status200OK)]
-		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public Task<BenchmarkDto> GetSingle([FromRoute] long id, CancellationToken cancellationToken)
-		{
-			return _benchmarkService.GetSingleAsync(id, cancellationToken);
-		}
-
-		/// <summary>
-		///     Search for Benchmarks with the provided criteria.
-		/// </summary>
-		/// <param name="queryRequest">The query request.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <returns>The page of Benchmark previews that the search yielded.</returns>
-		/// <response code="200">The returned page of the Benchmark previews that the search yielded.</response>
-		/// <response code="400">The request data was invalid.</response>
-		[HttpPost("Search")]
-		[Produces("application/json")]
-		[Consumes("application/json")]
-		[ProducesResponseType(StatusCodes.Status200OK)]
-		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public Task<PagedResult<BenchmarkPreviewDto>> Search(
-			[FromBody] QueryRequest queryRequest,
-			CancellationToken cancellationToken
-		)
-		{
-			return _benchmarkService.GetPagedPreviewsAsync(QueryRequestUtilities.PreProcessQuery(queryRequest), cancellationToken);
 		}
 	}
 }

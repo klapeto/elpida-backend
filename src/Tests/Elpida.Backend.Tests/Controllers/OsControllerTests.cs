@@ -18,38 +18,30 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
+using Elpida.Backend.Controllers;
+using Elpida.Backend.Services.Abstractions.Dtos.Os;
+using Elpida.Backend.Services.Abstractions.Interfaces;
+using Elpida.Backend.Services.Tests;
+using NUnit.Framework;
 
-namespace Elpida.Backend.Common.Lock.Local
+namespace Elpida.Backend.Tests.Controllers
 {
-	public class LocalLockFactory : ILockFactory
+	[TestFixture]
+	internal class OsControllerTests : ServiceControllerTests<OsDto, OsDto, IOsService>
 	{
-		private readonly object _locker = new ();
-		private readonly Dictionary<string, LocalLock> _locks = new ();
-
-		public Task<IDisposable> AcquireAsync(string name, CancellationToken cancellationToken = default)
+		protected override ServiceController<OsDto, OsDto, IOsService> GetController(IOsService service)
 		{
-			return Task.Run(() => Acquire(name), cancellationToken);
+			return new OsController(service);
 		}
 
-		public IDisposable Acquire(string name)
+		protected override OsDto NewDummyDto()
 		{
-			LocalLock? returnLock;
-			lock (_locker)
-			{
-				if (!_locks.TryGetValue(name, out returnLock))
-				{
-					returnLock = new LocalLock();
-					_locks.Add(name, returnLock);
-				}
-			}
+			return DtoGenerators.NewOs();
+		}
 
-			returnLock.Acquire();
-
-			return returnLock;
+		protected override OsDto NewDummyPreviewDto()
+		{
+			return DtoGenerators.NewOs();
 		}
 	}
 }

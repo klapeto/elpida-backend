@@ -23,7 +23,7 @@ using FluentValidation;
 
 namespace Elpida.Backend.Validators
 {
-	public class TaskResultSlimDtoValidator : AbstractValidator<TaskResultSlimDto>
+	internal class TaskResultSlimDtoValidator : AbstractValidator<TaskResultSlimDto>
 	{
 		public TaskResultSlimDtoValidator()
 		{

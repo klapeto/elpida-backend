@@ -25,7 +25,7 @@ using FluentValidation;
 
 namespace Elpida.Backend.Validators
 {
-	public class BenchmarkResultSlimDtoValidator : AbstractValidator<BenchmarkResultSlimDto>
+	internal class BenchmarkResultSlimDtoValidator : AbstractValidator<BenchmarkResultSlimDto>
 	{
 		public BenchmarkResultSlimDtoValidator()
 		{

@@ -19,6 +19,7 @@
 // =========================================================================
 
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 using Elpida.Backend.Services.Abstractions;
@@ -44,15 +45,19 @@ namespace Elpida.Backend
 
 		private static FilterInstance ConvertValues(FilterInstance instance)
 		{
-			var element = (JsonElement)instance.Value;
+			if (instance.Value is not JsonElement element)
+			{
+				return instance;
+			}
+
 			switch (element.ValueKind)
 			{
 				case JsonValueKind.String:
-					return DateTime.TryParse(element.GetString(), out var date)
+					return DateTime.TryParse(element.GetString(), null, DateTimeStyles.AdjustToUniversal, out var date)
 						? new FilterInstance(instance.Name, date, instance.Comparison)
 						: new FilterInstance(
 							instance.Name,
-							element.GetString() ?? throw new ArgumentException("The filter value cannot be null"),
+							element.GetString()!,
 							instance.Comparison
 						);
 				case JsonValueKind.Number:
@@ -60,14 +65,8 @@ namespace Elpida.Backend
 				case JsonValueKind.False:
 				case JsonValueKind.True:
 					return new FilterInstance(instance.Name, element.GetBoolean(), instance.Comparison);
-				case JsonValueKind.Object:
-				case JsonValueKind.Array:
-					return instance;
 				default:
-					throw new ArgumentOutOfRangeException(
-						nameof(instance),
-						$"The JSON member type of '{element.ValueKind}' is not acceptable"
-					);
+					throw new ArgumentException($"The JSON member type of '{element.ValueKind}' is not acceptable");
 			}
 		}
 	}

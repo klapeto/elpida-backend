@@ -33,7 +33,7 @@ using Elpida.Backend.Services.Utilities;
 
 namespace Elpida.Backend.Services
 {
-	public class OsService : Service<OsDto, OsModel, IOsRepository>, IOsService
+	public class OsService : Service<OsDto, OsDto, OsModel, IOsRepository>, IOsService
 	{
 		private static readonly IEnumerable<FilterExpression> OsFilters = new List<FilterExpression>
 		{
@@ -45,6 +45,11 @@ namespace Elpida.Backend.Services
 		public OsService(IOsRepository osRepository)
 			: base(osRepository)
 		{
+		}
+
+		protected override Expression<Func<OsModel, OsDto>> GetPreviewConstructionExpression()
+		{
+			return m => new OsDto(m.Id, m.Category, m.Name, m.Version);
 		}
 
 		protected override Task<OsModel> ProcessDtoAndCreateModelAsync(OsDto dto, CancellationToken cancellationToken)

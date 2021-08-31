@@ -23,7 +23,7 @@ using FluentValidation;
 
 namespace Elpida.Backend.Validators
 {
-	public class TimingDtoValidator : AbstractValidator<TimingDto>
+	internal class TimingDtoValidator : AbstractValidator<TimingDto>
 	{
 		public TimingDtoValidator()
 		{

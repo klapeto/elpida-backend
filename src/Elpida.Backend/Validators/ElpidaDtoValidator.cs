@@ -23,7 +23,7 @@ using FluentValidation;
 
 namespace Elpida.Backend.Validators
 {
-	public class ElpidaDtoValidator : AbstractValidator<ElpidaDto>
+	internal class ElpidaDtoValidator : AbstractValidator<ElpidaDto>
 	{
 		public ElpidaDtoValidator()
 		{

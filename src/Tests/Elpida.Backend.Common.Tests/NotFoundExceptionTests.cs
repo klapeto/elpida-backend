@@ -18,9 +18,31 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-namespace Elpida.Backend.Services.Tests
+using System;
+using Elpida.Backend.Common.Exceptions;
+using NUnit.Framework;
+
+namespace Elpida.Backend.Common.Tests
 {
-	internal static class Generators
+	[TestFixture]
+	internal class NotFoundExceptionTests
 	{
+		[Test]
+		public void Id_Valid()
+		{
+			var id = Guid.NewGuid();
+			var ex = new NotFoundException("This item was not found", id);
+
+			Assert.AreEqual(id.ToString(), ex.Id);
+		}
+
+		[Test]
+		public void Id_Long_Valid()
+		{
+			const long id = 512L;
+			var ex = new NotFoundException("This item was not found", id);
+
+			Assert.AreEqual(id.ToString(), ex.Id);
+		}
 	}
 }

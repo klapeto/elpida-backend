@@ -23,7 +23,7 @@ using FluentValidation;
 
 namespace Elpida.Backend.Validators
 {
-	public class MemoryDtoValidator : AbstractValidator<MemoryDto>
+	internal class MemoryDtoValidator : AbstractValidator<MemoryDto>
 	{
 		public MemoryDtoValidator()
 		{
