@@ -18,36 +18,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using NUnit.Framework;
-
-namespace Elpida.Backend.Services.Tests.Helpers
+namespace Elpida.Backend.Common
 {
-	internal static class TypeHelpers
+	/// <summary>
+	///     Aggregation modes for calculating result for multiple threads.
+	/// </summary>
+	public enum AggregationType
 	{
-		public static bool AssertCollectionsAreEqual<T, R>(
-			IEnumerable<T> ea,
-			IEnumerable<R> eb,
-			Func<T, R, bool> assertion
-		)
-		{
-			var a = ea.ToArray();
-			var b = eb.ToArray();
+		/// <summary>
+		///     All results are added.
+		/// </summary>
+		Accumulative,
 
-			Assert.True(a.Length == b.Length);
-
-			// ReSharper disable once LoopCanBeConvertedToQuery
-			for (var i = 0; i < a.Length; i++)
-			{
-				if (!assertion(a[i], b[i]))
-				{
-					return false;
-				}
-			}
-
-			return true;
-		}
+		/// <summary>
+		///     All results are averaged.
+		/// </summary>
+		Average,
 	}
 }

@@ -87,31 +87,5 @@ namespace Elpida.Backend.Services.Utilities
 				j <<= 1;
 			}
 		}
-
-		public static double CalculateArithmeticMean<T>(ICollection<T> population, Func<T, double> getter)
-		{
-			return population.Sum(getter) / population.Count;
-		}
-
-		public static double CalculateHarmonicMean<T>(ICollection<T> population, Func<T, double> getter)
-		{
-			return population.Count / population.Sum(sample => 1.0 / getter(sample));
-		}
-
-		public static double CalculateMarginOfError(double standardDeviation, long size)
-		{
-			return standardDeviation / Math.Sqrt(size);
-		}
-
-		public static double CalculateStandardDeviation<T>(ICollection<T> population, Func<T, double> getter)
-		{
-			var mean = CalculateArithmeticMean(population, getter);
-
-			var deviation = population
-				                .Sum(sample => Math.Pow(getter(sample) - mean, 2.0))
-			                / population.Count;
-
-			return Math.Sqrt(deviation);
-		}
 	}
 }

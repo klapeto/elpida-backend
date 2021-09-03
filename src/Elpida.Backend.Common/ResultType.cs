@@ -18,21 +18,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-namespace Elpida.Backend.Services.Abstractions.Dtos.Task
+namespace Elpida.Backend.Common
 {
 	/// <summary>
-	///     Aggregation modes for calculating result for multiple threads.
+	///     Result type.
 	/// </summary>
-	public enum AggregationType
+	public enum ResultType
 	{
 		/// <summary>
-		///     All results are added.
+		///     Result is a ratio to time (eg. Pixel/s).
 		/// </summary>
-		Accumulative,
+		Throughput,
 
 		/// <summary>
-		///     All results are averaged.
+		///     The result is a raw value (eg. seconds).
 		/// </summary>
-		Average,
+		Raw,
 	}
 }

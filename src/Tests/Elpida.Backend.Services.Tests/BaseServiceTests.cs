@@ -102,7 +102,7 @@ namespace Elpida.Backend.Services.Tests
 						query.Descending,
 						true,
 						It.Is<Expression<Func<DummyModel, object>>?>(
-							x => x.ToString() == builder.GetOrderBy<DummyModel>(query).ToString()
+							x => x!.ToString() == builder.GetOrderBy<DummyModel>(query)!.ToString()
 						),
 						It.Is<IEnumerable<Expression<Func<DummyModel, bool>>>>(
 							x => x.SequenceEqual(
@@ -138,7 +138,7 @@ namespace Elpida.Backend.Services.Tests
 					query.Descending,
 					true,
 					It.Is<Expression<Func<DummyModel, object>>?>(
-						x => x.ToString() == builder.GetOrderBy<DummyModel>(query).ToString()
+						x => x!.ToString() == builder.GetOrderBy<DummyModel>(query)!.ToString()
 					),
 					It.Is<IEnumerable<Expression<Func<DummyModel, bool>>>>(
 						x => x.SequenceEqual(

@@ -18,6 +18,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
+using Elpida.Backend.Common;
+
 namespace Elpida.Backend.Services.Abstractions.Dtos.Task
 {
 	/// <summary>

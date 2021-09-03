@@ -48,7 +48,5 @@ namespace Elpida.Backend.Data.Abstractions.Models.Statistics
 		public double MarginOfError { get; set; }
 
 		public string FrequencyClasses { get; set; } = default!;
-
-		public byte[]? RowVersion { get; set; } = default;
 	}
 }

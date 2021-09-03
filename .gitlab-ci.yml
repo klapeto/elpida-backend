@@ -4,7 +4,7 @@ stages:
     - deploy
 
 build:
-    image: mcr.microsoft.com/dotnet/core/sdk:latest
+    image: mcr.microsoft.com/dotnet/sdk:5.0
     stage: build
     script:
         - cd src
@@ -13,7 +13,7 @@ build:
       paths:
         - src/Elpida.Backend/bin/
 test:
-    image: mcr.microsoft.com/dotnet/core/sdk:latest
+    image: mcr.microsoft.com/dotnet/sdk:5.0
     stage: test
     script: 
         - cd src

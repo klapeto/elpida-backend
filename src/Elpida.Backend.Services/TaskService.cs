@@ -99,8 +99,8 @@ namespace Elpida.Backend.Services
 
 					ResultName = dto.Result.Name,
 					ResultDescription = dto.Result.Description,
-					ResultType = (int)dto.Result.Type,
-					ResultAggregation = (int)dto.Result.Aggregation,
+					ResultType = dto.Result.Type,
+					ResultAggregation = dto.Result.Aggregation,
 					ResultUnit = dto.Result.Unit,
 				}
 			);

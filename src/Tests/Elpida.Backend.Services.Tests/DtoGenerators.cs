@@ -37,19 +37,20 @@ namespace Elpida.Backend.Services.Tests
 {
 	public static class DtoGenerators
 	{
-		public static BenchmarkDto NewBenchmark()
+		public static BenchmarkDto NewBenchmark(long? id = null)
 		{
-			return new (5, Guid.NewGuid(), "Test Benchmark", NewBenchmarkScoreSpecification(), new[] { BenchmarkTaskDto() });
+			return new (id ?? NewId(), Guid.NewGuid(), "Test Benchmark", NewBenchmarkScoreSpecification(), new[] { BenchmarkTaskDto() });
 		}
 
-		public static BenchmarkPreviewDto NewBenchmarkPreview()
+		public static BenchmarkPreviewDto NewBenchmarkPreview(long? id = null)
 		{
-			return new (5, Guid.NewGuid(), "Test Benchmark");
+			return new (id ?? NewId(), Guid.NewGuid(), "Test Benchmark");
 		}
 
-		public static TaskDto NewTask()
+		public static TaskDto NewTask(long? id = null, Guid? uuid = null)
 		{
-			return new (5, Guid.NewGuid(), "Test Task", "Test descdription", NewResultSpecification(),
+			return new (id ?? NewId(), uuid ?? Guid.NewGuid(), "Test Task", "Test descdription",
+				NewResultSpecification(),
 				NewDataSpecification(), NewDataSpecification());
 		}
 
@@ -68,15 +69,16 @@ namespace Elpida.Backend.Services.Tests
 			);
 		}
 
-		public static BenchmarkResultPreviewDto NewBenchmarkResultPreview()
+		public static BenchmarkResultPreviewDto NewBenchmarkResultPreview(long? id = null)
 		{
-			return new (5, Guid.NewGuid(), DateTime.UtcNow, "Test benchmark", "Gentoo", "ARM", "Cortex A7", "b/s", 46);
+			return new (id ?? NewId(), Guid.NewGuid(), DateTime.UtcNow, "Test benchmark", "Gentoo", "ARM", "Cortex A7",
+				"b/s", 46);
 		}
 
-		public static BenchmarkResultDto NewBenchmarkResult()
+		public static BenchmarkResultDto NewBenchmarkResult(long? id = null)
 		{
 			return new (
-				5,
+				id ?? NewId(),
 				DateTime.UtcNow,
 				Guid.NewGuid(),
 				"Test Benchmark",
@@ -89,10 +91,10 @@ namespace Elpida.Backend.Services.Tests
 			);
 		}
 
-		public static TaskResultDto NewTaskResult()
+		public static TaskResultDto NewTaskResult(long? id = null)
 		{
 			return new (
-				6,
+				id ?? NewId(),
 				2,
 				6,
 				7,
@@ -150,9 +152,9 @@ namespace Elpida.Backend.Services.Tests
 			return new ("GCC", "10.0");
 		}
 
-		public static ElpidaDto NewElpida()
+		public static ElpidaDto NewElpida(long? id = null)
 		{
-			return new (3, NewVersion(), NewCompiler());
+			return new (id ?? NewId(), NewVersion(), NewCompiler());
 		}
 
 		public static MemoryDto NewMemory()
@@ -187,19 +189,19 @@ namespace Elpida.Backend.Services.Tests
 			return new (ProcessorNodeType.Core, "Core", 0, 0, null, null);
 		}
 
-		public static TopologyDto NewTopology()
+		public static TopologyDto NewTopology(long? id = null)
 		{
-			return new (7, 3, "x86_64", "Ryzen TR", 128, 64, 4, 1, NewRootCpuNode());
+			return new (id ?? NewId(), 3, "x86_64", "Ryzen TR", 128, 64, 4, 1, NewRootCpuNode());
 		}
 
-		public static TopologyPreviewDto NewTopologyPreviewDto()
+		public static TopologyPreviewDto NewTopologyPreviewDto(long? id = null)
 		{
-			return new (5, 2, "ARM", "Exynos", 16, 8, 2, 2, "sdfdsf");
+			return new (id ?? NewId(), 2, "ARM", "Exynos", 16, 8, 2, 2, "sdfdsf");
 		}
 
-		public static OsDto NewOs()
+		public static OsDto NewOs(long? id = null)
 		{
-			return new (8, "Linux", "KDE Neon", "21.1");
+			return new (id ?? NewId(), "Linux", "KDE Neon", "21.1");
 		}
 
 		public static CpuCacheDto NewCache()
@@ -207,10 +209,10 @@ namespace Elpida.Backend.Services.Tests
 			return new ("L5", "Satoko Hojo", 4654641, 1320);
 		}
 
-		public static CpuDto NewCpu()
+		public static CpuDto NewCpu(long? id = null)
 		{
 			return new (
-				3,
+				id ?? NewId(),
 				"ARM",
 				"Samsung",
 				"Exynos",
@@ -222,15 +224,15 @@ namespace Elpida.Backend.Services.Tests
 			);
 		}
 
-		public static CpuPreviewDto NewCpuPreview()
+		public static CpuPreviewDto NewCpuPreview(long? id = null)
 		{
-			return new (5, "Samsung", "Exynos", 5, 4);
+			return new (id ?? NewId(), "Samsung", "Exynos", 5, 4);
 		}
 
-		public static BenchmarkStatisticsDto NewBenchmarkStatistic()
+		public static BenchmarkStatisticsDto NewBenchmarkStatistic(long? id = null)
 		{
 			return new (
-				5,
+				id ?? NewId(),
 				NewCpu(),
 				NewBenchmark(),
 				52,
@@ -244,10 +246,10 @@ namespace Elpida.Backend.Services.Tests
 			);
 		}
 
-		public static BenchmarkStatisticsPreviewDto NewBenchmarkStatisticsPreview()
+		public static BenchmarkStatisticsPreviewDto NewBenchmarkStatisticsPreview(long? id = null)
 		{
 			return new (
-				5,
+				id ?? NewId(),
 				"ARM",
 				"Cortex A7",
 				Guid.NewGuid(),
@@ -280,9 +282,14 @@ namespace Elpida.Backend.Services.Tests
 			);
 		}
 
-		public static BenchmarkResultsBatchDto NewBenchmarkResultsBatch()
+		public static BenchmarkResultsBatchDto NewBenchmarkResultsBatch(long? id = null)
 		{
-			return new (5, NewElpida(), NewSystem(), new[] { NewBenchmarkResultSlim() });
+			return new (id ?? NewId(), NewElpida(), NewSystem(), new[] { NewBenchmarkResultSlim(), NewBenchmarkResultSlim() });
+		}
+
+		public static long NewId()
+		{
+			return new Random().Next(1, 50);
 		}
 	}
 }

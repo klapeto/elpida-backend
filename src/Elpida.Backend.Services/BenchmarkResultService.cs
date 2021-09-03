@@ -24,6 +24,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Elpida.Backend.Common.Exceptions;
 using Elpida.Backend.Data.Abstractions.Models.Benchmark;
 using Elpida.Backend.Data.Abstractions.Models.Elpida;
 using Elpida.Backend.Data.Abstractions.Models.Os;
@@ -49,9 +50,7 @@ namespace Elpida.Backend.Services
 		private readonly IBenchmarkStatisticsService _benchmarkStatisticsService;
 		private readonly ICpuService _cpuService;
 		private readonly IElpidaService _elpidaService;
-
 		private readonly IOsService _osService;
-		private readonly ITaskService _taskService;
 		private readonly ITopologyService _topologyService;
 
 		public BenchmarkResultService(
@@ -61,12 +60,10 @@ namespace Elpida.Backend.Services
 			IElpidaService elpidaService,
 			IOsService osService,
 			IBenchmarkService benchmarkService,
-			ITaskService taskService,
 			IBenchmarkStatisticsService benchmarkStatisticsService
 		)
 			: base(benchmarkResultsRepository)
 		{
-			_taskService = taskService;
 			_benchmarkStatisticsService = benchmarkStatisticsService;
 			_cpuService = cpuService;
 			_topologyService = topologyService;
@@ -215,13 +212,18 @@ namespace Elpida.Backend.Services
 			var order = 0;
 			foreach (var taskResult in benchmarkResult.TaskResults)
 			{
-				var task = await _taskService.GetSingleAsync(taskResult.Uuid, cancellationToken);
+				var task = benchmark.Tasks.FirstOrDefault(t => t.Uuid == taskResult.Uuid);
+
+				if (task is null)
+				{
+					throw new NotFoundException("The task was not found", taskResult.Uuid);
+				}
 
 				model.TaskResults.Add(
 					new TaskResultModel
 					{
 						CpuId = cpuId,
-						TaskId = task.Id,
+						TaskId = task.Task!.Id,
 						TopologyId = topologyId,
 						BenchmarkResult = model,
 						Max = taskResult.Statistics.Max,

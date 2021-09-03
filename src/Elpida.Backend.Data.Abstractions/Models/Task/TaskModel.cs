@@ -19,6 +19,7 @@
 // =========================================================================
 
 using System;
+using Elpida.Backend.Common;
 
 namespace Elpida.Backend.Data.Abstractions.Models.Task
 {
@@ -36,9 +37,9 @@ namespace Elpida.Backend.Data.Abstractions.Models.Task
 
 		public string ResultUnit { get; set; } = default!;
 
-		public int ResultAggregation { get; set; }
+		public AggregationType ResultAggregation { get; set; }
 
-		public int ResultType { get; set; }
+		public ResultType ResultType { get; set; }
 
 		public string? InputName { get; set; }
 

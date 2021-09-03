@@ -57,7 +57,7 @@ namespace Elpida.Backend.Tests
 
 			var newRequest = QueryRequestUtilities.PreProcessQuery(request);
 
-			Assert.AreEqual(value, newRequest.Filters.First().Value);
+			Assert.AreEqual(value, newRequest.Filters!.First().Value);
 		}
 
 		[Test]
@@ -76,7 +76,7 @@ namespace Elpida.Backend.Tests
 
 			var newRequest = QueryRequestUtilities.PreProcessQuery(request);
 
-			Assert.AreEqual(obj, newRequest.Filters.First().Value);
+			Assert.AreEqual(obj, newRequest.Filters!.First().Value);
 		}
 
 		[Test]
@@ -99,7 +99,7 @@ namespace Elpida.Backend.Tests
 
 			var newRequest = QueryRequestUtilities.PreProcessQuery(request);
 
-			Assert.AreEqual(obj, newRequest.Filters.First().Value);
+			Assert.AreEqual(obj, newRequest.Filters!.First().Value);
 		}
 
 		[Test]

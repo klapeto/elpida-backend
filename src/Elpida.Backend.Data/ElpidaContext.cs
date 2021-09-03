@@ -47,8 +47,6 @@ namespace Elpida.Backend.Data
 
 		public DbSet<BenchmarkResultModel> BenchmarkResults { get; set; } = default!;
 
-		public DbSet<TaskResultModel> TaskResults { get; set; } = default!;
-
 		public DbSet<ElpidaModel> Elpidas { get; set; } = default!;
 
 		public DbSet<OsModel> Oses { get; set; } = default!;
@@ -101,10 +99,6 @@ namespace Elpida.Backend.Data
 
 			modelBuilder.Entity<BenchmarkStatisticsModel>()
 				.HasOne(m => m.Benchmark);
-
-			modelBuilder.Entity<BenchmarkStatisticsModel>()
-				.Property(m => m.RowVersion)
-				.IsRowVersion();
 		}
 	}
 }
