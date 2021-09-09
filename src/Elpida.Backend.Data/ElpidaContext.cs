@@ -20,7 +20,7 @@
 
 using Elpida.Backend.Data.Abstractions.Models.Benchmark;
 using Elpida.Backend.Data.Abstractions.Models.Cpu;
-using Elpida.Backend.Data.Abstractions.Models.Elpida;
+using Elpida.Backend.Data.Abstractions.Models.ElpidaVersion;
 using Elpida.Backend.Data.Abstractions.Models.Os;
 using Elpida.Backend.Data.Abstractions.Models.Result;
 using Elpida.Backend.Data.Abstractions.Models.Statistics;
@@ -47,7 +47,7 @@ namespace Elpida.Backend.Data
 
 		public DbSet<BenchmarkResultModel> BenchmarkResults { get; set; } = default!;
 
-		public DbSet<ElpidaModel> Elpidas { get; set; } = default!;
+		public DbSet<ElpidaVersionModel> ElpidaVersions { get; set; } = default!;
 
 		public DbSet<OsModel> Oses { get; set; } = default!;
 
@@ -56,49 +56,38 @@ namespace Elpida.Backend.Data
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			modelBuilder.Entity<BenchmarkModel>()
-				.HasMany(m => m.Tasks)
-				.WithOne(m => m.Benchmark)
-				.OnDelete(DeleteBehavior.Cascade);
-
-			modelBuilder.Entity<BenchmarkTaskModel>()
-				.HasOne(m => m.Task);
-
-			modelBuilder.Entity<TaskResultModel>()
-				.HasOne(m => m.Task);
-
-			modelBuilder.Entity<TaskResultModel>()
-				.HasOne(m => m.Topology);
-
-			modelBuilder.Entity<TaskResultModel>()
-				.HasOne(m => m.Cpu);
-
-			modelBuilder.Entity<BenchmarkResultModel>()
-				.HasMany(m => m.TaskResults)
-				.WithOne(m => m.BenchmarkResult)
-				.OnDelete(DeleteBehavior.Cascade);
-
-			modelBuilder.Entity<BenchmarkResultModel>()
-				.HasOne(m => m.Topology);
-
-			modelBuilder.Entity<BenchmarkResultModel>()
-				.HasOne(m => m.Cpu);
-
-			modelBuilder.Entity<BenchmarkResultModel>()
-				.HasOne(m => m.Benchmark);
+				.HasIndex(m => m.Uuid)
+				.IsUnique();
 
 			modelBuilder.Entity<CpuModel>()
-				.HasMany(m => m.BenchmarkStatistics)
-				.WithOne(m => m.Cpu);
+				.HasIndex(m => new { m.Vendor, m.ModelName, m.AdditionalInfo })
+				.IsUnique();
 
-			modelBuilder.Entity<CpuModel>()
-				.HasMany(m => m.Topologies)
-				.WithOne(m => m.Cpu);
+			modelBuilder.Entity<ElpidaVersionModel>()
+				.HasIndex(
+					m => new
+					{
+						m.VersionMajor, m.VersionMinor, m.VersionRevision, m.VersionBuild, m.CompilerName,
+						m.CompilerVersion
+					}
+				)
+				.IsUnique();
+
+			modelBuilder.Entity<OsModel>()
+				.HasIndex(m => new { m.Category, m.Name, m.Version })
+				.IsUnique();
 
 			modelBuilder.Entity<BenchmarkStatisticsModel>()
-				.HasOne(m => m.Cpu);
+				.HasIndex(m => new { m.CpuId, m.BenchmarkId })
+				.IsUnique();
 
-			modelBuilder.Entity<BenchmarkStatisticsModel>()
-				.HasOne(m => m.Benchmark);
+			modelBuilder.Entity<TaskModel>()
+				.HasIndex(m => new { m.Uuid })
+				.IsUnique();
+
+			modelBuilder.Entity<TopologyModel>()
+				.HasIndex(m => new { m.CpuId, m.TopologyHash })
+				.IsUnique();
 		}
 	}
 }

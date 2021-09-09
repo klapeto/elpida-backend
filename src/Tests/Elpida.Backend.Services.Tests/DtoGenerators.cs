@@ -152,7 +152,7 @@ namespace Elpida.Backend.Services.Tests
 			return new ("GCC", "10.0");
 		}
 
-		public static ElpidaDto NewElpida(long? id = null)
+		public static ElpidaVersionDto NewElpida(long? id = null)
 		{
 			return new (id ?? NewId(), NewVersion(), NewCompiler());
 		}
@@ -226,7 +226,7 @@ namespace Elpida.Backend.Services.Tests
 
 		public static CpuPreviewDto NewCpuPreview(long? id = null)
 		{
-			return new (id ?? NewId(), "Samsung", "Exynos", 5, 4);
+			return new (id ?? NewId(), "Samsung", "Exynos");
 		}
 
 		public static BenchmarkStatisticsDto NewBenchmarkStatistic(long? id = null)

@@ -53,7 +53,7 @@ namespace Elpida.Backend.Tests.Validators.Dtos
 					null!,
 					DtoGenerators.NewSystem(),
 					new BenchmarkResultSlimDto[] { null! }
-				), $"null {nameof(BenchmarkResultsBatchDto.Elpida)}");
+				), $"null {nameof(BenchmarkResultsBatchDto.ElpidaVersion)}");
 
 			yield return (
 				new BenchmarkResultsBatchDto(

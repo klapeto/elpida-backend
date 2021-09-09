@@ -24,6 +24,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Elpida.Backend.Common.Exceptions;
 using Elpida.Backend.Data.Abstractions.Interfaces;
 using Elpida.Backend.Data.Abstractions.Models;
 using Elpida.Backend.Services.Abstractions;
@@ -57,6 +58,45 @@ namespace Elpida.Backend.Services.Utilities
 			var updatedPage = new PageRequest(pageRequest.Next, pageRequest.Count, result.TotalCount);
 
 			return new PagedResult<TProjection>(result.Items.ToList(), updatedPage);
+		}
+
+		public static async Task<TModel> GetOrAddSafeAsync<TModel>(
+			IRepository<TModel> repository,
+			TModel model,
+			Expression<Func<TModel, bool>> searchExpression,
+			CancellationToken cancellationToken
+		)
+			where TModel : Entity
+		{
+			var entity = await repository.GetSingleAsync(searchExpression, cancellationToken);
+			if (entity != null)
+			{
+				return entity;
+			}
+
+			try
+			{
+				entity = model;
+				entity.Id = 0;
+				entity = await repository.CreateAsync(entity, cancellationToken);
+
+				await repository.SaveChangesAsync(cancellationToken);
+				return entity;
+			}
+			catch (DuplicateRecordException)
+			{
+				await repository.DropAddedAsync(entity!, cancellationToken);
+				await repository.SaveChangesAsync(cancellationToken); // Safe synchronization
+
+				entity = await repository.GetSingleAsync(searchExpression, cancellationToken);
+
+				if (entity != null)
+				{
+					return entity;
+				}
+
+				throw;
+			}
 		}
 
 		public static Task<PagedResult<TProjection>> GetPagedProjectionsAsync<TProjection, TModel>(

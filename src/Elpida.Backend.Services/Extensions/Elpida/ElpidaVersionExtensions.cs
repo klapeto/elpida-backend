@@ -18,40 +18,24 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using Elpida.Backend.Data.Abstractions.Models.Task;
+using Elpida.Backend.Data.Abstractions.Models.ElpidaVersion;
+using Elpida.Backend.Services.Abstractions.Dtos.Elpida;
 
-namespace Elpida.Backend.Data.Abstractions.Models.Result
+namespace Elpida.Backend.Services.Extensions.Elpida
 {
-	public class TaskResultModel : Entity
+	public static class ElpidaVersionExtensions
 	{
-		public long BenchmarkResultId { get; set; }
-
-		public BenchmarkResultModel BenchmarkResult { get; set; } = default!;
-
-		public long TaskId { get; set; }
-
-		public TaskModel Task { get; set; } = default!;
-
-		public int Order { get; set; }
-
-		public double Value { get; set; }
-
-		public double Time { get; set; }
-
-		public long InputSize { get; set; }
-
-		public long SampleSize { get; set; }
-
-		public double Max { get; set; }
-
-		public double Min { get; set; }
-
-		public double Mean { get; set; }
-
-		public double StandardDeviation { get; set; }
-
-		public double Tau { get; set; }
-
-		public double MarginOfError { get; set; }
+		public static ElpidaVersionDto ToDto(this ElpidaVersionModel elpidaVersionModel)
+		{
+			return new (
+				elpidaVersionModel.Id,
+				new VersionDto(
+					elpidaVersionModel.VersionMajor,
+					elpidaVersionModel.VersionMinor,
+					elpidaVersionModel.VersionRevision,
+					elpidaVersionModel.VersionBuild
+				),
+				new CompilerDto(elpidaVersionModel.CompilerName, elpidaVersionModel.CompilerVersion));
+		}
 	}
 }

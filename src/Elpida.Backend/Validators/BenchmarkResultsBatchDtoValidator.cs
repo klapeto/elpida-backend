@@ -27,7 +27,7 @@ namespace Elpida.Backend.Validators
 	{
 		public BenchmarkResultsBatchDtoValidator()
 		{
-			RuleFor(dto => dto.Elpida)
+			RuleFor(dto => dto.ElpidaVersion)
 				.NotNull();
 
 			RuleFor(dto => dto.System)

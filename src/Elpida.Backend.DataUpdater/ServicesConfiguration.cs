@@ -30,21 +30,21 @@ using Microsoft.Extensions.Logging;
 
 namespace Elpida.Backend.DataUpdater
 {
-	internal class ServicesConfigurator
+	internal class ServicesConfiguration
 	{
-		public ServicesConfigurator(string[] args)
+		public ServicesConfiguration(SqlProvider provider, string connectionStringName)
 		{
 			var services = new ServiceCollection();
 
 			Configuration = new ConfigurationBuilder()
 				.AddJsonFile("appsettings.json", false, true)
-				.AddCommandLine(args)
+				.AddJsonFile("appsettings.Development.json", true, true)
 				.Build();
 
 			services.AddLogging(
 				builder =>
 				{
-					builder.AddConsole();
+					builder.AddSimpleConsole(b => b.IncludeScopes = true);
 					builder.AddConfiguration(Configuration.GetSection("Logging"));
 				}
 			);
@@ -52,7 +52,7 @@ namespace Elpida.Backend.DataUpdater
 			services.AddTransient<IBenchmarkResultsService, BenchmarkResultService>();
 			services.AddTransient<IBenchmarkService, BenchmarkService>();
 			services.AddTransient<ICpuService, CpuService>();
-			services.AddTransient<IElpidaService, ElpidaService>();
+			services.AddTransient<IElpidaVersionService, ElpidaVersionService>();
 			services.AddTransient<IOsService, OsService>();
 			services.AddTransient<IBenchmarkStatisticsService, BenchmarkStatisticsService>();
 			services.AddTransient<ITaskService, TaskService>();
@@ -63,17 +63,24 @@ namespace Elpida.Backend.DataUpdater
 			services.AddTransient<ITopologyRepository, TopologyRepository>();
 			services.AddTransient<IBenchmarkRepository, BenchmarkRepository>();
 			services.AddTransient<ITaskRepository, TaskRepository>();
-			services.AddTransient<IElpidaRepository, ElpidaRepository>();
+			services.AddTransient<IElpidaVersionRepository, ElpidaVersionRepository>();
 			services.AddTransient<IOsRepository, OsRepository>();
 			services.AddTransient<IBenchmarkStatisticsRepository, BenchmarkStatisticsRepository>();
 
 			services.AddDbContext<ElpidaContext>(
 				builder =>
 				{
-					builder.UseSqlite(
-						Configuration.GetConnectionString("Local"),
-						c => c.CommandTimeout(60)
-					);
+					switch (provider)
+					{
+						case SqlProvider.Sqlite:
+							builder.UseSqlite(Configuration.GetConnectionString(connectionStringName));
+							break;
+						case SqlProvider.SqlServer:
+							builder.UseSqlServer(Configuration.GetConnectionString(connectionStringName), b => b.CommandTimeout(120));
+							break;
+						default:
+							throw new ArgumentOutOfRangeException(nameof(provider), provider, null);
+					}
 				}
 			);
 
@@ -82,6 +89,6 @@ namespace Elpida.Backend.DataUpdater
 
 		public IServiceProvider ServiceProvider { get; }
 
-		public IConfigurationRoot Configuration { get; }
+		private IConfigurationRoot Configuration { get; }
 	}
 }

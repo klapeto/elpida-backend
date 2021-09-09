@@ -47,7 +47,7 @@ namespace Elpida.Backend.Services.Tests
 
 		private Mock<ITopologyService> _topologyService = default!;
 
-		private Mock<IElpidaService> _elpidaService = default!;
+		private Mock<IElpidaVersionService> _elpidaService = default!;
 
 		private Mock<IOsService> _osService = default!;
 
@@ -61,7 +61,7 @@ namespace Elpida.Backend.Services.Tests
 			_benchmarkResultRepo = new Mock<IBenchmarkResultsRepository>(MockBehavior.Strict);
 			_cpuService = new Mock<ICpuService>(MockBehavior.Strict);
 			_topologyService = new Mock<ITopologyService>(MockBehavior.Strict);
-			_elpidaService = new Mock<IElpidaService>(MockBehavior.Strict);
+			_elpidaService = new Mock<IElpidaVersionService>(MockBehavior.Strict);
 			_osService = new Mock<IOsService>(MockBehavior.Strict);
 			_benchmarkService = new Mock<IBenchmarkService>(MockBehavior.Strict);
 			_benchmarkStatisticsService = new Mock<IBenchmarkStatisticsService>(MockBehavior.Strict);
@@ -100,7 +100,7 @@ namespace Elpida.Backend.Services.Tests
 			_osService.Setup(s => s.GetOrAddAsync(batch.System.Os, default))
 				.ReturnsAsync(returnOs);
 
-			_elpidaService.Setup(s => s.GetOrAddAsync(batch.Elpida, default))
+			_elpidaService.Setup(s => s.GetOrAddAsync(batch.ElpidaVersion, default))
 				.ReturnsAsync(returnElpida);
 
 			_benchmarkResultRepo.Setup(r => r.CreateAsync(It.Is<BenchmarkResultModel>(x => x.Id == 0), default))
@@ -167,7 +167,7 @@ namespace Elpida.Backend.Services.Tests
 			_osService.Setup(s => s.GetOrAddAsync(batch.System.Os, default))
 				.ReturnsAsync(returnOs);
 
-			_elpidaService.Setup(s => s.GetOrAddAsync(batch.Elpida, default))
+			_elpidaService.Setup(s => s.GetOrAddAsync(batch.ElpidaVersion, default))
 				.ReturnsAsync(returnElpida);
 
 			_benchmarkResultRepo.Setup(r => r.SaveChangesAsync(default))
@@ -213,9 +213,9 @@ namespace Elpida.Backend.Services.Tests
 			Assert.AreEqual(model.TargetTime, dto.System.Timing.TargetTime);
 			Assert.AreEqual(model.WakeupOverhead, dto.System.Timing.WakeupOverhead);
 
-			model.Elpida.AssertEqual(dto.Elpida);
+			model.ElpidaVersion.AssertEqual(dto.ElpidaVersion);
 			model.Os.AssertEqual(dto.System.Os);
-			model.Cpu.AssertEqual(dto.System.Cpu);
+			model.Topology.Cpu.AssertEqual(dto.System.Cpu);
 			model.Topology.AssertEqual(dto.System.Topology);
 
 			JsonConvert.DeserializeObject<long[]>(model.Affinity)
@@ -239,7 +239,7 @@ namespace Elpida.Backend.Services.Tests
 				var a = modelsArray[i];
 				var b = dtosArray[i];
 
-				Assert.AreEqual(model.Cpu.Id, b.CpuId);
+				Assert.AreEqual(model.Topology.Cpu.Id, b.CpuId);
 				Assert.AreEqual(model.Topology.Id, b.TopologyId);
 				Assert.AreEqual(model.Id, b.BenchmarkResultId);
 

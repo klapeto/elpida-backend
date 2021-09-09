@@ -23,7 +23,7 @@ using System.Collections.Generic;
 using Elpida.Backend.Common;
 using Elpida.Backend.Data.Abstractions.Models.Benchmark;
 using Elpida.Backend.Data.Abstractions.Models.Cpu;
-using Elpida.Backend.Data.Abstractions.Models.Elpida;
+using Elpida.Backend.Data.Abstractions.Models.ElpidaVersion;
 using Elpida.Backend.Data.Abstractions.Models.Os;
 using Elpida.Backend.Data.Abstractions.Models.Result;
 using Elpida.Backend.Data.Abstractions.Models.Statistics;
@@ -52,8 +52,6 @@ namespace Elpida.Backend.Services.Tests
 		{
 			return new ()
 			{
-				BenchmarkId = DtoGenerators.NewId(),
-				CpuId = DtoGenerators.NewId(),
 				Id = DtoGenerators.NewId(),
 				Benchmark = NewBenchmark(),
 				Cpu = NewCpu(),
@@ -102,8 +100,6 @@ namespace Elpida.Backend.Services.Tests
 			{
 				Id = DtoGenerators.NewId(),
 				Task = NewTask(),
-				BenchmarkId = 5,
-				TaskId = 2,
 				CanBeDisabled = true,
 				IterationsToRun = 5,
 				CanBeMultiThreaded = true,
@@ -136,12 +132,11 @@ namespace Elpida.Backend.Services.Tests
 				Smt = true,
 				Vendor = "Samsung",
 				AdditionalInfo = JsonConvert.SerializeObject(new { Haha = "haha" }),
-				BenchmarkStatistics = new List<BenchmarkStatisticsModel>(),
 				ModelName = "Cortex A7",
 			};
 		}
 
-		public static ElpidaModel NewElpida()
+		public static ElpidaVersionModel NewElpida()
 		{
 			return new ()
 			{
@@ -171,7 +166,6 @@ namespace Elpida.Backend.Services.Tests
 			return new ()
 			{
 				Id = DtoGenerators.NewId(),
-				CpuId = 77,
 				Cpu = NewCpu(),
 				TopologyHash = "jsadfhgjkfdsg",
 				TotalPackages = 8,
@@ -209,26 +203,20 @@ namespace Elpida.Backend.Services.Tests
 				Id = DtoGenerators.NewId(),
 				Affinity = JsonConvert.SerializeObject(new long[] { 1, 2, 3 }),
 				Benchmark = NewBenchmark(),
-				Cpu = NewCpu(),
-				Elpida = NewElpida(),
+				ElpidaVersion = NewElpida(),
 				Os = NewOs(),
 				Score = 4984,
-				BenchmarkId = 9,
-				CpuId = 6,
 				Topology = NewTopology(),
-				ElpidaId = 8,
 				JoinOverhead = 987,
 				LockOverhead = 646,
 				LoopOverhead = 6546,
 				MemorySize = 968763541,
 				NotifyOverhead = 313,
 				NowOverhead = 876,
-				OsId = 6,
 				PageSize = 464,
 				SleepOverhead = 64566,
 				TargetTime = 635435,
 				TimeStamp = DateTime.UtcNow,
-				TopologyId = 133,
 				WakeupOverhead = 654,
 				TaskResults = new List<TaskResultModel> { NewTaskResult(), NewTaskResult() },
 			};

@@ -31,21 +31,15 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Cpu
 		/// <param name="id">The id of the Cpu.</param>
 		/// <param name="vendor">The vendor name of the cpu.</param>
 		/// <param name="modelName">The model name of the cpu.</param>
-		/// <param name="topologiesCount">The number of topologies this cpu has.</param>
-		/// <param name="benchmarkStatisticsCount">The number of Benchmarks statistics this cpu has.</param>
 		public CpuPreviewDto(
 			long id,
 			string vendor,
-			string modelName,
-			int topologiesCount,
-			int benchmarkStatisticsCount
+			string modelName
 		)
 			: base(id)
 		{
 			Vendor = vendor;
 			ModelName = modelName;
-			TopologiesCount = topologiesCount;
-			BenchmarkStatisticsCount = benchmarkStatisticsCount;
 		}
 
 		/// <summary>
@@ -59,15 +53,5 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Cpu
 		/// </summary>
 		/// <example>Cortex A7</example>
 		public string ModelName { get; }
-
-		/// <summary>
-		///     The number of topologies this cpu has.
-		/// </summary>
-		public int TopologiesCount { get; }
-
-		/// <summary>
-		///     The number of Benchmarks statistics this cpu has.
-		/// </summary>
-		public int BenchmarkStatisticsCount { get; }
 	}
 }

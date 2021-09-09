@@ -18,10 +18,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using System.Collections.Generic;
-using Elpida.Backend.Data.Abstractions.Models.Statistics;
-using Elpida.Backend.Data.Abstractions.Models.Topology;
-
 namespace Elpida.Backend.Data.Abstractions.Models.Cpu
 {
 	public class CpuModel : Entity
@@ -41,9 +37,5 @@ namespace Elpida.Backend.Data.Abstractions.Models.Cpu
 		public string Caches { get; set; } = default!;
 
 		public string Features { get; set; } = default!;
-
-		public ICollection<BenchmarkStatisticsModel> BenchmarkStatistics { get; set; } = default!;
-
-		public ICollection<TopologyModel> Topologies { get; set; } = default!;
 	}
 }

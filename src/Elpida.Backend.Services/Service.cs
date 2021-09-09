@@ -75,20 +75,18 @@ namespace Elpida.Backend.Services
 		public virtual async Task<TDto> GetOrAddAsync(TDto dto, CancellationToken cancellationToken = default)
 		{
 			var bypassExpression = GetCreationBypassCheckExpression(dto);
-			if (bypassExpression == null)
+			var entity = await ProcessDtoAndCreateModelAsync(dto, cancellationToken);
+			if (bypassExpression != null)
 			{
-				return await DoAddAsync(dto, null, cancellationToken);
+				return ToDto(
+					await QueryUtilities.GetOrAddSafeAsync(Repository, entity, bypassExpression, cancellationToken)
+				);
 			}
 
-			using var transaction = await Repository.BeginTransactionAsync(cancellationToken);
-
-			var entity = await Repository.GetSingleAsync(bypassExpression, cancellationToken);
-			if (entity != null)
-			{
-				return ToDto(entity);
-			}
-
-			return await DoAddAsync(dto, transaction, cancellationToken);
+			entity.Id = 0;
+			entity = await Repository.CreateAsync(entity, cancellationToken);
+			await Repository.SaveChangesAsync(cancellationToken);
+			return ToDto(entity);
 		}
 
 		public IEnumerable<FilterExpression> ConstructCustomFilters<T, TR>(Expression<Func<T, TR>> baseExpression)
@@ -110,22 +108,6 @@ namespace Elpida.Backend.Services
 		protected virtual Expression<Func<TModel, bool>>? GetCreationBypassCheckExpression(TDto dto)
 		{
 			return null;
-		}
-
-		private async Task<TDto> DoAddAsync(TDto dto, ITransaction? transaction, CancellationToken cancellationToken)
-		{
-			var entity = await ProcessDtoAndCreateModelAsync(dto, cancellationToken);
-			entity.Id = 0;
-			entity = await Repository.CreateAsync(entity, cancellationToken);
-
-			await Repository.SaveChangesAsync(cancellationToken);
-
-			if (transaction != null)
-			{
-				await transaction.CommitAsync(cancellationToken);
-			}
-
-			return ToDto(entity);
 		}
 	}
 }

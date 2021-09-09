@@ -77,7 +77,7 @@ namespace Elpida.Backend.Services
 		{
 			return m => new TopologyPreviewDto(
 				m.Id,
-				m.CpuId,
+				m.Cpu.Id,
 				m.Cpu.Vendor,
 				m.Cpu.ModelName,
 				m.TotalLogicalCores,
@@ -141,7 +141,7 @@ namespace Elpida.Backend.Services
 		{
 			var topologyHash = GetTopologyHash(dto);
 			return t =>
-				t.CpuId == dto.CpuId
+				t.Cpu.Id == dto.CpuId
 				&& t.TopologyHash == topologyHash;
 		}
 

@@ -49,7 +49,7 @@ namespace Elpida.Backend.Services.Extensions.Result
 				benchmarkResultModel.Benchmark.Uuid,
 				benchmarkResultModel.Benchmark.Name,
 				JsonConvert.DeserializeObject<long[]>(benchmarkResultModel.Affinity),
-				benchmarkResultModel.Elpida.ToDto(),
+				benchmarkResultModel.ElpidaVersion.ToDto(),
 				GetSystem(benchmarkResultModel),
 				benchmarkResultModel.Score,
 				scoreSpec,
@@ -119,7 +119,7 @@ namespace Elpida.Backend.Services.Extensions.Result
 					r => new TaskResultDto(
 						r.Task.Id,
 						result.Id,
-						result.Cpu.Id,
+						result.Topology.Cpu.Id,
 						result.Topology.Id,
 						r.Task.Uuid,
 						r.Task.Name,
@@ -149,7 +149,7 @@ namespace Elpida.Backend.Services.Extensions.Result
 				result.TargetTime
 			);
 
-			return new SystemDto(result.Cpu.ToDto(), result.Os.ToDto(), result.Topology.ToDto(), memory, timing);
+			return new SystemDto(result.Topology.Cpu.ToDto(), result.Os.ToDto(), result.Topology.ToDto(), memory, timing);
 		}
 	}
 }

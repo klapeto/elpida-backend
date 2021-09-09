@@ -1,0 +1,1101 @@
+{
+  "benchmarkResults": [
+    {
+      "affinity": [
+        19
+      ],
+      "score": 6.77787626050222e-08,
+      "taskResults": [
+        {
+          "inputSize": 16777216,
+          "statistics": {
+            "marginOfError": 7.8769910044946405,
+            "max": 6902.514636871333,
+            "mean": 6778.118534135113,
+            "min": 6646.044995200041,
+            "sampleSize": 49,
+            "standardDeviation": 55.13893703146248,
+            "tau": 1.9301
+          },
+          "time": 6.777876260502219e-06,
+          "uuid": "7b184be3-9915-4529-8e02-c5db88191c7f",
+          "value": 6.77787626050222e-08
+        }
+      ],
+      "timeStamp": "2021-09-05T13:43:49Z",
+      "uuid": "7626cdc2-6f7b-4c34-8cf9-b6e3fcb4c735"
+    },
+    {
+      "affinity": [
+        19
+      ],
+      "score": 9.557664260691792e-09,
+      "taskResults": [
+        {
+          "inputSize": 4194304,
+          "statistics": {
+            "marginOfError": 2.6130517205167707,
+            "max": 995.7469222864032,
+            "mean": 956.8972099639233,
+            "min": 925.652039082597,
+            "sampleSize": 49,
+            "standardDeviation": 18.291362043617394,
+            "tau": 1.9301
+          },
+          "time": 9.557664260691789e-07,
+          "uuid": "4552ef8e-c4f8-44d6-8a49-7d24eb8f5df1",
+          "value": 9.557664260691792e-09
+        }
+      ],
+      "timeStamp": "2021-09-05T13:44:04Z",
+      "uuid": "4543c724-b17b-4425-8104-79d819825621"
+    },
+    {
+      "affinity": [
+        19
+      ],
+      "score": 2.4981261223939124e-09,
+      "taskResults": [
+        {
+          "inputSize": 262144,
+          "statistics": {
+            "marginOfError": 0.30249291035846587,
+            "max": 257.4588233251072,
+            "mean": 250.22869400914203,
+            "min": 247.14768861705068,
+            "sampleSize": 49,
+            "standardDeviation": 2.117450372509261,
+            "tau": 1.9301
+          },
+          "time": 2.498126122393912e-07,
+          "uuid": "bf049f8d-3b84-4e98-badb-bf8cf0ca0249",
+          "value": 2.4981261223939124e-09
+        }
+      ],
+      "timeStamp": "2021-09-05T13:44:16Z",
+      "uuid": "3ad2c346-926c-4f2f-b57a-0a046757b7eb"
+    },
+    {
+      "affinity": [
+        19
+      ],
+      "score": 8.179893734960865e-10,
+      "taskResults": [
+        {
+          "inputSize": 16384,
+          "statistics": {
+            "marginOfError": 0.07251121171059102,
+            "max": 84.38416696997267,
+            "mean": 81.85321663436564,
+            "min": 80.91006575046714,
+            "sampleSize": 49,
+            "standardDeviation": 0.5075784819741371,
+            "tau": 1.9301
+          },
+          "time": 8.179893734960867e-08,
+          "uuid": "7b401200-1e5a-4e3e-96b4-59ece5c23e3b",
+          "value": 8.179893734960865e-10
+        }
+      ],
+      "timeStamp": "2021-09-05T13:44:32Z",
+      "uuid": "ebe54867-eb7e-4848-8bd0-5286b77fdcdd"
+    },
+    {
+      "affinity": [
+        19
+      ],
+      "score": 6.765592388026888e-08,
+      "taskResults": [
+        {
+          "inputSize": 16777216,
+          "statistics": {
+            "marginOfError": 6.074533251214058,
+            "max": 6838.7219448420055,
+            "mean": 6761.953865837294,
+            "min": 6665.989971725013,
+            "sampleSize": 49,
+            "standardDeviation": 42.52173275849841,
+            "tau": 1.9301
+          },
+          "time": 6.765592388026889e-06,
+          "uuid": "7b184be3-9915-4529-8e02-c5db88191c7f",
+          "value": 6.765592388026888e-08
+        }
+      ],
+      "timeStamp": "2021-09-05T13:44:45Z",
+      "uuid": "7626cdc2-6f7b-4c34-8cf9-b6e3fcb4c735"
+    },
+    {
+      "affinity": [
+        19
+      ],
+      "score": 9.383228426151016e-09,
+      "taskResults": [
+        {
+          "inputSize": 4194304,
+          "statistics": {
+            "marginOfError": 1.2095578459104417,
+            "max": 977.7458554100871,
+            "mean": 940.0843112815351,
+            "min": 928.6432942135862,
+            "sampleSize": 49,
+            "standardDeviation": 8.466904921373091,
+            "tau": 1.9301
+          },
+          "time": 9.383228426151015e-07,
+          "uuid": "4552ef8e-c4f8-44d6-8a49-7d24eb8f5df1",
+          "value": 9.383228426151016e-09
+        }
+      ],
+      "timeStamp": "2021-09-05T13:45:01Z",
+      "uuid": "4543c724-b17b-4425-8104-79d819825621"
+    },
+    {
+      "affinity": [
+        19
+      ],
+      "score": 2.521428144351566e-09,
+      "taskResults": [
+        {
+          "inputSize": 262144,
+          "statistics": {
+            "marginOfError": 0.30461205872237757,
+            "max": 258.49121602838244,
+            "mean": 252.4149382966894,
+            "min": 248.0325751879331,
+            "sampleSize": 49,
+            "standardDeviation": 2.132284411056643,
+            "tau": 1.9301
+          },
+          "time": 2.521428144351566e-07,
+          "uuid": "bf049f8d-3b84-4e98-badb-bf8cf0ca0249",
+          "value": 2.521428144351566e-09
+        }
+      ],
+      "timeStamp": "2021-09-05T13:45:14Z",
+      "uuid": "3ad2c346-926c-4f2f-b57a-0a046757b7eb"
+    },
+    {
+      "affinity": [
+        19
+      ],
+      "score": 8.207106318082488e-10,
+      "taskResults": [
+        {
+          "inputSize": 16384,
+          "statistics": {
+            "marginOfError": 0.07343222235582779,
+            "max": 84.87600272499999,
+            "mean": 82.12961083999582,
+            "min": 81.50503184336905,
+            "sampleSize": 49,
+            "standardDeviation": 0.5140255564907945,
+            "tau": 1.9301
+          },
+          "time": 8.20710631808249e-08,
+          "uuid": "7b401200-1e5a-4e3e-96b4-59ece5c23e3b",
+          "value": 8.207106318082488e-10
+        }
+      ],
+      "timeStamp": "2021-09-05T13:45:30Z",
+      "uuid": "ebe54867-eb7e-4848-8bd0-5286b77fdcdd"
+    }
+  ],
+  "elpidaVersion": {
+    "compiler": {
+      "name": "GNU",
+      "version": "9.3.0"
+    },
+    "version": {
+      "build": 1000,
+      "major": 0,
+      "minor": 0,
+      "revision": 1
+    }
+  },
+  "system": {
+    "cpu": {
+      "additionalInfo": {
+        "Family": "23",
+        "Model": "1",
+        "Stepping": "1"
+      },
+      "architecture": "x86-64",
+      "caches": [
+        {
+          "associativity": "4-way",
+          "lineSize": 64,
+          "name": "L1 Instruction Cache",
+          "size": 64000
+        },
+        {
+          "associativity": "8-way",
+          "lineSize": 64,
+          "name": "L1 Data Cache",
+          "size": 32000
+        },
+        {
+          "associativity": "8-Way",
+          "lineSize": 64,
+          "name": "L2 Cache",
+          "size": 512000
+        },
+        {
+          "associativity": "32-Way",
+          "lineSize": 64,
+          "name": "L3 Cache",
+          "size": 32768000
+        }
+      ],
+      "features": [
+        "RDRAND",
+        "F16C",
+        "AVX",
+        "AES",
+        "SSE42",
+        "SSE41",
+        "FMA",
+        "SSSE3",
+        "SSE3",
+        "SSE2",
+        "SSE",
+        "CMOV",
+        "SHA",
+        "BMI2",
+        "AVX2",
+        "BMI1",
+        "3DNowPrefetch",
+        "SSE4A",
+        "ABM",
+        "SVM",
+        "Mmx",
+        "MmxExt"
+      ],
+      "frequency": 3480190976,
+      "modelName": "AMD Ryzen Threadripper 1920X 12-Core Processor",
+      "smt": true,
+      "vendor": "AuthenticAMD"
+    },
+    "memory": {
+      "pageSize": 4096,
+      "totalSize": 67447201792
+    },
+    "os": {
+      "category": "Linux",
+      "name": "KDE neon 5.22",
+      "version": "5.11.0-27-generic"
+    },
+    "timing": {
+      "joinOverhead": 7.14235225e-06,
+      "lockOverhead": 8.854800000000065e-08,
+      "loopOverhead": 1.9106224999999997e-09,
+      "notifyOverhead": 3.234750000000027e-10,
+      "nowOverhead": 4.9775e-08,
+      "sleepOverhead": 8.264052499999828e-05,
+      "targetTime": 0.1,
+      "wakeupOverhead": 6.01378299999994e-06
+    },
+    "topology": {
+      "root": {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "children": [
+                              {
+                                "children": [
+                                  {
+                                    "children": [
+                                      {
+                                        "children": null,
+                                        "efficiency": 0,
+                                        "memoryChildren": null,
+                                        "name": "EU",
+                                        "nodeType": 14,
+                                        "osIndex": 0,
+                                        "value": null
+                                      },
+                                      {
+                                        "children": null,
+                                        "efficiency": 0,
+                                        "memoryChildren": null,
+                                        "name": "EU",
+                                        "nodeType": 14,
+                                        "osIndex": 12,
+                                        "value": null
+                                      }
+                                    ],
+                                    "efficiency": null,
+                                    "memoryChildren": null,
+                                    "name": "Core",
+                                    "nodeType": 5,
+                                    "osIndex": 0,
+                                    "value": null
+                                  }
+                                ],
+                                "efficiency": null,
+                                "memoryChildren": null,
+                                "name": "L1I",
+                                "nodeType": 6,
+                                "osIndex": 0,
+                                "value": 65536
+                              }
+                            ],
+                            "efficiency": null,
+                            "memoryChildren": null,
+                            "name": "L1D",
+                            "nodeType": 7,
+                            "osIndex": 0,
+                            "value": 32768
+                          }
+                        ],
+                        "efficiency": null,
+                        "memoryChildren": null,
+                        "name": "L2D",
+                        "nodeType": 9,
+                        "osIndex": 0,
+                        "value": 524288
+                      },
+                      {
+                        "children": [
+                          {
+                            "children": [
+                              {
+                                "children": [
+                                  {
+                                    "children": [
+                                      {
+                                        "children": null,
+                                        "efficiency": 0,
+                                        "memoryChildren": null,
+                                        "name": "EU",
+                                        "nodeType": 14,
+                                        "osIndex": 1,
+                                        "value": null
+                                      },
+                                      {
+                                        "children": null,
+                                        "efficiency": 0,
+                                        "memoryChildren": null,
+                                        "name": "EU",
+                                        "nodeType": 14,
+                                        "osIndex": 13,
+                                        "value": null
+                                      }
+                                    ],
+                                    "efficiency": null,
+                                    "memoryChildren": null,
+                                    "name": "Core",
+                                    "nodeType": 5,
+                                    "osIndex": 1,
+                                    "value": null
+                                  }
+                                ],
+                                "efficiency": null,
+                                "memoryChildren": null,
+                                "name": "L1I",
+                                "nodeType": 6,
+                                "osIndex": 0,
+                                "value": 65536
+                              }
+                            ],
+                            "efficiency": null,
+                            "memoryChildren": null,
+                            "name": "L1D",
+                            "nodeType": 7,
+                            "osIndex": 0,
+                            "value": 32768
+                          }
+                        ],
+                        "efficiency": null,
+                        "memoryChildren": null,
+                        "name": "L2D",
+                        "nodeType": 9,
+                        "osIndex": 0,
+                        "value": 524288
+                      },
+                      {
+                        "children": [
+                          {
+                            "children": [
+                              {
+                                "children": [
+                                  {
+                                    "children": [
+                                      {
+                                        "children": null,
+                                        "efficiency": 0,
+                                        "memoryChildren": null,
+                                        "name": "EU",
+                                        "nodeType": 14,
+                                        "osIndex": 2,
+                                        "value": null
+                                      },
+                                      {
+                                        "children": null,
+                                        "efficiency": 0,
+                                        "memoryChildren": null,
+                                        "name": "EU",
+                                        "nodeType": 14,
+                                        "osIndex": 14,
+                                        "value": null
+                                      }
+                                    ],
+                                    "efficiency": null,
+                                    "memoryChildren": null,
+                                    "name": "Core",
+                                    "nodeType": 5,
+                                    "osIndex": 2,
+                                    "value": null
+                                  }
+                                ],
+                                "efficiency": null,
+                                "memoryChildren": null,
+                                "name": "L1I",
+                                "nodeType": 6,
+                                "osIndex": 0,
+                                "value": 65536
+                              }
+                            ],
+                            "efficiency": null,
+                            "memoryChildren": null,
+                            "name": "L1D",
+                            "nodeType": 7,
+                            "osIndex": 0,
+                            "value": 32768
+                          }
+                        ],
+                        "efficiency": null,
+                        "memoryChildren": null,
+                        "name": "L2D",
+                        "nodeType": 9,
+                        "osIndex": 0,
+                        "value": 524288
+                      }
+                    ],
+                    "efficiency": null,
+                    "memoryChildren": null,
+                    "name": "L3D",
+                    "nodeType": 11,
+                    "osIndex": 0,
+                    "value": 8388608
+                  },
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "children": [
+                              {
+                                "children": [
+                                  {
+                                    "children": [
+                                      {
+                                        "children": null,
+                                        "efficiency": 0,
+                                        "memoryChildren": null,
+                                        "name": "EU",
+                                        "nodeType": 14,
+                                        "osIndex": 3,
+                                        "value": null
+                                      },
+                                      {
+                                        "children": null,
+                                        "efficiency": 0,
+                                        "memoryChildren": null,
+                                        "name": "EU",
+                                        "nodeType": 14,
+                                        "osIndex": 15,
+                                        "value": null
+                                      }
+                                    ],
+                                    "efficiency": null,
+                                    "memoryChildren": null,
+                                    "name": "Core",
+                                    "nodeType": 5,
+                                    "osIndex": 4,
+                                    "value": null
+                                  }
+                                ],
+                                "efficiency": null,
+                                "memoryChildren": null,
+                                "name": "L1I",
+                                "nodeType": 6,
+                                "osIndex": 0,
+                                "value": 65536
+                              }
+                            ],
+                            "efficiency": null,
+                            "memoryChildren": null,
+                            "name": "L1D",
+                            "nodeType": 7,
+                            "osIndex": 0,
+                            "value": 32768
+                          }
+                        ],
+                        "efficiency": null,
+                        "memoryChildren": null,
+                        "name": "L2D",
+                        "nodeType": 9,
+                        "osIndex": 0,
+                        "value": 524288
+                      },
+                      {
+                        "children": [
+                          {
+                            "children": [
+                              {
+                                "children": [
+                                  {
+                                    "children": [
+                                      {
+                                        "children": null,
+                                        "efficiency": 0,
+                                        "memoryChildren": null,
+                                        "name": "EU",
+                                        "nodeType": 14,
+                                        "osIndex": 4,
+                                        "value": null
+                                      },
+                                      {
+                                        "children": null,
+                                        "efficiency": 0,
+                                        "memoryChildren": null,
+                                        "name": "EU",
+                                        "nodeType": 14,
+                                        "osIndex": 16,
+                                        "value": null
+                                      }
+                                    ],
+                                    "efficiency": null,
+                                    "memoryChildren": null,
+                                    "name": "Core",
+                                    "nodeType": 5,
+                                    "osIndex": 5,
+                                    "value": null
+                                  }
+                                ],
+                                "efficiency": null,
+                                "memoryChildren": null,
+                                "name": "L1I",
+                                "nodeType": 6,
+                                "osIndex": 0,
+                                "value": 65536
+                              }
+                            ],
+                            "efficiency": null,
+                            "memoryChildren": null,
+                            "name": "L1D",
+                            "nodeType": 7,
+                            "osIndex": 0,
+                            "value": 32768
+                          }
+                        ],
+                        "efficiency": null,
+                        "memoryChildren": null,
+                        "name": "L2D",
+                        "nodeType": 9,
+                        "osIndex": 0,
+                        "value": 524288
+                      },
+                      {
+                        "children": [
+                          {
+                            "children": [
+                              {
+                                "children": [
+                                  {
+                                    "children": [
+                                      {
+                                        "children": null,
+                                        "efficiency": 0,
+                                        "memoryChildren": null,
+                                        "name": "EU",
+                                        "nodeType": 14,
+                                        "osIndex": 5,
+                                        "value": null
+                                      },
+                                      {
+                                        "children": null,
+                                        "efficiency": 0,
+                                        "memoryChildren": null,
+                                        "name": "EU",
+                                        "nodeType": 14,
+                                        "osIndex": 17,
+                                        "value": null
+                                      }
+                                    ],
+                                    "efficiency": null,
+                                    "memoryChildren": null,
+                                    "name": "Core",
+                                    "nodeType": 5,
+                                    "osIndex": 6,
+                                    "value": null
+                                  }
+                                ],
+                                "efficiency": null,
+                                "memoryChildren": null,
+                                "name": "L1I",
+                                "nodeType": 6,
+                                "osIndex": 0,
+                                "value": 65536
+                              }
+                            ],
+                            "efficiency": null,
+                            "memoryChildren": null,
+                            "name": "L1D",
+                            "nodeType": 7,
+                            "osIndex": 0,
+                            "value": 32768
+                          }
+                        ],
+                        "efficiency": null,
+                        "memoryChildren": null,
+                        "name": "L2D",
+                        "nodeType": 9,
+                        "osIndex": 0,
+                        "value": 524288
+                      }
+                    ],
+                    "efficiency": null,
+                    "memoryChildren": null,
+                    "name": "L3D",
+                    "nodeType": 11,
+                    "osIndex": 0,
+                    "value": 8388608
+                  }
+                ],
+                "efficiency": null,
+                "memoryChildren": [
+                  {
+                    "children": null,
+                    "efficiency": null,
+                    "memoryChildren": null,
+                    "name": "Numa Node",
+                    "nodeType": 2,
+                    "osIndex": 0,
+                    "value": 33672597504
+                  }
+                ],
+                "name": "Die",
+                "nodeType": 4,
+                "osIndex": 0,
+                "value": null
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "children": [
+                              {
+                                "children": [
+                                  {
+                                    "children": [
+                                      {
+                                        "children": null,
+                                        "efficiency": 0,
+                                        "memoryChildren": null,
+                                        "name": "EU",
+                                        "nodeType": 14,
+                                        "osIndex": 6,
+                                        "value": null
+                                      },
+                                      {
+                                        "children": null,
+                                        "efficiency": 0,
+                                        "memoryChildren": null,
+                                        "name": "EU",
+                                        "nodeType": 14,
+                                        "osIndex": 18,
+                                        "value": null
+                                      }
+                                    ],
+                                    "efficiency": null,
+                                    "memoryChildren": null,
+                                    "name": "Core",
+                                    "nodeType": 5,
+                                    "osIndex": 8,
+                                    "value": null
+                                  }
+                                ],
+                                "efficiency": null,
+                                "memoryChildren": null,
+                                "name": "L1I",
+                                "nodeType": 6,
+                                "osIndex": 0,
+                                "value": 65536
+                              }
+                            ],
+                            "efficiency": null,
+                            "memoryChildren": null,
+                            "name": "L1D",
+                            "nodeType": 7,
+                            "osIndex": 0,
+                            "value": 32768
+                          }
+                        ],
+                        "efficiency": null,
+                        "memoryChildren": null,
+                        "name": "L2D",
+                        "nodeType": 9,
+                        "osIndex": 0,
+                        "value": 524288
+                      },
+                      {
+                        "children": [
+                          {
+                            "children": [
+                              {
+                                "children": [
+                                  {
+                                    "children": [
+                                      {
+                                        "children": null,
+                                        "efficiency": 0,
+                                        "memoryChildren": null,
+                                        "name": "EU",
+                                        "nodeType": 14,
+                                        "osIndex": 7,
+                                        "value": null
+                                      },
+                                      {
+                                        "children": null,
+                                        "efficiency": 0,
+                                        "memoryChildren": null,
+                                        "name": "EU",
+                                        "nodeType": 14,
+                                        "osIndex": 19,
+                                        "value": null
+                                      }
+                                    ],
+                                    "efficiency": null,
+                                    "memoryChildren": null,
+                                    "name": "Core",
+                                    "nodeType": 5,
+                                    "osIndex": 9,
+                                    "value": null
+                                  }
+                                ],
+                                "efficiency": null,
+                                "memoryChildren": null,
+                                "name": "L1I",
+                                "nodeType": 6,
+                                "osIndex": 0,
+                                "value": 65536
+                              }
+                            ],
+                            "efficiency": null,
+                            "memoryChildren": null,
+                            "name": "L1D",
+                            "nodeType": 7,
+                            "osIndex": 0,
+                            "value": 32768
+                          }
+                        ],
+                        "efficiency": null,
+                        "memoryChildren": null,
+                        "name": "L2D",
+                        "nodeType": 9,
+                        "osIndex": 0,
+                        "value": 524288
+                      },
+                      {
+                        "children": [
+                          {
+                            "children": [
+                              {
+                                "children": [
+                                  {
+                                    "children": [
+                                      {
+                                        "children": null,
+                                        "efficiency": 0,
+                                        "memoryChildren": null,
+                                        "name": "EU",
+                                        "nodeType": 14,
+                                        "osIndex": 8,
+                                        "value": null
+                                      },
+                                      {
+                                        "children": null,
+                                        "efficiency": 0,
+                                        "memoryChildren": null,
+                                        "name": "EU",
+                                        "nodeType": 14,
+                                        "osIndex": 20,
+                                        "value": null
+                                      }
+                                    ],
+                                    "efficiency": null,
+                                    "memoryChildren": null,
+                                    "name": "Core",
+                                    "nodeType": 5,
+                                    "osIndex": 10,
+                                    "value": null
+                                  }
+                                ],
+                                "efficiency": null,
+                                "memoryChildren": null,
+                                "name": "L1I",
+                                "nodeType": 6,
+                                "osIndex": 0,
+                                "value": 65536
+                              }
+                            ],
+                            "efficiency": null,
+                            "memoryChildren": null,
+                            "name": "L1D",
+                            "nodeType": 7,
+                            "osIndex": 0,
+                            "value": 32768
+                          }
+                        ],
+                        "efficiency": null,
+                        "memoryChildren": null,
+                        "name": "L2D",
+                        "nodeType": 9,
+                        "osIndex": 0,
+                        "value": 524288
+                      }
+                    ],
+                    "efficiency": null,
+                    "memoryChildren": null,
+                    "name": "L3D",
+                    "nodeType": 11,
+                    "osIndex": 0,
+                    "value": 8388608
+                  },
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "children": [
+                              {
+                                "children": [
+                                  {
+                                    "children": [
+                                      {
+                                        "children": null,
+                                        "efficiency": 0,
+                                        "memoryChildren": null,
+                                        "name": "EU",
+                                        "nodeType": 14,
+                                        "osIndex": 9,
+                                        "value": null
+                                      },
+                                      {
+                                        "children": null,
+                                        "efficiency": 0,
+                                        "memoryChildren": null,
+                                        "name": "EU",
+                                        "nodeType": 14,
+                                        "osIndex": 21,
+                                        "value": null
+                                      }
+                                    ],
+                                    "efficiency": null,
+                                    "memoryChildren": null,
+                                    "name": "Core",
+                                    "nodeType": 5,
+                                    "osIndex": 12,
+                                    "value": null
+                                  }
+                                ],
+                                "efficiency": null,
+                                "memoryChildren": null,
+                                "name": "L1I",
+                                "nodeType": 6,
+                                "osIndex": 0,
+                                "value": 65536
+                              }
+                            ],
+                            "efficiency": null,
+                            "memoryChildren": null,
+                            "name": "L1D",
+                            "nodeType": 7,
+                            "osIndex": 0,
+                            "value": 32768
+                          }
+                        ],
+                        "efficiency": null,
+                        "memoryChildren": null,
+                        "name": "L2D",
+                        "nodeType": 9,
+                        "osIndex": 0,
+                        "value": 524288
+                      },
+                      {
+                        "children": [
+                          {
+                            "children": [
+                              {
+                                "children": [
+                                  {
+                                    "children": [
+                                      {
+                                        "children": null,
+                                        "efficiency": 0,
+                                        "memoryChildren": null,
+                                        "name": "EU",
+                                        "nodeType": 14,
+                                        "osIndex": 10,
+                                        "value": null
+                                      },
+                                      {
+                                        "children": null,
+                                        "efficiency": 0,
+                                        "memoryChildren": null,
+                                        "name": "EU",
+                                        "nodeType": 14,
+                                        "osIndex": 22,
+                                        "value": null
+                                      }
+                                    ],
+                                    "efficiency": null,
+                                    "memoryChildren": null,
+                                    "name": "Core",
+                                    "nodeType": 5,
+                                    "osIndex": 13,
+                                    "value": null
+                                  }
+                                ],
+                                "efficiency": null,
+                                "memoryChildren": null,
+                                "name": "L1I",
+                                "nodeType": 6,
+                                "osIndex": 0,
+                                "value": 65536
+                              }
+                            ],
+                            "efficiency": null,
+                            "memoryChildren": null,
+                            "name": "L1D",
+                            "nodeType": 7,
+                            "osIndex": 0,
+                            "value": 32768
+                          }
+                        ],
+                        "efficiency": null,
+                        "memoryChildren": null,
+                        "name": "L2D",
+                        "nodeType": 9,
+                        "osIndex": 0,
+                        "value": 524288
+                      },
+                      {
+                        "children": [
+                          {
+                            "children": [
+                              {
+                                "children": [
+                                  {
+                                    "children": [
+                                      {
+                                        "children": null,
+                                        "efficiency": 0,
+                                        "memoryChildren": null,
+                                        "name": "EU",
+                                        "nodeType": 14,
+                                        "osIndex": 11,
+                                        "value": null
+                                      },
+                                      {
+                                        "children": null,
+                                        "efficiency": 0,
+                                        "memoryChildren": null,
+                                        "name": "EU",
+                                        "nodeType": 14,
+                                        "osIndex": 23,
+                                        "value": null
+                                      }
+                                    ],
+                                    "efficiency": null,
+                                    "memoryChildren": null,
+                                    "name": "Core",
+                                    "nodeType": 5,
+                                    "osIndex": 14,
+                                    "value": null
+                                  }
+                                ],
+                                "efficiency": null,
+                                "memoryChildren": null,
+                                "name": "L1I",
+                                "nodeType": 6,
+                                "osIndex": 0,
+                                "value": 65536
+                              }
+                            ],
+                            "efficiency": null,
+                            "memoryChildren": null,
+                            "name": "L1D",
+                            "nodeType": 7,
+                            "osIndex": 0,
+                            "value": 32768
+                          }
+                        ],
+                        "efficiency": null,
+                        "memoryChildren": null,
+                        "name": "L2D",
+                        "nodeType": 9,
+                        "osIndex": 0,
+                        "value": 524288
+                      }
+                    ],
+                    "efficiency": null,
+                    "memoryChildren": null,
+                    "name": "L3D",
+                    "nodeType": 11,
+                    "osIndex": 0,
+                    "value": 8388608
+                  }
+                ],
+                "efficiency": null,
+                "memoryChildren": [
+                  {
+                    "children": null,
+                    "efficiency": null,
+                    "memoryChildren": null,
+                    "name": "Numa Node",
+                    "nodeType": 2,
+                    "osIndex": 1,
+                    "value": 33774604288
+                  }
+                ],
+                "name": "Die",
+                "nodeType": 4,
+                "osIndex": 1,
+                "value": null
+              }
+            ],
+            "efficiency": null,
+            "memoryChildren": null,
+            "name": "Package",
+            "nodeType": 1,
+            "osIndex": 0,
+            "value": null
+          }
+        ],
+        "efficiency": null,
+        "memoryChildren": null,
+        "name": "Machine",
+        "nodeType": 0,
+        "osIndex": 0,
+        "value": null
+      },
+      "totalLogicalCores": 24,
+      "totalNumaNodes": 2,
+      "totalPackages": 1,
+      "totalPhysicalCores": 12
+    }
+  }
+}

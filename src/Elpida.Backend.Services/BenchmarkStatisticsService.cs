@@ -92,8 +92,8 @@ namespace Elpida.Backend.Services
 			foreach (var frequencyClass in previousClasses)
 			{
 				var count = await _benchmarkResultsRepository.GetCountWithScoreBetween(
-					stats.BenchmarkId,
-					stats.CpuId,
+					stats.Benchmark.Id,
+					stats.Cpu.Id,
 					frequencyClass.Low,
 					frequencyClass.High,
 					cancellationToken
@@ -141,10 +141,10 @@ namespace Elpida.Backend.Services
 
 			StatisticsExpressions = new[]
 				{
-					FiltersTransformer.CreateFilter<BenchmarkStatisticsModel, long>("cpuId", model => model.CpuId),
+					FiltersTransformer.CreateFilter<BenchmarkStatisticsModel, long>("cpuId", model => model.Cpu.Id),
 					FiltersTransformer.CreateFilter<BenchmarkStatisticsModel, long>(
 						"benchmarkId",
-						model => model.BenchmarkId
+						model => model.Benchmark.Id
 					),
 					FiltersTransformer.CreateFilter<BenchmarkStatisticsModel, double>(
 						"benchmarkScoreMean",
@@ -221,33 +221,24 @@ namespace Elpida.Backend.Services
 			return cls;
 		}
 
-		private async Task<BenchmarkStatisticsModel> GetStatisticsModelAsync(
+		private Task<BenchmarkStatisticsModel> GetStatisticsModelAsync(
 			long benchmarkId,
 			long cpuId,
 			CancellationToken cancellationToken
 		)
 		{
-			var stats = await Repository.GetSingleAsync(
-				t => t.BenchmarkId == benchmarkId
-				     && t.CpuId == cpuId,
+			return QueryUtilities.GetOrAddSafeAsync(
+				Repository,
+				new BenchmarkStatisticsModel
+				{
+					Id = 0,
+					CpuId = cpuId,
+					BenchmarkId = benchmarkId,
+					FrequencyClasses = string.Empty,
+				},
+				t => t.Benchmark.Id == benchmarkId && t.Cpu.Id == cpuId,
 				cancellationToken
 			);
-
-			if (stats != null)
-			{
-				return stats;
-			}
-
-			stats = new BenchmarkStatisticsModel
-			{
-				Id = 0,
-				CpuId = cpuId,
-				BenchmarkId = benchmarkId,
-			};
-
-			await Repository.CreateAsync(stats, cancellationToken);
-
-			return stats;
 		}
 	}
 }

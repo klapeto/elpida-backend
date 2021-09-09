@@ -48,8 +48,8 @@ namespace Elpida.Backend.Data
 		{
 			return Collection
 				.Where(
-					s => s.BenchmarkId == benchmarkId
-					     && s.CpuId == cpuId
+					s => s.Benchmark.Id == benchmarkId
+					     && s.Topology.Cpu.Id == cpuId
 					     && s.Score >= min
 					     && s.Score < max
 				)
@@ -64,8 +64,8 @@ namespace Elpida.Backend.Data
 		{
 			var baseQuery = Collection
 				.AsNoTracking()
-				.Where(m => m.CpuId == cpuId && m.BenchmarkId == benchmarkId)
-				.GroupBy(m => m.BenchmarkId);
+				.Where(m => m.Topology.Cpu.Id == cpuId && m.Benchmark.Id == benchmarkId)
+				.GroupBy(m => m.Benchmark.Id);
 
 			var result = await baseQuery
 				.Select(
@@ -108,12 +108,11 @@ namespace Elpida.Backend.Data
 				.AsNoTracking()
 				.Include(model => model.Benchmark)
 				.Include(model => model.Os)
-				.Include(model => model.Elpida)
+				.Include(model => model.ElpidaVersion)
 				.Include(model => model.TaskResults)
 				.ThenInclude(model => model.Task)
 				.Include(model => model.Topology)
-				.ThenInclude(model => model.Cpu)
-				.Include(model => model.Cpu);
+				.ThenInclude(model => model.Cpu);
 		}
 	}
 }

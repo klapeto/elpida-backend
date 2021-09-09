@@ -20,10 +20,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Elpida.Backend.Common.Exceptions;
 using Elpida.Backend.Data.Abstractions;
 using Elpida.Backend.Data.Abstractions.Interfaces;
 using Elpida.Backend.Data.Abstractions.Models;
@@ -65,6 +67,12 @@ namespace Elpida.Backend.Data
 			return Task.FromResult(addedEntity.Entity);
 		}
 
+		public Task DropAddedAsync(TEntity entity, CancellationToken cancellationToken = default)
+		{
+			Context.Entry(entity).State = EntityState.Detached;
+			return Task.CompletedTask;
+		}
+
 		public async Task<PagedQueryResult<TReturnEntity>> GetPagedProjectionAsync<TOrderKey, TReturnEntity>(
 			int from,
 			int count,
@@ -94,36 +102,25 @@ namespace Elpida.Backend.Data
 			return new PagedQueryResult<TReturnEntity>(totalCount, results);
 		}
 
-		public Task SaveChangesAsync(CancellationToken cancellationToken = default)
+		public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
 		{
-			return Context.SaveChangesAsync(cancellationToken);
+			try
+			{
+				await Context.SaveChangesAsync(cancellationToken);
+			}
+			catch (DbUpdateConcurrencyException)
+			{
+				throw new UpdateConcurrencyException();
+			}
+			catch (DbUpdateException e)
+			{
+				throw new DuplicateRecordException(e.Message, e);
+			}
 		}
 
 		public Task<ITransaction> BeginTransactionAsync(CancellationToken cancellationToken = default)
 		{
 			return EntityTransaction.CreateAsync(Context, cancellationToken);
-		}
-
-		public Task<PagedQueryResult<TEntity>> GetMultiplePagedAsync<TOrderKey>(
-			int from,
-			int count,
-			bool descending,
-			bool calculateTotalCount,
-			Expression<Func<TEntity, TOrderKey>>? orderBy,
-			IEnumerable<Expression<Func<TEntity, bool>>>? filters,
-			CancellationToken cancellationToken = default
-		)
-		{
-			return GetPagedProjectionAsync(
-				from,
-				count,
-				m => m,
-				descending,
-				calculateTotalCount,
-				orderBy,
-				filters,
-				cancellationToken
-			);
 		}
 
 		protected virtual IQueryable<TEntity> ProcessGetSingle(IQueryable<TEntity> queryable)

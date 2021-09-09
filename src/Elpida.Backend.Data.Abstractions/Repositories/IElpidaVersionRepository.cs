@@ -18,16 +18,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using Elpida.Backend.Data.Abstractions.Models.Elpida;
-using Elpida.Backend.Data.Abstractions.Repositories;
+using Elpida.Backend.Data.Abstractions.Interfaces;
+using Elpida.Backend.Data.Abstractions.Models.ElpidaVersion;
 
-namespace Elpida.Backend.Data
+namespace Elpida.Backend.Data.Abstractions.Repositories
 {
-	public class ElpidaRepository : EntityRepository<ElpidaModel>, IElpidaRepository
+	public interface IElpidaVersionRepository : IRepository<ElpidaVersionModel>
 	{
-		public ElpidaRepository(ElpidaContext context)
-			: base(context, context.Elpidas)
-		{
-		}
 	}
 }

@@ -26,9 +26,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Common.Exceptions;
 using Elpida.Backend.Data.Abstractions.Models.Benchmark;
-using Elpida.Backend.Data.Abstractions.Models.Elpida;
+using Elpida.Backend.Data.Abstractions.Models.ElpidaVersion;
 using Elpida.Backend.Data.Abstractions.Models.Os;
 using Elpida.Backend.Data.Abstractions.Models.Result;
+using Elpida.Backend.Data.Abstractions.Models.Task;
 using Elpida.Backend.Data.Abstractions.Models.Topology;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services.Abstractions;
@@ -49,7 +50,7 @@ namespace Elpida.Backend.Services
 		private readonly IBenchmarkService _benchmarkService;
 		private readonly IBenchmarkStatisticsService _benchmarkStatisticsService;
 		private readonly ICpuService _cpuService;
-		private readonly IElpidaService _elpidaService;
+		private readonly IElpidaVersionService _elpidaVersionService;
 		private readonly IOsService _osService;
 		private readonly ITopologyService _topologyService;
 
@@ -57,7 +58,7 @@ namespace Elpida.Backend.Services
 			IBenchmarkResultsRepository benchmarkResultsRepository,
 			ICpuService cpuService,
 			ITopologyService topologyService,
-			IElpidaService elpidaService,
+			IElpidaVersionService elpidaVersionService,
 			IOsService osService,
 			IBenchmarkService benchmarkService,
 			IBenchmarkStatisticsService benchmarkStatisticsService
@@ -67,7 +68,7 @@ namespace Elpida.Backend.Services
 			_benchmarkStatisticsService = benchmarkStatisticsService;
 			_cpuService = cpuService;
 			_topologyService = topologyService;
-			_elpidaService = elpidaService;
+			_elpidaVersionService = elpidaVersionService;
 			_osService = osService;
 			_benchmarkService = benchmarkService;
 			_benchmarkResultsRepository = benchmarkResultsRepository;
@@ -88,7 +89,7 @@ namespace Elpida.Backend.Services
 			);
 
 			var os = await _osService.GetOrAddAsync(batch.System.Os, cancellationToken);
-			var elpida = await _elpidaService.GetOrAddAsync(batch.Elpida, cancellationToken);
+			var elpida = await _elpidaVersionService.GetOrAddAsync(batch.ElpidaVersion, cancellationToken);
 
 			var ids = new List<long>();
 
@@ -125,8 +126,8 @@ namespace Elpida.Backend.Services
 				m.TimeStamp,
 				m.Benchmark.Name,
 				m.Os.Name,
-				m.Cpu.Vendor,
-				m.Cpu.ModelName,
+				m.Topology.Cpu.Vendor,
+				m.Topology.Cpu.ModelName,
 				m.Benchmark.ScoreUnit,
 				m.Score
 			);
@@ -161,7 +162,7 @@ namespace Elpida.Backend.Services
 					),
 				}
 				.Concat(_topologyService.ConstructCustomFilters<BenchmarkResultModel, TopologyModel>(m => m.Topology))
-				.Concat(_elpidaService.ConstructCustomFilters<BenchmarkResultModel, ElpidaModel>(m => m.Elpida))
+				.Concat(_elpidaVersionService.ConstructCustomFilters<BenchmarkResultModel, ElpidaVersionModel>(m => m.ElpidaVersion))
 				.Concat(_osService.ConstructCustomFilters<BenchmarkResultModel, OsModel>(m => m.Os))
 				.Concat(
 					_benchmarkService.ConstructCustomFilters<BenchmarkResultModel, BenchmarkModel>(m => m.Benchmark)
@@ -189,10 +190,9 @@ namespace Elpida.Backend.Services
 			var model = new BenchmarkResultModel
 			{
 				BenchmarkId = benchmark.Id,
-				ElpidaId = elpidaId,
-				TopologyId = topologyId,
+				ElpidaVersionId = elpidaId,
 				OsId = osId,
-				CpuId = cpuId,
+				TopologyId = topologyId,
 				Affinity = JsonConvert.SerializeObject(benchmarkResult.Affinity),
 				JoinOverhead = timing.JoinOverhead,
 				LockOverhead = timing.LockOverhead,
@@ -222,10 +222,8 @@ namespace Elpida.Backend.Services
 				model.TaskResults.Add(
 					new TaskResultModel
 					{
-						CpuId = cpuId,
+						BenchmarkResultId = benchmark.Id,
 						TaskId = task.Task!.Id,
-						TopologyId = topologyId,
-						BenchmarkResult = model,
 						Max = taskResult.Statistics.Max,
 						Mean = taskResult.Statistics.Mean,
 						Min = taskResult.Statistics.Min,

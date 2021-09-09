@@ -25,18 +25,18 @@ using Elpida.Backend.Validators;
 
 namespace Elpida.Backend.Tests.Validators.Dtos
 {
-	internal class ElpidaDtoValidatorTests : ValidatorTest<ElpidaDto, ElpidaDtoValidator>
+	internal class ElpidaDtoValidatorTests : ValidatorTest<ElpidaVersionDto, ElpidaVersionDtoValidator>
 	{
-		protected override IEnumerable<(ElpidaDto, string)> GetInvalidData()
+		protected override IEnumerable<(ElpidaVersionDto, string)> GetInvalidData()
 		{
-			yield return (new ElpidaDto(5, DtoGenerators.NewVersion(), DtoGenerators.NewCompiler()),
-				$"value in {nameof(ElpidaDto.Id)}");
+			yield return (new ElpidaVersionDto(5, DtoGenerators.NewVersion(), DtoGenerators.NewCompiler()),
+				$"value in {nameof(ElpidaVersionDto.Id)}");
 
-			yield return (new ElpidaDto(0, null!, DtoGenerators.NewCompiler()),
-				$"null {nameof(ElpidaDto.Version)}");
+			yield return (new ElpidaVersionDto(0, null!, DtoGenerators.NewCompiler()),
+				$"null {nameof(ElpidaVersionDto.Version)}");
 
-			yield return (new ElpidaDto(0, DtoGenerators.NewVersion(), null!),
-				$"null {nameof(ElpidaDto.Compiler)}");
+			yield return (new ElpidaVersionDto(0, DtoGenerators.NewVersion(), null!),
+				$"null {nameof(ElpidaVersionDto.Compiler)}");
 		}
 	}
 }

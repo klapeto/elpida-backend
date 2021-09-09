@@ -18,34 +18,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-namespace Elpida.Backend.Services.Abstractions.Dtos.Elpida
+using Elpida.Backend.Services.Abstractions.Dtos.Elpida;
+
+namespace Elpida.Backend.Services.Abstractions.Interfaces
 {
-	/// <summary>
-	///     Details of an Elpida version.
-	/// </summary>
-	public sealed class ElpidaDto : FoundationDto
+	public interface IElpidaVersionService : IService<ElpidaVersionDto, ElpidaVersionDto>
 	{
-		/// <summary>
-		///     Initializes a new instance of the <see cref="ElpidaDto" /> class.
-		/// </summary>
-		/// <param name="id">The id of the Elpida.</param>
-		/// <param name="version">The Elpida version.</param>
-		/// <param name="compiler">The compiler details that built Elpida.</param>
-		public ElpidaDto(long id, VersionDto version, CompilerDto compiler)
-			: base(id)
-		{
-			Version = version;
-			Compiler = compiler;
-		}
-
-		/// <summary>
-		///     The Elpida version.
-		/// </summary>
-		public VersionDto Version { get; }
-
-		/// <summary>
-		///     The compiler details that built Elpida.
-		/// </summary>
-		public CompilerDto Compiler { get; }
 	}
 }

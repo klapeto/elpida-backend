@@ -30,7 +30,7 @@ namespace Elpida.Backend.Services.Extensions.Topology
 		{
 			return new (
 				topologyModel.Id,
-				topologyModel.CpuId,
+				topologyModel.Cpu.Id,
 				topologyModel.Cpu.Vendor,
 				topologyModel.Cpu.ModelName,
 				topologyModel.TotalLogicalCores,

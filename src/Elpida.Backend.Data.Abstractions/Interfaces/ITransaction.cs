@@ -27,5 +27,7 @@ namespace Elpida.Backend.Data.Abstractions.Interfaces
 	public interface ITransaction : IDisposable
 	{
 		Task CommitAsync(CancellationToken cancellationToken = default);
+
+		Task Rollback(CancellationToken cancellationToken = default);
 	}
 }

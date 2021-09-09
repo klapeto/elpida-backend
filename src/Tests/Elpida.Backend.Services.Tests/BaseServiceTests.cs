@@ -25,7 +25,6 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Elpida.Backend.Common.Exceptions;
 using Elpida.Backend.Data.Abstractions;
-using Elpida.Backend.Data.Abstractions.Interfaces;
 using Elpida.Backend.Services.Abstractions;
 using Elpida.Backend.Services.Tests.Helpers;
 using Elpida.Backend.Services.Utilities;
@@ -382,7 +381,6 @@ namespace Elpida.Backend.Services.Tests
 		public async Task GetOrAddAsync_BypassCheck_NoExisting_DoesAdd()
 		{
 			var repo = new Mock<IDummyRepository>(MockBehavior.Strict);
-			var transactionMock = new Mock<ITransaction>(MockBehavior.Strict);
 
 			Expression<Func<DummyModel, bool>> bypassCheck = m => true;
 
@@ -392,9 +390,6 @@ namespace Elpida.Backend.Services.Tests
 
 			const int actualId = 8;
 
-			repo.Setup(r => r.BeginTransactionAsync(default))
-				.ReturnsAsync(transactionMock.Object);
-
 			repo.Setup(r => r.CreateAsync(It.Is<DummyModel>(m => m.Id == 0 && m.Data == dto.Data), default))
 				.ReturnsAsync(
 					new DummyModel
@@ -403,10 +398,6 @@ namespace Elpida.Backend.Services.Tests
 						Data = dto.Data,
 					}
 				);
-
-			transactionMock.Setup(t => t.Dispose());
-			transactionMock.Setup(t => t.CommitAsync(default))
-				.Returns(Task.CompletedTask);
 
 			repo.Setup(r => r.GetSingleAsync(bypassCheck, default))
 				.ReturnsAsync((DummyModel)null!);
@@ -427,16 +418,12 @@ namespace Elpida.Backend.Services.Tests
 			);
 
 			repo.Verify(r => r.SaveChangesAsync(default), Times.Once);
-
-			transactionMock.Verify(t => t.Dispose(), Times.Once);
-			transactionMock.Verify(t => t.CommitAsync(default), Times.Once);
 		}
 
 		[Test]
 		public async Task GetOrAddAsync_BypassCheck_ExistingFirst_DoesNotAdd()
 		{
 			var repo = new Mock<IDummyRepository>(MockBehavior.Strict);
-			var transactionMock = new Mock<ITransaction>(MockBehavior.Strict);
 
 			Expression<Func<DummyModel, bool>> bypassCheck = m => true;
 
@@ -454,11 +441,6 @@ namespace Elpida.Backend.Services.Tests
 						Data = dto.Data,
 					}
 				);
-
-			repo.Setup(r => r.BeginTransactionAsync(default))
-				.ReturnsAsync(transactionMock.Object);
-
-			transactionMock.Setup(t => t.Dispose());
 
 			var obj = await service.GetOrAddAsync(dto);
 
@@ -498,6 +480,143 @@ namespace Elpida.Backend.Services.Tests
 
 			Assert.AreEqual(filters.Last().Expression.ToString(), "m.Child.Data");
 			Assert.AreEqual(filters.Last().Name, "data");
+		}
+
+		[Test]
+		public async Task GetOrAddAsync_BypassCheck_ExistingThrowsDuplicateException_GetsResult()
+		{
+			var repo = new Mock<IDummyRepository>(MockBehavior.Strict);
+
+			Expression<Func<DummyModel, bool>> bypassCheck = m => true;
+
+			var service = new DummyService(repo.Object, bypassCheck);
+
+			var dto = new DummyDto(5, "hahah");
+
+			const int actualId = 8;
+
+			var failing = 1;
+
+			var model = new DummyModel
+			{
+				Id = actualId,
+				Data = dto.Data,
+			};
+
+			repo.Setup(r => r.GetSingleAsync(bypassCheck, default))
+				.ReturnsAsync(() => failing == 1 ? null : model);
+
+			repo.Setup(r => r.CreateAsync(It.Is<DummyModel>(m => m.Id == 0 && m.Data == dto.Data), default))
+				.ReturnsAsync(model);
+
+			repo.Setup(r => r.SaveChangesAsync(default))
+				.Callback(
+					() =>
+					{
+						if (failing-- == 1)
+						{
+							throw new DuplicateRecordException("This element already exists", null);
+						}
+					}
+				)
+				.Returns(Task.CompletedTask);
+
+			repo.Setup(r => r.DropAddedAsync(model, default))
+				.Returns(Task.CompletedTask);
+
+			var obj = await service.GetOrAddAsync(dto);
+
+			Assert.NotNull(obj);
+			Assert.AreEqual(actualId, obj.Id);
+			Assert.AreEqual(dto.Data, obj.Data);
+
+			repo.Verify(r => r.GetSingleAsync(bypassCheck, default), Times.Exactly(2));
+			repo.Verify(
+				r => r.CreateAsync(It.Is<DummyModel>(m => m.Id == 0 && m.Data == dto.Data), default),
+				Times.Once
+			);
+
+			repo.Verify(r => r.SaveChangesAsync(default), Times.Exactly(2));
+			repo.Verify(r => r.DropAddedAsync(model, default), Times.Once);
+		}
+
+		[Test]
+		public void GetOrAddAsync_BypassCheck_DoubleFail_ThrowsException()
+		{
+			var repo = new Mock<IDummyRepository>(MockBehavior.Strict);
+
+			Expression<Func<DummyModel, bool>> bypassCheck = m => true;
+
+			var service = new DummyService(repo.Object, bypassCheck);
+
+			var dto = new DummyDto(5, "hahah");
+
+			const int actualId = 8;
+
+			var model = new DummyModel
+			{
+				Id = actualId,
+				Data = dto.Data,
+			};
+
+			repo.Setup(r => r.GetSingleAsync(bypassCheck, default))
+				.ReturnsAsync((DummyModel)null!);
+
+			repo.Setup(r => r.CreateAsync(It.Is<DummyModel>(m => m.Id == 0 && m.Data == dto.Data), default))
+				.ReturnsAsync(model);
+
+			repo.Setup(r => r.SaveChangesAsync(default))
+				.Throws(new DuplicateRecordException("This element already exists", null));
+
+			repo.Setup(r => r.DropAddedAsync(model, default))
+				.Returns(Task.CompletedTask);
+
+			Assert.ThrowsAsync<DuplicateRecordException>(() => service.GetOrAddAsync(dto));
+		}
+
+		[Test]
+		public void GetOrAddAsync_BypassCheck_DoubleReturnNull_ThrowsException()
+		{
+			var repo = new Mock<IDummyRepository>(MockBehavior.Strict);
+
+			Expression<Func<DummyModel, bool>> bypassCheck = m => true;
+
+			var service = new DummyService(repo.Object, bypassCheck);
+
+			var dto = new DummyDto(5, "hahah");
+
+			const int actualId = 8;
+
+			var model = new DummyModel
+			{
+				Id = actualId,
+				Data = dto.Data,
+			};
+
+			var failing = 1;
+
+			repo.Setup(r => r.GetSingleAsync(bypassCheck, default))
+				.ReturnsAsync((DummyModel)null!);
+
+			repo.Setup(r => r.CreateAsync(It.Is<DummyModel>(m => m.Id == 0 && m.Data == dto.Data), default))
+				.ReturnsAsync(model);
+
+			repo.Setup(r => r.SaveChangesAsync(default))
+				.Callback(
+					() =>
+					{
+						if (failing-- == 1)
+						{
+							throw new DuplicateRecordException("This element already exists", null);
+						}
+					}
+				)
+				.Returns(Task.CompletedTask);
+
+			repo.Setup(r => r.DropAddedAsync(model, default))
+				.Returns(Task.CompletedTask);
+
+			Assert.ThrowsAsync<DuplicateRecordException>(() => service.GetOrAddAsync(dto));
 		}
 
 		private static List<DummyPreviewDto> CreateReturnPreviewDtos()

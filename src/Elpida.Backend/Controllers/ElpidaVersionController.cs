@@ -18,12 +18,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using Elpida.Backend.Data.Abstractions.Interfaces;
-using Elpida.Backend.Data.Abstractions.Models.Elpida;
+using Elpida.Backend.Services.Abstractions.Dtos.Elpida;
+using Elpida.Backend.Services.Abstractions.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
-namespace Elpida.Backend.Data.Abstractions.Repositories
+namespace Elpida.Backend.Controllers
 {
-	public interface IElpidaRepository : IRepository<ElpidaModel>
+	/// <summary>
+	///     Controller for accessing Elpida versions.
+	/// </summary>
+	[ApiController]
+	[Route("api/v1/[controller]")]
+	public class ElpidaVersionController : ServiceController<ElpidaVersionDto, ElpidaVersionDto, IElpidaVersionService>
 	{
+		public ElpidaVersionController(IElpidaVersionService elpidaService)
+			: base(elpidaService)
+		{
+		}
 	}
 }

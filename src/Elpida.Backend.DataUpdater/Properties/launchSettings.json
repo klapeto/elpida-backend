@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "Elpida.Backend.DataUpdater (Create: Sqlite)": {
+      "commandName": "Project",
+      "commandLineArgs": "create Local --sql=Sqlite",
+      "environmentVariables": {
+
+      }
+    },
+    "Elpida.Backend.DataUpdater (Seed: Sqlite)": {
+      "commandName": "Project",
+      "commandLineArgs": "seed Local --sql=Sqlite",
+      "environmentVariables": {
+
+      }
+    },
+    "Elpida.Backend.DataUpdater (Create: Sql Server)": {
+      "commandName": "Project",
+      "commandLineArgs": "create ElpidaDB --sql=SqlServer",
+      "environmentVariables": {
+
+      }
+    },
+    "Elpida.Backend.DataUpdater (Seed: Sql Server)": {
+      "commandName": "Project",
+      "commandLineArgs": "seed ElpidaDB --sql=SqlServer",
+      "environmentVariables": {
+
+      }
+    },
+    "Elpida.Backend.DataUpdater (Drop results: Sql Server)": {
+      "commandName": "Project",
+      "commandLineArgs": "dropResults ElpidaDB --sql=SqlServer",
+      "environmentVariables": {
+
+      }
+    },
+    "Elpida.Backend.DataUpdater (Clean: Sql Server)": {
+      "commandName": "Project",
+      "commandLineArgs": "clean ElpidaDB --sql=SqlServer",
+      "environmentVariables": {
+
+      }
+    },
+    "Elpida.Backend.DataUpdater (Clean: Sqlite)": {
+      "commandName": "Project",
+      "commandLineArgs": "clean Local --sql=Sqlite",
+      "environmentVariables": {
+
+      }
+    },
+    "Elpida.Backend.DataUpdater (Drop results: Sqlite)": {
+      "commandName": "Project",
+      "commandLineArgs": "dropResults Local --sql=Sqlite",
+      "environmentVariables": {
+
+      }
+    }
+  }
+}

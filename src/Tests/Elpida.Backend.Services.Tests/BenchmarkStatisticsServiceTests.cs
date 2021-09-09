@@ -84,8 +84,8 @@ namespace Elpida.Backend.Services.Tests
 
 			_benchmarkResultsRepository.Setup(
 					r => r.GetCountWithScoreBetween(
-						returnStatistics.BenchmarkId,
-						returnStatistics.CpuId,
+						returnStatistics.Benchmark.Id,
+						returnStatistics.Cpu.Id,
 						It.IsAny<double>(),
 						It.IsAny<double>(),
 						default

@@ -37,7 +37,7 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 		/// <param name="uuid">The UUID of this Benchmark.</param>
 		/// <param name="name">The name of this Benchmark.</param>
 		/// <param name="affinity">The Cpu Affinity used by this Benchmark Result.</param>
-		/// <param name="elpida">The Elpida Version that this result was produced from.</param>
+		/// <param name="elpidaVersion">The Elpida Version that this result was produced from.</param>
 		/// <param name="system">The system details for this result.</param>
 		/// <param name="score">The score of the benchmark.</param>
 		/// <param name="scoreSpecification">The score specification details of this Benchmark.</param>
@@ -48,7 +48,7 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 			Guid uuid,
 			string name,
 			long[] affinity,
-			ElpidaDto elpida,
+			ElpidaVersionDto elpidaVersion,
 			SystemDto system,
 			double score,
 			BenchmarkScoreSpecificationDto scoreSpecification,
@@ -58,7 +58,7 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 		{
 			TimeStamp = timeStamp;
 			Affinity = affinity;
-			Elpida = elpida;
+			ElpidaVersion = elpidaVersion;
 			System = system;
 			Score = score;
 			Uuid = uuid;
@@ -80,7 +80,7 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 		/// <summary>
 		///     The Elpida Version that this result was produced from.
 		/// </summary>
-		public ElpidaDto Elpida { get; }
+		public ElpidaVersionDto ElpidaVersion { get; }
 
 		/// <summary>
 		///     The system details for this result.

@@ -34,9 +34,7 @@ namespace Elpida.Backend.Data
 
 		protected override IQueryable<CpuModel> ProcessGetSingle(IQueryable<CpuModel> queryable)
 		{
-			return queryable
-				.Include(m => m.BenchmarkStatistics)
-				.ThenInclude(m => m.Benchmark);
+			return queryable;
 		}
 	}
 }

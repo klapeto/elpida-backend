@@ -33,17 +33,17 @@ namespace Elpida.Backend
 	{
 		private const string ApiKeyHeaderName = "api_key";
 
+		private readonly string _keyName;
+
 		public ApiKeyAuthenticationAttribute(string keyName)
 		{
-			KeyName = keyName;
+			_keyName = keyName;
 		}
-
-		public string KeyName { get; }
 
 		public Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
 		{
 			if (IsAuthorized(
-				KeyName,
+				_keyName,
 				context.HttpContext.Request.Headers,
 				context.HttpContext.RequestServices
 			))

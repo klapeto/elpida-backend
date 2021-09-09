@@ -36,10 +36,10 @@ namespace Elpida.Backend.Data
 			_transaction = transaction;
 		}
 
-		public static Task<ITransaction> CreateAsync(DbContext context, CancellationToken cancellationToken = default)
+		public static async Task<ITransaction> CreateAsync(DbContext context, CancellationToken cancellationToken = default)
 		{
-			return context.Database.BeginTransactionAsync(cancellationToken)
-				.ContinueWith(c => (ITransaction)new EntityTransaction(c.Result), cancellationToken);
+			var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
+			return new EntityTransaction(transaction);
 		}
 
 		public void Dispose()
@@ -51,6 +51,11 @@ namespace Elpida.Backend.Data
 		public Task CommitAsync(CancellationToken cancellationToken = default)
 		{
 			return _transaction.CommitAsync(cancellationToken);
+		}
+
+		public Task Rollback(CancellationToken cancellationToken = default)
+		{
+			return _transaction.RollbackAsync(cancellationToken);
 		}
 	}
 }

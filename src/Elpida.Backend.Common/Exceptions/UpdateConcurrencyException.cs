@@ -18,11 +18,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using Elpida.Backend.Services.Abstractions.Dtos.Elpida;
+using System;
 
-namespace Elpida.Backend.Services.Abstractions.Interfaces
+namespace Elpida.Backend.Common.Exceptions
 {
-	public interface IElpidaService : IService<ElpidaDto, ElpidaDto>
+	public class UpdateConcurrencyException : Exception
 	{
 	}
 }

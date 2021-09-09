@@ -14,53 +14,30 @@
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
         </Content>
-        <None Remove="ResultData\AMD-ThreadRipper-1920X_2.json" />
-        <None Remove="ResultData\Intel-i3-330m.json" />
-        <None Remove="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1620677224.json" />
-        <None Remove="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1620942113.json" />
-        <None Remove="BenchmarkData\tasks.json" />
         <Content Include="BenchmarkData\tasks.json">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
-        <None Remove="BenchmarkData\benchmarks.json" />
         <Content Include="BenchmarkData\benchmarks.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
-        <None Remove="ResultData\Raspberry Pi 4 Model B Rev 1.4-1623693265.json" />
-        <None Remove="ResultData\Cortex-A72-1624056541.json" />
-        <None Remove="ResultData\Cortex-A72-1624054193.json" />
-        <None Remove="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1624137042.json" />
-        <None Remove="ResultData\Intel(R) Core(TM) i9-10900K CPU @ 3.70GHz-1629493458.json" />
-        <None Remove="ResultData\Intel(R) Core(TM) i9-10900K CPU @ 3.70GHz-1629493766.json" />
-        <None Remove="ResultData\Intel(R) Core(TM) i9-10900K CPU @ 3.70GHz-1629495479.json" />
-        <None Remove="ResultData\Intel(R) Core(TM) i9-10900K CPU @ 3.70GHz-1629495232.json" />
-        <None Remove="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629495153.json" />
-        <None Remove="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629493875.json" />
-        <None Remove="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629493597.json" />
-        <None Remove="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1629569043.json" />
-        <None Remove="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1629573068.json" />
-        <None Remove="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1629573447.json" />
-        <None Remove="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1629573286.json" />
-        <None Remove="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1629574301.json" />
-        <None Remove="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1629574895.json" />
-        <None Remove="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1629577986.json" />
-        <None Remove="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629741763.json" />
-        <None Remove="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629742331.json" />
-        <None Remove="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629742905.json" />
-        <None Remove="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629743476.json" />
-        <None Remove="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629744075.json" />
-        <None Remove="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629744680.json" />
-        <None Remove="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629745291.json" />
-        <None Remove="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629745838.json" />
-        <None Remove="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629746411.json" />
-        <None Remove="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629746993.json" />
-        <None Remove="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629747598.json" />
-        <None Remove="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629748542.json" />
-        <None Remove="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1629749144.json" />
-        <None Remove="ResultData\Intel(R) Core(TM) i9-10900K CPU @ 3.70GHz-1629575871.json" />
-        <None Remove="ResultData\Intel(R) Core(TM) i9-10900K CPU @ 3.70GHz-1629590894.json" />
-        <None Remove="ResultData\Cortex-A72-1630266354.json" />
-        <Content Include="ResultData\Cortex-A72-1630266354.json">
+        <None Remove="appsettings.Development.json" />
+        <Content Include="appsettings.Development.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1630849371.json" />
+        <Content Include="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1630849371.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1630849534.json" />
+        <Content Include="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1630849534.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1630849656.json" />
+        <Content Include="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1630849656.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Remove="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1630849776.json" />
+        <Content Include="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1630849776.json">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
     </ItemGroup>
@@ -79,6 +56,8 @@
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.4" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.0" />
+        <PackageReference Include="Microsoft.Extensions.CommandLineUtils" Version="1.1.1" />
         <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="5.0.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />

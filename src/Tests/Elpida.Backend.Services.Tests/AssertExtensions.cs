@@ -22,7 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Elpida.Backend.Data.Abstractions.Models.Cpu;
-using Elpida.Backend.Data.Abstractions.Models.Elpida;
+using Elpida.Backend.Data.Abstractions.Models.ElpidaVersion;
 using Elpida.Backend.Data.Abstractions.Models.Os;
 using Elpida.Backend.Data.Abstractions.Models.Topology;
 using Elpida.Backend.Services.Abstractions.Dtos.Cpu;
@@ -39,7 +39,7 @@ namespace Elpida.Backend.Services.Tests
 		public static void AssertEqual(this TopologyModel model, TopologyDto dto)
 		{
 			Assert.AreEqual(model.Id, dto.Id);
-			Assert.AreEqual(model.CpuId, dto.CpuId);
+			Assert.AreEqual(model.Cpu.Id, dto.CpuId);
 			Assert.AreEqual(model.TotalPackages, dto.TotalPackages);
 			Assert.AreEqual(model.TotalNumaNodes, dto.TotalNumaNodes);
 			Assert.AreEqual(model.TotalPhysicalCores, dto.TotalPhysicalCores);
@@ -124,15 +124,15 @@ namespace Elpida.Backend.Services.Tests
 				);
 		}
 
-		public static void AssertEqual(this ElpidaModel model, ElpidaDto dto)
+		public static void AssertEqual(this ElpidaVersionModel versionModel, ElpidaVersionDto versionDto)
 		{
-			Assert.AreEqual(model.Id, dto.Id);
-			Assert.AreEqual(model.CompilerName, dto.Compiler.Name);
-			Assert.AreEqual(model.CompilerVersion, dto.Compiler.Version);
-			Assert.AreEqual(model.VersionMajor, dto.Version.Major);
-			Assert.AreEqual(model.VersionMinor, dto.Version.Minor);
-			Assert.AreEqual(model.VersionRevision, dto.Version.Revision);
-			Assert.AreEqual(model.VersionBuild, dto.Version.Build);
+			Assert.AreEqual(versionModel.Id, versionDto.Id);
+			Assert.AreEqual(versionModel.CompilerName, versionDto.Compiler.Name);
+			Assert.AreEqual(versionModel.CompilerVersion, versionDto.Compiler.Version);
+			Assert.AreEqual(versionModel.VersionMajor, versionDto.Version.Major);
+			Assert.AreEqual(versionModel.VersionMinor, versionDto.Version.Minor);
+			Assert.AreEqual(versionModel.VersionRevision, versionDto.Version.Revision);
+			Assert.AreEqual(versionModel.VersionBuild, versionDto.Version.Build);
 		}
 
 		public static void AssertEqual(this OsModel model, OsDto dto)

@@ -68,7 +68,7 @@ namespace Elpida.Backend
 			services.AddScoped<IBenchmarkResultsService, BenchmarkResultService>();
 			services.AddScoped<IBenchmarkService, BenchmarkService>();
 			services.AddScoped<ICpuService, CpuService>();
-			services.AddScoped<IElpidaService, ElpidaService>();
+			services.AddScoped<IElpidaVersionService, ElpidaVersionService>();
 			services.AddScoped<IOsService, OsService>();
 			services.AddScoped<IBenchmarkStatisticsService, BenchmarkStatisticsService>();
 			services.AddScoped<ITaskService, TaskService>();
@@ -79,21 +79,25 @@ namespace Elpida.Backend
 			services.AddTransient<ITopologyRepository, TopologyRepository>();
 			services.AddTransient<IBenchmarkRepository, BenchmarkRepository>();
 			services.AddTransient<ITaskRepository, TaskRepository>();
-			services.AddTransient<IElpidaRepository, ElpidaRepository>();
+			services.AddTransient<IElpidaVersionRepository, ElpidaVersionRepository>();
 			services.AddTransient<IOsRepository, OsRepository>();
 			services.AddTransient<IBenchmarkStatisticsRepository, BenchmarkStatisticsRepository>();
 
 			services.AddDbContext<ElpidaContext>(
 				builder =>
 				{
-#if DEBUG
+#if false
 					builder.UseSqlite(
-						"Data Source=results.db",
+						Configuration.GetConnectionString("Local"),
 						b => b.MigrationsAssembly(Assembly.GetExecutingAssembly().GetName().Name)
 					);
 #else
-				// Use something else, eg SQL Server
-				#error
+
+					// Use something else, eg SQL Server
+					builder.UseSqlServer(
+						Configuration.GetConnectionString("ElpidaDB"),
+						b => b.MigrationsAssembly(Assembly.GetExecutingAssembly().GetName().Name)
+					);
 #endif
 				}
 			);
@@ -138,17 +142,27 @@ namespace Elpida.Backend
 
 			app.UseCors(
 				builder =>
-					builder.WithOrigins(
-							"https://beta.elpida.dev",
-							"https://elpida.dev",
+				{
+					if (env.IsProduction())
+					{
+						builder.WithOrigins(
 							"https://www.elpida.dev"
-						)
-						.WithMethods(HttpMethods.Get, HttpMethods.Post)
+						);
+					}
+					else if (env.IsStaging())
+					{
+						builder.WithOrigins(
+							"https://staging.elpida.dev"
+						);
+					}
+
+					builder.WithMethods(HttpMethods.Get, HttpMethods.Post)
 						.WithHeaders(HeaderNames.ContentType, HeaderNames.Accept)
 						.WithExposedHeaders(
 							HeaderNames.ContentLength,
 							HeaderNames.ContentRange
-						)
+						);
+				}
 			);
 
 			app.UseRouting();
@@ -174,8 +188,9 @@ namespace Elpida.Backend
 					context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
 					await context.Response.WriteAsync($"{ae.Message}: '{ae.ParamName}'");
 					break;
-				case NotFoundException _:
+				case NotFoundException nfe:
 					context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+					await context.Response.WriteAsync($"The resource with id '{nfe.Id}' was not found");
 					break;
 				default:
 					context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;

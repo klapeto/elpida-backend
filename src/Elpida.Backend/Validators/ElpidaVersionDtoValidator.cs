@@ -18,24 +18,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using Elpida.Backend.Data.Abstractions.Models.Elpida;
 using Elpida.Backend.Services.Abstractions.Dtos.Elpida;
+using FluentValidation;
 
-namespace Elpida.Backend.Services.Extensions.Elpida
+namespace Elpida.Backend.Validators
 {
-	public static class ElpidaExtensions
+	internal class ElpidaVersionDtoValidator : AbstractValidator<ElpidaVersionDto>
 	{
-		public static ElpidaDto ToDto(this ElpidaModel elpidaModel)
+		public ElpidaVersionDtoValidator()
 		{
-			return new (
-				elpidaModel.Id,
-				new VersionDto(
-					elpidaModel.VersionMajor,
-					elpidaModel.VersionMinor,
-					elpidaModel.VersionRevision,
-					elpidaModel.VersionBuild
-				),
-				new CompilerDto(elpidaModel.CompilerName, elpidaModel.CompilerVersion));
+			RuleFor(dto => dto.Id)
+				.Empty();
+
+			RuleFor(dto => dto.Compiler)
+				.NotNull();
+
+			RuleFor(dto => dto.Version)
+				.NotNull();
 		}
 	}
 }

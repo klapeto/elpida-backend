@@ -18,22 +18,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using Elpida.Backend.Services.Abstractions.Dtos.Elpida;
-using Elpida.Backend.Services.Abstractions.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-
-namespace Elpida.Backend.Controllers
+namespace Elpida.Backend.DataUpdater
 {
-	/// <summary>
-	///     Controller for accessing Elpida versions.
-	/// </summary>
-	[ApiController]
-	[Route("api/v1/[controller]")]
-	public class ElpidaController : ServiceController<ElpidaDto, ElpidaDto, IElpidaService>
+	public enum SqlProvider
 	{
-		public ElpidaController(IElpidaService elpidaService)
-			: base(elpidaService)
-		{
-		}
+		Sqlite,
+		SqlServer,
 	}
 }

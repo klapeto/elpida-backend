@@ -27,19 +27,19 @@ using NUnit.Framework;
 namespace Elpida.Backend.Tests.Controllers
 {
 	[TestFixture]
-	internal class ElpidaControllerTests : ServiceControllerTests<ElpidaDto, ElpidaDto, IElpidaService>
+	internal class ElpidaControllerTests : ServiceControllerTests<ElpidaVersionDto, ElpidaVersionDto, IElpidaVersionService>
 	{
-		protected override ServiceController<ElpidaDto, ElpidaDto, IElpidaService> GetController(IElpidaService service)
+		protected override ServiceController<ElpidaVersionDto, ElpidaVersionDto, IElpidaVersionService> GetController(IElpidaVersionService versionService)
 		{
-			return new ElpidaController(service);
+			return new ElpidaVersionController(versionService);
 		}
 
-		protected override ElpidaDto NewDummyDto()
+		protected override ElpidaVersionDto NewDummyDto()
 		{
 			return DtoGenerators.NewElpida();
 		}
 
-		protected override ElpidaDto NewDummyPreviewDto()
+		protected override ElpidaVersionDto NewDummyPreviewDto()
 		{
 			return DtoGenerators.NewElpida();
 		}

@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -30,6 +31,8 @@ using Elpida.Backend.Services.Abstractions.Dtos.Benchmark;
 using Elpida.Backend.Services.Abstractions.Dtos.Result.Batch;
 using Elpida.Backend.Services.Abstractions.Dtos.Task;
 using Elpida.Backend.Services.Abstractions.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -38,58 +41,276 @@ namespace Elpida.Backend.DataUpdater
 {
 	internal static class Program
 	{
-		private static long _batchesProcessedCount;
+		private const string TasksFile = "tasks.json";
+		private const string BenchmarkDataDirectory = "BenchmarkData";
+		private const string ResultDataDirectory = "ResultData";
+		private const string BenchmarksFile = "benchmarks.json";
+		private static int _batchesProcessedCount;
+		private static int _resultsExpected;
+		private static int _resultsProcessed;
 
-		private static async Task Main(string[] args)
+		private static int Main(string[] args)
 		{
-			var servicesConfiguration = new ServicesConfigurator(args);
-			using var scope = servicesConfiguration.ServiceProvider.CreateScope();
-			var serviceProvider = scope.ServiceProvider;
-
-			var baseLogger = serviceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("Main");
-
-			var targetDirectory = Path.Combine(Path.GetTempPath(), "Elpida");
-
-			baseLogger.LogInformation("Creating temporary directory for split files: {Directory}", targetDirectory);
-			Directory.CreateDirectory(targetDirectory);
-			try
+			var app = new CommandLineApplication
 			{
-				await UpdateDbAsync(serviceProvider, "BenchmarkData", "ResultData");
+				Name = Assembly.GetExecutingAssembly().GetName().Name,
+				Description = "Updates/migrates an Elpida database and seeds some data",
+				ShortVersionGetter = () => Assembly.GetExecutingAssembly().GetName().Version?.ToString(),
+				LongVersionGetter = () => Assembly.GetExecutingAssembly().GetName().Version?.ToString(),
+			};
 
-				baseLogger.LogInformation("All operations completed successfully");
-			}
-			finally
-			{
-				baseLogger.LogInformation("Deleting temporary directory for split files: {Directory}", targetDirectory);
-				Directory.Delete(targetDirectory, true);
-			}
+			app.Command(
+				"clean",
+				c =>
+				{
+					var (sqlProvider, connectionStringName) = ConfigureArguments(c);
+					c.OnExecute(Invoke(sqlProvider, connectionStringName, Clean));
+				}
+			);
+
+			app.Command(
+				"drop",
+				c =>
+				{
+					var (sqlProvider, connectionStringName) = ConfigureArguments(c);
+					c.OnExecute(Invoke(sqlProvider, connectionStringName, Drop));
+				}
+			);
+
+			app.Command(
+				"dropResults",
+				c =>
+				{
+					var (sqlProvider, connectionStringName) = ConfigureArguments(c);
+					c.OnExecute(Invoke(sqlProvider, connectionStringName, DropResults));
+				}
+			);
+
+			app.Command(
+				"create",
+				c =>
+				{
+					var (sqlProvider, connectionStringName) = ConfigureArguments(c);
+					c.OnExecute(Invoke(sqlProvider, connectionStringName, Create));
+				}
+			);
+
+			app.Command(
+				"migrate",
+				c =>
+				{
+					var (sqlProvider, connectionStringName) = ConfigureArguments(c);
+					c.OnExecute(Invoke(sqlProvider, connectionStringName, Migrate));
+				}
+			);
+
+			app.Command(
+				"seed",
+				c =>
+				{
+					var (sqlProvider, connectionStringName) = ConfigureArguments(c);
+					c.OnExecute(Invoke(sqlProvider, connectionStringName, Seed));
+				}
+			);
+
+			app.HelpOption("-h|--help");
+
+			return app.Execute(args);
 		}
 
-		private static async Task UpdateDbAsync(
-			IServiceProvider serviceProvider,
-			string benchmarkDataDirectory,
-			string seedDataDirectory
+		private static Func<Task<int>> Invoke(
+			CommandOption? sqlProvider,
+			CommandArgument? connectionStringName,
+			Func<IServiceProvider, Task> action
 		)
 		{
-			using var scope = serviceProvider.CreateScope();
-			serviceProvider = scope.ServiceProvider;
+			return async () =>
+			{
+				if (!TryGetServiceProvider(sqlProvider, connectionStringName, out var serviceProvider))
+				{
+					return 1;
+				}
 
-			var logger = serviceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("Database updater");
+				try
+				{
+					await ScopedExecution(serviceProvider!, action);
+					return 0;
+				}
+				catch (Exception e)
+				{
+					await Console.Error.WriteLineAsync(e.ToString());
+					return 1;
+				}
+			};
+		}
+
+		private static bool TryGetServiceProvider(
+			CommandOption? sqlProvider,
+			CommandArgument? connectionStringName,
+			out IServiceProvider? serviceProvider
+		)
+		{
+			serviceProvider = null;
+			if (sqlProvider == null || !sqlProvider.HasValue())
+			{
+				Console.Error.WriteLine("You have to define the sql provider to use.");
+				return false;
+			}
+
+			if (!Enum.TryParse(sqlProvider.Value(), out SqlProvider provider))
+			{
+				Console.Error.WriteLine(
+					$"'{sqlProvider.Value() ?? "null"}' is not a valid sql provider. See --help for available providers."
+				);
+
+				return false;
+			}
+
+			if (string.IsNullOrEmpty(connectionStringName?.Value))
+			{
+				Console.Error.WriteLine("You have to define the connection string name to use from 'appSettings.json'");
+				return false;
+			}
+
+			serviceProvider = new ServicesConfiguration(provider, connectionStringName.Value).ServiceProvider;
+			return true;
+		}
+
+		private static (CommandOption SqlProvider, CommandArgument ConnectionStringName) ConfigureArguments(
+			CommandLineApplication application
+		)
+		{
+			return (application.Option(
+				"-s|--sql <provider>",
+				$"The sql provider to use: [{string.Join(',', Enum.GetNames(typeof(SqlProvider)))}]",
+				CommandOptionType.SingleValue
+			), application.Argument(
+				"<connectionStringName>",
+				"The connection string name to use from 'appSettings.json'"
+			));
+		}
+
+		private static async Task Drop(IServiceProvider serviceProvider)
+		{
+			var logger = serviceProvider.CreateLogger("Drop");
 
 			try
 			{
 				var context = serviceProvider.GetRequiredService<ElpidaContext>();
 
 				await context.Database.EnsureDeletedAsync();
-				await context.Database.EnsureCreatedAsync();
 
-				await SeedBenchmarks(serviceProvider, benchmarkDataDirectory);
-				await SeedResults(serviceProvider, seedDataDirectory);
+				logger.LogInformation("All operations completed successfully");
 			}
 			catch (Exception ex)
 			{
-				logger.LogCritical(ex, "Failed to update");
+				logger.LogCritical(ex, "Failed to drop the database");
 			}
+		}
+
+		private static async Task DropResults(IServiceProvider serviceProvider)
+		{
+			var logger = serviceProvider.CreateLogger("RemoveResults");
+
+			try
+			{
+				var context = serviceProvider.GetRequiredService<ElpidaContext>();
+
+				context.BenchmarkResults.RemoveRange(context.BenchmarkResults);
+				context.BenchmarkStatistics.RemoveRange(context.BenchmarkStatistics);
+				await context.SaveChangesAsync();
+
+				logger.LogInformation("All operations completed successfully");
+			}
+			catch (Exception ex)
+			{
+				logger.LogCritical(ex, "Failed to drop the database");
+			}
+		}
+
+		private static async Task Clean(IServiceProvider serviceProvider)
+		{
+			var logger = serviceProvider.CreateLogger("Clean");
+
+			try
+			{
+				var context = serviceProvider.GetRequiredService<ElpidaContext>();
+
+				context.Cpus.RemoveRange(context.Cpus);
+				await context.SaveChangesAsync();
+
+				logger.LogInformation("All operations completed successfully");
+			}
+			catch (Exception ex)
+			{
+				logger.LogCritical(ex, "Failed to clean the database");
+			}
+		}
+
+		private static async Task Migrate(IServiceProvider serviceProvider)
+		{
+			var logger = serviceProvider.CreateLogger("Migrate");
+
+			try
+			{
+				var context = serviceProvider.GetRequiredService<ElpidaContext>();
+
+				await context.Database.MigrateAsync();
+
+				logger.LogInformation("All operations completed successfully");
+			}
+			catch (Exception ex)
+			{
+				logger.LogCritical(ex, "Failed to migrate the database");
+			}
+		}
+
+		private static async Task Create(IServiceProvider serviceProvider)
+		{
+			var logger = serviceProvider.CreateLogger("Create");
+
+			try
+			{
+				var context = serviceProvider.GetRequiredService<ElpidaContext>();
+
+				//await context.Database.EnsureDeletedAsync();
+				await context.Database.EnsureCreatedAsync();
+				await SeedTasks(serviceProvider, logger);
+				await SeedBenchmarks(serviceProvider, logger);
+
+				logger.LogInformation("All operations completed successfully");
+			}
+			catch (Exception ex)
+			{
+				logger.LogCritical(ex, "Failed to create the database");
+			}
+		}
+
+		private static async Task Seed(IServiceProvider serviceProvider)
+		{
+			var logger = serviceProvider.CreateLogger("Seed");
+
+			try
+			{
+				await SeedResults(serviceProvider, logger);
+
+				logger.LogInformation("All operations completed successfully");
+			}
+			catch (Exception ex)
+			{
+				logger.LogCritical(ex, "Failed to seed the database");
+			}
+		}
+
+		private static async Task ScopedExecution(
+			IServiceProvider serviceProvider,
+			Func<IServiceProvider, Task> action
+		)
+		{
+			using var scope = serviceProvider.CreateScope();
+			var scopedServiceProvider = scope.ServiceProvider;
+
+			await action(scopedServiceProvider);
 		}
 
 		private static async Task ProcessResultAsync(
@@ -104,15 +325,21 @@ namespace Elpida.Backend.DataUpdater
 			{
 				var resultService = serviceProvider.GetRequiredService<IBenchmarkResultsService>();
 
+				Interlocked.Add(ref _resultsExpected, benchmarkResultBatchDto.BenchmarkResults.Length);
+
 				await resultService.AddBatchAsync(benchmarkResultBatchDto, cancellationToken);
 
-				Interlocked.Add(ref _batchesProcessedCount, benchmarkResultBatchDto.BenchmarkResults.Length);
+				Interlocked.Add(ref _resultsProcessed, benchmarkResultBatchDto.BenchmarkResults.Length);
 
-				logger.LogInformation("Added: {Added}", benchmarkResultBatchDto.BenchmarkResults.Length);
+				var processedBatches = Interlocked.Increment(ref _batchesProcessedCount);
+				if (processedBatches % 10 == 0)
+				{
+					logger.LogInformation("Added batches so far: {Added}", processedBatches);
+				}
 			}
 			catch (Exception e)
 			{
-				logger.LogError(e, "Failed to add result");
+				logger.LogError(e, "Failed to add result batch");
 			}
 		}
 
@@ -156,16 +383,11 @@ namespace Elpida.Backend.DataUpdater
 			}
 		}
 
-		private static async Task SeedResults(IServiceProvider serviceProvider, string resultsDirectory)
+		private static async Task SeedResults(IServiceProvider serviceProvider, ILogger logger)
 		{
-			using var scope = serviceProvider.CreateScope();
-			serviceProvider = scope.ServiceProvider;
-
-			var logger = serviceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("Results seeder");
-
 			await TimeProcedure(
 				ParallelExecutor.ProcessFilesInDirectoryAsync<BenchmarkResultsBatchDto>(
-					resultsDirectory,
+					ResultDataDirectory,
 					serviceProvider,
 					ProcessResultAsync
 				),
@@ -173,26 +395,52 @@ namespace Elpida.Backend.DataUpdater
 			);
 
 			logger.LogInformation(
-				"Results processed: {Processed}. Results successfully added: {Added}",
-				_batchesProcessedCount,
-				_batchesProcessedCount
+				"Finished. Results expected: {Expected}, Results successfully added: {Added}",
+				_resultsExpected,
+				_resultsProcessed
 			);
 		}
 
-		private static async Task SeedBenchmarks(IServiceProvider serviceProvider, string benchmarksDirectory)
+		private static Task SeedBenchmarks(
+			IServiceProvider serviceProvider,
+			ILogger logger
+		)
 		{
-			using var scope = serviceProvider.CreateScope();
-			serviceProvider = scope.ServiceProvider;
+			return TimeProcedure(
+				Task.Run(
+					async () =>
+					{
+						var taskData =
+							JsonConvert.DeserializeObject<List<BenchmarkDto>?>(
+								await File.ReadAllTextAsync(Path.Combine(BenchmarkDataDirectory, BenchmarksFile))
+							);
 
-			var logger = serviceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("Benchmarks updater");
+						if (taskData != null)
+						{
+							await ParallelExecutor.ProcessItemsAsync(
+								taskData,
+								serviceProvider,
+								ProcessBenchmarkAsync
+							);
+						}
+					}
+				),
+				logger
+			);
+		}
 
-			await TimeProcedure(
+		private static Task SeedTasks(
+			IServiceProvider serviceProvider,
+			ILogger logger
+		)
+		{
+			return TimeProcedure(
 				Task.Run(
 					async () =>
 					{
 						var taskData =
 							JsonConvert.DeserializeObject<List<TaskDto>?>(
-								await File.ReadAllTextAsync(Path.Combine(benchmarksDirectory, "tasks.json"))
+								await File.ReadAllTextAsync(Path.Combine(BenchmarkDataDirectory, TasksFile))
 							);
 
 						if (taskData != null)
@@ -201,27 +449,7 @@ namespace Elpida.Backend.DataUpdater
 						}
 					}
 				),
-				logger,
-				"Tasks update"
-			);
-
-			await TimeProcedure(
-				Task.Run(
-					async () =>
-					{
-						var taskData =
-							JsonConvert.DeserializeObject<List<BenchmarkDto>?>(
-								await File.ReadAllTextAsync(Path.Combine(benchmarksDirectory, "benchmarks.json"))
-							);
-
-						if (taskData != null)
-						{
-							await ParallelExecutor.ProcessItemsAsync(taskData, serviceProvider, ProcessBenchmarkAsync);
-						}
-					}
-				),
-				logger,
-				"Benchmarks update"
+				logger
 			);
 		}
 
@@ -239,6 +467,11 @@ namespace Elpida.Backend.DataUpdater
 
 				logger.LogInformation("Operation completed: {Time}", stopWatch.Elapsed);
 			}
+		}
+
+		private static ILogger CreateLogger(this IServiceProvider serviceProvider, string category)
+		{
+			return serviceProvider.GetRequiredService<ILoggerFactory>().CreateLogger(category);
 		}
 	}
 }

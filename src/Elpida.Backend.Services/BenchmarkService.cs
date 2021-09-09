@@ -25,6 +25,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Common.Exceptions;
 using Elpida.Backend.Data.Abstractions.Models.Benchmark;
+using Elpida.Backend.Data.Abstractions.Models.Task;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services.Abstractions;
 using Elpida.Backend.Services.Abstractions.Dtos.Benchmark;
@@ -95,6 +96,7 @@ namespace Elpida.Backend.Services
 
 				var taskModel = new BenchmarkTaskModel
 				{
+					BenchmarkId = dto.Id,
 					TaskId = task.Id,
 					CanBeDisabled = taskDto.CanBeDisabled,
 					IterationsToRun = taskDto.IterationsToRun,

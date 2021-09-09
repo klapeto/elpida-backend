@@ -18,20 +18,34 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-namespace Elpida.Backend.Data.Abstractions.Models.Elpida
+namespace Elpida.Backend.Services.Abstractions.Dtos.Elpida
 {
-	public class ElpidaModel : Entity
+	/// <summary>
+	///     Details of an Elpida version.
+	/// </summary>
+	public sealed class ElpidaVersionDto : FoundationDto
 	{
-		public int VersionMajor { get; set; }
+		/// <summary>
+		///     Initializes a new instance of the <see cref="ElpidaVersionDto" /> class.
+		/// </summary>
+		/// <param name="id">The id of the Elpida.</param>
+		/// <param name="version">The Elpida version.</param>
+		/// <param name="compiler">The compiler details that built Elpida.</param>
+		public ElpidaVersionDto(long id, VersionDto version, CompilerDto compiler)
+			: base(id)
+		{
+			Version = version;
+			Compiler = compiler;
+		}
 
-		public int VersionMinor { get; set; }
+		/// <summary>
+		///     The Elpida version.
+		/// </summary>
+		public VersionDto Version { get; }
 
-		public int VersionRevision { get; set; }
-
-		public int VersionBuild { get; set; }
-
-		public string CompilerVersion { get; set; } = default!;
-
-		public string CompilerName { get; set; } = default!;
+		/// <summary>
+		///     The compiler details that built Elpida.
+		/// </summary>
+		public CompilerDto Compiler { get; }
 	}
 }
