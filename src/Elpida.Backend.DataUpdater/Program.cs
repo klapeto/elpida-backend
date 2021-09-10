@@ -331,6 +331,8 @@ namespace Elpida.Backend.DataUpdater
 
 				Interlocked.Add(ref _resultsProcessed, benchmarkResultBatchDto.BenchmarkResults.Length);
 
+				logger.LogInformation("Successfully added batch with {ResultCount} benchmarks", benchmarkResultBatchDto.BenchmarkResults.Length);
+
 				var processedBatches = Interlocked.Increment(ref _batchesProcessedCount);
 				if (processedBatches % 10 == 0)
 				{
