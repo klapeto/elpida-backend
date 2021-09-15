@@ -44,7 +44,7 @@ using Microsoft.OpenApi.Models;
 
 namespace Elpida.Backend
 {
-	internal class Startup
+	public class Startup
 	{
 		public Startup(IConfiguration configuration)
 		{
@@ -86,19 +86,10 @@ namespace Elpida.Backend
 			services.AddDbContext<ElpidaContext>(
 				builder =>
 				{
-#if false
-					builder.UseSqlite(
-						Configuration.GetConnectionString("Local"),
-						b => b.MigrationsAssembly(Assembly.GetExecutingAssembly().GetName().Name)
-					);
-#else
-
-					// Use something else, eg SQL Server
 					builder.UseSqlServer(
 						Configuration.GetConnectionString("ElpidaDB"),
 						b => b.MigrationsAssembly(Assembly.GetExecutingAssembly().GetName().Name)
 					);
-#endif
 				}
 			);
 

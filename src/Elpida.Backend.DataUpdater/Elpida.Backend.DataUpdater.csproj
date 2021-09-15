@@ -5,57 +5,16 @@
         <Nullable>enable</Nullable>
         <TargetFramework>net5.0</TargetFramework>
         <LangVersion>default</LangVersion>
-        <UserSecretsId>628a63a3-9969-4907-b9ba-0ef8c2bae7da</UserSecretsId>
     </PropertyGroup>
-
-    <ItemGroup>
-        <Content Include="appsettings.json">
-            <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-            <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-        </Content>
-        <Content Include="BenchmarkData\tasks.json">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="BenchmarkData\benchmarks.json">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <None Remove="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1630849371.json" />
-        <Content Include="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1630849371.json">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <None Remove="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1630849534.json" />
-        <Content Include="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1630849534.json">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <None Remove="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1630849656.json" />
-        <Content Include="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1630849656.json">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <None Remove="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1630849776.json" />
-        <Content Include="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1630849776.json">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <None Remove="ResultData\Intel(R) Core(TM) i9-10900K CPU @ 3.70GHz-1631227256.json" />
-        <Content Include="ResultData\Intel(R) Core(TM) i9-10900K CPU @ 3.70GHz-1631227256.json">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <None Remove="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1631290371.json" />
-        <Content Include="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1631290371.json">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <None Remove="ResultData\Cortex-A72-1631292731.json" />
-        <Content Include="ResultData\Cortex-A72-1631292731.json">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-    </ItemGroup>
 
 
     <ItemGroup>
         <ProjectReference Include="..\Elpida.Backend.Common\Elpida.Backend.Common.csproj" />
+        <ProjectReference Include="..\Elpida.Backend.DataSeed\Elpida.Backend.DataSeed.csproj" />
         <ProjectReference Include="..\Elpida.Backend.Data\Elpida.Backend.Data.csproj" />
         <ProjectReference Include="..\Elpida.Backend.Services.Abstractions\Elpida.Backend.Services.Abstractions.csproj" />
         <ProjectReference Include="..\Elpida.Backend.Services\Elpida.Backend.Services.csproj" />
+        <ProjectReference Include="..\Elpida.Backend\Elpida.Backend.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -63,7 +22,6 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.4" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.0" />
         <PackageReference Include="Microsoft.Extensions.CommandLineUtils" Version="1.1.1" />
         <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="5.0.0" />
@@ -71,15 +29,11 @@
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
         <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
-        <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\Elpida.Backend.Data.Abstractions\Elpida.Backend.Data.Abstractions.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="ResultData" />
     </ItemGroup>
 
 </Project>

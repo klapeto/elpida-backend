@@ -6,8 +6,4 @@
         <LangVersion>default</LangVersion>
     </PropertyGroup>
 
-    <ItemGroup>
-      <PackageReference Include="RedLock.net" Version="2.2.0" />
-    </ItemGroup>
-
 </Project>

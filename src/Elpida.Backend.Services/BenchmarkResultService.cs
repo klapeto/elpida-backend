@@ -29,7 +29,6 @@ using Elpida.Backend.Data.Abstractions.Models.Benchmark;
 using Elpida.Backend.Data.Abstractions.Models.ElpidaVersion;
 using Elpida.Backend.Data.Abstractions.Models.Os;
 using Elpida.Backend.Data.Abstractions.Models.Result;
-using Elpida.Backend.Data.Abstractions.Models.Task;
 using Elpida.Backend.Data.Abstractions.Models.Topology;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services.Abstractions;
@@ -162,7 +161,11 @@ namespace Elpida.Backend.Services
 					),
 				}
 				.Concat(_topologyService.ConstructCustomFilters<BenchmarkResultModel, TopologyModel>(m => m.Topology))
-				.Concat(_elpidaVersionService.ConstructCustomFilters<BenchmarkResultModel, ElpidaVersionModel>(m => m.ElpidaVersion))
+				.Concat(
+					_elpidaVersionService.ConstructCustomFilters<BenchmarkResultModel, ElpidaVersionModel>(
+						m => m.ElpidaVersion
+					)
+				)
 				.Concat(_osService.ConstructCustomFilters<BenchmarkResultModel, OsModel>(m => m.Os))
 				.Concat(
 					_benchmarkService.ConstructCustomFilters<BenchmarkResultModel, BenchmarkModel>(m => m.Benchmark)

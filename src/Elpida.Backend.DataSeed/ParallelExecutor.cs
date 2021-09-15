@@ -27,7 +27,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 
-namespace Elpida.Backend.DataUpdater
+namespace Elpida.Backend.DataSeed
 {
 	internal static class ParallelExecutor
 	{

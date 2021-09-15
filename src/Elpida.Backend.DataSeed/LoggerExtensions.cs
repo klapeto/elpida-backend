@@ -18,11 +18,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-namespace Elpida.Backend.DataUpdater
+using System;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+
+namespace Elpida.Backend.DataSeed
 {
-	public enum SqlProvider
+	public static class LoggerExtensions
 	{
-		Sqlite,
-		SqlServer,
+		public static ILogger CreateLogger(this IServiceProvider serviceProvider, string category)
+		{
+			return serviceProvider.GetRequiredService<ILoggerFactory>().CreateLogger(category);
+		}
 	}
 }

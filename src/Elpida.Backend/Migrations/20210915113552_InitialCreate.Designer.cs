@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Elpida.Backend.Migrations
 {
     [DbContext(typeof(ElpidaContext))]
-    [Migration("20210909192314_InitialCreate")]
+    [Migration("20210915113552_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

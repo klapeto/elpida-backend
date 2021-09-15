@@ -18,19 +18,27 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
+using System;
+using System.IO;
+using System.Reflection;
+using System.Threading.Tasks;
+using Elpida.Backend.DataSeed;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace Elpida.Backend
 {
-	internal static class Program
+	public class Program
 	{
-		public static void Main(string[] args)
+		public static async Task Main(string[] args)
 		{
-			CreateHostBuilder(args)
-				.Build()
-				.Run();
+			var host = CreateHostBuilder(args)
+				.Build();
+
+			await UpdateDbAsync(host);
+			await host.RunAsync();
 		}
 
 		private static IHostBuilder CreateHostBuilder(string[] args)
@@ -38,6 +46,30 @@ namespace Elpida.Backend
 			return Host.CreateDefaultBuilder(args)
 				.ConfigureLogging(builder => builder.AddConsole())
 				.ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
+		}
+
+		private static async Task UpdateDbAsync(IHost host)
+		{
+			using var scope = host.Services.CreateScope();
+
+			var services = scope.ServiceProvider;
+			try
+			{
+				var updater = new DbUpdater(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!);
+				await updater.MigrateAsync(services);
+				if (await updater.NeedsBenchmarkSeedingAsync(services))
+				{
+					await updater.SeedBenchmarksAsync(services);
+				}
+			}
+			catch (Exception ex)
+			{
+				services
+					.GetRequiredService<ILogger<Program>>()
+					.LogError(ex, "An error occurred updating the database");
+
+				throw;
+			}
 		}
 	}
 }
