@@ -2,6 +2,8 @@
     <PropertyGroup>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)..\Analyzers.ruleset</CodeAnalysisRuleSet>
+        <Nullable>enable</Nullable>
+        <TargetFramework>net5.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>

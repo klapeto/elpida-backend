@@ -68,7 +68,7 @@ namespace Elpida.Backend.Data
 					m => new
 					{
 						m.VersionMajor, m.VersionMinor, m.VersionRevision, m.VersionBuild, m.CompilerName,
-						m.CompilerVersion
+						m.CompilerVersion,
 					}
 				)
 				.IsUnique();

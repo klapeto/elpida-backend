@@ -52,10 +52,5 @@ namespace Elpida.Backend.Data
 		{
 			return _transaction.CommitAsync(cancellationToken);
 		}
-
-		public Task Rollback(CancellationToken cancellationToken = default)
-		{
-			return _transaction.RollbackAsync(cancellationToken);
-		}
 	}
 }

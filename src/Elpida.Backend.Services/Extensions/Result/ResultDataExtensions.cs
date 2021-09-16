@@ -48,7 +48,7 @@ namespace Elpida.Backend.Services.Extensions.Result
 				benchmarkResultModel.TimeStamp,
 				benchmarkResultModel.Benchmark.Uuid,
 				benchmarkResultModel.Benchmark.Name,
-				JsonConvert.DeserializeObject<long[]>(benchmarkResultModel.Affinity),
+				JsonConvert.DeserializeObject<long[]>(benchmarkResultModel.Affinity)!,
 				benchmarkResultModel.ElpidaVersion.ToDto(),
 				GetSystem(benchmarkResultModel),
 				benchmarkResultModel.Score,
@@ -63,8 +63,8 @@ namespace Elpida.Backend.Services.Extensions.Result
 				model.ResultName,
 				model.ResultDescription,
 				model.ResultUnit,
-				(AggregationType)model.ResultAggregation,
-				(ResultType)model.ResultType
+				model.ResultAggregation,
+				model.ResultType
 			);
 		}
 
@@ -79,7 +79,7 @@ namespace Elpida.Backend.Services.Extensions.Result
 				model.InputName,
 				model.InputDescription!,
 				model.InputUnit!,
-				JsonConvert.DeserializeObject<string[]>(model.InputProperties!)
+				JsonConvert.DeserializeObject<string[]>(model.InputProperties!)!
 			);
 		}
 
@@ -94,7 +94,7 @@ namespace Elpida.Backend.Services.Extensions.Result
 				model.OutputName,
 				model.OutputDescription!,
 				model.OutputUnit!,
-				JsonConvert.DeserializeObject<string[]>(model.OutputProperties!)
+				JsonConvert.DeserializeObject<string[]>(model.OutputProperties!)!
 			);
 		}
 

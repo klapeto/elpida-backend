@@ -37,7 +37,7 @@ namespace Elpida.Backend.Services.Extensions.Topology
 				topologyModel.TotalPhysicalCores,
 				topologyModel.TotalNumaNodes,
 				topologyModel.TotalPackages,
-				JsonConvert.DeserializeObject<CpuNodeDto>(topologyModel.Root)
+				JsonConvert.DeserializeObject<CpuNodeDto>(topologyModel.Root)!
 			);
 		}
 	}

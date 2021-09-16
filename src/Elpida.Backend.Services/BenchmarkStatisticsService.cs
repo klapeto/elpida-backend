@@ -173,7 +173,7 @@ namespace Elpida.Backend.Services
 				model.StandardDeviation,
 				model.Tau,
 				model.MarginOfError,
-				JsonConvert.DeserializeObject<FrequencyClassDto[]>(model.FrequencyClasses)
+				JsonConvert.DeserializeObject<FrequencyClassDto[]>(model.FrequencyClasses)!
 			);
 		}
 
