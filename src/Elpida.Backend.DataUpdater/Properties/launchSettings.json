@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "Elpida.Backend.DataUpdater (Create)": {
+      "commandName": "Project",
+      "commandLineArgs": "create",
+      "environmentVariables": {
+
+      }
+    },
+    "Elpida.Backend.DataUpdater (Seed results)": {
+      "commandName": "Project",
+      "commandLineArgs": "seed",
+      "environmentVariables": {
+
+      }
+    },
+    "Elpida.Backend.DataUpdater (Drop results)": {
+      "commandName": "Project",
+      "commandLineArgs": "dropResults",
+      "environmentVariables": {
+
+      }
+    },
+    "Elpida.Backend.DataUpdater (Clean)": {
+      "commandName": "Project",
+      "commandLineArgs": "clean",
+      "environmentVariables": {
+
+      }
+    },
+    "Elpida.Backend.DataUpdater (Drop)": {
+      "commandName": "Project",
+      "commandLineArgs": "drop",
+      "environmentVariables": {
+
+      }
+    }
+  }
+}

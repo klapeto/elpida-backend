@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.4"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Elpida.Backend.Data\Elpida.Backend.Data.csproj"/>
+        <ProjectReference Include="..\Elpida.Backend.Services.Abstractions\Elpida.Backend.Services.Abstractions.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Include="BenchmarkData\benchmarks.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="BenchmarkData\tasks.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
+</Project>

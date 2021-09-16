@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\Elpida.Backend\Elpida.Backend.csproj"/>
+        <ProjectReference Include="..\Elpida.Backend.Services.Tests\Elpida.Backend.Services.Tests.csproj"/>
+    </ItemGroup>
+
+</Project>
