@@ -18,6 +18,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
+using System.ComponentModel.DataAnnotations;
+
 namespace Elpida.Backend.Services.Abstractions.Dtos.Elpida
 {
 	/// <summary>
@@ -40,12 +42,16 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Elpida
 		///     The name of the compiler.
 		/// </summary>
 		/// <example>GNU</example>
+		[Required]
+		[MaxLength(50)]
 		public string Name { get; }
 
 		/// <summary>
 		///     The version of the compiler.
 		/// </summary>
 		/// <example>10.0</example>
+		[Required]
+		[MaxLength(50)]
 		public string Version { get; }
 	}
 }

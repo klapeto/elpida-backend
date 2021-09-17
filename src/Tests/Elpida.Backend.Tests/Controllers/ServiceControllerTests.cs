@@ -83,10 +83,11 @@ namespace Elpida.Backend.Tests.Controllers
 			var page = DtoGenerators.NewPage();
 			var expectedResult = new PagedResult<TPreview>(
 				new[] { NewDummyPreviewDto() },
-				page
+				page,
+				1
 			);
 
-			service.Setup(s => s.GetPagedPreviewsAsync(It.Is<QueryRequest>(x => x.PageRequest == page), default))
+			service.Setup(s => s.GetPagedPreviewsAsync(It.Is<QueryRequest>(x => x.PageRequest.Next == page.Next && x.PageRequest.Count == page.Count), default))
 				.ReturnsAsync(expectedResult);
 
 			var result = await controller.GetPagedPreviews(page, default);
@@ -94,7 +95,7 @@ namespace Elpida.Backend.Tests.Controllers
 			Assert.AreEqual(expectedResult, result);
 
 			service.Verify(
-				s => s.GetPagedPreviewsAsync(It.Is<QueryRequest>(x => x.PageRequest == page), default),
+				s => s.GetPagedPreviewsAsync(It.Is<QueryRequest>(x => x.PageRequest.Next == page.Next && x.PageRequest.Count == page.Count), default),
 				Times.Once
 			);
 		}
@@ -108,16 +109,16 @@ namespace Elpida.Backend.Tests.Controllers
 			var page = DtoGenerators.NewPage();
 			var expectedException = new NotFoundException("It was not found", 65);
 
-			service.Setup(s => s.GetPagedPreviewsAsync(It.Is<QueryRequest>(x => x.PageRequest == page), default))
+			service.Setup(s => s.GetPagedPreviewsAsync(It.Is<QueryRequest>(x => x.PageRequest.Next == page.Next && x.PageRequest.Count == page.Count), default))
 				.Throws(expectedException);
 
 			var actualException =
-				Assert.ThrowsAsync<NotFoundException>(() => controller.GetPagedPreviews(page, default));
+				Assert.ThrowsAsync<NotFoundException>(() => controller.GetPagedPreviews(page,  default));
 
 			Assert.AreEqual(expectedException, actualException);
 
 			service.Verify(
-				s => s.GetPagedPreviewsAsync(It.Is<QueryRequest>(x => x.PageRequest == page), default),
+				s => s.GetPagedPreviewsAsync(It.Is<QueryRequest>(x => x.PageRequest.Next == page.Next && x.PageRequest.Count == page.Count), default),
 				Times.Once
 			);
 		}
@@ -131,7 +132,8 @@ namespace Elpida.Backend.Tests.Controllers
 			var query = DtoGenerators.NewQueryRequest();
 			var expectedResult = new PagedResult<TPreview>(
 				new[] { NewDummyPreviewDto() },
-				query.PageRequest
+				query.PageRequest,
+				1
 			);
 
 			service.Setup(s => s.GetPagedPreviewsAsync(It.Is<QueryRequest>(q => QueriesAreEqual(q, query)), default))
@@ -222,8 +224,7 @@ namespace Elpida.Backend.Tests.Controllers
 		private static bool PagesAreEqual(PageRequest a, PageRequest b)
 		{
 			return a.Count == b.Count
-			       && a.Next == b.Next
-			       && a.TotalCount == b.TotalCount;
+			       && a.Next == b.Next;
 		}
 	}
 }

@@ -139,7 +139,7 @@ namespace Elpida.Backend.Services.Tests
 
 		public static PageRequest NewPage()
 		{
-			return new (10, 10, 10);
+			return new (10, 10);
 		}
 
 		public static VersionDto NewVersion()

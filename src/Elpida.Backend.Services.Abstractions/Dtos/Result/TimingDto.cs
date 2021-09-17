@@ -18,6 +18,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
+using System;
+using System.ComponentModel.DataAnnotations;
+
 namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 {
 	/// <summary>
@@ -60,41 +63,57 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 		/// <summary>
 		///     How many seconds a thread notify() takes.
 		/// </summary>
+		[Required]
+		[Range(0.0, double.MaxValue)]
 		public double NotifyOverhead { get; }
 
 		/// <summary>
 		///     How many seconds a thread wakeup takes.
 		/// </summary>
+		[Required]
+		[Range(0.0, double.MaxValue)]
 		public double WakeupOverhead { get; }
 
 		/// <summary>
 		///     How many extra seconds sleep() takes apart from the actual sleep time.
 		/// </summary>
+		[Required]
+		[Range(0.0, double.MaxValue)]
 		public double SleepOverhead { get; }
 
 		/// <summary>
 		///     How many seconds a thread now() takes.
 		/// </summary>
+		[Required]
+		[Range(0.0, double.MaxValue)]
 		public double NowOverhead { get; }
 
 		/// <summary>
 		///     How many seconds a thread mutex lock takes.
 		/// </summary>
+		[Required]
+		[Range(0.0, double.MaxValue)]
 		public double LockOverhead { get; }
 
 		/// <summary>
 		///     How many seconds a bare loop takes.
 		/// </summary>
+		[Required]
+		[Range(0.0, double.MaxValue)]
 		public double LoopOverhead { get; }
 
 		/// <summary>
 		///     How many seconds a thread join() takes apart from wait the time.
 		/// </summary>
+		[Required]
+		[Range(0.0, double.MaxValue)]
 		public double JoinOverhead { get; }
 
 		/// <summary>
 		///     The minimum time a benchmark can take.
 		/// </summary>
+		[Required]
+		[Range(0.0, double.MaxValue)]
 		public double TargetTime { get; }
 	}
 }

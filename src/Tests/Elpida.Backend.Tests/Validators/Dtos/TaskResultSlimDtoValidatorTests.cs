@@ -22,11 +22,10 @@ using System;
 using System.Collections.Generic;
 using Elpida.Backend.Services.Abstractions.Dtos.Result;
 using Elpida.Backend.Services.Abstractions.Dtos.Result.Batch;
-using Elpida.Backend.Validators;
 
 namespace Elpida.Backend.Tests.Validators.Dtos
 {
-	internal class TaskResultSlimDtoValidatorTests : ValidatorTest<TaskResultSlimDto, TaskResultSlimDtoValidator>
+	internal class TaskResultSlimDtoValidatorTests : ValidatorTest<TaskResultSlimDto>
 	{
 		protected override IEnumerable<(TaskResultSlimDto, string)> GetInvalidData()
 		{

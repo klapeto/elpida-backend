@@ -19,6 +19,7 @@
 // =========================================================================
 
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Result.Batch
 {
@@ -47,26 +48,35 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result.Batch
 		/// <summary>
 		///     The UUID of this Task.
 		/// </summary>
+		[Required]
+		[NonDefaultValue]
 		public Guid Uuid { get; }
 
 		/// <summary>
 		///     The value of the result.
 		/// </summary>
+		[Required]
+		[Range(double.Epsilon, double.MaxValue)]
 		public double Value { get; }
 
 		/// <summary>
 		///     The total time this task run.
 		/// </summary>
+		[Required]
+		[Range(double.Epsilon, double.MaxValue)]
 		public double Time { get; }
 
 		/// <summary>
 		///     How much data this task received as input.
 		/// </summary>
+		[Required]
+		[Range(0.0, double.MaxValue)]
 		public long InputSize { get; }
 
 		/// <summary>
 		///     The result statistics.
 		/// </summary>
+		[Required]
 		public TaskRunStatisticsDto Statistics { get; }
 	}
 }

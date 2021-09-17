@@ -18,6 +18,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
+using System.ComponentModel.DataAnnotations;
+
 namespace Elpida.Backend.Services.Abstractions.Dtos.Elpida
 {
 	/// <summary>
@@ -33,12 +35,20 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Elpida
 			Build = build;
 		}
 
+		[Required]
+		[Range(0, int.MaxValue)]
 		public int Major { get; }
 
+		[Required]
+		[Range(0, int.MaxValue)]
 		public int Minor { get; }
 
+		[Required]
+		[Range(0, int.MaxValue)]
 		public int Revision { get; }
 
+		[Required]
+		[Range(0, int.MaxValue)]
 		public int Build { get; }
 	}
 }

@@ -49,15 +49,13 @@ namespace Elpida.Backend.Services.Utilities
 				pageRequest.Count,
 				constructionExpression,
 				descending,
-				pageRequest.TotalCount == 0,
+				true,
 				orderBy,
 				filters,
 				cancellationToken
 			);
 
-			var updatedPage = new PageRequest(pageRequest.Next, pageRequest.Count, result.TotalCount);
-
-			return new PagedResult<TProjection>(result.Items.ToList(), updatedPage);
+			return new PagedResult<TProjection>(result.Items.ToList(), pageRequest, result.TotalCount);
 		}
 
 		public static async Task<TModel> GetOrAddSafeAsync<TModel>(

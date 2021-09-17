@@ -20,11 +20,10 @@
 
 using System.Collections.Generic;
 using Elpida.Backend.Services.Abstractions.Dtos.Elpida;
-using Elpida.Backend.Validators;
 
 namespace Elpida.Backend.Tests.Validators.Dtos
 {
-	internal class CompilerDtoValidatorTests : ValidatorTest<CompilerDto, CompilerDtoValidator>
+	internal class CompilerDtoValidatorTests : ValidatorTest<CompilerDto>
 	{
 		protected override IEnumerable<(CompilerDto, string)> GetInvalidData()
 		{

@@ -19,24 +19,23 @@
 // =========================================================================
 
 using System.Collections.Generic;
-using FluentValidation;
+using System.ComponentModel.DataAnnotations;
 using NUnit.Framework;
 
 namespace Elpida.Backend.Tests.Validators
 {
 	[TestFixture]
-	public abstract class ValidatorTest<TDto, TValidator>
-		where TValidator : AbstractValidator<TDto>, new()
+	public abstract class ValidatorTest<TDto>
 	{
 		[Test]
 		public void TestInvalidData()
 		{
-			var validator = new TValidator();
-
 			foreach (var (data, type) in GetInvalidData())
 			{
-				var result = validator.Validate(data);
-				Assert.False(result.IsValid, type);
+				Assert.Throws<ValidationException>(
+					() => Validator.ValidateObject(data, new ValidationContext(data), true),
+					type
+				);
 			}
 		}
 

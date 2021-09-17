@@ -18,6 +18,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
+using System.ComponentModel.DataAnnotations;
+
 namespace Elpida.Backend.Services.Abstractions.Dtos.Os
 {
 	/// <summary>
@@ -44,18 +46,24 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Os
 		///     The category of the Operating System.
 		/// </summary>
 		/// <example>GNU/Linux</example>
+		[Required]
+		[MaxLength(50)]
 		public string Category { get; }
 
 		/// <summary>
 		///     The name of the Operating System.
 		/// </summary>
 		/// <example>Ubuntu</example>
+		[Required]
+		[MaxLength(100)]
 		public string Name { get; }
 
 		/// <summary>
 		///     The version of the Operating System.
 		/// </summary>
 		/// <example>21.04</example>
+		[Required]
+		[MaxLength(50)]
 		public string Version { get; }
 	}
 }
