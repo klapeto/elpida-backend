@@ -20,17 +20,13 @@
 
 using System.Collections.Generic;
 using Elpida.Backend.Services.Abstractions.Dtos.Os;
-using Elpida.Backend.Validators;
 
 namespace Elpida.Backend.Tests.Validators.Dtos
 {
-	internal class OsDtoValidatorTests : ValidatorTest<OsDto, OsDtoValidator>
+	internal class OsDtoValidatorTests : ValidatorTest<OsDto>
 	{
 		protected override IEnumerable<(OsDto, string)> GetInvalidData()
 		{
-			yield return (new OsDto(5, "Test", "Test", "Test"), $"Non Zero {nameof(OsDto.Id)}");
-			yield return (new OsDto(-5, "Test", "Test", "Test"), $"Non Zero {nameof(OsDto.Id)}");
-
 			yield return (new OsDto(0, null!, "Test", "Test"), $"null {nameof(OsDto.Category)}");
 			yield return (new OsDto(0, string.Empty, "Test", "Test"), $"empty {nameof(OsDto.Category)}");
 			yield return (new OsDto(0, " ", "Test", "Test"), $"empty {nameof(OsDto.Category)}");

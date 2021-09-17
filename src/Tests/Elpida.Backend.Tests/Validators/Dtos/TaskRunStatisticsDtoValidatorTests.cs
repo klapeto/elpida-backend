@@ -20,11 +20,10 @@
 
 using System.Collections.Generic;
 using Elpida.Backend.Services.Abstractions.Dtos.Result;
-using Elpida.Backend.Validators;
 
 namespace Elpida.Backend.Tests.Validators.Dtos
 {
-	internal class TaskRunStatisticsDtoValidatorTests : ValidatorTest<TaskRunStatisticsDto, TaskRunStatisticsDtoValidator>
+	internal class TaskRunStatisticsDtoValidatorTests : ValidatorTest<TaskRunStatisticsDto>
 	{
 		protected override IEnumerable<(TaskRunStatisticsDto, string)> GetInvalidData()
 		{

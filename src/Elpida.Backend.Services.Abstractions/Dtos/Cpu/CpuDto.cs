@@ -19,6 +19,7 @@
 // =========================================================================
 
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Cpu
 {
@@ -66,28 +67,37 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Cpu
 		///     The architecture of this Cpu.
 		/// </summary>
 		/// <example>ARM</example>
+		[Required]
+		[MaxLength(20)]
 		public string Architecture { get; }
 
 		/// <summary>
 		///     The vendor of this Cpu.
 		/// </summary>
 		/// <example>ARM</example>
+		[Required]
+		[MaxLength(50)]
 		public string Vendor { get; }
 
 		/// <summary>
 		///     The model name of this Cpu.
 		/// </summary>
 		/// <example>Cortex A7</example>
+		[Required]
+		[MaxLength(50)]
 		public string ModelName { get; }
 
 		/// <summary>
 		///     The frequency of this Cpu.
 		/// </summary>
+		[Required]
+		[Range(0, long.MaxValue)]
 		public long Frequency { get; }
 
 		/// <summary>
 		///     Whether this cpu supports Simultaneously Multi Threading.
 		/// </summary>
+		[Required]
 		public bool Smt { get; }
 
 		/// <summary>

@@ -18,6 +18,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
+using System.ComponentModel.DataAnnotations;
 using Elpida.Backend.Services.Abstractions.Dtos.Cpu;
 using Elpida.Backend.Services.Abstractions.Dtos.Os;
 using Elpida.Backend.Services.Abstractions.Dtos.Topology;
@@ -49,26 +50,31 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 		/// <summary>
 		///     The Cpu of this system.
 		/// </summary>
+		[Required]
 		public CpuDto Cpu { get; }
 
 		/// <summary>
 		///     The operating system of this system.
 		/// </summary>
+		[Required]
 		public OsDto Os { get; }
 
 		/// <summary>
 		///     The topology of this system.
 		/// </summary>
+		[Required]
 		public TopologyDto Topology { get; }
 
 		/// <summary>
 		///     The memory details of this system.
 		/// </summary>
+		[Required]
 		public MemoryDto Memory { get; }
 
 		/// <summary>
 		///     Timing details of this system.
 		/// </summary>
+		[Required]
 		public TimingDto Timing { get; }
 	}
 }

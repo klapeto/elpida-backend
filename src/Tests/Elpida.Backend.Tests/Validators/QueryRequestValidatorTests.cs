@@ -20,11 +20,10 @@
 
 using System.Collections.Generic;
 using Elpida.Backend.Services.Abstractions;
-using Elpida.Backend.Validators;
 
 namespace Elpida.Backend.Tests.Validators
 {
-	internal class QueryRequestValidatorTests : ValidatorTest<QueryRequest, QueryRequestValidator>
+	internal class QueryRequestValidatorTests : ValidatorTest<QueryRequest>
 	{
 		protected override IEnumerable<(QueryRequest, string)> GetInvalidData()
 		{

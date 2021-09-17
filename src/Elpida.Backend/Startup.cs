@@ -29,8 +29,6 @@ using Elpida.Backend.Data;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services;
 using Elpida.Backend.Services.Abstractions.Interfaces;
-using Elpida.Backend.Validators;
-using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
@@ -56,14 +54,7 @@ namespace Elpida.Backend
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
-			services.AddControllers()
-				.AddFluentValidation(
-					configuration =>
-					{
-						configuration.ImplicitlyValidateChildProperties = true;
-						configuration.RegisterValidatorsFromAssemblyContaining<BenchmarkResultSlimDtoValidator>();
-					}
-				);
+			services.AddControllers();
 
 			services.AddScoped<IBenchmarkResultsService, BenchmarkResultService>();
 			services.AddScoped<IBenchmarkService, BenchmarkService>();
@@ -175,10 +166,6 @@ namespace Elpida.Backend
 
 			switch (exceptionHandlerPathFeature.Error)
 			{
-				case ArgumentException ae:
-					context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-					await context.Response.WriteAsync($"{ae.Message}: '{ae.ParamName}'");
-					break;
 				case NotFoundException nfe:
 					context.Response.StatusCode = (int)HttpStatusCode.NotFound;
 					await context.Response.WriteAsync($"The resource with id '{nfe.Id}' was not found");

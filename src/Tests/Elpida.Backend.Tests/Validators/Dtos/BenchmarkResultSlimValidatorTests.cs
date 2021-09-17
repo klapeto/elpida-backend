@@ -21,13 +21,12 @@
 using System;
 using System.Collections.Generic;
 using Elpida.Backend.Services.Abstractions.Dtos.Result.Batch;
-using Elpida.Backend.Validators;
 using NUnit.Framework;
 
 namespace Elpida.Backend.Tests.Validators.Dtos
 {
 	[TestFixture]
-	internal class BenchmarkResultSlimValidatorTests : ValidatorTest<BenchmarkResultSlimDto, BenchmarkResultSlimDtoValidator>
+	internal class BenchmarkResultSlimValidatorTests : ValidatorTest<BenchmarkResultSlimDto>
 	{
 		protected override IEnumerable<(BenchmarkResultSlimDto, string)> GetInvalidData()
 		{

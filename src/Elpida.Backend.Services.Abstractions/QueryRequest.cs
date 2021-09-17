@@ -18,6 +18,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
+using System.ComponentModel.DataAnnotations;
+
 namespace Elpida.Backend.Services.Abstractions
 {
 	/// <summary>
@@ -59,6 +61,7 @@ namespace Elpida.Backend.Services.Abstractions
 		/// <summary>
 		///     The page of the search results to return.
 		/// </summary>
+		[Required]
 		public PageRequest PageRequest { get; }
 
 		/// <summary>

@@ -18,6 +18,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
+using System.ComponentModel.DataAnnotations;
+
 namespace Elpida.Backend.Services.Abstractions
 {
 	/// <summary>
@@ -42,18 +44,21 @@ namespace Elpida.Backend.Services.Abstractions
 		///     The name of the field this criteria applies.
 		/// </summary>
 		/// <example>benchmarkName</example>
+		[Required]
 		public string Name { get; }
 
 		/// <summary>
 		///     The value this criteria.
 		/// </summary>
 		/// <example>Allocate Memory</example>
+		[Required]
 		public object Value { get; }
 
 		/// <summary>
 		///     The comparison to use on the field and the value.
 		/// </summary>
 		/// <example>equal</example>
+		[Required]
 		public string Comparison { get; }
 	}
 }

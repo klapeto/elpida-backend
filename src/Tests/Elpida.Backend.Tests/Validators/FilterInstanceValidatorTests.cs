@@ -20,11 +20,10 @@
 
 using System.Collections.Generic;
 using Elpida.Backend.Services.Abstractions;
-using Elpida.Backend.Validators;
 
 namespace Elpida.Backend.Tests.Validators
 {
-	internal class FilterInstanceValidatorTests : ValidatorTest<FilterInstance, FilterInstanceValidator>
+	internal class FilterInstanceValidatorTests : ValidatorTest<FilterInstance>
 	{
 		protected override IEnumerable<(FilterInstance, string)> GetInvalidData()
 		{

@@ -18,6 +18,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
+using System;
+using System.ComponentModel.DataAnnotations;
+
 namespace Elpida.Backend.Services.Abstractions.Dtos.Topology
 {
 	/// <summary>
@@ -80,26 +83,35 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Topology
 		/// <summary>
 		///     The total logical cores of this topology.
 		/// </summary>
+		[Required]
+		[Range(0, int.MaxValue)]
 		public int TotalLogicalCores { get; }
 
 		/// <summary>
 		///     The total physical cores of this topology.
 		/// </summary>
+		[Required]
+		[Range(0, int.MaxValue)]
 		public int TotalPhysicalCores { get; }
 
 		/// <summary>
 		///     The total numa nodes of this topology.
 		/// </summary>
+		[Required]
+		[Range(0, int.MaxValue)]
 		public int TotalNumaNodes { get; }
 
 		/// <summary>
 		///     The total cpu packages of this topology.
 		/// </summary>
+		[Required]
+		[Range(0, int.MaxValue)]
 		public int TotalPackages { get; }
 
 		/// <summary>
 		///     The first cpu node of this topology.
 		/// </summary>
+		[Required]
 		public CpuNodeDto Root { get; }
 	}
 }

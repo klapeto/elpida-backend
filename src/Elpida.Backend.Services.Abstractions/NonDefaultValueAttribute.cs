@@ -18,23 +18,34 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using Elpida.Backend.Services.Abstractions.Dtos.Elpida;
-using FluentValidation;
+using System;
+using System.ComponentModel.DataAnnotations;
 
-namespace Elpida.Backend.Validators
+namespace Elpida.Backend.Services.Abstractions
 {
-	internal class ElpidaVersionDtoValidator : AbstractValidator<ElpidaVersionDto>
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter)]
+	public class NonDefaultValueAttribute : ValidationAttribute
 	{
-		public ElpidaVersionDtoValidator()
+		public NonDefaultValueAttribute()
+			: base("The value be the default")
 		{
-			RuleFor(dto => dto.Id)
-				.Empty();
+		}
 
-			RuleFor(dto => dto.Compiler)
-				.NotNull();
+		public override bool IsValid(object? value)
+		{
+			if (value is null)
+			{
+				return false;
+			}
 
-			RuleFor(dto => dto.Version)
-				.NotNull();
+			var type = value.GetType();
+
+			if (type.IsValueType)
+			{
+				return !value.Equals(Activator.CreateInstance(type));
+			}
+
+			return true;
 		}
 	}
 }

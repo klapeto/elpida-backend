@@ -22,31 +22,13 @@ using System;
 using System.Collections.Generic;
 using Elpida.Backend.Services.Abstractions.Dtos.Result.Batch;
 using Elpida.Backend.Services.Tests;
-using Elpida.Backend.Validators;
 
 namespace Elpida.Backend.Tests.Validators.Dtos
 {
-	internal class BenchmarkResultsBatchDtoValidatorTests
-		: ValidatorTest<BenchmarkResultsBatchDto, BenchmarkResultsBatchDtoValidator>
+	internal class BenchmarkResultsBatchDtoValidatorTests : ValidatorTest<BenchmarkResultsBatchDto>
 	{
 		protected override IEnumerable<(BenchmarkResultsBatchDto, string)> GetInvalidData()
 		{
-			yield return (
-				new BenchmarkResultsBatchDto(
-					5,
-					DtoGenerators.NewElpida(),
-					DtoGenerators.NewSystem(),
-					new BenchmarkResultSlimDto[] { null! }
-				), $"Non zero {nameof(BenchmarkResultsBatchDto.Id)}");
-
-			yield return (
-				new BenchmarkResultsBatchDto(
-					-5,
-					DtoGenerators.NewElpida(),
-					DtoGenerators.NewSystem(),
-					new BenchmarkResultSlimDto[] { null! }
-				), $"Non zero {nameof(BenchmarkResultsBatchDto.Id)}");
-
 			yield return (
 				new BenchmarkResultsBatchDto(
 					0,
