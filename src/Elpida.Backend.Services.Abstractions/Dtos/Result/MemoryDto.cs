@@ -18,6 +18,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
+using System.ComponentModel.DataAnnotations;
+
 namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 {
 	/// <summary>
@@ -39,11 +41,15 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 		/// <summary>
 		///     The total size of the memory.
 		/// </summary>
+		[Required]
+		[Range(1, long.MaxValue)]
 		public long TotalSize { get; }
 
 		/// <summary>
 		///     The page size of this system.
 		/// </summary>
+		[Required]
+		[Range(1, long.MaxValue)]
 		public long PageSize { get; }
 	}
 }

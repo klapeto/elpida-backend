@@ -21,17 +21,13 @@
 using System.Collections.Generic;
 using Elpida.Backend.Services.Abstractions.Dtos.Elpida;
 using Elpida.Backend.Services.Tests;
-using Elpida.Backend.Validators;
 
 namespace Elpida.Backend.Tests.Validators.Dtos
 {
-	internal class ElpidaDtoValidatorTests : ValidatorTest<ElpidaVersionDto, ElpidaVersionDtoValidator>
+	internal class ElpidaDtoValidatorTests : ValidatorTest<ElpidaVersionDto>
 	{
 		protected override IEnumerable<(ElpidaVersionDto, string)> GetInvalidData()
 		{
-			yield return (new ElpidaVersionDto(5, DtoGenerators.NewVersion(), DtoGenerators.NewCompiler()),
-				$"value in {nameof(ElpidaVersionDto.Id)}");
-
 			yield return (new ElpidaVersionDto(0, null!, DtoGenerators.NewCompiler()),
 				$"null {nameof(ElpidaVersionDto.Version)}");
 

@@ -18,6 +18,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
+using System;
+using System.ComponentModel.DataAnnotations;
+
 namespace Elpida.Backend.Services.Abstractions
 {
 	/// <summary>
@@ -35,37 +38,28 @@ namespace Elpida.Backend.Services.Abstractions
 		/// </summary>
 		/// <param name="next">The items that should be skipped.</param>
 		/// <param name="count">How many items should be returned.</param>
-		/// <param name="totalCount">The total count of items.</param>
-		public PageRequest(int next, int count, long totalCount)
+		public PageRequest(int next, int count)
 		{
 			Next = next;
 			Count = count;
-			TotalCount = totalCount;
+		}
+
+		public PageRequest()
+		{
 		}
 
 		/// <summary>
 		///     The number of objects to skip.
 		/// </summary>
-		/// <example>0</example>
-		public int Next { get; }
+		[Range(0, int.MaxValue)]
+		public int Next { get; init; }
 
 		/// <summary>
 		///     The number of objects the page should have.
 		/// </summary>
 		/// <example>10</example>
-		public int Count { get; }
-
-		/// <summary>
-		///     The total count of objects. This value is returned from
-		///     the server and is ignored when set.
-		/// </summary>
-		/// <remarks>
-		///     When requesting a page with this value set to 0, then server will
-		///     set this to the total count of the objects with the returning <see cref="PageRequest" />
-		///     or the <see cref="PagedResult{T}.TotalCount" /> of <see cref="PagedResult{T}" />
-		///     (depending of which is returned).
-		/// </remarks>
-		/// <example>0</example>
-		public long TotalCount { get; }
+		[Required]
+		[Range(1, MaxCount)]
+		public int Count { get; init; }
 	}
 }

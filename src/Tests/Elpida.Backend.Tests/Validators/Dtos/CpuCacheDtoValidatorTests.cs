@@ -20,11 +20,10 @@
 
 using System.Collections.Generic;
 using Elpida.Backend.Services.Abstractions.Dtos.Cpu;
-using Elpida.Backend.Validators;
 
 namespace Elpida.Backend.Tests.Validators.Dtos
 {
-	internal class CpuCacheDtoValidatorTests : ValidatorTest<CpuCacheDto, CpuCacheDtoValidator>
+	internal class CpuCacheDtoValidatorTests : ValidatorTest<CpuCacheDto>
 	{
 		protected override IEnumerable<(CpuCacheDto, string)> GetInvalidData()
 		{
@@ -37,8 +36,10 @@ namespace Elpida.Backend.Tests.Validators.Dtos
 			yield return (new CpuCacheDto("Test", null!, 456, 465), $"null {nameof(CpuCacheDto.Associativity)}");
 			yield return (new CpuCacheDto("Test", string.Empty, 456, 465),
 				$"very large {nameof(CpuCacheDto.Associativity)}");
+
 			yield return (new CpuCacheDto("Test", " ", 456, 465),
 				$"very large {nameof(CpuCacheDto.Associativity)}");
+
 			yield return (new CpuCacheDto("Test", new string('A', 80), 456, 465),
 				$"empty {nameof(CpuCacheDto.Associativity)}");
 

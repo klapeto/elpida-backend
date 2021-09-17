@@ -21,62 +21,13 @@
 using System.Collections.Generic;
 using Elpida.Backend.Services.Abstractions.Dtos.Topology;
 using Elpida.Backend.Services.Tests;
-using Elpida.Backend.Validators;
 
 namespace Elpida.Backend.Tests.Validators.Dtos
 {
-	internal class TopologyDtoValidatorTests : ValidatorTest<TopologyDto, TopologyDtoValidator>
+	internal class TopologyDtoValidatorTests : ValidatorTest<TopologyDto>
 	{
 		protected override IEnumerable<(TopologyDto, string)> GetInvalidData()
 		{
-			yield return (new TopologyDto(
-				5,
-				0,
-				null,
-				null,
-				10,
-				10,
-				10,
-				10,
-				DtoGenerators.NewRootCpuNode()
-			), $"Non Zero {nameof(TopologyDto.Id)}");
-
-			yield return (new TopologyDto(
-				-5,
-				0,
-				null,
-				null,
-				10,
-				10,
-				10,
-				10,
-				DtoGenerators.NewRootCpuNode()
-			), $"Non Zero {nameof(TopologyDto.Id)}");
-
-			yield return (new TopologyDto(
-				0,
-				5,
-				null,
-				null,
-				10,
-				10,
-				10,
-				10,
-				DtoGenerators.NewRootCpuNode()
-			), $"Non Zero {nameof(TopologyDto.CpuId)}");
-
-			yield return (new TopologyDto(
-				0,
-				-5,
-				null,
-				null,
-				10,
-				10,
-				10,
-				10,
-				DtoGenerators.NewRootCpuNode()
-			), $"Non Zero {nameof(TopologyDto.CpuId)}");
-
 			yield return (new TopologyDto(
 				0,
 				0,

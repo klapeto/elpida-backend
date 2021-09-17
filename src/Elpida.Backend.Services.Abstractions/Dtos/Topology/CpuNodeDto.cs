@@ -18,6 +18,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
+using System;
+using System.ComponentModel.DataAnnotations;
+
 namespace Elpida.Backend.Services.Abstractions.Dtos.Topology
 {
 	/// <summary>
@@ -54,12 +57,16 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Topology
 		/// <summary>
 		///     The cpu node type.
 		/// </summary>
+		[Required]
+		[EnumDataType(typeof(ProcessorNodeType))]
 		public ProcessorNodeType NodeType { get; }
 
 		/// <summary>
 		///     The name of this node.
 		/// </summary>
 		/// <example>Core</example>
+		[Required]
+		[MaxLength(50)]
 		public string Name { get; }
 
 		/// <summary>
@@ -70,6 +77,7 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Topology
 		/// <summary>
 		///     A value representing the size of the node.
 		/// </summary>
+		[Range(0, long.MaxValue)]
 		public long? Value { get; }
 
 		/// <summary>

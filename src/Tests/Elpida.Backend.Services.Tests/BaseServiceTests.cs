@@ -93,8 +93,8 @@ namespace Elpida.Backend.Services.Tests
 
 			repo.Setup(
 					r => r.GetPagedProjectionAsync(
-						query.PageRequest.Next,
-						query.PageRequest.Count,
+						(int)query.PageRequest.Next,
+						(int)query.PageRequest.Count,
 						It.Is<Expression<Func<DummyModel, DummyPreviewDto>>>(
 							x => x.ToString() == service.GetPreviewConstructionExpressionImpl().ToString()
 						),
@@ -159,7 +159,7 @@ namespace Elpida.Backend.Services.Tests
 			var service = new DummyBasicService(repo.Object);
 
 			var query = new QueryRequest(
-				new PageRequest(12, 2, 0),
+				new PageRequest(12, 2),
 				null,
 				null,
 				false
@@ -259,14 +259,14 @@ namespace Elpida.Backend.Services.Tests
 
 		[Test]
 		[TestCase(0, true, 12)]
-		[TestCase(5, false, 0)]
+		[TestCase(5, true, 0)]
 		public async Task GetPagedAsync_TotalCount_CalculatedWhenNeeded(int totalCount, bool valuePassed, int expected)
 		{
 			var repo = new Mock<IDummyRepository>(MockBehavior.Strict);
 
 			var service = new DummyService(repo.Object);
 
-			var query = CreateQuery(totalCount);
+			var query = CreateQuery();
 
 			var returnItems = CreateReturnPreviewDtos();
 
@@ -628,10 +628,10 @@ namespace Elpida.Backend.Services.Tests
 			};
 		}
 
-		private static QueryRequest CreateQuery(long totalCount = 0, bool descending = false)
+		private static QueryRequest CreateQuery(bool descending = false)
 		{
 			var filters = new[] { new FilterInstance("data", "lol", "equal") };
-			return new QueryRequest(new PageRequest(12, 2, totalCount), filters, "data", descending);
+			return new QueryRequest(new PageRequest(12, 2), filters, "data", descending);
 		}
 	}
 }

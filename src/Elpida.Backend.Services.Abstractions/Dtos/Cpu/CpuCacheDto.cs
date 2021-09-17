@@ -18,6 +18,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
+using System.ComponentModel.DataAnnotations;
+
 namespace Elpida.Backend.Services.Abstractions.Dtos.Cpu
 {
 	/// <summary>
@@ -44,22 +46,30 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Cpu
 		///     The name of this cache.
 		/// </summary>
 		/// <example>L1D</example>
+		[Required]
+		[MaxLength(50)]
 		public string Name { get; }
 
 		/// <summary>
 		///     The associativity of this cache.
 		/// </summary>
 		/// <example>8-Way</example>
+		[Required]
+		[MaxLength(50)]
 		public string Associativity { get; }
 
 		/// <summary>
 		///     The size of the cache in bytes.
 		/// </summary>
+		[Required]
+		[Range(0, long.MaxValue)]
 		public long Size { get; }
 
 		/// <summary>
 		///     The size of the line.
 		/// </summary>
+		[Required]
+		[Range(0, long.MaxValue)]
 		public int LineSize { get; }
 	}
 }

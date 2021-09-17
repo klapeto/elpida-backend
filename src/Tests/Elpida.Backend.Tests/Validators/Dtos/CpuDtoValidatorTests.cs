@@ -20,38 +20,13 @@
 
 using System.Collections.Generic;
 using Elpida.Backend.Services.Abstractions.Dtos.Cpu;
-using Elpida.Backend.Validators;
 
 namespace Elpida.Backend.Tests.Validators.Dtos
 {
-	internal class CpuDtoValidatorTests : ValidatorTest<CpuDto, CpuDtoValidator>
+	internal class CpuDtoValidatorTests : ValidatorTest<CpuDto>
 	{
 		protected override IEnumerable<(CpuDto, string)> GetInvalidData()
 		{
-			yield return (new CpuDto(
-				5,
-				"Test",
-				"Test",
-				"Test",
-				546,
-				true,
-				null,
-				null,
-				null
-			), $"Non zero {nameof(CpuDto.Id)}");
-
-			yield return (new CpuDto(
-				-1,
-				"Test",
-				"Test",
-				"Test",
-				546,
-				true,
-				null,
-				null,
-				null
-			), $"Non zero {nameof(CpuDto.Id)}");
-
 			yield return (new CpuDto(
 				0,
 				null!,

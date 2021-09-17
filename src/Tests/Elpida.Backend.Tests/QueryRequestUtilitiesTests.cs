@@ -49,7 +49,7 @@ namespace Elpida.Backend.Tests
 		public void LiteralValue_DoesNotChange(object value)
 		{
 			var request = new QueryRequest(
-				new PageRequest(10, 10, 0),
+				new PageRequest(10, 10),
 				new FilterInstance[] { new ("test", value, "equal") },
 				"data",
 				true
@@ -68,7 +68,7 @@ namespace Elpida.Backend.Tests
 			var document = JsonDocument.Parse(serialized);
 
 			var request = new QueryRequest(
-				new PageRequest(10, 10, 0),
+				new PageRequest(10, 10),
 				new FilterInstance[] { new ("test", document.RootElement, "equal") },
 				"data",
 				true
@@ -91,7 +91,7 @@ namespace Elpida.Backend.Tests
 			var document = JsonDocument.Parse(serialized);
 
 			var request = new QueryRequest(
-				new PageRequest(10, 10, 0),
+				new PageRequest(10, 10),
 				new FilterInstance[] { new ("test", document.RootElement, "equal") },
 				"data",
 				true
@@ -109,7 +109,7 @@ namespace Elpida.Backend.Tests
 			var document = JsonDocument.Parse(serialized);
 
 			var request = new QueryRequest(
-				new PageRequest(10, 10, 0),
+				new PageRequest(10, 10),
 				new FilterInstance[] { new ("test", document.RootElement, "equal") },
 				"data",
 				true
@@ -122,7 +122,7 @@ namespace Elpida.Backend.Tests
 		public void NullFilters_DoesNothing()
 		{
 			var request = new QueryRequest(
-				new PageRequest(10, 10, 0),
+				new PageRequest(10, 10),
 				null,
 				"data",
 				true

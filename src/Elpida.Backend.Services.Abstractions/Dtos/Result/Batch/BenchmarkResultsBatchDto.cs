@@ -18,6 +18,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
+using System.ComponentModel.DataAnnotations;
 using Elpida.Backend.Services.Abstractions.Dtos.Elpida;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Result.Batch
@@ -50,16 +51,20 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result.Batch
 		/// <summary>
 		///     The Elpida Version that this result was produced from.
 		/// </summary>
+		[Required]
 		public ElpidaVersionDto ElpidaVersion { get; }
 
 		/// <summary>
 		///     The system details for this result.
 		/// </summary>
+		[Required]
 		public SystemDto System { get; }
 
 		/// <summary>
 		///     The benchmark results.
 		/// </summary>
+		[Required]
+		[MinLength(1)]
 		public BenchmarkResultSlimDto[] BenchmarkResults { get; }
 	}
 }

@@ -18,6 +18,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
+using System.ComponentModel.DataAnnotations;
+
 namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 {
 	/// <summary>
@@ -57,36 +59,50 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 		/// <summary>
 		///     How many times this task run.
 		/// </summary>
+		[Required]
+		[Range(1, long.MaxValue)]
 		public long SampleSize { get; }
 
 		/// <summary>
 		///     The maximum value of the result.
 		/// </summary>
+		[Required]
+		[Range(0.0, double.MaxValue)]
 		public double Max { get; }
 
 		/// <summary>
 		///     The minimum value of the result.
 		/// </summary>
+		[Required]
+		[Range(0.0, double.MaxValue)]
 		public double Min { get; }
 
 		/// <summary>
 		///     The mean value of the result.
 		/// </summary>
+		[Required]
+		[Range(0.0, double.MaxValue)]
 		public double Mean { get; }
 
 		/// <summary>
 		///     The standard deviation of the value of the result.
 		/// </summary>
+		[Required]
+		[Range(0.0, double.MaxValue)]
 		public double StandardDeviation { get; }
 
 		/// <summary>
 		///     The tau of this sample size.
 		/// </summary>
+		[Required]
+		[Range(0.0, double.MaxValue)]
 		public double Tau { get; }
 
 		/// <summary>
 		///     The margin of error of the value of the result.
 		/// </summary>
+		[Required]
+		[Range(0.0, double.MaxValue)]
 		public double MarginOfError { get; }
 	}
 }

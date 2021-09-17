@@ -34,15 +34,16 @@ namespace Elpida.Backend.Services.Abstractions
 		/// </summary>
 		/// <param name="items">The collection of the items.</param>
 		/// <param name="pageRequest">The previous page.</param>
-		public PagedResult(IEnumerable<T> items, PageRequest pageRequest)
+		/// <param name="totalCount">The total count of items.</param>
+		public PagedResult(IEnumerable<T> items, PageRequest pageRequest, long totalCount)
 		{
 			Items = items.ToArray();
 			Count = Items.Length;
 
-			TotalCount = pageRequest.TotalCount;
+			TotalCount = totalCount;
 
 			NextPage = Items.Length == pageRequest.Count
-				? new PageRequest(pageRequest.Next + Items.Length, pageRequest.Count, pageRequest.TotalCount)
+				? new PageRequest(pageRequest.Next + Items.Length, pageRequest.Count)
 				: null;
 		}
 
