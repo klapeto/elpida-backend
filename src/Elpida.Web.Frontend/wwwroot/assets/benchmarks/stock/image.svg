@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="64"
+   height="64"
+   viewBox="0 0 64.000002 63.999999"
+   version="1.1"
+   id="svg1484"
+   inkscape:version="1.0 (1.0+r73+1)"
+   sodipodi:docname="image.svg">
+  <title
+     id="title842">Elpida</title>
+  <defs
+     id="defs1478" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="16"
+     inkscape:cx="50.687002"
+     inkscape:cy="51.425426"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     inkscape:document-rotation="0"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     units="px"
+     inkscape:window-width="3840"
+     inkscape:window-height="2045"
+     inkscape:window-x="3840"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:object-paths="true"
+     inkscape:snap-nodes="true"
+     showguides="true" />
+  <metadata
+     id="metadata1481">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Elpida</dc:title>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Ioannis Panagiotopoulos</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/by-nc/4.0/" />
+        <dc:rights>
+          <cc:Agent>
+            <dc:title>Ioannis Panagiotopoulos</dc:title>
+          </cc:Agent>
+        </dc:rights>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/by-nc/4.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Notice" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Attribution" />
+        <cc:prohibits
+           rdf:resource="http://creativecommons.org/ns#CommercialUse" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-54.271023,-92.285728)">
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.9879;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect921-7-8-7-1-6-3"
+       width="62.61702"
+       height="62.61702"
+       x="54.771023"
+       y="92.786301" />
+    <rect
+       style="fill:#c7cdf9;fill-opacity:1;stroke:none;stroke-width:1.11817;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect934-3-7-3-96-9-2"
+       width="62.61702"
+       height="62.61702"
+       x="54.771023"
+       y="92.786301" />
+    <path
+       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.15126px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 74.837319,107.6276 h 18.549485 c 1.707022,-0.11749 2.919186,-6.11573 -5.594269,-4.61351 0.451612,-3.90801 -3.910564,-4.41575 -6.441811,-2.84392 -2.221372,-3.856955 -8.126181,-3.698927 -9.637286,-0.19972 -1.591227,3.68501 1.349359,7.6571 3.123881,7.6571 z"
+       id="path931-5-9-6-9-8-1"
+       sodipodi:nodetypes="ccccscc" />
+    <path
+       id="path930-6-2-1-3-7-5"
+       d="m 54.771035,131.85803 h 62.617035 v 23.54528 H 54.771035 Z"
+       style="fill:#898ee2;fill-opacity:1;stroke:none;stroke-width:1.9879;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <path
+       style="fill:#c7cdf9;fill-opacity:1;stroke:none;stroke-width:0.993952px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 54.771035,133.92394 8.671324,0.20427 10.756277,0.5267 16.56998,1.58923 14.740544,2.33705 2.0501,0.83208 0.25784,0.68674 -2.23924,0.90354 -10.628932,1.04268 -20.06868,1.31438 -12.411942,1.93805 -1.429144,1.15103 1.272676,1.06095 8.841677,2.08043 14.447492,2.07418 15.244033,2.62048 -46.074005,1.11757 z"
+       id="path2413"
+       sodipodi:nodetypes="cccccccccccccccccc" />
+    <path
+       style="fill:none;stroke:#898ee2;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 117.38807,131.85803 H 54.771035"
+       id="path2465" />
+    <path
+       style="fill:none;fill-opacity:1;stroke:#c7cdf9;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 54.771035,133.99283 c 28.369926,0 53.518575,4.47681 53.463235,6.03561 -0.0896,2.52571 -46.813331,2.96605 -47.251962,6.25989 -0.406625,3.05361 25.420168,4.89704 41.503242,7.9974"
+       id="path923-2-0-2-3"
+       sodipodi:nodetypes="cssc" />
+    <path
+       sodipodi:nodetypes="cccccc"
+       id="path931-3-2-7-1-66-9-4"
+       d="m 117.38804,120.15566 h -13.44279 c -1.2602,-0.0867 -2.15506,-4.51488 4.1299,-3.40583 -0.33336,-2.88507 2.887,-3.2599 4.75562,-2.09954 0.96984,-1.6839 2.91865,-2.33118 4.55727,-2.04466 z"
+       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.849909px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <path
+       id="path926-6-3-2-7-46-0-0"
+       d="m 66.452512,140.47686 v -5.45217"
+       style="fill:#6a7098;fill-opacity:1;stroke:#6a7098;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <path
+       sodipodi:nodetypes="zzz"
+       id="path928-7-6-2-8-2-2-7"
+       d="m 66.452512,136.53663 c -7.16176,0 -2.142145,-32.25539 0.004,-32.25539 2.147214,0 7.156691,32.25539 -0.004,32.25539 z"
+       style="fill:#6a7098;fill-opacity:1;stroke:#6a7098;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <rect
+       y="92.786301"
+       x="54.771023"
+       height="62.61702"
+       width="62.61702"
+       id="rect932-7-8-4-6-7-5"
+       style="fill:none;fill-opacity:1;stroke:none;stroke-width:1.9879;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <rect
+       y="94.285728"
+       x="56.271023"
+       height="60"
+       width="60"
+       id="rect4342"
+       style="fill:none;stroke:#6a7098;stroke-width:4;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+  </g>
+</svg>

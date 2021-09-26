@@ -1,3 +1,81 @@
 @inherits LayoutComponentBase
 
-@Body
+<Layout>
+    <Sider Breakpoint="@BreakpointType.Lg"
+           CollapsedWidth="64"
+           Theme="SiderTheme.Light">
+        <div class="logo-container">
+            <img src="./assets/Elpida_Logo.svg" class="logo"/>
+        </div>
+        <Menu Theme="MenuTheme.Light" Mode="MenuMode.Inline" DefaultSelectedKeys=@(new[] { "1" })>
+            <MenuItem Key="1">
+                <Icon Type="user" Theme="outline"/>
+                <span>nav 1</span>
+            </MenuItem>
+            <MenuItem Key="2">
+                <Icon Type="video-camera" Theme="outline"/>
+                <span>nav 2</span>
+            </MenuItem>
+            <MenuItem Key="3">
+                <Icon Type="upload" Theme="outline"/>
+                <span>nav 3</span>
+            </MenuItem>
+            <MenuItem Key="4">
+                <Icon Type="user" Theme="outline"/>
+                <span>nav 4</span>
+            </MenuItem>
+        </Menu>
+    </Sider>
+    <Layout>
+        <Header class="header"></Header>
+        <Content class="content-bg">
+            <div class="content">
+                @Body
+            </div>
+        </Content>
+        <Footer class="footer"><div>©2021 Ioannis Panagiotopoulos</div></Footer>
+    </Layout>
+</Layout>
+
+<style>
+    .logo-container {
+        height: 4rem;
+        padding: 0.5rem;
+        background: var(--nav-bg-color);
+    }
+    
+    .logo {
+        height: 100%;
+        width: 100%;
+    }
+    
+    .header{
+        background: var(--nav-bg-color); 
+        height: 4rem;
+    }
+    
+    .footer {
+        height: 4rem;
+        display: flex;
+        flex-flow: row wrap;
+        place-content: center;
+        background-color: var(--main-bg-color);
+        border-top: 1px solid var(--nav-bg-color);
+    }
+    
+    .content-bg {
+        background-image: url("./assets/Elpida.svg");
+        background-repeat: no-repeat;
+        background-position: 100% 100%;
+        background-size: contain;
+        background-attachment: fixed;
+        background-color: var(--main-bg-color);
+        min-height: calc(100vh - 8rem);
+    }
+    
+    .content {
+        background-color: var(--content-bg-color);
+        padding: 1em;
+        min-height: calc(100vh - 8rem);
+    }
+</style>
