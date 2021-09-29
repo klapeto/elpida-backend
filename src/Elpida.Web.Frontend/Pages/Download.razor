@@ -1,0 +1,143 @@
+﻿@page "/Download"
+@using Elpida.Web.Frontend.Services
+
+<Title Level="3">Downloads</Title>
+
+<Title Level="4">
+    Binaries:
+</Title>
+<Row Gutter="16">
+    <AntDesign.Col>
+        <Card Title="Windows">
+            <div class="download-group">
+                <Button Type="primary" Shape="round" NoSpanWrap>
+                    <ElpidaIcon Text="x86-64 (.zip)" IconName="download"/>
+                </Button>
+                <a href="https://gitlab.com/dev-hood/elpida/elpida/-/jobs/artifacts/master/raw/Elpida-latest-x86_64.zip.SHA256SUMS?job=deploy:windows">sha256sum</a>
+            </div>
+        </Card>
+    </AntDesign.Col>
+
+    <AntDesign.Col>
+        <Card Title="Linux">
+            <div class="download-group">
+                <Button Type="primary" Shape="round" NoSpanWrap>
+                    <ElpidaIcon Text="x86-64 (.AppImage)" IconName="download"/>
+                </Button>
+                <a href="https://gitlab.com/dev-hood/elpida/elpida/-/jobs/artifacts/master/raw/Elpida-latest-x86_64.zip.SHA256SUMS?job=deploy:windows">sha256sum</a>
+            </div>
+            <div class="download-group">
+                <Button Type="primary" Shape="round" NoSpanWrap>
+                    <ElpidaIcon Text="AArch64 (.AppImage)" IconName="download"/>
+                </Button>
+                <a href="https://gitlab.com/dev-hood/elpida/elpida/-/jobs/artifacts/master/raw/Elpida-latest-x86_64.zip.SHA256SUMS?job=deploy:windows">sha256sum</a>
+            </div>
+        </Card>
+    </AntDesign.Col>
+</Row>
+
+<Divider/>
+
+<Title Level="4">
+    Sources:
+</Title>
+<Row Gutter="16">
+    <AntDesign.Col>
+        <Card Title="Application">
+            <Button Type="primary" Shape="round" NoSpanWrap>
+                <ElpidaIcon Text="Sources (.tar.gz)" IconName="download"/>
+            </Button>
+        </Card>
+    </AntDesign.Col>
+
+    <AntDesign.Col>
+        <Card Title="Web stack">
+            <Button Type="primary" Shape="round" NoSpanWrap>
+                <ElpidaIcon Text="Sources (.tar.gz)" IconName="download"/>
+            </Button>
+        </Card>
+    </AntDesign.Col>
+</Row>
+
+<Divider/>
+
+<Title Level="3">
+    How to check the files for integrity
+</Title>
+<Paragraph>
+    It is advised to check the downloaded files for integrity. For this we provide checksums for each binary file.
+</Paragraph>
+
+<Title Level="4">
+    For Linux:
+</Title>
+<Paragraph>
+    Download the app image and SHA256SUMS(via the link bellow each download button) and place them on the same
+    directory.
+    Open a terminal and navigate
+    on that directory. The enter the following command:
+</Paragraph>
+<Text Code Copyable>
+    sha256sum -c SHA256SUMS
+</Text>
+<Paragraph>
+    It should output:
+</Paragraph>
+<Text Code Copyable>
+    ./Elpida-latest-x86_64.AppImage: OK
+</Text>
+<Paragraph>
+    If it outputs something like this:
+</Paragraph>
+<Text Code>
+    ./Elpida-latest-x86_64.AppImage: FAIL <br/>
+    sha256sum: WARNING: 1 computed checksum did NOT match
+</Text>
+<Paragraph>
+    Then the file is corrupted. You should download again the main file and try again. If it fails all the time and
+    there is not a
+    problem
+    with your setup (eg. Network connection, bad storage etc). Please report it to us by opening a ticket at the
+    <a href="https://gitlab.com/dev-hood/elpida/elpida">repository</a>
+</Paragraph>
+
+<Title Level="4">
+    For Windows:
+</Title>
+<Paragraph>
+    Download the app image and SHA256SUMS(via the link bellow each download button) and place them on the same
+    directory.
+    Open a PowerShell and navigate
+    on that directory. The enter the following command:
+</Paragraph>
+<Text Code Copyable>
+    certUtil -hashfile .\Elpida-latest-x86_64.zip SHA256
+</Text>
+<Paragraph>
+    It should output something like this:
+</Paragraph>
+<Text Code>
+    SHA256 hash of .\Elpida-latest-x86_64.zip:<br/>
+    'large random string'
+</Text>
+<Paragraph>
+    Now you should compare the 'large random string' with the corresponding 'large random string' inside the SHA256SUMS
+    file.
+    Unfortunately there is no easy/straightforward way to do this on windows. You either copy both strings on a text
+    editor
+    and check if they are the same or use a 3rd party tool.
+    If the strings do not match, the the main file is corrupted. You should download again the main file and try again.
+    If the check fails all the time and there is not a problem
+    with your setup (eg. Network connection, bad storage etc). Please report it to us by opening a ticket at the
+    <a href="https://gitlab.com/dev-hood/elpida/elpida">repository</a>
+</Paragraph>
+
+<style>
+    .download-group {
+        padding: 0.5em;
+    }
+</style>
+
+@code {
+    
+}

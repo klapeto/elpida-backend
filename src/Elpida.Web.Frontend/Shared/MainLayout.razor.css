@@ -1,0 +1,10 @@
+﻿.logo-container {
+    height: 4rem;
+    padding: 0.5rem;
+    background: var(--nav-bg-color);
+}
+
+.logo {
+    height: 100%;
+    width: 100%;
+}

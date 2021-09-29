@@ -1,0 +1,29 @@
+﻿.header {
+    background: var(--nav-bg-color);
+    height: 4rem;
+}
+
+.footer {
+    height: 4rem;
+    display: flex;
+    flex-flow: row wrap;
+    place-content: center;
+    background-color: var(--main-bg-color);
+    border-top: 1px solid var(--nav-bg-color);
+}
+
+.content {
+    background-color: var(--content-bg-color);
+    padding: 1em;
+    min-height: calc(100vh - 8rem);
+}
+
+.content-bg {
+    background-image: url("./assets/Elpida.svg");
+    background-repeat: no-repeat;
+    background-position: 100% 100%;
+    background-size: contain;
+    background-attachment: fixed;
+    background-color: var(--main-bg-color);
+    min-height: calc(100vh - 8rem);
+}

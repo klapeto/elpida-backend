@@ -1,0 +1,18 @@
+﻿@using Elpida.Web.Frontend.Services
+
+<Icon component="@_elpidaIcons.IconsMap[IconName]"/>
+@if (Text != null)
+{
+    <span>@Text</span>
+}
+
+@inject ElpidaIconsService _elpidaIcons;
+
+@code {
+
+    [Parameter]
+    public string IconName { get; set; } = ElpidaIconsService.DefaultIconName;
+    
+    [Parameter]
+    public string? Text { get; set; }
+}
