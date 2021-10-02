@@ -1,58 +1,20 @@
 @inherits LayoutComponentBase
 
-<Layout>
-    <Sider Breakpoint="@BreakpointType.Lg"
-           CollapsedWidth="64"
-           Theme="SiderTheme.Light">
-        <div class="logo-container">
-            <img src="./assets/Elpida_Logo.svg" class="logo" alt="Elpida Icon"/>
+<div class="background-back">
+    <div class="background-front">
+        <div class="header-wrapper">
+          <Header/>
         </div>
-        <Menu Theme="MenuTheme.Light" Mode="MenuMode.Inline" DefaultSelectedKeys=@(new[] { "1" })>
-            <MenuItem Key="1" RouterLink="/">
-                <ElpidaIcon IconName="home" Text="Home"/>
-            </MenuItem>
-            <MenuItem Key="2" RouterLink="/download">
-                <ElpidaIcon IconName="download" Text="Download"/>
-            </MenuItem>
-            <SubMenu Key="sub1" TitleTemplate="@CreateDatabaseTitle()">
-                <MenuItem Key="3">
-                    <ElpidaIcon IconName="result" Text="Results"/>
-                </MenuItem>
-                <MenuItem Key="4">
-                    <ElpidaIcon IconName="cpu" Text="CPUs"/>
-                </MenuItem>
-                <MenuItem Key="5">
-                    <ElpidaIcon IconName="benchmark" Text="Benchmarks"/>
-                </MenuItem>
-                <MenuItem Key="6">
-                    <ElpidaIcon IconName="topology" Text="Topologies"/>
-                </MenuItem>
-                <MenuItem Key="7">
-                    <ElpidaIcon IconName="operatingSystem" Text="Operating Systems"/>
-                </MenuItem>
-                <MenuItem Key="8">
-                    <ElpidaIcon IconName="elpida" Text="Elpida Versions"/>
-                </MenuItem>
-            </SubMenu>
-        </Menu>
-    </Sider>
-    <Layout>
-        <Header class="header"></Header>
-        <Content class="content-bg">
-            <div class="content">
+        
+        <div class="content-wrapper">
+            <Content>
                 @Body
-            </div>
-        </Content>
-        <Footer class="footer">
-            <div>©2021 Ioannis Panagiotopoulos</div>
-        </Footer>
-    </Layout>
-</Layout>
+            </Content>
+        </div>
+    </div>
+</div>
 
 @code
 {
-    private RenderFragment CreateDatabaseTitle()
-    {
-        return @<ElpidaIcon IconName="database" Text="Database"/>;
-    }
+
 }

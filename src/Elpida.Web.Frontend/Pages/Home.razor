@@ -1,49 +1,50 @@
 ﻿@page "/"
 
-<Title Level="3">Welcome to Elpida!</Title>
+@using Elpida.Web.Frontend.Shared.Components
 
-<Paragraph>
+<h1>Welcome to Elpida!</h1>
+
+<p>
     Elpida is an Open Source (GPLv3) Benchmarking framework for measuring performance of computer hardware or algorithms.
     It's goal is to be as transparent and open as possible as well as exensible by the community. It comes with a library (libelpida),
     a Qt application and a set of predefined benchmarks for measuring computer hardware capabilities.
-</Paragraph>
+</p>
 
-<Carousel Autoplay="TimeSpan.FromSeconds(2)">
-    <CarouselSlick>
-        <div class="screenshot-container">
-            <img alt="example" class="screenshot" src="./assets/elpida-qt-scrn-01.png"/>
-        </div>
+@* <Carousel Autoplay="TimeSpan.FromSeconds(2)"> *@
+@*     <CarouselSlick> *@
+@*         <div class="screenshot-container"> *@
+@*             <img alt="example" class="screenshot" src="./assets/elpida-qt-scrn-01.png"/> *@
+@*         </div> *@
+@* *@
+@*     </CarouselSlick> *@
+@*     <CarouselSlick> *@
+@*         <div class="screenshot-container"> *@
+@*             <img alt="example" class="screenshot" src="./assets/elpida-qt-scrn-02.png"/> *@
+@*         </div> *@
+@*     </CarouselSlick> *@
+@*     <CarouselSlick> *@
+@*         <div class="screenshot-container"> *@
+@*             <img alt="example" class="screenshot" src="./assets/elpida-qt-scrn-03.png"/> *@
+@*         </div> *@
+@*     </CarouselSlick> *@
+@* </Carousel> *@
 
-    </CarouselSlick>
-    <CarouselSlick>
-        <div class="screenshot-container">
-            <img alt="example" class="screenshot" src="./assets/elpida-qt-scrn-02.png"/>
-        </div>
-    </CarouselSlick>
-    <CarouselSlick>
-        <div class="screenshot-container">
-            <img alt="example" class="screenshot" src="./assets/elpida-qt-scrn-03.png"/>
-        </div>
-    </CarouselSlick>
-</Carousel>
+<hr/>
 
-<Divider/>
-
-<Title Level="3">Download</Title>
+<h2>Download</h2>
 <div>
-    <Button Type="primary" Shape="round" NoSpanWrap>
-        <ElpidaIcon Text="Windows x86-64" IconName="download"/>
-    </Button>
-    <Button Type="primary" Shape="round" NoSpanWrap>
-        <ElpidaIcon Text="Linux x86-64" IconName="download"/>
-        Linux x86-64
-    </Button>
+    <LinkButton Href="/Windows" Size="Size.Small">
+        <IconWithText Text="Windows x86-64" IconName="download"/>
+    </LinkButton>
+    <LinkButton Href="/Windows" Size="Size.Small">
+        <IconWithText Text="Linux x86-64" IconName="download"/>
+    </LinkButton>
 </div>
 
-<Divider/>
+<hr/>
 
-<Title Level="3">Features:</Title>
-<Paragraph>
+<h2>Features:</h2>
+<p>
     <ul>
         <li>
             <strong>Variety of pre-defined benchmarks.</strong> The Stand alone application comes
@@ -100,22 +101,9 @@
             system benchmarked and the results.
         </li>
     </ul>
-</Paragraph>
+</p>
 
-<Text Strong>Note: This public beta is under heavy development. Expect breaking changes, downtimes, bugs etc.</Text>
-
-
-<style>
-    .screenshot {
-        height: 40em;
-    }
-    
-    .screenshot-container {
-        display: flex;
-        place-content: center;
-    }
-   
-</style>
+<strong>Note: This public beta is under heavy development. Expect breaking changes, downtimes, bugs etc.</strong>
 
 @code {
 

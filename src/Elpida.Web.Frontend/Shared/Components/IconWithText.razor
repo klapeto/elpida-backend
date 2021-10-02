@@ -1,10 +1,16 @@
 ﻿@using Elpida.Web.Frontend.Services
 
-<Icon component="@_elpidaIcons.IconsMap[IconName]"/>
-@if (Text != null)
-{
-    <span>@Text</span>
-}
+<div class="icon-container">
+    @if (_elpidaIcons.IconsMap.ContainsKey(IconName))
+    {
+        @_elpidaIcons.IconsMap[IconName]
+    }
+    
+    @if (Text != null)
+    {
+        <span class="icon-text">@Text</span>
+    }
+</div>
 
 @inject ElpidaIconsService _elpidaIcons;
 

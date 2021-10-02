@@ -1,10 +1,30 @@
-﻿.logo-container {
-    height: 4rem;
-    padding: 0.5rem;
-    background: var(--nav-bg-color);
+﻿.background-back {
+    background-image: url("./assets/Elpida.svg");
+    background-repeat: no-repeat;
+    background-position: 100% 100%;
+    background-size: contain;
+    background-attachment: fixed;
+    background-color: var(--main-bg-color);
+    min-height: 100vh;
 }
 
-.logo {
-    height: 100%;
-    width: 100%;
+.background-front {
+    background-color: var(--content-bg-color);
+    min-height: 100vh;
+    max-height: 100vh;
+    display: flex;
+    flex-flow: column;
+    align-items: stretch;
+    align-content: stretch;
+}
+
+.content-wrapper {
+    display: flex;
+    flex-grow: 1;
+    overflow: auto;
+}
+
+.header-wrapper {
+    position: relative;
+    z-index: 1;
 }

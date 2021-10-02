@@ -20,8 +20,6 @@ namespace Elpida.Web.Frontend
 
 			builder.Services.AddSingleton<ElpidaIconsService>();
 
-			builder.Services.AddAntDesign();
-
 			await builder.Build().RunAsync();
 		}
 	}

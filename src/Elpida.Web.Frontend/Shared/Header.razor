@@ -1,0 +1,46 @@
+﻿@using Elpida.Web.Frontend.Services
+@using Elpida.Web.Frontend.Shared.Components
+
+<div class="header">
+    <div class="container header-container">
+        <NavLink href="/" class="flex-center">
+            <img class="logo" src="./assets/Elpida_Logo.svg" alt="Elpida Logo"/>
+        </NavLink>
+        <nav>
+            <div class="menu-toggler" @onclick="ToggleNavMenu"></div>
+            <div class="nav-links @AdditionalNavCssClass">
+                <LinkButton Href="/">
+                    <IconWithText IconName="home" Text="Home"/>
+                </LinkButton>
+                <LinkButton Href="/download">
+                    <IconWithText IconName="download" Text="Download"/>
+                </LinkButton>
+                <LinkButton Href="/database">
+                    <IconWithText IconName="database" Text="Database"/>
+                </LinkButton>
+                <LinkButton Href="/statistics">
+                    <IconWithText IconName="statistics" Text="Statistics"/>
+                </LinkButton>
+                <LinkButton Href="/results">
+                    <IconWithText IconName="result" Text="Results"/>
+                </LinkButton>
+                <LinkButton Href="/about">
+                    <IconWithText IconName="elpida" Text="About"/>
+                </LinkButton>
+            </div>
+        </nav>
+    </div>
+</div>
+
+@code {
+
+    private bool _collapseMenu = true;
+
+    private string? AdditionalNavCssClass => _collapseMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        _collapseMenu = !_collapseMenu;
+    }
+
+}

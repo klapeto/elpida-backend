@@ -1,126 +1,114 @@
 ﻿@page "/Download"
-@using Elpida.Web.Frontend.Services
 
-<Title Level="3">Downloads</Title>
+@using Elpida.Web.Frontend.Shared.Components
 
-<Title Level="4">
+<h1>Downloads</h1>
+
+<h2>
     Binaries:
-</Title>
-<Row Gutter="16">
-    <AntDesign.Col>
-        <Card Title="Windows">
-            <div class="download-group">
-                <Button Type="primary" Shape="round" NoSpanWrap>
-                    <ElpidaIcon Text="x86-64 (.zip)" IconName="download"/>
-                </Button>
-                <a href="https://gitlab.com/dev-hood/elpida/elpida/-/jobs/artifacts/master/raw/Elpida-latest-x86_64.zip.SHA256SUMS?job=deploy:windows">sha256sum</a>
-            </div>
-        </Card>
-    </AntDesign.Col>
+</h2>
+<div class="download-group">
+    <LinkButton Href="" Size="Size.Small">
+        <IconWithText Text="x86-64 (.zip)" IconName="download"/>
+    </LinkButton>
+    <NavLink href="https://gitlab.com/dev-hood/elpida/elpida/-/jobs/artifacts/master/raw/Elpida-latest-x86_64.zip.SHA256SUMS?job=deploy:windows">
+        sha256sum
+    </NavLink>
+</div>
 
-    <AntDesign.Col>
-        <Card Title="Linux">
-            <div class="download-group">
-                <Button Type="primary" Shape="round" NoSpanWrap>
-                    <ElpidaIcon Text="x86-64 (.AppImage)" IconName="download"/>
-                </Button>
-                <a href="https://gitlab.com/dev-hood/elpida/elpida/-/jobs/artifacts/master/raw/Elpida-latest-x86_64.zip.SHA256SUMS?job=deploy:windows">sha256sum</a>
-            </div>
-            <div class="download-group">
-                <Button Type="primary" Shape="round" NoSpanWrap>
-                    <ElpidaIcon Text="AArch64 (.AppImage)" IconName="download"/>
-                </Button>
-                <a href="https://gitlab.com/dev-hood/elpida/elpida/-/jobs/artifacts/master/raw/Elpida-latest-x86_64.zip.SHA256SUMS?job=deploy:windows">sha256sum</a>
-            </div>
-        </Card>
-    </AntDesign.Col>
-</Row>
+<div class="download-group">
+    <LinkButton Href="" Size="Size.Small">
+        <IconWithText Text="x86-64 (.AppImage)" IconName="download"/>
+    </LinkButton>
+    <a href="https://gitlab.com/dev-hood/elpida/elpida/-/jobs/artifacts/master/raw/Elpida-latest-x86_64.zip.SHA256SUMS?job=deploy:windows">sha256sum</a>
+</div>
+<div class="download-group">
+    <LinkButton Href="" Size="Size.Small">
+        <IconWithText Text="AArch64 (.AppImage)" IconName="download"/>
+    </LinkButton>
+    <NavLink href="https://gitlab.com/dev-hood/elpida/elpida/-/jobs/artifacts/master/raw/Elpida-latest-x86_64.zip.SHA256SUMS?job=deploy:windows">
+        sha256sum
+    </NavLink>
+</div>
 
-<Divider/>
+<hr/>
 
-<Title Level="4">
+<h2>
     Sources:
-</Title>
-<Row Gutter="16">
-    <AntDesign.Col>
-        <Card Title="Application">
-            <Button Type="primary" Shape="round" NoSpanWrap>
-                <ElpidaIcon Text="Sources (.tar.gz)" IconName="download"/>
-            </Button>
-        </Card>
-    </AntDesign.Col>
+</h2>
 
-    <AntDesign.Col>
-        <Card Title="Web stack">
-            <Button Type="primary" Shape="round" NoSpanWrap>
-                <ElpidaIcon Text="Sources (.tar.gz)" IconName="download"/>
-            </Button>
-        </Card>
-    </AntDesign.Col>
-</Row>
+<LinkButton Href="" Size="Size.Small">
+    <IconWithText Text="Sources (.tar.gz)" IconName="download"/>
+</LinkButton>
 
-<Divider/>
+<LinkButton Href="" Size="Size.Small">
+    <IconWithText Text="Sources (.tar.gz)" IconName="download"/>
+</LinkButton>
 
-<Title Level="3">
+<hr/>
+
+<h2>
     How to check the files for integrity
-</Title>
-<Paragraph>
+</h2>
+<p>
     It is advised to check the downloaded files for integrity. For this we provide checksums for each binary file.
-</Paragraph>
+</p>
 
-<Title Level="4">
+<h3>
     For Linux:
-</Title>
-<Paragraph>
+</h3>
+<p>
     Download the app image and SHA256SUMS(via the link bellow each download button) and place them on the same
     directory.
     Open a terminal and navigate
     on that directory. The enter the following command:
-</Paragraph>
-<Text Code Copyable>
+</p>
+<code>
     sha256sum -c SHA256SUMS
-</Text>
-<Paragraph>
+</code>
+<p>
     It should output:
-</Paragraph>
-<Text Code Copyable>
+</p>
+<code>
     ./Elpida-latest-x86_64.AppImage: OK
-</Text>
-<Paragraph>
+</code>
+<p>
     If it outputs something like this:
-</Paragraph>
-<Text Code>
+</p>
+<code>
     ./Elpida-latest-x86_64.AppImage: FAIL <br/>
     sha256sum: WARNING: 1 computed checksum did NOT match
-</Text>
-<Paragraph>
+</code>
+<p>
     Then the file is corrupted. You should download again the main file and try again. If it fails all the time and
     there is not a
     problem
     with your setup (eg. Network connection, bad storage etc). Please report it to us by opening a ticket at the
-    <a href="https://gitlab.com/dev-hood/elpida/elpida">repository</a>
-</Paragraph>
+    <NavLink href="https://gitlab.com/dev-hood/elpida/elpida">
+        repository
+    </NavLink>
+</p>
 
-<Title Level="4">
+<h3>
     For Windows:
-</Title>
-<Paragraph>
+</h3>
+<p>
     Download the app image and SHA256SUMS(via the link bellow each download button) and place them on the same
     directory.
     Open a PowerShell and navigate
     on that directory. The enter the following command:
-</Paragraph>
-<Text Code Copyable>
+</p>
+<code>
     certUtil -hashfile .\Elpida-latest-x86_64.zip SHA256
-</Text>
-<Paragraph>
+</code>
+<p>
     It should output something like this:
-</Paragraph>
-<Text Code>
+</p>
+<code>
     SHA256 hash of .\Elpida-latest-x86_64.zip:<br/>
     'large random string'
-</Text>
-<Paragraph>
+</code>
+<p>
     Now you should compare the 'large random string' with the corresponding 'large random string' inside the SHA256SUMS
     file.
     Unfortunately there is no easy/straightforward way to do this on windows. You either copy both strings on a text
@@ -130,14 +118,8 @@
     If the check fails all the time and there is not a problem
     with your setup (eg. Network connection, bad storage etc). Please report it to us by opening a ticket at the
     <a href="https://gitlab.com/dev-hood/elpida/elpida">repository</a>
-</Paragraph>
-
-<style>
-    .download-group {
-        padding: 0.5em;
-    }
-</style>
+</p>
 
 @code {
-    
+
 }

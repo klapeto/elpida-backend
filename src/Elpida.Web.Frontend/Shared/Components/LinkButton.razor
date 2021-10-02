@@ -1,0 +1,23 @@
+﻿<NavLink href="@Href" class="@Classes[Size]" Match="NavLinkMatch.All">
+    @ChildContent
+</NavLink>
+
+@code {
+
+    [Parameter]
+    public string Href { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public Size Size { get; set; } = Size.Large;
+
+    private static Dictionary<Size, string> Classes = new()
+    {
+        [Size.Large] = "button",
+        [Size.Medium] = "button medium",
+        [Size.Small] = "button small",
+    };
+
+}

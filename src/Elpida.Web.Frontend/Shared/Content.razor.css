@@ -1,0 +1,12 @@
+﻿.content-container {
+    display: flex;
+    place-items: center;
+    flex-flow: column wrap;
+    overflow: auto;
+}
+
+.content-bg {
+    background-color: rgba(229,232,253,.85);
+    box-shadow: 0 0 1rem 1rem rgba(229,232,253,.85);
+    border-radius: .5rem;
+}

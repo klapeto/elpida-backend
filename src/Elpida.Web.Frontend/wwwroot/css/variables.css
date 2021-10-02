@@ -1,6 +1,20 @@
 ﻿:root {
     --nav-bg-color: #c7cdf9;
     --main-bg-color: #e5e8fd;
+    
     --font-color: #454545;
-    --content-bg-color: rgba(229,232,253,.95);
+    
+    --button-bg-color: #969be7;
+    --button-hover-bg-color:  #dddbf3;
+    --button-active-bg-color: #dddbf3;
+
+    --button-fg-color: #fff;
+
+    --border-color: #9e9fee;
+    --hr-color: #abade4;
+    --content-bg-color: rgba(229,232,253,.85);
+    
+    --code-bg-color: #edf4f9;
+    
+    --shadow: 0 .2rem .4rem 0 rgba(0,0,0,.14);
 }
