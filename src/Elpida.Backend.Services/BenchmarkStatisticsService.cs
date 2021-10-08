@@ -109,30 +109,7 @@ namespace Elpida.Backend.Services
 			await transaction.CommitAsync(cancellationToken);
 		}
 
-		protected override Task<BenchmarkStatisticsModel> ProcessDtoAndCreateModelAsync(
-			BenchmarkStatisticsDto dto,
-			CancellationToken cancellationToken
-		)
-		{
-			return Task.FromResult(
-				new BenchmarkStatisticsModel
-				{
-					Id = dto.Id,
-					CpuId = dto.Cpu.Id,
-					BenchmarkId = dto.Benchmark.Id,
-					Max = dto.Max,
-					Mean = dto.Mean,
-					Min = dto.Min,
-					Tau = dto.Tau,
-					SampleSize = dto.SampleSize,
-					StandardDeviation = dto.StandardDeviation,
-					MarginOfError = dto.MarginOfError,
-					FrequencyClasses = JsonConvert.SerializeObject(dto.Classes),
-				}
-			);
-		}
-
-		protected override IEnumerable<FilterExpression> GetFilterExpressions()
+		public override IEnumerable<FilterExpression> GetFilterExpressions()
 		{
 			if (StatisticsExpressions != null)
 			{
@@ -158,6 +135,29 @@ namespace Elpida.Backend.Services
 				.ToArray();
 
 			return StatisticsExpressions;
+		}
+
+		protected override Task<BenchmarkStatisticsModel> ProcessDtoAndCreateModelAsync(
+			BenchmarkStatisticsDto dto,
+			CancellationToken cancellationToken
+		)
+		{
+			return Task.FromResult(
+				new BenchmarkStatisticsModel
+				{
+					Id = dto.Id,
+					CpuId = dto.Cpu.Id,
+					BenchmarkId = dto.Benchmark.Id,
+					Max = dto.Max,
+					Mean = dto.Mean,
+					Min = dto.Min,
+					Tau = dto.Tau,
+					SampleSize = dto.SampleSize,
+					StandardDeviation = dto.StandardDeviation,
+					MarginOfError = dto.MarginOfError,
+					FrequencyClasses = JsonConvert.SerializeObject(dto.Classes),
+				}
+			);
 		}
 
 		protected override BenchmarkStatisticsDto ToDto(BenchmarkStatisticsModel model)

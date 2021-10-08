@@ -1,34 +1,37 @@
 ﻿@page "/Download"
 
 @using Elpida.Web.Frontend.Shared.Components
+@using Elpida.Web.Frontend.Services
+
+@inject DownloadService _downloadService;
 
 <h1>Downloads</h1>
 
 <h2>
-    Binaries:
+    Binaries
 </h2>
-<div class="download-group">
-    <LinkButton Href="" Size="Size.Small">
-        <IconWithText Text="x86-64 (.zip)" IconName="download"/>
-    </LinkButton>
-    <NavLink href="https://gitlab.com/dev-hood/elpida/elpida/-/jobs/artifacts/master/raw/Elpida-latest-x86_64.zip.SHA256SUMS?job=deploy:windows">
-        sha256sum
-    </NavLink>
-</div>
+
+<p>We provide standalone binaries for a variety of operating systems and cpu architecures:</p>
 
 <div class="download-group">
-    <LinkButton Href="" Size="Size.Small">
-        <IconWithText Text="x86-64 (.AppImage)" IconName="download"/>
-    </LinkButton>
-    <a href="https://gitlab.com/dev-hood/elpida/elpida/-/jobs/artifacts/master/raw/Elpida-latest-x86_64.zip.SHA256SUMS?job=deploy:windows">sha256sum</a>
-</div>
-<div class="download-group">
-    <LinkButton Href="" Size="Size.Small">
-        <IconWithText Text="AArch64 (.AppImage)" IconName="download"/>
-    </LinkButton>
-    <NavLink href="https://gitlab.com/dev-hood/elpida/elpida/-/jobs/artifacts/master/raw/Elpida-latest-x86_64.zip.SHA256SUMS?job=deploy:windows">
-        sha256sum
-    </NavLink>
+    @foreach (var group in _downloadService.BinariesDownloadLinks.GroupBy(l => l.Name))
+    {
+        <GroupBox Title="@group.Key">
+            @foreach (var link in group)
+            {
+                <div class="download-links-container">
+                    <LinkButton Href="@link.MainLink" Size="Size.Small">
+                        <IconWithText IconName="download">
+                            @link.Architecture (.@link.FileType)
+                        </IconWithText>
+                    </LinkButton>
+                    <NavLink href="@link.ChecksumLink">
+                        sha256sum
+                    </NavLink>
+                </div>
+            }
+        </GroupBox>
+    }
 </div>
 
 <hr/>
@@ -36,15 +39,22 @@
 <h2>
     Sources:
 </h2>
+<p>You can also download the sources of both the application and the web stack:</p>
 
-<LinkButton Href="" Size="Size.Small">
-    <IconWithText Text="Sources (.tar.gz)" IconName="download"/>
-</LinkButton>
-
-<LinkButton Href="" Size="Size.Small">
-    <IconWithText Text="Sources (.tar.gz)" IconName="download"/>
-</LinkButton>
-
+<div class="download-group">
+    @foreach (var link in _downloadService.SourcesDownloadLinks)
+    {
+        <GroupBox Title="@link.Name">
+            <div class="download-links-container">
+                <LinkButton Href="@link.MainLink" Size="Size.Small">
+                    <IconWithText IconName="download">
+                        @link.Architecture (.@link.FileType)
+                    </IconWithText>
+                </LinkButton>
+            </div>
+        </GroupBox>
+    }
+</div>
 <hr/>
 
 <h2>
@@ -63,22 +73,22 @@
     Open a terminal and navigate
     on that directory. The enter the following command:
 </p>
-<code>
+<kbd>
     sha256sum -c SHA256SUMS
-</code>
+</kbd>
 <p>
     It should output:
 </p>
-<code>
+<samp>
     ./Elpida-latest-x86_64.AppImage: OK
-</code>
+</samp>
 <p>
     If it outputs something like this:
 </p>
-<code>
+<samp>
     ./Elpida-latest-x86_64.AppImage: FAIL <br/>
     sha256sum: WARNING: 1 computed checksum did NOT match
-</code>
+</samp>
 <p>
     Then the file is corrupted. You should download again the main file and try again. If it fails all the time and
     there is not a
@@ -98,16 +108,16 @@
     Open a PowerShell and navigate
     on that directory. The enter the following command:
 </p>
-<code>
+<kbd>
     certUtil -hashfile .\Elpida-latest-x86_64.zip SHA256
-</code>
+</kbd>
 <p>
     It should output something like this:
 </p>
-<code>
+<samp>
     SHA256 hash of .\Elpida-latest-x86_64.zip:<br/>
     'large random string'
-</code>
+</samp>
 <p>
     Now you should compare the 'large random string' with the corresponding 'large random string' inside the SHA256SUMS
     file.

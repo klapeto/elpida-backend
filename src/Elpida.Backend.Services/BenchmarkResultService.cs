@@ -111,38 +111,7 @@ namespace Elpida.Backend.Services
 			return ids;
 		}
 
-		protected override BenchmarkResultDto ToDto(BenchmarkResultModel model)
-		{
-			return model.ToDto();
-		}
-
-		protected override Expression<Func<BenchmarkResultModel, BenchmarkResultPreviewDto>>
-			GetPreviewConstructionExpression()
-		{
-			return m => new BenchmarkResultPreviewDto(
-				m.Id,
-				m.Benchmark.Uuid,
-				m.TimeStamp,
-				m.Benchmark.Name,
-				m.Os.Name,
-				m.Topology.Cpu.Vendor,
-				m.Topology.Cpu.ModelName,
-				m.Benchmark.ScoreUnit,
-				m.Score
-			);
-		}
-
-		protected override Task<BenchmarkResultModel> ProcessDtoAndCreateModelAsync(
-			BenchmarkResultDto dto,
-			CancellationToken cancellationToken
-		)
-		{
-			throw new NotSupportedException(
-				$"You cannot add a result in the usual way. Please use '{nameof(AddBatchAsync)}'"
-			);
-		}
-
-		protected override IEnumerable<FilterExpression> GetFilterExpressions()
+		public override IEnumerable<FilterExpression> GetFilterExpressions()
 		{
 			if (ResultFilters != null)
 			{
@@ -174,6 +143,37 @@ namespace Elpida.Backend.Services
 				.ToArray();
 
 			return ResultFilters;
+		}
+
+		protected override BenchmarkResultDto ToDto(BenchmarkResultModel model)
+		{
+			return model.ToDto();
+		}
+
+		protected override Expression<Func<BenchmarkResultModel, BenchmarkResultPreviewDto>>
+			GetPreviewConstructionExpression()
+		{
+			return m => new BenchmarkResultPreviewDto(
+				m.Id,
+				m.Benchmark.Uuid,
+				m.TimeStamp,
+				m.Benchmark.Name,
+				m.Os.Name,
+				m.Topology.Cpu.Vendor,
+				m.Topology.Cpu.ModelName,
+				m.Benchmark.ScoreUnit,
+				m.Score
+			);
+		}
+
+		protected override Task<BenchmarkResultModel> ProcessDtoAndCreateModelAsync(
+			BenchmarkResultDto dto,
+			CancellationToken cancellationToken
+		)
+		{
+			throw new NotSupportedException(
+				$"You cannot add a result in the usual way. Please use '{nameof(AddBatchAsync)}'"
+			);
 		}
 
 		private async Task<long> AddAsync(

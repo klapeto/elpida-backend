@@ -73,6 +73,29 @@ namespace Elpida.Backend.Services
 			);
 		}
 
+		public override IEnumerable<FilterExpression> GetFilterExpressions()
+		{
+			if (FilterExpressions != null)
+			{
+				return FilterExpressions;
+			}
+
+			FilterExpressions = new[]
+				{
+					FiltersTransformer.CreateFilter<TopologyModel, int>("cpuPackages", model => model.TotalPackages),
+					FiltersTransformer.CreateFilter<TopologyModel, int>("cpuNumaNodes", model => model.TotalNumaNodes),
+					FiltersTransformer.CreateFilter<TopologyModel, int>("cpuCores", model => model.TotalPhysicalCores),
+					FiltersTransformer.CreateFilter<TopologyModel, int>(
+						"cpuLogicalCores",
+						model => model.TotalLogicalCores
+					),
+				}
+				.Concat(_cpuService.ConstructCustomFilters<TopologyModel, CpuModel>(m => m.Cpu))
+				.ToArray();
+
+			return FilterExpressions;
+		}
+
 		protected override Expression<Func<TopologyModel, TopologyPreviewDto>> GetPreviewConstructionExpression()
 		{
 			return m => new TopologyPreviewDto(
@@ -107,29 +130,6 @@ namespace Elpida.Backend.Services
 					Root = serializedRoot,
 				}
 			);
-		}
-
-		protected override IEnumerable<FilterExpression> GetFilterExpressions()
-		{
-			if (FilterExpressions != null)
-			{
-				return FilterExpressions;
-			}
-
-			FilterExpressions = new[]
-				{
-					FiltersTransformer.CreateFilter<TopologyModel, int>("cpuPackages", model => model.TotalPackages),
-					FiltersTransformer.CreateFilter<TopologyModel, int>("cpuNumaNodes", model => model.TotalNumaNodes),
-					FiltersTransformer.CreateFilter<TopologyModel, int>("cpuCores", model => model.TotalPhysicalCores),
-					FiltersTransformer.CreateFilter<TopologyModel, int>(
-						"cpuLogicalCores",
-						model => model.TotalLogicalCores
-					),
-				}
-				.Concat(_cpuService.ConstructCustomFilters<TopologyModel, CpuModel>(m => m.Cpu))
-				.ToArray();
-
-			return FilterExpressions;
 		}
 
 		protected override TopologyDto ToDto(TopologyModel model)

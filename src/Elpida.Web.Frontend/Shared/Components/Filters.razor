@@ -1,0 +1,62 @@
+@using Elpida.Backend.Services.Abstractions
+@using Elpida.Web.Frontend.Data
+@using System.Reflection
+@using System.Diagnostics
+
+<EditForm EditContext="@_editContext">
+    @foreach (var filter in FilterExpressions)
+    {
+        @GetInput(filter)
+    }
+</EditForm>
+
+
+@code {
+
+    [Parameter]
+    public IEnumerable<FilterExpression> FilterExpressions { get; set; }
+
+    [Parameter]
+    public EventCallback<QueryRequest> Submitted { get; set; }
+
+    private List<Filter> _filters = new();
+
+    private EditContext _editContext;
+    
+    protected override void OnInitialized()
+    {
+        _editContext = new(_filters);
+    }
+
+    private RenderFragment GetInput(FilterExpression expression)
+    {
+        if (((PropertyInfo)expression.Expression.Member).PropertyType.IsPrimitive)
+        {
+            var filter = new Filter<int>
+            {
+                Name = expression.Name,
+            };
+            _filters.Add(filter);
+            return @<InputNumber TValue="int" @bind-Value="filter.Value" DisplayName="@expression.Name"/>;
+        }
+        else if (((PropertyInfo)expression.Expression.Member).PropertyType == typeof(string))
+        {
+            var filter = new Filter<string>
+            {
+                Name = expression.Name,
+            };
+            _filters.Add(filter);
+            return @<InputText @bind-Value="filter.Value"  DisplayName="@expression.Name"/>;
+        } 
+        else
+        {
+            var filter = new Filter<DateTime>
+            {
+                Name = expression.Name,
+            };
+            _filters.Add(filter);
+            return @<InputDate TValue="DateTime" @bind-Value="filter.Value" DisplayName="@expression.Name"/>;
+        }
+    }
+
+}

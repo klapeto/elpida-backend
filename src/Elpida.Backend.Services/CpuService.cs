@@ -48,6 +48,11 @@ namespace Elpida.Backend.Services
 			FiltersTransformer.CreateFilter<CpuModel, long>("cpuFrequency", model => model.Frequency),
 		};
 
+		public override IEnumerable<FilterExpression> GetFilterExpressions()
+		{
+			return CpuExpressions;
+		}
+
 		protected override Expression<Func<CpuModel, CpuPreviewDto>> GetPreviewConstructionExpression()
 		{
 			return m => new CpuPreviewDto(m.Id, m.Vendor, m.ModelName);
@@ -69,11 +74,6 @@ namespace Elpida.Backend.Services
 					AdditionalInfo = JsonConvert.SerializeObject(dto.AdditionalInfo),
 				}
 			);
-		}
-
-		protected override IEnumerable<FilterExpression> GetFilterExpressions()
-		{
-			return CpuExpressions;
 		}
 
 		protected override CpuDto ToDto(CpuModel model)

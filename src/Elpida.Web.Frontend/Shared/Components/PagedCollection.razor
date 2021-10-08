@@ -1,0 +1,42 @@
+@using Elpida.Backend.Services.Abstractions.Interfaces
+@using Elpida.Backend.Services.Abstractions
+@using System.Threading
+
+@typeparam TDto
+@typeparam TPreview
+
+<h3>PagedCollection</h3>
+
+<Filters FilterExpressions="@Service.GetFilterExpressions()"></Filters>
+
+@if (_currentPage != null)
+{
+    <div>
+        @foreach (var item in _currentPage.Items)
+        {
+            @ChildContent(item)
+        }
+    </div>
+}
+
+
+@code {
+
+    [Parameter]
+    public IService<TDto, TPreview> Service { get; set; }
+
+    [Parameter]
+    public RenderFragment<TPreview> ChildContent { get; set; }
+
+    private List<FilterExpression> _filterExpressions;
+
+    private PagedResult<TPreview>? _currentPage;
+
+    private QueryRequest _currentQuery = new(new PageRequest(0, 10), null, null, false);
+
+    private async Task LoadPage(int pageNumber)
+    {
+        _currentPage = await Service.GetPagedPreviewsAsync(_currentQuery, CancellationToken.None);
+    }
+
+}

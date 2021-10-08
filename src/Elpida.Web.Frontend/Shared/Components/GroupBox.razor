@@ -1,0 +1,19 @@
+<section class="groupBox">
+    <h3 class="groupBoxHeader">
+        @Title
+    </h3>
+    <div class="groupBoxContent">
+       @ChildContent
+    </div>
+</section>
+
+
+@code {
+
+    [Parameter]
+    public string Title { get; set; } = string.Empty;
+    
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+}

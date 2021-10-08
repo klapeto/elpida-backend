@@ -6,9 +6,9 @@
         @_elpidaIcons.IconsMap[IconName]
     }
     
-    @if (Text != null)
+    @if (ChildContent != null)
     {
-        <span class="icon-text">@Text</span>
+        <span class="icon-text">@ChildContent</span>
     }
 </div>
 
@@ -20,5 +20,6 @@
     public string IconName { get; set; } = ElpidaIconsService.DefaultIconName;
     
     [Parameter]
-    public string? Text { get; set; }
+    public RenderFragment? ChildContent { get; set; }
+
 }

@@ -8,6 +8,13 @@
 
       }
     },
+    "Elpida.Backend.DataUpdater (Migrate)": {
+      "commandName": "Project",
+      "commandLineArgs": "migrate",
+      "environmentVariables": {
+
+      }
+    },
     "Elpida.Backend.DataUpdater (Seed results)": {
       "commandName": "Project",
       "commandLineArgs": "seed",

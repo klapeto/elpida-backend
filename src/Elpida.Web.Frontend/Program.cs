@@ -19,6 +19,7 @@ namespace Elpida.Web.Frontend
 			);
 
 			builder.Services.AddSingleton<ElpidaIconsService>();
+			builder.Services.AddSingleton<DownloadService>();
 
 			await builder.Build().RunAsync();
 		}

@@ -47,6 +47,11 @@ namespace Elpida.Backend.Services
 		{
 		}
 
+		public override IEnumerable<FilterExpression> GetFilterExpressions()
+		{
+			return OsFilters;
+		}
+
 		protected override Expression<Func<OsModel, OsDto>> GetPreviewConstructionExpression()
 		{
 			return m => new OsDto(m.Id, m.Category, m.Name, m.Version);
@@ -63,11 +68,6 @@ namespace Elpida.Backend.Services
 					Version = dto.Version,
 				}
 			);
-		}
-
-		protected override IEnumerable<FilterExpression> GetFilterExpressions()
-		{
-			return OsFilters;
 		}
 
 		protected override OsDto ToDto(OsModel model)

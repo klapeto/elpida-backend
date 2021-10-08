@@ -11,4 +11,9 @@
         <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Elpida.Backend.Services.Abstractions\Elpida.Backend.Services.Abstractions.csproj" />
+      <ProjectReference Include="..\Elpida.Backend.Services\Elpida.Backend.Services.csproj" />
+    </ItemGroup>
+
 </Project>

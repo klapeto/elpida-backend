@@ -10,98 +10,113 @@
     a Qt application and a set of predefined benchmarks for measuring computer hardware capabilities.
 </p>
 
-@* <Carousel Autoplay="TimeSpan.FromSeconds(2)"> *@
-@*     <CarouselSlick> *@
-@*         <div class="screenshot-container"> *@
-@*             <img alt="example" class="screenshot" src="./assets/elpida-qt-scrn-01.png"/> *@
-@*         </div> *@
-@* *@
-@*     </CarouselSlick> *@
-@*     <CarouselSlick> *@
-@*         <div class="screenshot-container"> *@
-@*             <img alt="example" class="screenshot" src="./assets/elpida-qt-scrn-02.png"/> *@
-@*         </div> *@
-@*     </CarouselSlick> *@
-@*     <CarouselSlick> *@
-@*         <div class="screenshot-container"> *@
-@*             <img alt="example" class="screenshot" src="./assets/elpida-qt-scrn-03.png"/> *@
-@*         </div> *@
-@*     </CarouselSlick> *@
-@* </Carousel> *@
-
 <hr/>
 
 <h2>Download</h2>
 <div>
     <LinkButton Href="/Windows" Size="Size.Small">
-        <IconWithText Text="Windows x86-64" IconName="download"/>
+        <IconWithText IconName="download">
+            Windows x86-64
+        </IconWithText>
     </LinkButton>
     <LinkButton Href="/Windows" Size="Size.Small">
-        <IconWithText Text="Linux x86-64" IconName="download"/>
+        <IconWithText IconName="download">
+            Linux x86-64
+        </IconWithText>
     </LinkButton>
 </div>
 
 <hr/>
 
 <h2>Features:</h2>
-<p>
-    <ul>
-        <li>
-            <strong>Variety of pre-defined benchmarks.</strong> The Stand alone application comes
-            with predefined
-            benchmarks for testing hardware, ranging from Memory bandwidth/Latency to PNG encoding and Storage Bandwithdth
-            benchmarks.
-        </li>
-        <li>
-            <strong>Easy benchmark creation.</strong> You only create specifications and
-            implementations of the tasks of your benchmark.
-            More technical details are handled by default by the framework.
-        </li>
-        <li>
-            <strong>Automatic chunk based Multithreading.</strong> You create a task for a single
-            thread execution. Then if your task can
-            be broken into multiple threads to take a chunk of the input, you only have to set up a flag on your task. The
-            rest will be handled by the framework. You only need to create your task as it would be executed as a single
-            thread.
-        </li>
-        <li>
-            <strong>NUMA-Awareness for tasks.</strong> You don't have to be aware of
-            NUMA when creating your tasks. CPU/Memory pinning
-            happens automatically before each task execution. So your task will always have local memory (if possible) and
-            will
-            be pinned to the nearest CPU to that memory region.
-        </li>
-        <li>
-            <strong>Plugin based benchmark loading.</strong> Benchmarks are defined in plugins
-            that are dynamically loaded during
-            execution. This means you can add more plugins on the load folder and the application will detect them as new.
-            This way the community
-            can share plugins to use outside of the official ones.
-        </li>
-        <li>
-            <strong>CPU capabilities/Topology detection.</strong> You want to use specific
-            instructions found
-            on specific CPUs for your task? No problem. The framework can provide you with information on what the current
-            hardware is capable of as well the whole system Topology, thanks to
-            <a
-                href="https://www.open-mpi.org/projects/hwloc/">
-                hwloc
-            </a>.
-        </li>
-        <li>
-            <strong>Affinity based Benchmark runs.</strong> The stand alone application allows you
-            to run benchmarks on specific CPUs Cores/Threads.
-            With the Topology component you can select from the whole Machine (multiple packages) down to specific EU
-            (Thread).
-        </li>
-        <li>
-            <strong>Anonymous result postings.</strong> After each benchmark, the results are
-            posted anonymously on
-            the official Elpida site. Data is transparent and no personal info is sent. The only info used is regarding the
-            system benchmarked and the results.
-        </li>
-    </ul>
-</p>
+<dl>
+
+    <dt>
+        <b>Variety of pre-defined benchmarks.</b>
+    </dt>
+    <dd>
+        The Stand alone application comes
+        with predefined
+        benchmarks for testing hardware, ranging from Memory bandwidth/Latency to PNG encoding and Storage Bandwithdth
+        benchmarks.
+    </dd>
+
+    <dt>
+        <b>Easy benchmark creation.</b>
+    </dt>
+    <dd>
+        You only create specifications and
+        implementations of the tasks of your benchmark.
+        More technical details are handled by default by the framework.
+    </dd>
+
+    <dt>
+        <b>Automatic chunk based Multithreading.</b>
+    </dt>
+    <dd>
+        You create a task for a single
+        thread execution. Then if your task can
+        be broken into multiple threads to take a chunk of the input, you only have to set up a flag on your task. The
+        rest will be handled by the framework. You only need to create your task as it would be executed as a single
+        thread.
+    </dd>
+
+    <dt>
+        <b>NUMA-Awareness for tasks.</b>
+    </dt>
+    <dd>
+        You don't have to be aware of
+        NUMA when creating your tasks. CPU/Memory pinning
+        happens automatically before each task execution. So your task will always have local memory (if possible) and
+        will
+        be pinned to the nearest CPU to that memory region.
+    </dd>
+
+    <dt>
+        <b>Plugin based benchmark loading.</b>
+    </dt>
+    <dd>
+        Benchmarks are defined in plugins
+        that are dynamically loaded during
+        execution. This means you can add more plugins on the load folder and the application will detect them as new.
+        This way the community
+        can share plugins to use outside of the official ones.
+    </dd>
+
+    <dt>
+        <b>CPU capabilities/Topology detection.</b>
+    </dt>
+    <dd>
+        You want to use specific
+        instructions found
+        on specific CPUs for your task? No problem. The framework can provide you with information on what the current
+        hardware is capable of as well the whole system Topology, thanks to
+        <a
+            href="https://www.open-mpi.org/projects/hwloc/">
+            hwloc
+        </a>.
+    </dd>
+
+    <dt>
+        <b>Affinity based Benchmark runs.</b>
+    </dt>
+    <dd>
+        The stand alone application allows you
+        to run benchmarks on specific CPUs Cores/Threads.
+        With the Topology component you can select from the whole Machine (multiple packages) down to specific EU
+        (Thread).
+    </dd>
+
+    <dt>
+        <b>Anonymous result postings.</b>
+    </dt>
+    <dd>
+        After each benchmark, the results are
+        posted anonymously on
+        the official Elpida site. Data is transparent and no personal info is sent. The only info used is regarding the
+        system benchmarked and the results.
+    </dd>
+</dl>
 
 <strong>Note: This public beta is under heavy development. Expect breaking changes, downtimes, bugs etc.</strong>
 

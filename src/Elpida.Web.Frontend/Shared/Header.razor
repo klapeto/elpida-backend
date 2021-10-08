@@ -1,7 +1,7 @@
 ﻿@using Elpida.Web.Frontend.Services
 @using Elpida.Web.Frontend.Shared.Components
 
-<div class="header">
+<header class="header">
     <div class="container header-container">
         <NavLink href="/" class="flex-center">
             <img class="logo" src="./assets/Elpida_Logo.svg" alt="Elpida Logo"/>
@@ -10,27 +10,39 @@
             <div class="menu-toggler" @onclick="ToggleNavMenu"></div>
             <div class="nav-links @AdditionalNavCssClass">
                 <LinkButton Href="/">
-                    <IconWithText IconName="home" Text="Home"/>
+                    <IconWithText IconName="home">
+                        Home
+                    </IconWithText>
                 </LinkButton>
                 <LinkButton Href="/download">
-                    <IconWithText IconName="download" Text="Download"/>
+                    <IconWithText IconName="download">
+                        Download
+                    </IconWithText>
                 </LinkButton>
                 <LinkButton Href="/database">
-                    <IconWithText IconName="database" Text="Database"/>
+                    <IconWithText IconName="database">
+                        Database
+                    </IconWithText>
                 </LinkButton>
                 <LinkButton Href="/statistics">
-                    <IconWithText IconName="statistics" Text="Statistics"/>
+                    <IconWithText IconName="statistics">
+                        Statistics
+                    </IconWithText>
                 </LinkButton>
                 <LinkButton Href="/results">
-                    <IconWithText IconName="result" Text="Results"/>
+                    <IconWithText IconName="result">
+                        Results
+                    </IconWithText>
                 </LinkButton>
                 <LinkButton Href="/about">
-                    <IconWithText IconName="elpida" Text="About"/>
+                    <IconWithText IconName="elpida">
+                        About
+                    </IconWithText>
                 </LinkButton>
             </div>
         </nav>
     </div>
-</div>
+</header>
 
 @code {
 
