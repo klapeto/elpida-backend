@@ -33,13 +33,6 @@ namespace Elpida.Backend.Tests.Validators.Dtos
 			yield return (new CpuCacheDto(new string('A', 80), "Test", 456, 465),
 				$"very large {nameof(CpuCacheDto.Name)}");
 
-			yield return (new CpuCacheDto("Test", null!, 456, 465), $"null {nameof(CpuCacheDto.Associativity)}");
-			yield return (new CpuCacheDto("Test", string.Empty, 456, 465),
-				$"very large {nameof(CpuCacheDto.Associativity)}");
-
-			yield return (new CpuCacheDto("Test", " ", 456, 465),
-				$"very large {nameof(CpuCacheDto.Associativity)}");
-
 			yield return (new CpuCacheDto("Test", new string('A', 80), 456, 465),
 				$"empty {nameof(CpuCacheDto.Associativity)}");
 

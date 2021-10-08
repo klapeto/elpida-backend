@@ -137,6 +137,12 @@ namespace Elpida.Backend
 							"https://staging.elpida.dev"
 						);
 					}
+					else
+					{
+						builder.WithOrigins(
+							"*"
+						);
+					}
 
 					builder.WithMethods(HttpMethods.Get, HttpMethods.Post)
 						.WithHeaders(HeaderNames.ContentType, HeaderNames.Accept)
