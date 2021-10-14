@@ -1,0 +1,30 @@
+@using Elpida.Web.Frontend.Models.Filters
+@using Elpida.Web.Frontend.Models
+@using Elpida.Web.Frontend.Services
+
+
+<label class="raw-value-filter">
+    <span>@Model.Name</span>
+    <ComparisonSelect AllowedComparisons="@ComparisonType.NumberComparisons" @bind-Comparison="Model.Comparison"/>
+    <div class="range-filter-slider">
+        <input type="range" @bind="Model.Value" min="@Model.Min" max="@Model.Max"/>
+        <output class="range-value">@GetValueString()</output>
+    </div>
+</label>
+
+
+@code {
+
+    [Parameter]
+    public RangeFilterModel Model { get; set; }
+
+    private string GetValueString()
+    {
+        if (Model.Value == null) return "N/A";
+
+        var (value, suffix) = ValueConverterService.ConvertToSI(Model.Value.Value);
+
+        return $"{value}{suffix}";
+    }
+
+}

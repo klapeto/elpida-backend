@@ -1,0 +1,16 @@
+@using Elpida.Backend.Services.Abstractions
+@using Elpida.Web.Frontend.Models
+@using Elpida.Web.Frontend.Models.Filters
+
+<label class="raw-value-filter">
+    <span>@Model.Name</span>
+    <ComparisonSelect AllowedComparisons="@ComparisonType.NumberComparisons" @bind-Comparison="Model.Comparison"/>
+    <InputNumber DisplayName="@Model.Name" @bind-Value="Model.Value"/>
+</label>
+
+@code {
+
+    [Parameter]
+    public NumberFilterModel Model { get; set; }
+
+}

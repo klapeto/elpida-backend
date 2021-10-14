@@ -1,4 +1,4 @@
-﻿<NavLink href="@Href" class="@Classes[Size]" Match="NavLinkMatch.All">
+﻿<NavLink href="@Href" class="@GetClass()" Match="NavLinkMatch.All">
     @ChildContent
 </NavLink>
 
@@ -12,6 +12,14 @@
 
     [Parameter]
     public Size Size { get; set; } = Size.Large;
+    
+    [Parameter]
+    public string Class { get; set; } = string.Empty;
+
+    private string GetClass()
+    {
+        return $"{Classes[Size]} {Class}";
+    }
 
     private static Dictionary<Size, string> Classes = new()
     {

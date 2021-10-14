@@ -1,0 +1,35 @@
+@page "/Database"
+@using Elpida.Web.Frontend.Models
+@using Elpida.Web.Frontend.Shared.Components
+
+<h1>Database</h1>
+
+
+<ul class="collection-container">
+
+    @foreach (var category in Categories)
+    {
+        <li class="collection-item">
+            <LinkButton Class="collection-link" Href="@category.Link">
+                <IconWithText IconName="@category.IconName">
+                    <span class="link-name">
+                       @category.Name 
+                    </span>
+                </IconWithText>
+            </LinkButton>
+        </li>
+    }
+</ul>
+
+@code {
+
+    private readonly CategoryModel[] Categories =
+    {
+        new("Results", "/Database/Results", "result"),
+        new("CPUs", "/Database/Cpus", "cpu"),
+        new("Benchmarks", "/Database/Benchmarks", "benchmark"),
+        new("Operating systems", "/Database/Operating-Systems", "operatingSystem"),
+        new("Elpida versions", "/Database/Elpida-Versions", "elpida"),
+    };
+
+}

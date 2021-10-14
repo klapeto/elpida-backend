@@ -1,0 +1,32 @@
+@using Elpida.Web.Frontend.Models
+
+<InputSelect TValue="string" @bind-Value="SelectedComparison">
+    @foreach (var comparison in AllowedComparisons)
+    {
+        <option value="@comparison.InternalName">@comparison.DisplayName</option>
+    }
+</InputSelect>
+
+@code {
+
+    [Parameter]
+    public IReadOnlyCollection<ComparisonType> AllowedComparisons { get; set; }
+    
+    [Parameter]
+    public EventCallback<string> ComparisonChanged { get; set; }
+    
+    [Parameter]
+    public string Comparison { get; set; }
+
+    protected override void OnInitialized()
+    {
+        SelectedComparison = AllowedComparisons.First().InternalName;
+    }
+
+    private string SelectedComparison
+    {
+        get => Comparison;
+        set => ComparisonChanged.InvokeAsync(value);
+    }
+    
+}

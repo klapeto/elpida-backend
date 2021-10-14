@@ -41,7 +41,5 @@ namespace Elpida.Backend.Services.Abstractions.Interfaces
 		Task<TDto> GetOrAddAsync(TDto dto, CancellationToken cancellationToken = default);
 
 		IEnumerable<FilterExpression> ConstructCustomFilters<T, TR>(Expression<Func<T, TR>> baseExpression);
-
-		IEnumerable<FilterExpression> GetFilterExpressions();
 	}
 }

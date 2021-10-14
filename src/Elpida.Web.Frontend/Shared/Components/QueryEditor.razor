@@ -1,0 +1,105 @@
+@using Elpida.Web.Frontend.Pages
+@using Microsoft.Extensions.Logging
+@using Elpida.Web.Frontend.Models.Filters
+@using Elpida.Web.Frontend.Shared.Components.Filters
+@using Elpida.Backend.Services.Abstractions
+@using Elpida.Web.Frontend.Models
+
+<EditForm EditContext="@_editContext" OnSubmit="@HandleSubmit" class="query-editor">
+    @foreach (var filter in Model.Filters)
+    {
+        @CreateView(filter)
+        <div>
+            <hr/>
+        </div>
+    }
+    
+    <label>
+        <span>Sort by</span>
+        <InputSelect TValue="string" @bind-Value="Model.SortBy">
+            <option value=""></option>
+            @foreach (var filter in Model.Filters)
+            {
+                <option value="@filter.InternalName">@filter.Name</option>
+            }
+        </InputSelect>
+    </label>
+
+
+    <div>
+        <hr/>
+    </div>
+
+
+    <label>
+        <span>Descending</span>
+        <InputCheckbox @bind-Value="Model.Descending"/>
+    </label>
+
+
+    <div>
+        <hr/>
+    </div>
+
+    <div>
+        <button type="submit">Submit</button>
+        <button type="reset" @onclick="Reset">Reset</button>
+    </div>
+
+</EditForm>
+
+@inject ILogger<QueryEditor> _logger;
+
+@code {
+
+    [Parameter]
+    public QueryModel Model { get; set; }
+
+    [Parameter]
+    public EventCallback Submitted { get; set; }
+
+    [Parameter]
+    public bool Descending { get; set; }
+
+    [Parameter]
+    public string? SortBy { get; set; }
+
+    private EditContext? _editContext;
+
+    protected override void OnInitialized()
+    {
+        _editContext = new EditContext(Model);
+    }
+
+    private async Task HandleSubmit()
+    {
+        await Submitted.InvokeAsync();
+    }
+
+    private void Reset()
+    {
+        foreach (var filterModel in Model.Filters)
+        {
+            filterModel.Reset();
+        }
+        _editContext = new EditContext(Model);
+    }
+
+    private RenderFragment CreateView(FilterModel filterModel)
+    {
+        switch (filterModel)
+        {
+            case RangeFilterModel rangeFilter:
+                return @<RangeFilterView Model="rangeFilter"/>;
+            case NumberFilterModel numberFilter:
+                return @<NumberFilterView Model="numberFilter"/>;
+            case DateTimeFilterModel dateTimeFilter:
+                return @<DateFilterView Model="dateTimeFilter"/>;
+            case StringFilterModel stringFilter:
+                return @<StringFilterView Model="stringFilter"/>;
+            default:
+                throw new NotImplementedException(filterModel.GetType().FullName);
+        }
+    }
+
+}

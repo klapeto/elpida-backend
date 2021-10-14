@@ -6,18 +6,22 @@ using System.Threading.Tasks;
 using Elpida.Backend.Services.Abstractions;
 using Elpida.Backend.Services.Abstractions.Dtos.Cpu;
 using Elpida.Backend.Services.Abstractions.Interfaces;
-using Elpida.Backend.Services.Utilities;
+using Elpida.Web.Frontend.Interfaces;
+using Elpida.Web.Frontend.Models.Filters;
 
 namespace Elpida.Web.Frontend.Services
 {
-	public class CpuService : ICpuService
+	public class CpuFrontEndService : ICpuService, IFrontendService<CpuDto, CpuPreviewDto>
 	{
 		public Task<CpuDto> GetSingleAsync(long id, CancellationToken cancellationToken = default)
 		{
 			throw new NotImplementedException();
 		}
 
-		public Task<PagedResult<CpuPreviewDto>> GetPagedPreviewsAsync(QueryRequest queryRequest, CancellationToken cancellationToken = default)
+		public Task<PagedResult<CpuPreviewDto>> GetPagedPreviewsAsync(
+			QueryRequest queryRequest,
+			CancellationToken cancellationToken = default
+		)
 		{
 			throw new NotImplementedException();
 		}
@@ -32,11 +36,12 @@ namespace Elpida.Web.Frontend.Services
 			throw new NotImplementedException();
 		}
 
-		public IEnumerable<FilterExpression> GetFilterExpressions()
+		public IEnumerable<FilterModel> CreateFilterModels()
 		{
-			yield return FiltersTransformer.CreateFilter<CpuDto, string>("cpuModelName", model => model.ModelName);
-			yield return FiltersTransformer.CreateFilter<CpuDto, string>("cpuVendor", model => model.Vendor);
-			yield return FiltersTransformer.CreateFilter<CpuDto, long>("cpuFrequency", model => model.Frequency);
+			yield return new StringFilterModel("CPU vendor", "cpuVendor");
+			yield return new NumberFilterModel("CPU frequency", "cpuFrequency");
+			yield return new DateTimeFilterModel("Start date", "startDate");
+			yield return new RangeFilterModel("CPU cores", "cpuCores", 1, 2000);
 		}
 	}
 }

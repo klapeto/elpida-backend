@@ -1,42 +1,67 @@
 @using Elpida.Backend.Services.Abstractions.Interfaces
 @using Elpida.Backend.Services.Abstractions
 @using System.Threading
+@using Elpida.Web.Frontend.Interfaces
+@using Elpida.Web.Frontend.Models
+@using Elpida.Web.Frontend.Models.Filters
+@using Elpida.Web.Frontend.Shared.Components.Filters
+@using Microsoft.Extensions.Logging
 
 @typeparam TDto
 @typeparam TPreview
 
 <h3>PagedCollection</h3>
 
-<Filters FilterExpressions="@Service.GetFilterExpressions()"></Filters>
+<button class="button non-a-button medium @QueryButtonActiveClass" @onclick="OnQueryClick">
+    <IconWithText IconName="query">
+        @QueryButtonVerb query
+    </IconWithText>
+</button>
+@if (_showQuery)
+{
+    <QueryEditor Model="_queryModel" Submitted="OnQuerySubmit"/>
+}
 
 @if (_currentPage != null)
 {
-    <div>
-        @foreach (var item in _currentPage.Items)
-        {
-            @ChildContent(item)
-        }
-    </div>
+    
 }
 
+@inject ILogger<PagedCollection<TDto, TPreview>> _logger;
 
 @code {
 
     [Parameter]
-    public IService<TDto, TPreview> Service { get; set; }
+    public IFrontendService<TDto, TPreview> Service { get; set; }
 
     [Parameter]
     public RenderFragment<TPreview> ChildContent { get; set; }
 
-    private List<FilterExpression> _filterExpressions;
+    private QueryModel? _queryModel;
 
-    private PagedResult<TPreview>? _currentPage;
+    private TPreview[]? _currentPage;
 
-    private QueryRequest _currentQuery = new(new PageRequest(0, 10), null, null, false);
+    private string? QueryButtonActiveClass => _showQuery ? "active" : null;
+    private string QueryButtonVerb => _showQuery ? "Hide" : "Show";
 
-    private async Task LoadPage(int pageNumber)
+    private bool _showQuery;
+
+    private void OnQueryClick()
     {
-        _currentPage = await Service.GetPagedPreviewsAsync(_currentQuery, CancellationToken.None);
+        _showQuery = !_showQuery;
+    }
+
+    protected override void OnInitialized()
+    {
+        _queryModel = new QueryModel(Service.CreateFilterModels());
+    }
+
+    private void OnQuerySubmit()
+    {
+        _logger.LogInformation("Query submitted: \n{Filters}\n{SortBy}\n{Descending}",
+            string.Join("\n\t", _queryModel.Filters.Where(f => f.IsSet).Select(f => f.ToString())),
+            _queryModel.SortBy,
+            _queryModel.Descending);
     }
 
 }

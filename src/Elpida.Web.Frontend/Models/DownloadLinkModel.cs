@@ -1,8 +1,8 @@
-namespace Elpida.Web.Frontend.Data
+namespace Elpida.Web.Frontend.Models
 {
-	public class DownloadLink
+	public class DownloadLinkModel
 	{
-		public DownloadLink(string name, string architecture, string fileType, string mainLink, string? checksumLink)
+		public DownloadLinkModel(string name, string architecture, string fileType, string mainLink, string? checksumLink)
 		{
 			Name = name;
 			Architecture = architecture;

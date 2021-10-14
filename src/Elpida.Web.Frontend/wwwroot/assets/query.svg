@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   sodipodi:docname="query.svg"
+   inkscape:version="1.0 (1.0+r73+1)"
+   id="svg1237"
+   version="1.1"
+   viewBox="0 0 16.933333 16.933333"
+   height="64"
+   width="64">
+  <defs />
+  <sodipodi:namedview
+     inkscape:window-maximized="1"
+     inkscape:window-y="0"
+     inkscape:window-x="3840"
+     inkscape:window-height="2045"
+     inkscape:window-width="3840"
+     units="px"
+     showgrid="false"
+     inkscape:document-rotation="0"
+     inkscape:current-layer="svg1237"
+     inkscape:document-units="px"
+     inkscape:cy="61.105602"
+     inkscape:cx="-41.825058"
+     inkscape:zoom="11.2"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base">
+    <inkscape:grid
+       id="grid1808"
+       type="xygrid" />
+  </sodipodi:namedview>
+  <path
+     d="M 1.4174962,2.5e-8 C 0.18815631,2.5e-8 0.37689991,1.2484865 0.81470111,1.6766921 L 6.9342382,7.6621417 H 6.6277525 c -0.6791722,0 -1.2259426,0.54677 -1.2259426,1.225943 0,0.679172 0.5467704,1.2259423 1.2259426,1.2259423 h 0.3064857 v 5.210257 c 0,2.145399 3.0648567,2.145399 3.0648567,0 v -5.210257 h 2.7583711 v 0.612972 c 0,0.679171 0.542579,1.225942 1.216365,1.225942 h 0.01915 c 0.673786,0 1.216365,-0.546771 1.216365,-1.225942 v -0.612972 c 0.679172,0 1.225943,-0.5467703 1.225943,-1.2259423 0,-0.679173 -0.546771,-1.225943 -1.225943,-1.225943 V 7.0491704 c 0,-0.6791722 -0.542579,-1.2259427 -1.216365,-1.2259427 h -0.01915 c -0.673786,0 -1.216365,0.5467705 -1.216365,1.2259427 V 7.6621417 H 9.9990949 L 16.118632,1.6766921 C 16.556433,1.2484865 16.745177,2.5e-8 15.515837,2.5e-8 H 8.4666666 Z" />
+  <metadata
+     id="metadata1929">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+</svg>

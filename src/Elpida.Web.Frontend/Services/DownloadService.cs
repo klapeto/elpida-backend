@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Elpida.Web.Frontend.Data;
+using Elpida.Web.Frontend.Models;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
 namespace Elpida.Web.Frontend.Services
@@ -29,21 +29,21 @@ namespace Elpida.Web.Frontend.Services
 
 			BinariesDownloadLinks = new[]
 			{
-				new DownloadLink(
+				new DownloadLinkModel(
 					"Windows",
 					"x86-64",
 					"zip",
 					string.Format(binaryUrl, "Elpida-latest-x86_64.zip?job=deploy:windows"),
 					string.Format(binaryUrl, "Elpida-latest-x86_64.zip.SHA256SUMS?job=deploy:windows")
 				),
-				new DownloadLink(
+				new DownloadLinkModel(
 					"Linux",
 					"x86-64",
 					"AppImage",
 					string.Format(binaryUrl, "Elpida-latest-x86_64.AppImage?job=deploy:linux"),
 					string.Format(binaryUrl, "Elpida-latest-x86_64.AppImage.SHA256SUMS?job=deploy:linux")
 				),
-				new DownloadLink(
+				new DownloadLinkModel(
 					"Linux",
 					"AArch64",
 					"AppImage",
@@ -54,14 +54,14 @@ namespace Elpida.Web.Frontend.Services
 
 			SourcesDownloadLinks = new[]
 			{
-				new DownloadLink(
+				new DownloadLinkModel(
 					"Application",
 					"sources",
 					"tar.gz",
 					string.Format(sourceUrl, "elpida", "elpida-master.tar.gz"),
 					null
 					),
-				new DownloadLink(
+				new DownloadLinkModel(
 					"Web",
 					"sources",
 					"tar.gz",
@@ -71,8 +71,8 @@ namespace Elpida.Web.Frontend.Services
 			};
 		}
 
-		public IReadOnlyCollection<DownloadLink> BinariesDownloadLinks { get; }
+		public IReadOnlyCollection<DownloadLinkModel> BinariesDownloadLinks { get; }
 
-		public IReadOnlyCollection<DownloadLink> SourcesDownloadLinks { get; }
+		public IReadOnlyCollection<DownloadLinkModel> SourcesDownloadLinks { get; }
 	}
 }

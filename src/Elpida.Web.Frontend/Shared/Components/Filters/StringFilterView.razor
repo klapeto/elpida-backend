@@ -1,0 +1,17 @@
+@using Elpida.Backend.Services.Abstractions
+@using Elpida.Web.Frontend.Models
+@using Elpida.Web.Frontend.Models.Filters
+
+<label class="raw-value-filter">
+    <span>@Model.Name</span>
+    <ComparisonSelect AllowedComparisons="@ComparisonType.StringComparisons" @bind-Comparison="Model.Comparison"/>
+    <InputText DisplayName="@Model.Name" @bind-Value="Model.Value"/>
+</label>
+
+
+@code {
+
+    [Parameter]
+    public StringFilterModel Model { get; set; }
+
+}

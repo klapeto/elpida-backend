@@ -1,0 +1,9 @@
+::deep .icon {
+    height: 3em;
+    width: 3em;
+}
+
+.link-name {
+    font-weight: 700;
+    font-size: 1.3em;
+}
