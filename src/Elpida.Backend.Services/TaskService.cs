@@ -71,7 +71,13 @@ namespace Elpida.Backend.Services
 
 		protected override Expression<Func<TaskModel, TaskPreviewDto>> GetPreviewConstructionExpression()
 		{
-			return m => new TaskPreviewDto(m.Id, m.Uuid, m.Name, m.ResultUnit);
+			return m => new TaskPreviewDto
+			{
+				Id = m.Id,
+				Uuid = m.Uuid,
+				Name = m.Name,
+				ResultUnit = m.ResultUnit,
+			};
 		}
 
 		protected override Task<TaskModel> ProcessDtoAndCreateModelAsync(

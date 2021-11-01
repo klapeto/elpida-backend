@@ -14,12 +14,39 @@ namespace Elpida.Web.Frontend
 			var builder = WebAssemblyHostBuilder.CreateDefault(args);
 			builder.RootComponents.Add<App>("#app");
 
-			builder.Services.AddScoped(
-				sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) }
-			);
+			if (builder.HostEnvironment.IsDevelopment())
+			{
+				builder.Services.AddScoped(
+					sp => new HttpClient
+					{
+						BaseAddress = new Uri("http://localhost:5002/api/v1/"),
+					}
+				);
+			}
+			else if (builder.HostEnvironment.IsStaging())
+			{
+				builder.Services.AddScoped(
+					sp => new HttpClient
+					{
+						BaseAddress = new Uri("https://staging.api.elpida.dev/api/v1/"),
+					}
+				);
+			}
+			else
+			{
+				builder.Services.AddScoped(
+					sp => new HttpClient
+					{
+						BaseAddress = new Uri("https://api.elpida.dev/api/v1/"),
+					}
+				);
+			}
 
 			builder.Services.AddSingleton<ElpidaIconsService>();
 			builder.Services.AddSingleton<DownloadService>();
+
+			builder.Services.AddScoped<ResultsFrontEndService>();
+			builder.Services.AddScoped<CpuFrontEndService>();
 
 			await builder.Build().RunAsync();
 		}

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Elpida.Backend.Services.Abstractions.Dtos;
 using Elpida.Backend.Services.Abstractions.Interfaces;
+using Elpida.Web.Frontend.Models;
 using Elpida.Web.Frontend.Models.Filters;
 
 namespace Elpida.Web.Frontend.Interfaces
@@ -9,6 +10,8 @@ namespace Elpida.Web.Frontend.Interfaces
 		where TDto : FoundationDto
 		where TPreview : FoundationDto
 	{
-		IEnumerable<FilterModel> CreateFilterModels();
+
+		QueryModel CreateSimpleQueryModel();
+		QueryModel CreateAdvancedQueryModel();
 	}
 }

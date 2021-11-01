@@ -20,6 +20,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace Elpida.Backend.Services.Abstractions
 {
@@ -45,6 +46,15 @@ namespace Elpida.Backend.Services.Abstractions
 			NextPage = Items.Length == pageRequest.Count
 				? new PageRequest(pageRequest.Next + Items.Length, pageRequest.Count)
 				: null;
+		}
+
+		[JsonConstructor]
+		public PagedResult(T[] items, int count, long totalCount, PageRequest? nextPage)
+		{
+			Items = items;
+			Count = count;
+			TotalCount = totalCount;
+			NextPage = nextPage;
 		}
 
 		/// <summary>

@@ -26,80 +26,45 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Topology
 	public sealed class TopologyPreviewDto : FoundationDto
 	{
 		/// <summary>
-		///     Initializes a new instance of the <see cref="TopologyPreviewDto" /> class.
-		/// </summary>
-		/// <param name="id">The id of the Topology.</param>
-		/// <param name="cpuId">The id of the cpu this topology belongs.</param>
-		/// <param name="cpuVendor">The vendor of the cpu this topology belongs.</param>
-		/// <param name="cpuModelName">The cpu model name of the cpu this topology belongs.</param>
-		/// <param name="totalLogicalCores">The total logical cores of this topology.</param>
-		/// <param name="totalPhysicalCores">The total physical cores of this topology.</param>
-		/// <param name="totalNumaNodes">The numa nodes of this topology.</param>
-		/// <param name="totalPackages">The total packages of this topology.</param>
-		/// <param name="hash">The hash of this topology.</param>
-		public TopologyPreviewDto(
-			long id,
-			long cpuId,
-			string cpuVendor,
-			string cpuModelName,
-			int totalLogicalCores,
-			int totalPhysicalCores,
-			int totalNumaNodes,
-			int totalPackages,
-			string hash
-		)
-			: base(id)
-		{
-			CpuId = cpuId;
-			CpuVendor = cpuVendor;
-			CpuModelName = cpuModelName;
-			TotalLogicalCores = totalLogicalCores;
-			TotalPhysicalCores = totalPhysicalCores;
-			TotalNumaNodes = totalNumaNodes;
-			TotalPackages = totalPackages;
-			Hash = hash;
-		}
-
-		/// <summary>
 		///     The id of the cpu this topology belongs.
 		/// </summary>
-		public long CpuId { get; }
+		public long CpuId { get; init; }
 
 		/// <summary>
 		///     The vendor of the cpu this topology belongs.
 		/// </summary>
 		/// <example>ARM</example>
-		public string CpuVendor { get; }
+		public string CpuVendor { get; init; }
 
 		/// <summary>
 		///     The cpu model name of the cpu this topology belongs.
 		/// </summary>
 		/// <example>Cortex A7</example>
-		public string CpuModelName { get; }
+		public string CpuModelName { get; init; }
 
 		/// <summary>
 		///     The total logical cores of this topology.
 		/// </summary>
-		public int TotalLogicalCores { get; }
+		public int TotalLogicalCores { get; init; }
 
 		/// <summary>
 		///     The total physical cores of this topology.
 		/// </summary>
-		public int TotalPhysicalCores { get; }
+		public int TotalPhysicalCores { get; init; }
 
 		/// <summary>
 		///     The numa nodes of this topology.
 		/// </summary>
-		public int TotalNumaNodes { get; }
+		public int TotalNumaNodes { get; init; }
 
 		/// <summary>
 		///     The total packages of this topology.
 		/// </summary>
-		public int TotalPackages { get; }
+		public int TotalPackages { get; init; }
 
 		/// <summary>
 		///     The hash of this topology.
 		/// </summary>
-		public string Hash { get; }
+		public string Hash { get; init; }
 	}
 }

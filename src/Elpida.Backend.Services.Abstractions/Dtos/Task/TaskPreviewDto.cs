@@ -28,35 +28,20 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Task
 	public class TaskPreviewDto : FoundationDto
 	{
 		/// <summary>
-		///     Initializes a new instance of the <see cref="TaskPreviewDto" /> class.
-		/// </summary>
-		/// <param name="id">The id of the Task.</param>
-		/// <param name="uuid">The UUID of this Task.</param>
-		/// <param name="name">The name of this Task.</param>
-		/// <param name="resultUnit">The unit of the result.</param>
-		public TaskPreviewDto(long id, Guid uuid, string name, string resultUnit)
-			: base(id)
-		{
-			Uuid = uuid;
-			Name = name;
-			ResultUnit = resultUnit;
-		}
-
-		/// <summary>
 		///     The UUID of this Task.
 		/// </summary>
-		public Guid Uuid { get; }
+		public Guid Uuid { get; init; }
 
 		/// <summary>
 		///     The name of this Task.
 		/// </summary>
 		/// <example>Allocate Memory</example>
-		public string Name { get; }
+		public string Name { get; init; }
 
 		/// <summary>
 		///     The unit of the result.
 		/// </summary>
 		/// <example>B/s</example>
-		public string ResultUnit { get; }
+		public string ResultUnit { get; init; }
 	}
 }

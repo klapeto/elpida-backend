@@ -54,7 +54,13 @@ namespace Elpida.Backend.Services
 
 		protected override Expression<Func<OsModel, OsDto>> GetPreviewConstructionExpression()
 		{
-			return m => new OsDto(m.Id, m.Category, m.Name, m.Version);
+			return m => new OsDto
+			{
+				Id = m.Id,
+				Category = m.Category,
+				Name = m.Name,
+				Version = m.Version,
+			};
 		}
 
 		protected override Task<OsModel> ProcessDtoAndCreateModelAsync(OsDto dto, CancellationToken cancellationToken)

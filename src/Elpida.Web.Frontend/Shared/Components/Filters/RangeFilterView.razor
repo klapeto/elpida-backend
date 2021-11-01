@@ -5,7 +5,6 @@
 
 <label class="raw-value-filter">
     <span>@Model.Name</span>
-    <ComparisonSelect AllowedComparisons="@ComparisonType.NumberComparisons" @bind-Comparison="Model.Comparison"/>
     <div class="range-filter-slider">
         <input type="range" @bind="Model.Value" min="@Model.Min" max="@Model.Max"/>
         <output class="range-value">@GetValueString()</output>
@@ -24,7 +23,7 @@
 
         var (value, suffix) = ValueConverterService.ConvertToSI(Model.Value.Value);
 
-        return $"{value}{suffix}";
+        return $"{value}{suffix}{Model.Suffix}";
     }
 
 }

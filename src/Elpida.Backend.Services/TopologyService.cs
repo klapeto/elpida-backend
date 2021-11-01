@@ -57,18 +57,22 @@ namespace Elpida.Backend.Services
 		)
 		{
 			var cpu = await _cpuService.GetSingleAsync(cpuId, cancellationToken);
+
+			topology.Root.SanitizeValues();
+
 			return await GetOrAddAsync(
-				new TopologyDto(
-					0,
-					cpuId,
-					cpu.Vendor,
-					cpu.ModelName,
-					topology.TotalLogicalCores,
-					topology.TotalPhysicalCores,
-					topology.TotalNumaNodes,
-					topology.TotalPackages,
-					topology.Root
-				),
+				new TopologyDto
+				{
+					Id = 0,
+					CpuId = cpuId,
+					CpuVendor = cpu.Vendor,
+					CpuModelName = cpu.ModelName,
+					TotalLogicalCores = topology.TotalLogicalCores,
+					TotalPhysicalCores = topology.TotalPhysicalCores,
+					TotalNumaNodes = topology.TotalNumaNodes,
+					TotalPackages = topology.TotalPackages,
+					Root = topology.Root,
+				},
 				cancellationToken
 			);
 		}
@@ -98,17 +102,18 @@ namespace Elpida.Backend.Services
 
 		protected override Expression<Func<TopologyModel, TopologyPreviewDto>> GetPreviewConstructionExpression()
 		{
-			return m => new TopologyPreviewDto(
-				m.Id,
-				m.Cpu.Id,
-				m.Cpu.Vendor,
-				m.Cpu.ModelName,
-				m.TotalLogicalCores,
-				m.TotalPhysicalCores,
-				m.TotalNumaNodes,
-				m.TotalPackages,
-				m.TopologyHash
-			);
+			return m => new TopologyPreviewDto
+			{
+				Id = m.Id,
+				CpuId = m.Cpu.Id,
+				CpuVendor = m.Cpu.Vendor,
+				CpuModelName = m.Cpu.ModelName,
+				TotalLogicalCores = m.TotalLogicalCores,
+				TotalPhysicalCores = m.TotalPhysicalCores,
+				TotalNumaNodes = m.TotalNumaNodes,
+				TotalPackages = m.TotalPackages,
+				Hash = m.TopologyHash,
+			};
 		}
 
 		protected override Task<TopologyModel> ProcessDtoAndCreateModelAsync(

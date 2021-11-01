@@ -29,37 +29,11 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Topology
 	public sealed class CpuNodeDto
 	{
 		/// <summary>
-		///     Initializes a new instance of the <see cref="CpuNodeDto" /> class.
-		/// </summary>
-		/// <param name="nodeType">The cpu node type.</param>
-		/// <param name="name">The name of this node.</param>
-		/// <param name="osIndex">The index assigned by the Operating System.</param>
-		/// <param name="value">A value representing the size of the node.</param>
-		/// <param name="children">The child nodes of this node.</param>
-		/// <param name="memoryChildren">The memory child nodes of this node.</param>
-		public CpuNodeDto(
-			ProcessorNodeType nodeType,
-			string name,
-			long? osIndex,
-			long? value,
-			CpuNodeDto[]? children,
-			CpuNodeDto[]? memoryChildren
-		)
-		{
-			NodeType = nodeType;
-			Name = name;
-			OsIndex = osIndex;
-			Value = GetSanitizedValue(value);
-			Children = children;
-			MemoryChildren = memoryChildren;
-		}
-
-		/// <summary>
 		///     The cpu node type.
 		/// </summary>
 		[Required]
 		[EnumDataType(typeof(ProcessorNodeType))]
-		public ProcessorNodeType NodeType { get; }
+		public ProcessorNodeType NodeType { get; init; }
 
 		/// <summary>
 		///     The name of this node.
@@ -67,30 +41,30 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Topology
 		/// <example>Core</example>
 		[Required]
 		[MaxLength(50)]
-		public string Name { get; }
+		public string Name { get; init; }
 
 		/// <summary>
 		///     The index assigned by the Operating System.
 		/// </summary>
-		public long? OsIndex { get; }
+		public long? OsIndex { get; init; }
 
 		/// <summary>
 		///     A value representing the size of the node.
 		/// </summary>
 		[Range(0, long.MaxValue)]
-		public long? Value { get; }
+		public long? Value { get; set; }
 
 		/// <summary>
 		///     The child nodes of this node.
 		/// </summary>
-		public CpuNodeDto[]? Children { get; }
+		public CpuNodeDto[]? Children { get; init; }
 
 		/// <summary>
 		///     The memory child nodes of this node.
 		/// </summary>
-		public CpuNodeDto[]? MemoryChildren { get; }
+		public CpuNodeDto[]? MemoryChildren { get; init; }
 
-		private long? GetSanitizedValue(long? value)
+		public void SanitizeValues()
 		{
 			switch (NodeType)
 			{
@@ -101,10 +75,32 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Topology
 				case ProcessorNodeType.L3DCache:
 				case ProcessorNodeType.L4Cache:
 				case ProcessorNodeType.L5Cache:
-					return value;
+					break;
 				default:
-					return null;
+					Value = null;
+					break;
 			}
+
+			if (Children != null)
+			{
+				foreach (var child in Children)
+				{
+					child.SanitizeValues();
+				}
+			}
+
+			if (MemoryChildren == null)
+			{
+				return;
+			}
+
+			{
+				foreach (var child in MemoryChildren)
+				{
+					child.SanitizeValues();
+				}
+			}
+
 		}
 	}
 }

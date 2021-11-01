@@ -28,81 +28,52 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 	public sealed class TaskRunStatisticsDto
 	{
 		/// <summary>
-		///     Initializes a new instance of the <see cref="TaskRunStatisticsDto" /> class.
-		/// </summary>
-		/// <param name="sampleSize">How many times this task run.</param>
-		/// <param name="max">The maximum value of the result.</param>
-		/// <param name="min">The minimum value of the result.</param>
-		/// <param name="mean">The mean value of the result.</param>
-		/// <param name="standardDeviation">The standard deviation of the value of the result.</param>
-		/// <param name="tau">The tau of this sample size.</param>
-		/// <param name="marginOfError">The margin of error of the value of the result.</param>
-		public TaskRunStatisticsDto(
-			long sampleSize,
-			double max,
-			double min,
-			double mean,
-			double standardDeviation,
-			double tau,
-			double marginOfError
-		)
-		{
-			SampleSize = sampleSize;
-			Max = max;
-			Min = min;
-			Mean = mean;
-			StandardDeviation = standardDeviation;
-			Tau = tau;
-			MarginOfError = marginOfError;
-		}
-
-		/// <summary>
 		///     How many times this task run.
 		/// </summary>
 		[Required]
 		[Range(1, long.MaxValue)]
-		public long SampleSize { get; }
+		public long SampleSize { get; init; }
 
 		/// <summary>
 		///     The maximum value of the result.
 		/// </summary>
 		[Required]
 		[Range(0.0, double.MaxValue)]
-		public double Max { get; }
+		public double Max { get; init; }
 
 		/// <summary>
 		///     The minimum value of the result.
 		/// </summary>
 		[Required]
 		[Range(0.0, double.MaxValue)]
-		public double Min { get; }
+		public double Min { get; init; }
 
 		/// <summary>
 		///     The mean value of the result.
 		/// </summary>
 		[Required]
 		[Range(0.0, double.MaxValue)]
-		public double Mean { get; }
+		public double Mean { get; init; }
 
 		/// <summary>
 		///     The standard deviation of the value of the result.
 		/// </summary>
 		[Required]
 		[Range(0.0, double.MaxValue)]
-		public double StandardDeviation { get; }
+		public double StandardDeviation { get; init; }
 
 		/// <summary>
 		///     The tau of this sample size.
 		/// </summary>
 		[Required]
 		[Range(0.0, double.MaxValue)]
-		public double Tau { get; }
+		public double Tau { get; init; }
 
 		/// <summary>
 		///     The margin of error of the value of the result.
 		/// </summary>
 		[Required]
 		[Range(0.0, double.MaxValue)]
-		public double MarginOfError { get; }
+		public double MarginOfError { get; init; }
 	}
 }

@@ -67,11 +67,22 @@ namespace Elpida.Backend.Services
 
 		protected override Expression<Func<ElpidaVersionModel, ElpidaVersionDto>> GetPreviewConstructionExpression()
 		{
-			return m => new ElpidaVersionDto(
-				m.Id,
-				new VersionDto(m.VersionMajor, m.VersionMinor, m.VersionRevision, m.VersionBuild),
-				new CompilerDto(m.CompilerName, m.CompilerVersion)
-			);
+			return m => new ElpidaVersionDto
+			{
+				Id = m.Id,
+				Version = new VersionDto
+				{
+					Major = m.VersionMajor,
+					Minor = m.VersionMinor,
+					Revision = m.VersionRevision,
+					Build = m.VersionBuild,
+				},
+				Compiler = new CompilerDto
+				{
+					Name = m.CompilerName,
+					Version = m.CompilerVersion,
+				},
+			};
 		}
 
 		protected override Task<ElpidaVersionModel> ProcessDtoAndCreateModelAsync(

@@ -26,42 +26,27 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Task
 	public sealed class DataSpecificationDto
 	{
 		/// <summary>
-		///     Initializes a new instance of the <see cref="DataSpecificationDto" /> class.
-		/// </summary>
-		/// <param name="name">The name of the data.</param>
-		/// <param name="description">The description of the data.</param>
-		/// <param name="unit">The unit that describes this data.</param>
-		/// <param name="requiredProperties">The required property names that this data has to carry in order to be valid.</param>
-		public DataSpecificationDto(string name, string description, string unit, string[] requiredProperties)
-		{
-			Name = name;
-			Description = description;
-			Unit = unit;
-			RequiredProperties = requiredProperties;
-		}
-
-		/// <summary>
 		///     The name of the data.
 		/// </summary>
 		/// <example>Allocated data.</example>
-		public string Name { get; }
+		public string Name { get; init; }
 
 		/// <summary>
 		///     The description of the data.
 		/// </summary>
 		/// <example>The memory that was allocated.</example>
-		public string Description { get; }
+		public string Description { get; init; }
 
 		/// <summary>
 		///     The unit that describes this data.
 		/// </summary>
 		/// <example>Bytes.</example>
-		public string Unit { get; }
+		public string Unit { get; init; }
 
 		/// <summary>
 		///     The required property names that this data has to carry in order
 		///     to be valid.
 		/// </summary>
-		public string[] RequiredProperties { get; }
+		public string[] RequiredProperties { get; init; }
 	}
 }

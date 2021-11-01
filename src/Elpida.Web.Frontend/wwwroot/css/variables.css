@@ -9,6 +9,10 @@
     --button-active-bg-color: #dddbf3;
 
     --button-fg-color: #fff;
+    
+    --close-button-bg: #e4786b;
+    --close-button-hover-bg: #e0b0ab;
+    --close-button-active-bg: #e0b0ab;
 
     --border-color: #9e9fee;
     --hr-color: #abade4;

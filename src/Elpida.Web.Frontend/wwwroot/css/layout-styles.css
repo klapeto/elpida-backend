@@ -10,6 +10,14 @@
     place-items: center;
 }
 
+.flex-center.row{
+    flex-flow: row wrap;
+}
+
+.flex-center.column{
+    flex-flow: column wrap;
+}
+
 @media (min-width: 992px) {
     .container {
         max-width: 90%;

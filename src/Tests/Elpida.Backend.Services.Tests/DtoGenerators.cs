@@ -226,7 +226,7 @@ namespace Elpida.Backend.Services.Tests
 
 		public static CpuPreviewDto NewCpuPreview(long? id = null)
 		{
-			return new (id ?? NewId(), "Samsung", "Exynos");
+			return new(){Id = id ?? NewId(), Vendor= "Samsung", ModelName= "Exynos"};
 		}
 
 		public static BenchmarkStatisticsDto NewBenchmarkStatistic(long? id = null)

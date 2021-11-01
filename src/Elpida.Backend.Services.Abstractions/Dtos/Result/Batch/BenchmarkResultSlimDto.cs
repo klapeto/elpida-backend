@@ -29,61 +29,38 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result.Batch
 	public sealed class BenchmarkResultSlimDto
 	{
 		/// <summary>
-		///     Initializes a new instance of the <see cref="BenchmarkResultSlimDto" /> class.
-		/// </summary>
-		/// <param name="uuid">The Uuid of the benchmark.</param>
-		/// <param name="timestamp">The timestamp of this benchmark run.</param>
-		/// <param name="affinity">The affinity used for this benchmark run.</param>
-		/// <param name="score">The score of this benchmark run.</param>
-		/// <param name="taskResults">The specific task results.</param>
-		public BenchmarkResultSlimDto(
-			Guid uuid,
-			DateTime timestamp,
-			long[] affinity,
-			double score,
-			TaskResultSlimDto[] taskResults
-		)
-		{
-			Uuid = uuid;
-			Timestamp = timestamp;
-			Affinity = affinity;
-			Score = score;
-			TaskResults = taskResults;
-		}
-
-		/// <summary>
 		///     The Uuid of the benchmark.
 		/// </summary>
 		[Required]
 		[NonDefaultValue]
-		public Guid Uuid { get; }
+		public Guid Uuid { get; init; }
 
 		/// <summary>
 		///     The timestamp of this benchmark run.
 		/// </summary>
 		[Required]
 		[NonDefaultValue]
-		public DateTime Timestamp { get; }
+		public DateTime Timestamp { get; init; }
 
 		/// <summary>
 		///     The affinity used for this benchmark run.
 		/// </summary>
 		[Required]
 		[MinLength(1)]
-		public long[] Affinity { get; }
+		public long[] Affinity { get; init; }
 
 		/// <summary>
 		///     The score of this benchmark run.
 		/// </summary>
 		[Required]
 		[Range(double.Epsilon, double.MaxValue)]
-		public double Score { get; }
+		public double Score { get; init; }
 
 		/// <summary>
 		///     The specific task results.
 		/// </summary>
 		[Required]
 		[MinLength(1)]
-		public TaskResultSlimDto[] TaskResults { get; }
+		public TaskResultSlimDto[] TaskResults { get; init; }
 	}
 }

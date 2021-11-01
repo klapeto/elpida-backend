@@ -28,28 +28,15 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Elpida
 	public sealed class ElpidaVersionDto : FoundationDto
 	{
 		/// <summary>
-		///     Initializes a new instance of the <see cref="ElpidaVersionDto" /> class.
-		/// </summary>
-		/// <param name="id">The id of the Elpida.</param>
-		/// <param name="version">The Elpida version.</param>
-		/// <param name="compiler">The compiler details that built Elpida.</param>
-		public ElpidaVersionDto(long id, VersionDto version, CompilerDto compiler)
-			: base(id)
-		{
-			Version = version;
-			Compiler = compiler;
-		}
-
-		/// <summary>
 		///     The Elpida version.
 		/// </summary>
 		[Required]
-		public VersionDto Version { get; }
+		public VersionDto Version { get; init; }
 
 		/// <summary>
 		///     The compiler details that built Elpida.
 		/// </summary>
 		[Required]
-		public CompilerDto Compiler { get; }
+		public CompilerDto Compiler { get; init; }
 	}
 }

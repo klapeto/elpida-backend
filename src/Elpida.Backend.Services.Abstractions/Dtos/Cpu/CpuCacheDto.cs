@@ -28,27 +28,12 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Cpu
 	public sealed class CpuCacheDto
 	{
 		/// <summary>
-		///     Initializes a new instance of the <see cref="CpuCacheDto" /> class.
-		/// </summary>
-		/// <param name="name">The name of this cache.</param>
-		/// <param name="associativity">The associativity of this cache.</param>
-		/// <param name="size">The size of the cache in bytes.</param>
-		/// <param name="lineSize">The size of the line.</param>
-		public CpuCacheDto(string name, string associativity, long size, int lineSize)
-		{
-			Name = name;
-			Associativity = associativity;
-			Size = size;
-			LineSize = lineSize;
-		}
-
-		/// <summary>
 		///     The name of this cache.
 		/// </summary>
 		/// <example>L1D</example>
 		[Required]
 		[MaxLength(50)]
-		public string Name { get; }
+		public string Name { get; init; }
 
 		/// <summary>
 		///     The associativity of this cache.
@@ -56,20 +41,20 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Cpu
 		/// <example>8-Way</example>
 		[Required]
 		[MaxLength(50)]
-		public string Associativity { get; }
+		public string Associativity { get; init; }
 
 		/// <summary>
 		///     The size of the cache in bytes.
 		/// </summary>
 		[Required]
 		[Range(0, long.MaxValue)]
-		public long Size { get; }
+		public long Size { get; init; }
 
 		/// <summary>
 		///     The size of the line.
 		/// </summary>
 		[Required]
 		[Range(0, long.MaxValue)]
-		public int LineSize { get; }
+		public int LineSize { get; init; }
 	}
 }

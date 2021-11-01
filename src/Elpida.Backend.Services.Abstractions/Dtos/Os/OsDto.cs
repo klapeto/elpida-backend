@@ -28,27 +28,12 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Os
 	public sealed class OsDto : FoundationDto
 	{
 		/// <summary>
-		///     Initializes a new instance of the <see cref="OsDto" /> class.
-		/// </summary>
-		/// <param name="id">The id of the Operating System.</param>
-		/// <param name="category">The category of the Operating System.</param>
-		/// <param name="name">The name of the Operating System.</param>
-		/// <param name="version">The version of the Operating System.</param>
-		public OsDto(long id, string category, string name, string version)
-			: base(id)
-		{
-			Category = category;
-			Name = name;
-			Version = version;
-		}
-
-		/// <summary>
 		///     The category of the Operating System.
 		/// </summary>
 		/// <example>GNU/Linux</example>
 		[Required]
 		[MaxLength(50)]
-		public string Category { get; }
+		public string Category { get; init; }
 
 		/// <summary>
 		///     The name of the Operating System.
@@ -56,7 +41,7 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Os
 		/// <example>Ubuntu</example>
 		[Required]
 		[MaxLength(100)]
-		public string Name { get; }
+		public string Name { get; init; }
 
 		/// <summary>
 		///     The version of the Operating System.
@@ -64,6 +49,6 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Os
 		/// <example>21.04</example>
 		[Required]
 		[MaxLength(50)]
-		public string Version { get; }
+		public string Version { get; init; }
 	}
 }

@@ -99,7 +99,14 @@ namespace Elpida.Backend.Services
 					cancellationToken
 				);
 
-				newClasses.Add(new FrequencyClassDto(frequencyClass.Low, frequencyClass.High, count));
+				newClasses.Add(
+					new FrequencyClassDto
+					{
+						Low = frequencyClass.Low,
+						High = frequencyClass.High,
+						Count = count,
+					}
+				);
 			}
 
 			stats.FrequencyClasses = JsonConvert.SerializeObject(newClasses);
@@ -162,35 +169,37 @@ namespace Elpida.Backend.Services
 
 		protected override BenchmarkStatisticsDto ToDto(BenchmarkStatisticsModel model)
 		{
-			return new (
-				model.Id,
-				model.Cpu.ToDto(),
-				model.Benchmark.ToDto(),
-				model.SampleSize,
-				model.Max,
-				model.Min,
-				model.Mean,
-				model.StandardDeviation,
-				model.Tau,
-				model.MarginOfError,
-				JsonConvert.DeserializeObject<FrequencyClassDto[]>(model.FrequencyClasses)!
-			);
+			return new()
+			{
+				Id = model.Id,
+				Cpu = model.Cpu.ToDto(),
+				Benchmark = model.Benchmark.ToDto(),
+				SampleSize = model.SampleSize,
+				Max = model.Max,
+				Min = model.Min,
+				Mean = model.Mean,
+				StandardDeviation = model.StandardDeviation,
+				Tau = model.Tau,
+				MarginOfError = model.MarginOfError,
+				Classes = JsonConvert.DeserializeObject<FrequencyClassDto[]>(model.FrequencyClasses)!,
+			};
 		}
 
 		protected override Expression<Func<BenchmarkStatisticsModel, BenchmarkStatisticsPreviewDto>>
 			GetPreviewConstructionExpression()
 		{
-			return m => new BenchmarkStatisticsPreviewDto(
-				m.Id,
-				m.Cpu.Vendor,
-				m.Cpu.ModelName,
-				m.Benchmark.Uuid,
-				m.Benchmark.Name,
-				m.Benchmark.ScoreUnit,
-				m.Mean,
-				m.SampleSize,
-				m.Benchmark.ScoreComparison
-			);
+			return m => new BenchmarkStatisticsPreviewDto
+			{
+				Id = m.Id,
+				CpuVendor = m.Cpu.Vendor,
+				CpuModelName = m.Cpu.ModelName,
+				BenchmarkUuid = m.Benchmark.Uuid,
+				BenchmarkName = m.Benchmark.Name,
+				BenchmarkScoreUnit = m.Benchmark.ScoreUnit,
+				Mean = m.Mean,
+				SampleSize = m.SampleSize,
+				Comparison = m.Benchmark.ScoreComparison,
+			};
 		}
 
 		private static IEnumerable<FrequencyClassDto> GetDefaultClasses(long count, double min, double max)
@@ -210,11 +219,12 @@ namespace Elpida.Backend.Services
 			var cls = Enumerable
 				.Range(0, classes)
 				.Select(
-					i => new FrequencyClassDto(
-						min + (i * classWidth),
-						min + (i * classWidth) + classWidth,
-						0
-					)
+					i => new FrequencyClassDto
+					{
+						Low = min + (i * classWidth),
+						High = min + (i * classWidth) + classWidth,
+						Count = 0,
+					}
 				)
 				.ToArray();
 

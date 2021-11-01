@@ -28,32 +28,19 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Statistics
 	public sealed class FrequencyClassDto
 	{
 		/// <summary>
-		///     Initializes a new instance of the <see cref="FrequencyClassDto" /> class.
-		/// </summary>
-		/// <param name="low">The low value for this class.</param>
-		/// <param name="high">The high value for this class.</param>
-		/// <param name="count">How many samples this class has.</param>
-		public FrequencyClassDto(double low, double high, long count)
-		{
-			Low = low;
-			High = high;
-			Count = count;
-		}
-
-		/// <summary>
 		///     The low value for this class.
 		/// </summary>
-		public double Low { get; }
+		public double Low { get; init; }
 
 		/// <summary>
 		///     The high value for this class.
 		/// </summary>
-		public double High { get; }
+		public double High { get; init; }
 
 		/// <summary>
 		///     How many samples this class has.
 		/// </summary>
-		public long Count { get; }
+		public long Count { get; init; }
 
 		public override bool Equals(object? obj)
 		{

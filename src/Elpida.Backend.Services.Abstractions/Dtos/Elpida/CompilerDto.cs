@@ -28,23 +28,12 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Elpida
 	public sealed class CompilerDto
 	{
 		/// <summary>
-		///     Initializes a new instance of the <see cref="CompilerDto" /> class.
-		/// </summary>
-		/// <param name="name">The name of the compiler.</param>
-		/// <param name="version">The version of the compiler.</param>
-		public CompilerDto(string name, string version)
-		{
-			Name = name;
-			Version = version;
-		}
-
-		/// <summary>
 		///     The name of the compiler.
 		/// </summary>
 		/// <example>GNU</example>
 		[Required]
 		[MaxLength(50)]
-		public string Name { get; }
+		public string Name { get; init; }
 
 		/// <summary>
 		///     The version of the compiler.
@@ -52,6 +41,6 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Elpida
 		/// <example>10.0</example>
 		[Required]
 		[MaxLength(50)]
-		public string Version { get; }
+		public string Version { get; init; }
 	}
 }

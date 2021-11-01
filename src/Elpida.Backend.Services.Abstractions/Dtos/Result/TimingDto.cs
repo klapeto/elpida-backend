@@ -29,91 +29,59 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 	public sealed class TimingDto
 	{
 		/// <summary>
-		///     Initializes a new instance of the <see cref="TimingDto" /> class.
-		/// </summary>
-		/// <param name="notifyOverhead">How many seconds a thread notify() takes.</param>
-		/// <param name="wakeupOverhead">How many seconds a thread wakeup takes.</param>
-		/// <param name="sleepOverhead">How many extra seconds sleep() takes apart from the actual sleep time.</param>
-		/// <param name="nowOverhead">How many seconds a thread now() takes.</param>
-		/// <param name="lockOverhead">How many seconds a thread mutex lock takes.</param>
-		/// <param name="loopOverhead">How many seconds a bare loop takes.</param>
-		/// <param name="joinOverhead">How many seconds a thread join() takes apart from wait the time.</param>
-		/// <param name="targetTime">The minimum time a benchmark can take.</param>
-		public TimingDto(
-			double notifyOverhead,
-			double wakeupOverhead,
-			double sleepOverhead,
-			double nowOverhead,
-			double lockOverhead,
-			double loopOverhead,
-			double joinOverhead,
-			double targetTime
-		)
-		{
-			NotifyOverhead = notifyOverhead;
-			WakeupOverhead = wakeupOverhead;
-			SleepOverhead = sleepOverhead;
-			NowOverhead = nowOverhead;
-			LockOverhead = lockOverhead;
-			LoopOverhead = loopOverhead;
-			JoinOverhead = joinOverhead;
-			TargetTime = targetTime;
-		}
-
-		/// <summary>
 		///     How many seconds a thread notify() takes.
 		/// </summary>
 		[Required]
 		[Range(0.0, double.MaxValue)]
-		public double NotifyOverhead { get; }
+		public double NotifyOverhead { get; init; }
 
 		/// <summary>
 		///     How many seconds a thread wakeup takes.
 		/// </summary>
 		[Required]
 		[Range(0.0, double.MaxValue)]
-		public double WakeupOverhead { get; }
+		public double WakeupOverhead { get; init; }
 
 		/// <summary>
 		///     How many extra seconds sleep() takes apart from the actual sleep time.
 		/// </summary>
 		[Required]
 		[Range(0.0, double.MaxValue)]
-		public double SleepOverhead { get; }
+		public double SleepOverhead { get; init; }
 
 		/// <summary>
 		///     How many seconds a thread now() takes.
 		/// </summary>
 		[Required]
 		[Range(0.0, double.MaxValue)]
-		public double NowOverhead { get; }
+		public double NowOverhead { get; init; }
 
 		/// <summary>
 		///     How many seconds a thread mutex lock takes.
 		/// </summary>
 		[Required]
 		[Range(0.0, double.MaxValue)]
-		public double LockOverhead { get; }
+		public double LockOverhead { get; init; }
 
 		/// <summary>
 		///     How many seconds a bare loop takes.
 		/// </summary>
 		[Required]
 		[Range(0.0, double.MaxValue)]
-		public double LoopOverhead { get; }
+		public double LoopOverhead { get; init; }
 
 		/// <summary>
 		///     How many seconds a thread join() takes apart from wait the time.
 		/// </summary>
 		[Required]
 		[Range(0.0, double.MaxValue)]
-		public double JoinOverhead { get; }
+		public double JoinOverhead { get; init; }
 
 		/// <summary>
 		///     The minimum time a benchmark can take.
 		/// </summary>
 		[Required]
 		[Range(0.0, double.MaxValue)]
-		public double TargetTime { get; }
+		public double TargetTime { get; init; }
 	}
 }

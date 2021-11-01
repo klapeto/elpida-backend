@@ -10,12 +10,11 @@
     @foreach (var category in Categories)
     {
         <li class="collection-item">
-            <LinkButton Class="collection-link" Href="@category.Link">
-                <IconWithText IconName="@category.IconName">
-                    <span class="link-name">
-                       @category.Name 
-                    </span>
-                </IconWithText>
+            <LinkButton Class="collection-item-link" Href="@category.Link">
+                <img alt="@category.Name" src="@category.IconLink" class="collection-item-icon" loading="lazy">
+                <span class="collection-item-name">
+                    @category.Name
+                </span>
             </LinkButton>
         </li>
     }
@@ -25,11 +24,11 @@
 
     private readonly CategoryModel[] Categories =
     {
-        new("Results", "/Database/Results", "result"),
-        new("CPUs", "/Database/Cpus", "cpu"),
-        new("Benchmarks", "/Database/Benchmarks", "benchmark"),
-        new("Operating systems", "/Database/Operating-Systems", "operatingSystem"),
-        new("Elpida versions", "/Database/Elpida-Versions", "elpida"),
+        new("Results", "/Database/Results", "./assets/categories/results.svg"),
+        new("CPUs", "/Database/Cpus", "./assets/categories/cpus.svg"),
+        new("Benchmarks", "/Database/Benchmarks", "./assets/categories/benchmarks.svg"),
+        new("Operating systems", "/Database/Operating-Systems", "./assets/categories/operating-systems.svg"),
+        new("Elpida versions", "/Database/Elpida-Versions", "./assets/categories/elpida-versions.svg"),
     };
 
 }

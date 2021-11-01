@@ -29,89 +29,54 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Topology
 	public sealed class TopologyDto : FoundationDto
 	{
 		/// <summary>
-		///     Initializes a new instance of the <see cref="TopologyDto" /> class.
-		/// </summary>
-		/// <param name="id">The id of the Topology.</param>
-		/// <param name="cpuId">The id of the Cpu this topology belongs.</param>
-		/// <param name="cpuVendor">The cpu vendor of this topology.</param>
-		/// <param name="cpuModelName">The cpu model name of this topology.</param>
-		/// <param name="totalLogicalCores">The total logical cores of this topology.</param>
-		/// <param name="totalPhysicalCores">The total physical cores of this topology.</param>
-		/// <param name="totalNumaNodes">The total numa nodes of this topology.</param>
-		/// <param name="totalPackages">The total cpu packages of this topology.</param>
-		/// <param name="root">The first cpu node of this topology.</param>
-		public TopologyDto(
-			long id,
-			long cpuId,
-			string? cpuVendor,
-			string? cpuModelName,
-			int totalLogicalCores,
-			int totalPhysicalCores,
-			int totalNumaNodes,
-			int totalPackages,
-			CpuNodeDto root
-		)
-			: base(id)
-		{
-			CpuId = cpuId;
-			CpuVendor = cpuVendor;
-			CpuModelName = cpuModelName;
-			TotalLogicalCores = totalLogicalCores;
-			TotalPhysicalCores = totalPhysicalCores;
-			TotalNumaNodes = totalNumaNodes;
-			TotalPackages = totalPackages;
-			Root = root;
-		}
-
-		/// <summary>
 		///     The id of the Cpu this topology belongs.
 		/// </summary>
-		public long CpuId { get; }
+		public long CpuId { get; init; }
 
 		/// <summary>
 		///     The cpu vendor of this topology.
 		/// </summary>
 		/// <example>ARM</example>
-		public string? CpuVendor { get; }
+		public string? CpuVendor { get; init; }
 
 		/// <summary>
 		///     The cpu model name of this topology.
 		/// </summary>
 		/// <example>Cortex A7</example>
-		public string? CpuModelName { get; }
+		public string? CpuModelName { get; init; }
 
 		/// <summary>
 		///     The total logical cores of this topology.
 		/// </summary>
 		[Required]
 		[Range(0, int.MaxValue)]
-		public int TotalLogicalCores { get; }
+		public int TotalLogicalCores { get; init; }
 
 		/// <summary>
 		///     The total physical cores of this topology.
 		/// </summary>
 		[Required]
 		[Range(0, int.MaxValue)]
-		public int TotalPhysicalCores { get; }
+		public int TotalPhysicalCores { get; init; }
 
 		/// <summary>
 		///     The total numa nodes of this topology.
 		/// </summary>
 		[Required]
 		[Range(0, int.MaxValue)]
-		public int TotalNumaNodes { get; }
+		public int TotalNumaNodes { get; init; }
 
 		/// <summary>
 		///     The total cpu packages of this topology.
 		/// </summary>
 		[Required]
 		[Range(0, int.MaxValue)]
-		public int TotalPackages { get; }
+		public int TotalPackages { get; init; }
 
 		/// <summary>
 		///     The first cpu node of this topology.
 		/// </summary>
 		[Required]
-		public CpuNodeDto Root { get; }
+		public CpuNodeDto Root { get; init; }
 	}
 }

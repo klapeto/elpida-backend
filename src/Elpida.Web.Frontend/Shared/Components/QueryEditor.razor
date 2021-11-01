@@ -5,41 +5,35 @@
 @using Elpida.Backend.Services.Abstractions
 @using Elpida.Web.Frontend.Models
 
-<EditForm EditContext="@_editContext" OnSubmit="@HandleSubmit" class="query-editor">
+<EditForm EditContext="@_editContext" OnSubmit="@HandleSubmit">
     @foreach (var filter in Model.Filters)
     {
         @CreateView(filter)
-        <div>
-            <hr/>
-        </div>
+        <hr/>
     }
-    
-    <label>
-        <span>Sort by</span>
-        <InputSelect TValue="string" @bind-Value="Model.SortBy">
-            <option value=""></option>
-            @foreach (var filter in Model.Filters)
-            {
-                <option value="@filter.InternalName">@filter.Name</option>
-            }
-        </InputSelect>
-    </label>
 
+    @if (AllowSort)
+    {
+        <label>
+            <span>Sort by</span>
+            <InputSelect TValue="string" @bind-Value="Model.SortBy">
+                <option value=""></option>
+                @foreach (var filter in Model.Filters)
+                {
+                    <option value="@filter.InternalName">@filter.Name</option>
+                }
+            </InputSelect>
+        </label>
 
-    <div>
         <hr/>
-    </div>
 
+        <label>
+            <span>Descending</span>
+            <InputCheckbox @bind-Value="Model.Descending"/>
+        </label>
 
-    <label>
-        <span>Descending</span>
-        <InputCheckbox @bind-Value="Model.Descending"/>
-    </label>
-
-
-    <div>
         <hr/>
-    </div>
+    }
 
     <div>
         <button type="submit">Submit</button>
@@ -48,7 +42,6 @@
 
 </EditForm>
 
-@inject ILogger<QueryEditor> _logger;
 
 @code {
 
@@ -56,13 +49,10 @@
     public QueryModel Model { get; set; }
 
     [Parameter]
+    public bool AllowSort { get; set; }
+
+    [Parameter]
     public EventCallback Submitted { get; set; }
-
-    [Parameter]
-    public bool Descending { get; set; }
-
-    [Parameter]
-    public string? SortBy { get; set; }
 
     private EditContext? _editContext;
 
@@ -95,6 +85,8 @@
                 return @<NumberFilterView Model="numberFilter"/>;
             case DateTimeFilterModel dateTimeFilter:
                 return @<DateFilterView Model="dateTimeFilter"/>;
+            case OptionFilterModel optionFilter:
+                return @<OptionFilterView Model="optionFilter"/>;
             case StringFilterModel stringFilter:
                 return @<StringFilterView Model="stringFilter"/>;
             default:

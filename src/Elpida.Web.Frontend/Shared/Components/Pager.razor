@@ -1,0 +1,99 @@
+<div class="pager-container">
+    <button class="@GetNextPreviousButtonClass(true)"
+            disabled="@PreviousButtonDisabled"
+            aria-label="Previous"
+            @onclick="() => OnPageClickedAsync(_currentPage - 1)">&laquo;</button>
+    <div class="pager-pages">
+        @foreach (var pageN in _pages)
+        {
+            <button class="@GetPageButtonClass(pageN)" @onclick="() => OnPageClickedAsync(pageN)">
+                @(pageN + 1)
+            </button>
+        }
+    </div>
+    <button class="@GetNextPreviousButtonClass(false)" 
+            disabled="@NextButtonDisabled"
+            aria-label="Next"
+            @onclick="() => OnPageClickedAsync(_currentPage + 1)">&raquo;</button>
+</div>
+
+@code {
+
+    [Parameter]
+    public int CurrentPage { get; set; }
+
+    [Parameter]
+    public EventCallback<int> CurrentPageChanged { get; set; }
+
+    [Parameter]
+    public int PagesCount { get; set; }
+
+    private const int MaxPagerButtons = 5;
+
+    private int[] _pages;
+
+    private int _currentPage;
+
+    bool NextButtonDisabled => _currentPage + 1 >= PagesCount;
+
+    bool PreviousButtonDisabled => _currentPage <= 0;
+    
+    protected override void OnParametersSet()
+    {
+        RecalculatePageButtons(CurrentPage);
+    }
+    
+    private string GetPageButtonClass(int page)
+    {
+        return $"small pager-page-button {(_currentPage == page ? "active" : null)}";
+    }
+
+    private async Task OnPageClickedAsync(int page)
+    {
+        await CurrentPageChanged.InvokeAsync(page);
+    }
+
+    private string GetNextPreviousButtonClass(bool previous)
+    {
+        var disabled = previous ?
+            PreviousButtonDisabled : 
+            NextButtonDisabled;
+
+        return $"small pager-page-button {(disabled ? "disabled" : null)}";
+    }
+
+    private void RecalculatePageButtons(int page)
+    {
+        _currentPage = page;
+
+        var currentMaxButtons = Math.Min(MaxPagerButtons, PagesCount);
+        var half = (int)Math.Floor(currentMaxButtons / 2.0);
+
+        // Calculate half points
+        // eg: cur page = 5 -> [2 4 5 6 7] --> a = 2, b = 7
+        var a = Math.Max(0, _currentPage - half);
+        var b = Math.Min(_currentPage + half, PagesCount);
+
+        var diff = b - a; // distance of points (how many buttons this will show)
+
+        // distance from max buttons we want to show (how many buttons we miss to hit the 'currentMaxButtons' target)
+        var diffFromMaxButtons = currentMaxButtons - diff;
+
+        // Extend the B by the distance we need (up to the limit)
+        b = Math.Min(b + diffFromMaxButtons, PagesCount);
+
+        diff = b - a; // recalculate distances
+        diffFromMaxButtons = currentMaxButtons - diff;
+
+        // Extend the A by the rest of distance we need (up to the limit)
+        a = Math.Max(0, a - diffFromMaxButtons);
+
+        // Recalculate distance (this should equal to 'currentMaxButtons')
+        diff = b - a;
+
+        _pages = Enumerable.Range(0, diff)
+            .Select(_ => a++)
+            .ToArray();
+    }
+
+}

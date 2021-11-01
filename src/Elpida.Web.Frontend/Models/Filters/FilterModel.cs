@@ -14,7 +14,7 @@ namespace Elpida.Web.Frontend.Models.Filters
 
 		public string InternalName { get; }
 
-		public string Comparison { get; set; }
+		public string Comparison { get; set; } = FilterMaps.ComparisonMap[FilterComparison.Equal];
 
 		public abstract bool IsSet { get; }
 

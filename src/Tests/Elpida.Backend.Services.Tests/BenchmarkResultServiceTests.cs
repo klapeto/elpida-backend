@@ -282,23 +282,23 @@ namespace Elpida.Backend.Services.Tests
 		private static IEnumerable<BenchmarkDto> GetBenchmarks(IEnumerable<BenchmarkResultSlimDto> benchmarkResults)
 		{
 			return benchmarkResults.Select(
-				s => new BenchmarkDto(
-					89,
-					s.Uuid,
-					"test benchmark",
-					DtoGenerators.NewBenchmarkScoreSpecification(),
+				s => new BenchmarkDto{
+					Id = 89,
+					Uuid = s.Uuid,
+					Name = "test benchmark",
+					Tasks = DtoGenerators.NewBenchmarkScoreSpecification(),
 					s.TaskResults.Select(
-							x => new BenchmarkTaskDto(
-								x.Uuid,
-								DtoGenerators.NewTask(664, x.Uuid),
-								true,
-								true,
-								5,
-								true
-							)
+							x => new BenchmarkTaskDto{
+								Uuid = x.Uuid,
+								Task = DtoGenerators.NewTask(664, x.Uuid),
+								CanBeDisabled = true,
+								CanBeMultiThreaded = true,
+								IterationsToRun = 5,
+								IsCountedOnResults = true
+							}
 						)
 						.ToArray()
-				)
+				}
 			);
 		}
 	}

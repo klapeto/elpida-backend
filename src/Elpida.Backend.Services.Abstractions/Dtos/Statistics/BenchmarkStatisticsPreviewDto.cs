@@ -29,82 +29,47 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Statistics
 	public sealed class BenchmarkStatisticsPreviewDto : FoundationDto
 	{
 		/// <summary>
-		///     Initializes a new instance of the <see cref="BenchmarkStatisticsPreviewDto" /> class.
-		/// </summary>
-		/// <param name="id">The id of the statistic.</param>
-		/// <param name="cpuVendor">The cpu vendor for this statistic.</param>
-		/// <param name="cpuModelName">The cpu model name for this statistic.</param>
-		/// <param name="benchmarkUuid">The benchmark UUID for this statistic.</param>
-		/// <param name="benchmarkName">The benchmark name for this statistic.</param>
-		/// <param name="benchmarkScoreUnit">The benchmark score unit for this statistic.</param>
-		/// <param name="mean">The benchmark statistic mean score.</param>
-		/// <param name="sampleSize">The sample size for this benchmark.</param>
-		/// <param name="comparison">The value comparison type for this benchmark.</param>
-		public BenchmarkStatisticsPreviewDto(
-			long id,
-			string cpuVendor,
-			string cpuModelName,
-			Guid benchmarkUuid,
-			string benchmarkName,
-			string benchmarkScoreUnit,
-			double mean,
-			long sampleSize,
-			ValueComparison comparison
-		)
-			: base(id)
-		{
-			CpuVendor = cpuVendor;
-			CpuModelName = cpuModelName;
-			BenchmarkName = benchmarkName;
-			BenchmarkScoreUnit = benchmarkScoreUnit;
-			BenchmarkUuid = benchmarkUuid;
-			Mean = mean;
-			SampleSize = sampleSize;
-			Comparison = comparison;
-		}
-
-		/// <summary>
 		///     The cpu vendor for this statistic.
 		/// </summary>
 		/// <example>ARM</example>
-		public string CpuVendor { get; }
+		public string CpuVendor { get; init; }
 
 		/// <summary>
 		///     The cpu model name for this statistic.
 		/// </summary>
 		/// <example>Cortex A7</example>
-		public string CpuModelName { get; }
+		public string CpuModelName { get; init; }
 
 		/// <summary>
 		///     The benchmark name for this statistic.
 		/// </summary>
 		/// <example>Memory read bandwidth</example>
-		public string BenchmarkName { get; }
+		public string BenchmarkName { get; init; }
 
 		/// <summary>
 		///     The benchmark score unit for this statistic.
 		/// </summary>
 		/// <example>B/s</example>
-		public string BenchmarkScoreUnit { get; }
+		public string BenchmarkScoreUnit { get; init; }
 
 		/// <summary>
 		///     The benchmark UUID for this statistic.
 		/// </summary>
-		public Guid BenchmarkUuid { get; }
+		public Guid BenchmarkUuid { get; init; }
 
 		/// <summary>
 		///     The benchmark statistic mean score.
 		/// </summary>
-		public double Mean { get; }
+		public double Mean { get; init; }
 
 		/// <summary>
 		///     The sample size for this benchmark.
 		/// </summary>
-		public long SampleSize { get; }
+		public long SampleSize { get; init; }
 
 		/// <summary>
 		///     The value comparison type for this benchmark.
 		/// </summary>
-		public ValueComparison Comparison { get; }
+		public ValueComparison Comparison { get; init; }
 	}
 }

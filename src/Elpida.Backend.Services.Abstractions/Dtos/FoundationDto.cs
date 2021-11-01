@@ -26,17 +26,8 @@ namespace Elpida.Backend.Services.Abstractions.Dtos
 	public class FoundationDto
 	{
 		/// <summary>
-		///     Initializes a new instance of the <see cref="FoundationDto" /> class.
-		/// </summary>
-		/// <param name="id">The id of the object.</param>
-		protected FoundationDto(long id)
-		{
-			Id = id;
-		}
-
-		/// <summary>
 		///     The id of this entity.
 		/// </summary>
-		public long Id { get; }
+		public long Id { get; set; }
 	}
 }

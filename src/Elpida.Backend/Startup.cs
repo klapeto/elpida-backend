@@ -44,12 +44,15 @@ namespace Elpida.Backend
 {
 	public class Startup
 	{
-		public Startup(IConfiguration configuration)
+		public Startup(IConfiguration configuration, IWebHostEnvironment env)
 		{
 			Configuration = configuration;
+			Environment = env;
 		}
 
 		public IConfiguration Configuration { get; }
+
+		public IWebHostEnvironment Environment { get; }
 
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
@@ -77,10 +80,22 @@ namespace Elpida.Backend
 			services.AddDbContext<ElpidaContext>(
 				builder =>
 				{
-					builder.UseSqlServer(
-						Configuration.GetConnectionString("ElpidaDB"),
-						b => b.MigrationsAssembly(Assembly.GetExecutingAssembly().GetName().Name)
-					);
+					if (Environment.IsDevelopment())
+					{
+						var path = Path.Combine(Path.GetTempPath(), "Elpida");
+						Directory.CreateDirectory(path);
+						builder.UseSqlite(
+							$"Data Source={Path.Combine(path, "ElpidaDB.db")}",
+							b => b.MigrationsAssembly("Elpida.Backend.Data.Sqlite")
+						);
+					}
+					else
+					{
+						builder.UseSqlServer(
+							Configuration.GetConnectionString("ElpidaDB"),
+							b => b.MigrationsAssembly(Assembly.GetExecutingAssembly().GetName().Name)
+						);
+					}
 				}
 			);
 
@@ -135,6 +150,12 @@ namespace Elpida.Backend
 					{
 						builder.WithOrigins(
 							"https://staging.elpida.dev"
+						);
+					}
+					else
+					{
+						builder.WithOrigins(
+							"*"
 						);
 					}
 

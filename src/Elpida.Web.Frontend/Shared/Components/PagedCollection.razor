@@ -17,51 +17,122 @@
         @QueryButtonVerb query
     </IconWithText>
 </button>
+
 @if (_showQuery)
 {
-    <QueryEditor Model="_queryModel" Submitted="OnQuerySubmit"/>
+    <div class="flex-center column">
+        <div class="flex-center row" style="margin: 1em">
+            <h3>Query</h3>
+            <button style="margin: 1em" class="button non-a-button medium @SimpleButtonActiveClass" @onclick="OnSimpleClick">
+                Simple
+            </button>
+            <button class="button non-a-button medium @AdvancedButtonActiveClass" @onclick="OnAdvancedClick">
+                Advanced
+            </button>
+        </div>
+        <QueryEditor Model="_currentQueryModel" AllowSort="_showAdvanced" Submitted="OnQuerySubmitAsync"/>
+    </div>
 }
 
-@if (_currentPage != null)
+@if (_currentResults != null)
 {
-    
+    foreach (var item in _currentResults.Items)
+    {
+        @ChildContent(item)
+    }
 }
+
+<Pager CurrentPage="@_currentPageNumber" CurrentPageChanged="r => LoadPageAsync(_currentQueryModel, r)" PagesCount="@PageCount"/>
 
 @inject ILogger<PagedCollection<TDto, TPreview>> _logger;
 
 @code {
+    
+    private const int PageSize = 10;
 
     [Parameter]
     public IFrontendService<TDto, TPreview> Service { get; set; }
 
     [Parameter]
     public RenderFragment<TPreview> ChildContent { get; set; }
+    
+    [CascadingParameter]
+    public Modal Modal { get; set; }
+    
+    [CascadingParameter]
+    public Content Content { get; set; }
 
-    private QueryModel? _queryModel;
+    private QueryModel _simpleQueryModel;
+    private QueryModel _advancedQueryModel;
+    private QueryModel _currentQueryModel;
 
-    private TPreview[]? _currentPage;
+    private PagedResult<TPreview>? _currentResults;
+
+    private int PageCount => (int)(_currentResults?.TotalCount / PageSize ?? 0) + 1;
+
+    private int _currentPageNumber;
 
     private string? QueryButtonActiveClass => _showQuery ? "active" : null;
+
+    private string? AdvancedButtonActiveClass => _showAdvanced ? "active" : null;
+
+    private string? SimpleButtonActiveClass => !_showAdvanced ? "active" : null;
+
     private string QueryButtonVerb => _showQuery ? "Hide" : "Show";
 
     private bool _showQuery;
+    private bool _showAdvanced;
 
     private void OnQueryClick()
     {
         _showQuery = !_showQuery;
     }
 
-    protected override void OnInitialized()
+    private void OnSimpleClick()
     {
-        _queryModel = new QueryModel(Service.CreateFilterModels());
+        _showAdvanced = false;
+        _currentQueryModel = _simpleQueryModel;
     }
 
-    private void OnQuerySubmit()
+    private void OnAdvancedClick()
     {
-        _logger.LogInformation("Query submitted: \n{Filters}\n{SortBy}\n{Descending}",
-            string.Join("\n\t", _queryModel.Filters.Where(f => f.IsSet).Select(f => f.ToString())),
-            _queryModel.SortBy,
-            _queryModel.Descending);
+        _showAdvanced = true;
+        _currentQueryModel = _advancedQueryModel;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _simpleQueryModel = Service.CreateSimpleQueryModel();
+        _advancedQueryModel = Service.CreateAdvancedQueryModel();
+        _currentQueryModel = _simpleQueryModel;
+
+        await LoadPageAsync(_advancedQueryModel, 0);
+        await base.OnInitializedAsync();
+    }
+
+    private async Task LoadPageAsync(QueryModel queryModel, int pageNumber)
+    {
+        try
+        {
+            _currentResults = await Service.GetPagedPreviewsAsync(
+                new QueryRequest(
+                    new PageRequest(pageNumber * PageSize, PageSize), 
+                    queryModel.Filters.Where(f=> f.IsSet).Select(f => f.CreateFilterInstance()).ToArray(),
+                    queryModel.SortBy,
+                    queryModel.Descending
+                    ));
+            _currentPageNumber = pageNumber;
+           await Content.ResetScrollAsync();
+        }
+        catch (Exception e)
+        {
+            Modal.ShowError(e);
+        }
+    }
+    
+    private Task OnQuerySubmitAsync()
+    {
+       return LoadPageAsync(_currentQueryModel, 0);
     }
 
 }

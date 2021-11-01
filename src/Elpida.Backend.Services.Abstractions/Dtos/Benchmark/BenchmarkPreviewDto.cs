@@ -28,27 +28,14 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Benchmark
 	public sealed class BenchmarkPreviewDto : FoundationDto
 	{
 		/// <summary>
-		///     Initializes a new instance of the <see cref="BenchmarkPreviewDto" /> class.
-		/// </summary>
-		/// <param name="id">The id if the Benchmark.</param>
-		/// <param name="uuid">The UUID of the Benchmark this preview represents.</param>
-		/// <param name="name">The name of the Benchmark this preview represents.</param>
-		public BenchmarkPreviewDto(long id, Guid uuid, string name)
-			: base(id)
-		{
-			Uuid = uuid;
-			Name = name;
-		}
-
-		/// <summary>
 		///     The UUID of the Benchmark this preview represents.
 		/// </summary>
-		public Guid Uuid { get; }
+		public Guid Uuid { get; init; }
 
 		/// <summary>
 		///     The name of the Benchmark this preview represents.
 		/// </summary>
 		/// <example>Test Benchmark</example>
-		public string Name { get; }
+		public string Name { get; init; }
 	}
 }

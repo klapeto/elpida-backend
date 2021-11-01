@@ -1,0 +1,36 @@
+@page "/Database/Results"
+@using Elpida.Web.Frontend.Shared.Components
+@using Elpida.Web.Frontend.Services
+@using Elpida.Backend.Services.Abstractions.Dtos.Result;
+@using Elpida.Backend.Services.Abstractions.Dtos
+
+<h3>Results</h3>
+
+<ul>
+    <PagedCollection Service="_service" TDto="BenchmarkResultDto" TPreview="BenchmarkResultPreviewDto">
+    <li class="collection-item">
+                <LinkButton Class="collection-item-link" Href="@GetResultLink(context)">
+                    <img alt="@context.CpuVendor" src="@GetVendorImage(context)" class="collection-item-icon" loading="lazy">
+                    <span class="collection-item-name">
+                        @context.BenchmarkName
+                    </span>
+                </LinkButton>
+            </li>
+</PagedCollection>
+
+</ul>
+@inject ResultsFrontEndService _service;
+
+@code {
+    
+    private static string GetVendorImage(BenchmarkResultPreviewDto dto)
+    {
+        return $"./assets/cpus/{dto.CpuVendor}.svg";
+    }
+
+    private static string GetResultLink(FoundationDto dto)
+    {
+        return $"/Database/Result/{dto.Id}";
+    }
+    
+}

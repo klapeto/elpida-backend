@@ -27,28 +27,20 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Elpida
 	/// </summary>
 	public sealed class VersionDto
 	{
-		public VersionDto(int major, int minor, int revision, int build)
-		{
-			Major = major;
-			Minor = minor;
-			Revision = revision;
-			Build = build;
-		}
+		[Required]
+		[Range(0, int.MaxValue)]
+		public int Major { get; init; }
 
 		[Required]
 		[Range(0, int.MaxValue)]
-		public int Major { get; }
+		public int Minor { get; init; }
 
 		[Required]
 		[Range(0, int.MaxValue)]
-		public int Minor { get; }
+		public int Revision { get; init; }
 
 		[Required]
 		[Range(0, int.MaxValue)]
-		public int Revision { get; }
-
-		[Required]
-		[Range(0, int.MaxValue)]
-		public int Build { get; }
+		public int Build { get; init; }
 	}
 }

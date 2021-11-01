@@ -27,12 +27,13 @@ namespace Elpida.Backend.Services.Extensions.Os
 	{
 		public static OsDto ToDto(this OsModel osModel)
 		{
-			return new (
-				osModel.Id,
-				osModel.Category,
-				osModel.Name,
-				osModel.Version
-			);
+			return new ()
+			{
+				Id = osModel.Id,
+				Category = osModel.Category,
+				Name = osModel.Name,
+				Version = osModel.Version,
+			};
 		}
 	}
 }

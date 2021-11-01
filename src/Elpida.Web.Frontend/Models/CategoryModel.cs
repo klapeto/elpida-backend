@@ -2,17 +2,17 @@ namespace Elpida.Web.Frontend.Models
 {
 	public class CategoryModel
 	{
-		public CategoryModel(string name, string link, string iconName)
+		public CategoryModel(string name, string link, string iconLink)
 		{
 			Name = name;
 			Link = link;
-			IconName = iconName;
+			IconLink = iconLink;
 		}
 
 		public string Name { get; }
 
 		public string Link { get; }
 
-		public string IconName { get; }
+		public string IconLink { get; }
 	}
 }

@@ -72,7 +72,7 @@ namespace Elpida.Backend.Services
 
 		protected override Expression<Func<BenchmarkModel, BenchmarkPreviewDto>> GetPreviewConstructionExpression()
 		{
-			return m => new BenchmarkPreviewDto(m.Id, m.Uuid, m.Name);
+			return m => new BenchmarkPreviewDto { Id = m.Id, Uuid = m.Uuid, Name = m.Name };
 		}
 
 		protected override async Task<BenchmarkModel> ProcessDtoAndCreateModelAsync(

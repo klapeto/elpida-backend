@@ -28,47 +28,24 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Benchmark
 	public sealed class BenchmarkDto : FoundationDto
 	{
 		/// <summary>
-		///     Initializes a new instance of the <see cref="BenchmarkDto" /> class.
-		/// </summary>
-		/// <param name="id">The id of the Benchmark.</param>
-		/// <param name="uuid">The UUID of the Benchmark.</param>
-		/// <param name="name">The name of the</param>
-		/// <param name="scoreSpecification">The score specification details of the Benchmark.</param>
-		/// <param name="tasks">The task specifications details of the Benchmark.</param>
-		public BenchmarkDto(
-			long id,
-			Guid uuid,
-			string name,
-			BenchmarkScoreSpecificationDto scoreSpecification,
-			BenchmarkTaskDto[] tasks
-		)
-			: base(id)
-		{
-			Uuid = uuid;
-			Name = name;
-			ScoreSpecification = scoreSpecification;
-			Tasks = tasks;
-		}
-
-		/// <summary>
 		///     The UUID of the Benchmark.
 		/// </summary>
-		public Guid Uuid { get; }
+		public Guid Uuid { get; init; }
 
 		/// <summary>
 		///     The name of the Benchmark.
 		/// </summary>
 		/// <example>Test Benchmark.</example>
-		public string Name { get; }
+		public string Name { get; init; }
 
 		/// <summary>
 		///     The score specification details of the Benchmark.
 		/// </summary>
-		public BenchmarkScoreSpecificationDto ScoreSpecification { get; }
+		public BenchmarkScoreSpecificationDto ScoreSpecification { get; init; }
 
 		/// <summary>
 		///     The task specifications details of the Benchmark.
 		/// </summary>
-		public BenchmarkTaskDto[] Tasks { get; }
+		public BenchmarkTaskDto[] Tasks { get; init; }
 	}
 }

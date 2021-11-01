@@ -26,32 +26,15 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Cpu
 	public sealed class CpuPreviewDto : FoundationDto
 	{
 		/// <summary>
-		///     Initializes a new instance of the <see cref="CpuPreviewDto" /> class.
-		/// </summary>
-		/// <param name="id">The id of the Cpu.</param>
-		/// <param name="vendor">The vendor name of the cpu.</param>
-		/// <param name="modelName">The model name of the cpu.</param>
-		public CpuPreviewDto(
-			long id,
-			string vendor,
-			string modelName
-		)
-			: base(id)
-		{
-			Vendor = vendor;
-			ModelName = modelName;
-		}
-
-		/// <summary>
 		///     The vendor name of the cpu.
 		/// </summary>
 		/// <example>ARM</example>
-		public string Vendor { get; }
+		public string Vendor { get; set; }
 
 		/// <summary>
 		///     The model name of the cpu.
 		/// </summary>
 		/// <example>Cortex A7</example>
-		public string ModelName { get; }
+		public string ModelName { get; set; }
 	}
 }

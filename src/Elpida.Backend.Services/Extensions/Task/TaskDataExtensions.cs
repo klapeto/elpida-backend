@@ -28,15 +28,16 @@ namespace Elpida.Backend.Services.Extensions.Task
 	{
 		public static TaskDto ToDto(this TaskModel taskModel)
 		{
-			return new (
-				taskModel.Id,
-				taskModel.Uuid,
-				taskModel.Name,
-				taskModel.Description,
-				taskModel.GetResultSpecificationDto(),
-				taskModel.CreateInputSpecDto(),
-				taskModel.CreateOutputSpecDto()
-			);
+			return new ()
+			{
+				Id = taskModel.Id,
+				Uuid = taskModel.Uuid,
+				Name = taskModel.Name,
+				Description = taskModel.Description,
+				Result = taskModel.GetResultSpecificationDto(),
+				Input = taskModel.CreateInputSpecDto(),
+				Output = taskModel.CreateOutputSpecDto(),
+			};
 		}
 	}
 }

@@ -28,54 +28,31 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Task
 	public sealed class ResultSpecificationDto
 	{
 		/// <summary>
-		///     Initializes a new instance of the <see cref="ResultSpecificationDto" /> class.
-		/// </summary>
-		/// <param name="name">The name of the result.</param>
-		/// <param name="description">The description of the result.</param>
-		/// <param name="unit">The unit of the result.</param>
-		/// <param name="aggregation">The type of aggregation for this result.</param>
-		/// <param name="type">The type of this result.</param>
-		public ResultSpecificationDto(
-			string name,
-			string description,
-			string unit,
-			AggregationType aggregation,
-			ResultType type
-		)
-		{
-			Name = name;
-			Description = description;
-			Unit = unit;
-			Aggregation = aggregation;
-			Type = type;
-		}
-
-		/// <summary>
 		///     The name of the result.
 		/// </summary>
 		/// <example>Allocation rate</example>
-		public string Name { get; }
+		public string Name { get; init; }
 
 		/// <summary>
 		///     The description of the result.
 		/// </summary>
 		/// <example>The rate the cpu can allocate memory.</example>
-		public string Description { get; }
+		public string Description { get; init; }
 
 		/// <summary>
 		///     The unit of the result.
 		/// </summary>
 		/// <example>B/s</example>
-		public string Unit { get; }
+		public string Unit { get; init; }
 
 		/// <summary>
 		///     The type of aggregation for this result.
 		/// </summary>
-		public AggregationType Aggregation { get; }
+		public AggregationType Aggregation { get; init; }
 
 		/// <summary>
 		///     The type of this result.
 		/// </summary>
-		public ResultType Type { get; }
+		public ResultType Type { get; init; }
 	}
 }

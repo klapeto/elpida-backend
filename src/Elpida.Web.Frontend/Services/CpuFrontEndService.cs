@@ -1,47 +1,70 @@
-using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Net.Http;
 using Elpida.Backend.Services.Abstractions;
 using Elpida.Backend.Services.Abstractions.Dtos.Cpu;
 using Elpida.Backend.Services.Abstractions.Interfaces;
-using Elpida.Web.Frontend.Interfaces;
+using Elpida.Web.Frontend.Models;
 using Elpida.Web.Frontend.Models.Filters;
 
 namespace Elpida.Web.Frontend.Services
 {
-	public class CpuFrontEndService : ICpuService, IFrontendService<CpuDto, CpuPreviewDto>
+	public class CpuFrontEndService : FrontEndServiceBase<CpuDto, CpuPreviewDto>, ICpuService
 	{
-		public Task<CpuDto> GetSingleAsync(long id, CancellationToken cancellationToken = default)
+		public CpuFrontEndService(HttpClient httpClient)
+			: base(httpClient)
 		{
-			throw new NotImplementedException();
 		}
 
-		public Task<PagedResult<CpuPreviewDto>> GetPagedPreviewsAsync(
-			QueryRequest queryRequest,
-			CancellationToken cancellationToken = default
-		)
+		protected override string UrlRouteBase => "Cpu";
+
+		public override QueryModel CreateAdvancedQueryModel()
 		{
-			throw new NotImplementedException();
+			return new (
+				new FilterModel[]
+				{
+					new StringFilterModel("CPU Vendor", "cpuVendor"),
+					new StringFilterModel("CPU Model", "cpuModelName"),
+					new NumberFilterModel("CPU Frequency", "cpuFrequency"),
+				}
+			);
 		}
 
-		public Task<CpuDto> GetOrAddAsync(CpuDto dto, CancellationToken cancellationToken = default)
+		public override QueryModel CreateSimpleQueryModel()
 		{
-			throw new NotImplementedException();
-		}
-
-		public IEnumerable<FilterExpression> ConstructCustomFilters<T, TR>(Expression<Func<T, TR>> baseExpression)
-		{
-			throw new NotImplementedException();
-		}
-
-		public IEnumerable<FilterModel> CreateFilterModels()
-		{
-			yield return new StringFilterModel("CPU vendor", "cpuVendor");
-			yield return new NumberFilterModel("CPU frequency", "cpuFrequency");
-			yield return new DateTimeFilterModel("Start date", "startDate");
-			yield return new RangeFilterModel("CPU cores", "cpuCores", 1, 2000);
+			return new (
+				new FilterModel[]
+				{
+					new OptionFilterModel(
+						"CPU model",
+						"cpuModelName",
+						new[]
+						{
+							new OptionModel(null, null),
+							new OptionModel("AMD Ryzen 3", "AMD Ryzen 3"),
+							new OptionModel("AMD Ryzen 5", "AMD Ryzen 5"),
+							new OptionModel("AMD Ryzen 7", "AMD Ryzen 7"),
+							new OptionModel("AMD Ryzen 9", "AMD Ryzen 9"),
+							new OptionModel("AMD Ryzen Threadripper", "AMD Ryzen Threadripper"),
+							new OptionModel("AMD Epyc", "AMD Epyc"),
+							new OptionModel("Intel Celeron", "Intel(R) Celeron"),
+							new OptionModel("Intel Pentium", "Intel(R) Pentium"),
+							new OptionModel("Intel Core i3", "Intel(R) Core(TM) i3"),
+							new OptionModel("Intel Core i5", "Intel(R) Core(TM) i5"),
+							new OptionModel("Intel Core i7", "Intel(R) Core(TM) i7"),
+							new OptionModel("Intel Core i9", "Intel(R) Core(TM) i9"),
+							new OptionModel("Intel Xeon", "Intel(R) Xeon(TM)"),
+						}
+					),
+					new RangeFilterModel(
+						"Min CPU Frequency",
+						"cpuFrequency",
+						500_000_000,
+						10_000_000_000,
+						FilterComparison.GreaterEqual,
+						"Hz",
+						2_500_000_000
+					),
+				}
+			);
 		}
 	}
 }

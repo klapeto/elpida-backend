@@ -18,7 +18,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using System;
 using Elpida.Backend.Services.Abstractions.Dtos.Task;
 
 namespace Elpida.Backend.Services.Abstractions.Dtos.Result
@@ -29,82 +28,38 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 	public sealed class TaskResultDto : TaskDto
 	{
 		/// <summary>
-		///     Initializes a new instance of the <see cref="TaskResultDto" /> class.
-		/// </summary>
-		/// <param name="taskId">The id of the Task this result belongs.</param>
-		/// <param name="benchmarkResultId">The id of the Benchmark this result belongs.</param>
-		/// <param name="cpuId">The id of the Cpu this result belongs.</param>
-		/// <param name="topologyId">The id of the Topology this result belongs.</param>
-		/// <param name="uuid">The UUID of this Task.</param>
-		/// <param name="name">The name of this Task.</param>
-		/// <param name="description">The description of this Task.</param>
-		/// <param name="result">The result specification of this Task.</param>
-		/// <param name="input">The input data specification of this Task.</param>
-		/// <param name="output">The output data specification of this Task.</param>
-		/// <param name="value">The value of the result.</param>
-		/// <param name="time">The total time this task run.</param>
-		/// <param name="inputSize">How much data this task received as input.</param>
-		/// <param name="statistics">The result statistics.</param>
-		public TaskResultDto(
-			long taskId,
-			long benchmarkResultId,
-			long cpuId,
-			long topologyId,
-			Guid uuid,
-			string name,
-			string description,
-			ResultSpecificationDto result,
-			DataSpecificationDto? input,
-			DataSpecificationDto? output,
-			double value,
-			double time,
-			long inputSize,
-			TaskRunStatisticsDto statistics
-		)
-			: base(taskId, uuid, name, description, result, input, output)
-		{
-			BenchmarkResultId = benchmarkResultId;
-			CpuId = cpuId;
-			TopologyId = topologyId;
-			Value = value;
-			Time = time;
-			InputSize = inputSize;
-			Statistics = statistics;
-		}
-
-		/// <summary>
 		///     The id of the Benchmark this result belongs.
 		/// </summary>
-		public long BenchmarkResultId { get; }
+		public long BenchmarkResultId { get; init; }
 
 		/// <summary>
 		///     The id of the Cpu this result belongs.
 		/// </summary>
-		public long CpuId { get; }
+		public long CpuId { get; init; }
 
 		/// <summary>
 		///     The id of the Topology this result belongs.
 		/// </summary>
-		public long TopologyId { get; }
+		public long TopologyId { get; init; }
 
 		/// <summary>
 		///     The value of the result.
 		/// </summary>
-		public double Value { get; }
+		public double Value { get; init; }
 
 		/// <summary>
 		///     The total time this task run.
 		/// </summary>
-		public double Time { get; }
+		public double Time { get; init; }
 
 		/// <summary>
 		///     How much data this task received as input.
 		/// </summary>
-		public long InputSize { get; }
+		public long InputSize { get; init; }
 
 		/// <summary>
 		///     The result statistics.
 		/// </summary>
-		public TaskRunStatisticsDto Statistics { get; }
+		public TaskRunStatisticsDto Statistics { get; init; }
 	}
 }

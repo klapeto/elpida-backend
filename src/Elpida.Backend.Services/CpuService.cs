@@ -55,7 +55,12 @@ namespace Elpida.Backend.Services
 
 		protected override Expression<Func<CpuModel, CpuPreviewDto>> GetPreviewConstructionExpression()
 		{
-			return m => new CpuPreviewDto(m.Id, m.Vendor, m.ModelName);
+			return m => new CpuPreviewDto
+			{
+				Id = m.Id,
+				Vendor = m.Vendor,
+				ModelName = m.ModelName,
+			};
 		}
 
 		protected override Task<CpuModel> ProcessDtoAndCreateModelAsync(CpuDto dto, CancellationToken cancellationToken)

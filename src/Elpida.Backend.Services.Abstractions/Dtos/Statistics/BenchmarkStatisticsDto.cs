@@ -29,94 +29,53 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Statistics
 	public sealed class BenchmarkStatisticsDto : FoundationDto
 	{
 		/// <summary>
-		///     Initializes a new instance of the <see cref="BenchmarkStatisticsDto" /> class.
-		/// </summary>
-		/// <param name="id">The id of the statistic.</param>
-		/// <param name="cpu">The Cpu this statistic represents.</param>
-		/// <param name="benchmark">The Benchmark this statistic represents.</param>
-		/// <param name="sampleSize">The sample size for this benchmark/cpu combination.</param>
-		/// <param name="max">The maximum score for this benchmark/cpu combination.</param>
-		/// <param name="min">The minimum score for this benchmark/cpu combination.</param>
-		/// <param name="mean">The mean score for this benchmark/cpu combination.</param>
-		/// <param name="standardDeviation">The standard deviation of the score for this benchmark/cpu combination.</param>
-		/// <param name="tau">The tau of the score for this benchmark/cpu combination.</param>
-		/// <param name="marginOfError">The margin of error of the score for this benchmark/cpu combination.</param>
-		/// <param name="classes">The frequency classes benchmark/cpu combination.</param>
-		public BenchmarkStatisticsDto(
-			long id,
-			CpuDto cpu,
-			BenchmarkDto benchmark,
-			long sampleSize,
-			double max,
-			double min,
-			double mean,
-			double standardDeviation,
-			double tau,
-			double marginOfError,
-			FrequencyClassDto[] classes
-		)
-			: base(id)
-		{
-			Cpu = cpu;
-			Benchmark = benchmark;
-			SampleSize = sampleSize;
-			Max = max;
-			Min = min;
-			Mean = mean;
-			StandardDeviation = standardDeviation;
-			Tau = tau;
-			MarginOfError = marginOfError;
-			Classes = classes;
-		}
-
-		/// <summary>
 		///     The Cpu this statistic represents.
 		/// </summary>
-		public CpuDto Cpu { get; }
+		public CpuDto Cpu { get; init; }
 
 		/// <summary>
 		///     The Benchmark this statistic represents.
 		/// </summary>
-		public BenchmarkDto Benchmark { get; }
+		public BenchmarkDto Benchmark { get; init; }
 
 		/// <summary>
 		///     The sample size for this benchmark/cpu combination.
 		/// </summary>
-		public long SampleSize { get; }
+		public long SampleSize { get; init; }
 
 		/// <summary>
 		///     The maximum score for this benchmark/cpu combination.
 		/// </summary>
-		public double Max { get; }
+		public double Max { get; init; }
 
 		/// <summary>
 		///     The minimum score for this benchmark/cpu combination.
 		/// </summary>
-		public double Min { get; }
+		public double Min { get; init; }
 
 		/// <summary>
 		///     The mean score for this benchmark/cpu combination.
 		/// </summary>
-		public double Mean { get; }
+		public double Mean { get; init; }
 
 		/// <summary>
 		///     The standard deviation of the score for this benchmark/cpu combination.
 		/// </summary>
-		public double StandardDeviation { get; }
+		public double StandardDeviation { get; init; }
 
 		/// <summary>
 		///     The tau of the score for this benchmark/cpu combination.
 		/// </summary>
-		public double Tau { get; }
+		public double Tau { get; init; }
 
 		/// <summary>
 		///     The margin of error of the score for this benchmark/cpu combination.
 		/// </summary>
-		public double MarginOfError { get; }
+		public double MarginOfError { get; init; }
 
 		/// <summary>
 		///     The frequency classes benchmark/cpu combination.
 		/// </summary>
-		public FrequencyClassDto[] Classes { get; }
+		public FrequencyClassDto[] Classes { get; init; }
 	}
 }

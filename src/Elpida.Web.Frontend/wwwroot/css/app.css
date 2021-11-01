@@ -10,6 +10,10 @@ hr {
     border-style: solid;
 }
 
+.hidden {
+    display: none !important;
+}
+
 .icon {
     height: 1em;
     width: 1em;
@@ -89,6 +93,27 @@ button {
     cursor: pointer;
     border: initial;
 }
+
+.button.close {
+    background-color: var( --close-button-bg);
+    border-radius: 0.4em;
+    padding: 0.2em 0.6em;
+}
+
+.button.close:hover {
+    background-color: var( --close-button-hover-bg);
+}
+
+.button.close.active {
+    background-color: var( --close-button-active-bg);
+}
+
+button.disabled,
+button.disabled:hover,
+.button.disabled,
+.button.disabled:hover {
+    background-color: rgb(212, 219, 224);
+}
 /* button */
 
 
@@ -113,7 +138,8 @@ button {
 
 .groupBoxHeader {
     text-align: center;
-    margin: 0.5em;
+    margin: 0;
+    padding: 0.5em;
 }
 
 .groupBoxContent {
@@ -127,11 +153,6 @@ button {
 
 
 /* QueryEditor */
-.query-editor {
-    display: flex;
-    flex-flow: column wrap;
-    place-content: center;
-}
 
 .raw-value-filter {
     display: flex;
@@ -188,10 +209,99 @@ input[type="range"] {
 .collection-item {
     list-style: none;
     margin: 0.8em;
-    display: block;
 }
 
-.collection-link {
-    display: block;
+.collection-item-link {
+    display: flex; 
+    flex-flow: row wrap; 
+    align-items: center;
+    background-color: var(--group-box-header-color);
+    color: var(--font-color);
+    border-radius: 3em;
 }
+
+.collection-item-icon {
+    height: 3em;
+    width: 3em;
+}
+
+.collection-item-name {
+    margin-left: 0.5em;
+    font-weight: 700;
+    font-size: 1.3em;
+}
+
 /* Collection */
+
+/* Modal */
+.modal-bg {
+    position: fixed;
+    top: 0;
+    z-index: 99;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,0,0, 0.5);
+    display: flex;
+    flex-flow: column;
+    place-items: center;
+    place-content: center;
+}
+.modal-container {
+    width: 95%;
+    height: 95%;
+    display: flex;
+    flex-flow: column;
+}
+
+@media (min-width: 960px) {
+    .modal-container {
+        width: 50%;
+        height: 50%;
+    }
+}
+
+.modal-header {
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    place-items: center
+}
+
+.modal-content {
+    overflow: auto;
+    height: 100%;
+}
+
+.exception-container {
+    display: flex;
+    flex-flow: column wrap;
+}
+
+.exception-detail {
+    word-wrap: anywhere;
+}
+
+@media (min-width: 960px) {
+    .exception-container {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        grid-gap: 0.5em;
+    }
+}
+/* Modal */
+
+/* Pager */
+.pager-container {
+    display: flex;
+    place-content: center;
+}
+
+.pager-pages {
+    display: flex;
+}
+
+.pager-page-button {
+    margin: 0.2em;
+}
+/* Pager */

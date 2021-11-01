@@ -28,25 +28,14 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Benchmark
 	public sealed class BenchmarkScoreSpecificationDto
 	{
 		/// <summary>
-		///     Initializes a new instance of the <see cref="BenchmarkScoreSpecificationDto" /> class.
-		/// </summary>
-		/// <param name="unit">The uint of this Benchmark's score.</param>
-		/// <param name="comparison">The comparison type of this Benchmark's score.</param>
-		public BenchmarkScoreSpecificationDto(string unit, ValueComparison comparison)
-		{
-			Unit = unit;
-			Comparison = comparison;
-		}
-
-		/// <summary>
 		///     The uint of this Benchmark's score.
 		/// </summary>
 		/// <example>Pixels/s</example>
-		public string Unit { get; }
+		public string Unit { get; init; }
 
 		/// <summary>
 		///     The comparison type of this Benchmark's score.
 		/// </summary>
-		public ValueComparison Comparison { get; }
+		public ValueComparison Comparison { get; init; }
 	}
 }

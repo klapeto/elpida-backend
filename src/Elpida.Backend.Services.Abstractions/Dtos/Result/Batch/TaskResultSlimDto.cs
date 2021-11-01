@@ -29,54 +29,37 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result.Batch
 	public sealed class TaskResultSlimDto
 	{
 		/// <summary>
-		///     Initializes a new instance of the <see cref="TaskResultSlimDto" /> class.
-		/// </summary>
-		/// <param name="uuid">The UUID of this Task.</param>
-		/// <param name="value">The value of the result.</param>
-		/// <param name="time">The total time this task run.</param>
-		/// <param name="inputSize">How much data this task received as input.</param>
-		/// <param name="statistics">The result statistics.</param>
-		public TaskResultSlimDto(Guid uuid, double value, double time, long inputSize, TaskRunStatisticsDto statistics)
-		{
-			Uuid = uuid;
-			Value = value;
-			Time = time;
-			InputSize = inputSize;
-			Statistics = statistics;
-		}
-
-		/// <summary>
 		///     The UUID of this Task.
 		/// </summary>
 		[Required]
 		[NonDefaultValue]
-		public Guid Uuid { get; }
+		public Guid Uuid { get; init; }
 
 		/// <summary>
 		///     The value of the result.
 		/// </summary>
 		[Required]
 		[Range(double.Epsilon, double.MaxValue)]
-		public double Value { get; }
+		public double Value { get; init; }
 
 		/// <summary>
 		///     The total time this task run.
 		/// </summary>
 		[Required]
 		[Range(double.Epsilon, double.MaxValue)]
-		public double Time { get; }
+		public double Time { get; init; }
 
 		/// <summary>
 		///     How much data this task received as input.
 		/// </summary>
 		[Required]
 		[Range(0.0, double.MaxValue)]
-		public long InputSize { get; }
+		public long InputSize { get; init; }
 
 		/// <summary>
 		///     The result statistics.
 		/// </summary>
 		[Required]
-		public TaskRunStatisticsDto Statistics { get; }
+		public TaskRunStatisticsDto Statistics { get; init; }
 	}
 }

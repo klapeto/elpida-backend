@@ -29,60 +29,34 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Benchmark
 	public sealed class BenchmarkTaskDto
 	{
 		/// <summary>
-		///     Initializes a new instance of the <see cref="BenchmarkTaskDto" /> class.
-		/// </summary>
-		/// <param name="uuid">The Task UUID.</param>
-		/// <param name="task">The Task details.</param>
-		/// <param name="canBeMultiThreaded">If this Task instance is allowed to run multi threaded.</param>
-		/// <param name="canBeDisabled">If this Task instance is allowed to be disabled.</param>
-		/// <param name="iterationsToRun">How many iterations this Task instance will be run.</param>
-		/// <param name="isCountedOnResults">If the results of this Task instance are counted on the Benchmark score etc.</param>
-		public BenchmarkTaskDto(
-			Guid uuid,
-			TaskDto? task,
-			bool canBeMultiThreaded,
-			bool canBeDisabled,
-			long iterationsToRun,
-			bool isCountedOnResults
-		)
-		{
-			Uuid = uuid;
-			Task = task;
-			CanBeMultiThreaded = canBeMultiThreaded;
-			CanBeDisabled = canBeDisabled;
-			IterationsToRun = iterationsToRun;
-			IsCountedOnResults = isCountedOnResults;
-		}
-
-		/// <summary>
 		///     The Task UUID.
 		/// </summary>
-		public Guid Uuid { get; }
+		public Guid Uuid { get; init; }
 
 		/// <summary>
 		///     The Task details.
 		/// </summary>
-		public TaskDto? Task { get; }
+		public TaskDto? Task { get; init; }
 
 		/// <summary>
 		///     If this Task instance is allowed to run multi threaded.
 		/// </summary>
-		public bool CanBeMultiThreaded { get; }
+		public bool CanBeMultiThreaded { get; init; }
 
 		/// <summary>
 		///     If this Task instance is allowed to be disabled.
 		/// </summary>
-		public bool CanBeDisabled { get; }
+		public bool CanBeDisabled { get; init; }
 
 		/// <summary>
 		///     How many iterations this Task instance will be run.
 		/// </summary>
 		/// <example>1</example>
-		public long IterationsToRun { get; }
+		public long IterationsToRun { get; init; }
 
 		/// <summary>
 		///     If the results of this Task instance are counted on the Benchmark score etc.
 		/// </summary>
-		public bool IsCountedOnResults { get; }
+		public bool IsCountedOnResults { get; init; }
 	}
 }
