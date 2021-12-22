@@ -1,7 +1,7 @@
 ﻿body {
     margin: 0;
     color: var(--font-color);
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
     overflow: hidden;
 }
 
@@ -226,9 +226,23 @@ input[type="range"] {
 }
 
 .collection-item-name {
+    font-weight: bold;
+    font-size: large;
+}
+
+.collection-item-name-container {
+    display: flex;
+    flex-flow: column;
     margin-left: 0.5em;
-    font-weight: 700;
-    font-size: 1.3em;
+}
+
+.collection-item-details-container {
+    display: flex;
+    flex-flow: row wrap;
+    flex-grow: 1;
+    place-content: end;
+    align-items: center;
+    margin-left: 4em;
 }
 
 /* Collection */
@@ -305,3 +319,16 @@ input[type="range"] {
     margin: 0.2em;
 }
 /* Pager */
+
+/* Results */
+.result-name {
+    display: block;
+}
+
+.result-value {
+    padding: 0.5em;
+    background-color: var(--content-bg-color);
+    border-radius: 1em;
+    margin-left: 0.5em;
+}
+/* Results */

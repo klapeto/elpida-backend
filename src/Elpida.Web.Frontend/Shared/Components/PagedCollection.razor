@@ -7,20 +7,18 @@
 @using Elpida.Web.Frontend.Shared.Components.Filters
 @using Microsoft.Extensions.Logging
 
-@typeparam TDto
-@typeparam TPreview
+@typeparam TDto        where TDto : Elpida.Backend.Services.Abstractions.Dtos.FoundationDto
+@typeparam TPreview        where TPreview : Elpida.Backend.Services.Abstractions.Dtos.FoundationDto
 
-<h3>PagedCollection</h3>
+<div class="flex-center column">
+    <button class="button non-a-button medium @QueryButtonActiveClass" @onclick="OnQueryClick">
+        <IconWithText IconName="query">
+            @QueryButtonVerb query
+        </IconWithText>
+    </button>
 
-<button class="button non-a-button medium @QueryButtonActiveClass" @onclick="OnQueryClick">
-    <IconWithText IconName="query">
-        @QueryButtonVerb query
-    </IconWithText>
-</button>
-
-@if (_showQuery)
-{
-    <div class="flex-center column">
+    @if (_showQuery)
+    {
         <div class="flex-center row" style="margin: 1em">
             <h3>Query</h3>
             <button style="margin: 1em" class="button non-a-button medium @SimpleButtonActiveClass" @onclick="OnSimpleClick">
@@ -31,15 +29,23 @@
             </button>
         </div>
         <QueryEditor Model="_currentQueryModel" AllowSort="_showAdvanced" Submitted="OnQuerySubmitAsync"/>
-    </div>
-}
+    }
+</div>
 
 @if (_currentResults != null)
 {
-    foreach (var item in _currentResults.Items)
-    {
-        @ChildContent(item)
-    }
+    <ul>
+        @foreach (var item in _currentResults.Items)
+        {
+            <li class="collection-item">
+                @ChildContent(item)
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <div class="spinner"></div>
 }
 
 <Pager CurrentPage="@_currentPageNumber" CurrentPageChanged="r => LoadPageAsync(_currentQueryModel, r)" PagesCount="@PageCount"/>
@@ -47,18 +53,18 @@
 @inject ILogger<PagedCollection<TDto, TPreview>> _logger;
 
 @code {
-    
-    private const int PageSize = 10;
+
+        private const int PageSize = 10;
 
     [Parameter]
-    public IFrontendService<TDto, TPreview> Service { get; set; }
+    public IFrontEndService<TDto, TPreview> Service { get; set; }
 
     [Parameter]
     public RenderFragment<TPreview> ChildContent { get; set; }
-    
+
     [CascadingParameter]
     public Modal Modal { get; set; }
-    
+
     [CascadingParameter]
     public Content Content { get; set; }
 
@@ -68,7 +74,7 @@
 
     private PagedResult<TPreview>? _currentResults;
 
-    private int PageCount => (int)(_currentResults?.TotalCount / PageSize ?? 0) + 1;
+    private int PageCount => (int)Math.Floor(_currentResults?.TotalCount / (float)PageSize ?? 0.0);
 
     private int _currentPageNumber;
 
@@ -116,23 +122,23 @@
         {
             _currentResults = await Service.GetPagedPreviewsAsync(
                 new QueryRequest(
-                    new PageRequest(pageNumber * PageSize, PageSize), 
-                    queryModel.Filters.Where(f=> f.IsSet).Select(f => f.CreateFilterInstance()).ToArray(),
+                    new PageRequest(pageNumber * PageSize, PageSize),
+                    queryModel.Filters.Where(f => f.IsSet).Select(f => f.CreateFilterInstance()).ToArray(),
                     queryModel.SortBy,
                     queryModel.Descending
                     ));
             _currentPageNumber = pageNumber;
-           await Content.ResetScrollAsync();
+            await Content.ResetScrollAsync();
         }
         catch (Exception e)
         {
             Modal.ShowError(e);
         }
     }
-    
+
     private Task OnQuerySubmitAsync()
     {
-       return LoadPageAsync(_currentQueryModel, 0);
+        return LoadPageAsync(_currentQueryModel, 0);
     }
 
 }

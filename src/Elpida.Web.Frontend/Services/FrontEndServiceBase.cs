@@ -14,7 +14,7 @@ using Elpida.Web.Frontend.Shared.Exceptions;
 
 namespace Elpida.Web.Frontend.Services
 {
-	public abstract class FrontEndServiceBase<TDto, TPreview> : IFrontendService<TDto, TPreview>
+	public abstract class FrontEndServiceBase<TDto, TPreview> : IFrontEndService<TDto, TPreview>
 		where TDto : FoundationDto
 		where TPreview : FoundationDto
 	{

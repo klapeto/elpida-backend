@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace Elpida.Web.Frontend.Services
 {
-	public class ValueConverterService
+	public static class ValueConverterService
 	{
 		private static readonly string[] PrefixesSI =
 		{
