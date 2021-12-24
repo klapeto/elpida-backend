@@ -1,11 +1,7 @@
-@using Elpida.Backend.Services.Abstractions.Interfaces
-@using Elpida.Backend.Services.Abstractions
-@using System.Threading
+@using Microsoft.Extensions.Logging
 @using Elpida.Web.Frontend.Interfaces
 @using Elpida.Web.Frontend.Models
-@using Elpida.Web.Frontend.Models.Filters
-@using Elpida.Web.Frontend.Shared.Components.Filters
-@using Microsoft.Extensions.Logging
+@using Elpida.Backend.Services.Abstractions
 
 @typeparam TDto        where TDto : Elpida.Backend.Services.Abstractions.Dtos.FoundationDto
 @typeparam TPreview        where TPreview : Elpida.Backend.Services.Abstractions.Dtos.FoundationDto
@@ -45,7 +41,9 @@
 }
 else
 {
-    <div class="spinner"></div>
+    <div class="flex-center column" style="height: 10em">
+        <div class="spinner"></div>
+    </div>
 }
 
 <Pager CurrentPage="@_currentPageNumber" CurrentPageChanged="r => LoadPageAsync(_currentQueryModel, r)" PagesCount="@PageCount"/>
@@ -54,7 +52,7 @@ else
 
 @code {
 
-        private const int PageSize = 10;
+    private const int PageSize = 10;
 
     [Parameter]
     public IFrontEndService<TDto, TPreview> Service { get; set; }

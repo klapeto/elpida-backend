@@ -9,7 +9,7 @@ namespace Elpida.Web.Frontend.Models.Filters
 			string internalName,
 			long min,
 			long max,
-			FilterComparison comparison, 
+			FilterComparison comparison,
 			string? suffix = null,
 			long? value = null
 		)

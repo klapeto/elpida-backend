@@ -2,7 +2,9 @@
     <button class="@GetNextPreviousButtonClass(true)"
             disabled="@PreviousButtonDisabled"
             aria-label="Previous"
-            @onclick="() => OnPageClickedAsync(_currentPage - 1)">&laquo;</button>
+            @onclick="() => OnPageClickedAsync(_currentPage - 1)">
+        &laquo;
+    </button>
     <div class="pager-pages">
         @foreach (var pageN in _pages)
         {
@@ -11,10 +13,16 @@
             </button>
         }
     </div>
-    <button class="@GetNextPreviousButtonClass(false)" 
+    <button class="@GetNextPreviousButtonClass(false)"
             disabled="@NextButtonDisabled"
             aria-label="Next"
-            @onclick="() => OnPageClickedAsync(_currentPage + 1)">&raquo;</button>
+            @onclick="() => OnPageClickedAsync(_currentPage + 1)">
+        &raquo;
+    </button>
+    <button class="small pager-page-button"
+            @onclick="OnJumpToPageClicked">
+        Jump to custom page
+    </button>
 </div>
 
 @code {
@@ -28,7 +36,10 @@
     [Parameter]
     public int PagesCount { get; set; }
 
-    private const int MaxPagerButtons = 5;
+    [CascadingParameter]
+    public Modal Modal { get; set; }
+        
+        private const int MaxPagerButtons = 5;
 
     private int[] _pages;
 
@@ -37,12 +48,16 @@
     bool NextButtonDisabled => _currentPage + 1 >= PagesCount;
 
     bool PreviousButtonDisabled => _currentPage <= 0;
+
+    private int _pageToJump;
     
+    private Action _closeJumpDialogAction;
+
     protected override void OnParametersSet()
     {
         RecalculatePageButtons(CurrentPage);
     }
-    
+
     private string GetPageButtonClass(int page)
     {
         return $"small pager-page-button {(_currentPage == page ? "active" : null)}";
@@ -56,10 +71,41 @@
     private string GetNextPreviousButtonClass(bool previous)
     {
         var disabled = previous ?
-            PreviousButtonDisabled : 
+            PreviousButtonDisabled :
             NextButtonDisabled;
 
         return $"small pager-page-button {(disabled ? "disabled" : null)}";
+    }
+
+    private RenderFragment GetJumpToPageFragment()
+    {
+        return @<div>
+                   <label>
+                       Page to jump to (min: 1, max: @PagesCount):
+                       <input min="1" max="@PagesCount" @bind-value="_pageToJump"/>
+                   </label>
+                   <button class="small"
+                           @onclick="async () => await OnJumpToPageSubmitted()">
+                       Jump
+                   </button>
+               </div>;
+    }
+
+    private void OnJumpToPageClicked()
+    {
+        _pageToJump = _currentPage + 1;
+        _closeJumpDialogAction = Modal.ShowContent("Jump to page", GetJumpToPageFragment(), true);
+    }
+
+    private async Task OnJumpToPageSubmitted()
+    {
+        if (_pageToJump < 1 || _pageToJump > PagesCount)
+        {
+            Modal.ShowMessage("Invalid page", $"Page must be between 1 and {PagesCount}.");
+            return;
+        }
+        await OnPageClickedAsync(_pageToJump - 1);
+        _closeJumpDialogAction();
     }
 
     private void RecalculatePageButtons(int page)
@@ -67,8 +113,8 @@
         _currentPage = page;
 
         var currentMaxButtons = Math.Min(MaxPagerButtons, PagesCount);
-        var half = (int)Math.Floor(currentMaxButtons / 2.0);
-
+        var half = (int)Math.Floor(currentMaxButtons / 2.0); 
+    
         // Calculate half points
         // eg: cur page = 5 -> [2 4 5 6 7] --> a = 2, b = 7
         var a = Math.Max(0, _currentPage - half);

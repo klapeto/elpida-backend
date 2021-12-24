@@ -60,8 +60,7 @@ public class CpuFrontEndService : FrontEndServiceBase<CpuDto, CpuPreviewDto>, IF
 					500_000_000,
 					10_000_000_000,
 					FilterComparison.GreaterEqual,
-					"Hz",
-					2_500_000_000
+					"Hz"
 				),
 			}
 		);

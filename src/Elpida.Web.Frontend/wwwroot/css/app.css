@@ -233,6 +233,9 @@ input[type="range"] {
 .collection-item-name-container {
     display: flex;
     flex-flow: column;
+}
+
+.collection-item-name-margin {
     margin-left: 0.5em;
 }
 
@@ -265,6 +268,11 @@ input[type="range"] {
     height: 95%;
     display: flex;
     flex-flow: column;
+}
+
+.auto-size {
+    width: auto !important;
+    height: auto !important;
 }
 
 @media (min-width: 960px) {
