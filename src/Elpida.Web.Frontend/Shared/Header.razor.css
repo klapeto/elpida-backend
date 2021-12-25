@@ -49,7 +49,7 @@ nav {
     display: none;
 }
 
-@media (min-width: 1048px) {
+@media (min-width: 67rem) {
     .menu-toggler {
         display: none;
     }

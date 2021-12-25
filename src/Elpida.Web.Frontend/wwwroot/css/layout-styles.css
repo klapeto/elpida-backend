@@ -24,14 +24,9 @@
     }
 }
 
-@media (min-width: 1200px) {
-    .container {
-        max-width: 80%;
-    }
-}
-
-@media (min-width: 1600px) {
+@media (min-width: 67rem) {
     .container {
         max-width: 65%;
+        min-width: 67rem;
     }
 }
