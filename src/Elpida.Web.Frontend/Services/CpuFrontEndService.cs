@@ -28,6 +28,11 @@ public class CpuFrontEndService : FrontEndServiceBase<CpuDto, CpuPreviewDto>, IF
 		);
 	}
 
+	public override StringFilterModel? CreateSearchFilterModel()
+	{
+		return new StringFilterModel("Cpu model name", "cpuModelName");
+	}
+
 	public override QueryModel CreateSimpleQueryModel()
 	{
 		return new QueryModel(

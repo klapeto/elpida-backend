@@ -49,6 +49,12 @@ namespace Elpida.Web.Frontend.Services
 			return GetValueScaleStringImpl(value, ScaleValuesSI, PrefixesSI, decimals);
 		}
 
+		public static string ConvertToStringSI(double value, int decimals = 2)
+		{
+			var (newValue, suffix) = ConvertToSI(value, decimals);
+			return $"{newValue}{suffix}";
+		}
+
 		private static (string Value, string Suffix) GetValueScaleStringImpl(
 			double value,
 			IReadOnlyList<double> denominators,

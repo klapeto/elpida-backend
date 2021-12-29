@@ -60,4 +60,9 @@ public class ResultsFrontEndService
 
 		return new QueryModel(filters);
 	}
+
+	public override StringFilterModel? CreateSearchFilterModel()
+	{
+		return new StringFilterModel("Benchmark name", "benchmarkName");
+	}
 }

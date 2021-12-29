@@ -202,8 +202,15 @@ input[type="range"] {
 /* input */
 
 /* Collection */
-.collection-container{
+.collection-container {
     padding: 0;
+}
+
+.collection-controls {
+    width: 60%; 
+    justify-content: space-around; 
+    padding: 0.5em; 
+    border-bottom: 2px solid var(--hr-color);
 }
 
 .collection-item {
@@ -223,6 +230,7 @@ input[type="range"] {
 .collection-item-icon {
     height: 3em;
     width: 3em;
+    margin-right: 0.5em;
 }
 
 .collection-item-name {
@@ -233,10 +241,6 @@ input[type="range"] {
 .collection-item-name-container {
     display: flex;
     flex-flow: column;
-}
-
-.collection-item-name-margin {
-    margin-left: 0.5em;
 }
 
 .collection-item-details-container {

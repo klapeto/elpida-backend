@@ -2,17 +2,33 @@
 @using Elpida.Web.Frontend.Interfaces
 @using Elpida.Web.Frontend.Models
 @using Elpida.Backend.Services.Abstractions
+@using Elpida.Web.Frontend.Models.Filters
+@using Elpida.Web.Frontend.Services
 
 @typeparam TDto        where TDto : Elpida.Backend.Services.Abstractions.Dtos.FoundationDto
 @typeparam TPreview        where TPreview : Elpida.Backend.Services.Abstractions.Dtos.FoundationDto
 
 <div class="flex-center column">
-    <button class="button non-a-button medium @QueryButtonActiveClass" @onclick="OnQueryClick">
-        <IconWithText IconName="query">
-            @QueryButtonVerb query
-        </IconWithText>
-    </button>
+    
+    <div class="flex-center row collection-controls">
+        <button class="button non-a-button medium @QueryButtonActiveClass" @onclick="OnQueryClick">
+            <IconWithText IconName="query">
+                @QueryButtonVerb query
+            </IconWithText>
+        </button>
+        <button class="button non-a-button medium" @onclick="RevertPageAsync">
+            Revert page
+        </button>
 
+        @if (_searchModel is not null)
+        {
+            <label>
+                Search:
+                <input type="search" @bind-value="_searchModel.Value" placeholder="@_searchModel.Name (Enter)" @onkeyup="OnSearchAsync"/>
+            </label>
+        }
+    </div>
+    
     @if (_showQuery)
     {
         <div class="flex-center row" style="margin: 1em">
@@ -26,6 +42,8 @@
         </div>
         <QueryEditor Model="_currentQueryModel" AllowSort="_showAdvanced" Submitted="OnQuerySubmitAsync"/>
     }
+
+    <p>Records found: @GetRecordsFoundString(), Pages: @PageCount</p>
 </div>
 
 @if (_currentResults != null)
@@ -48,11 +66,9 @@ else
 
 <Pager CurrentPage="@_currentPageNumber" CurrentPageChanged="r => LoadPageAsync(_currentQueryModel, r)" PagesCount="@PageCount"/>
 
-@inject ILogger<PagedCollection<TDto, TPreview>> _logger;
-
 @code {
 
-    private const int PageSize = 10;
+        private const int PageSize = 10;
 
     [Parameter]
     public IFrontEndService<TDto, TPreview> Service { get; set; }
@@ -69,6 +85,7 @@ else
     private QueryModel _simpleQueryModel;
     private QueryModel _advancedQueryModel;
     private QueryModel _currentQueryModel;
+    private StringFilterModel? _searchModel;
 
     private PagedResult<TPreview>? _currentResults;
 
@@ -106,11 +123,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        _simpleQueryModel = Service.CreateSimpleQueryModel();
-        _advancedQueryModel = Service.CreateAdvancedQueryModel();
-        _currentQueryModel = _simpleQueryModel;
-
-        await LoadPageAsync(_advancedQueryModel, 0);
+        await RevertPageAsync();
         await base.OnInitializedAsync();
     }
 
@@ -137,6 +150,36 @@ else
     private Task OnQuerySubmitAsync()
     {
         return LoadPageAsync(_currentQueryModel, 0);
+    }
+
+    private async Task OnSearchAsync(KeyboardEventArgs e)
+    {
+        if (e.Key != "Enter") return;
+
+        if (!string.IsNullOrWhiteSpace(_searchModel?.Value))
+        {
+            await LoadPageAsync(new QueryModel(new[] { _searchModel }), 0);
+        }
+    }
+
+    private string GetRecordsFoundString()
+    {
+        return _currentResults is not null ?
+            ValueConverterService.ConvertToStringSI(_currentResults.TotalCount) :
+            "0";
+    }
+
+    private async Task RevertPageAsync()
+    {
+        _simpleQueryModel = Service.CreateSimpleQueryModel();
+        _advancedQueryModel = Service.CreateAdvancedQueryModel();
+        _searchModel = Service.CreateSearchFilterModel();
+        if (_searchModel is not null)
+        {
+            _searchModel.Comparison = FilterMaps.ComparisonMap[FilterComparison.Contains];
+        }
+        _currentQueryModel = _simpleQueryModel;
+        await LoadPageAsync(_advancedQueryModel, 0);
     }
 
 }

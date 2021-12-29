@@ -68,5 +68,7 @@ namespace Elpida.Web.Frontend.Services
 		public abstract QueryModel CreateSimpleQueryModel();
 
 		public abstract QueryModel CreateAdvancedQueryModel();
+
+		public abstract StringFilterModel? CreateSearchFilterModel();
 	}
 }

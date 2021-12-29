@@ -10,11 +10,11 @@
     place-items: center;
 }
 
-.flex-center.row{
+.flex-center.row {
     flex-flow: row wrap;
 }
 
-.flex-center.column{
+.flex-center.column {
     flex-flow: column wrap;
 }
 
