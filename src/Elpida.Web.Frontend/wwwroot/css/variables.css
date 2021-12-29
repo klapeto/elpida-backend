@@ -18,6 +18,9 @@
     --hr-color: #abade4;
     --content-bg-color: rgba(229,232,253,.85);
     
+    --solid-line: 2px var(--hr-color) solid;
+    --dotted-line: 2px var(--hr-color) dotted;
+    
     --code-bg-color: #edf4f9;
     
     --group-box-header-color: #cbc7f7;

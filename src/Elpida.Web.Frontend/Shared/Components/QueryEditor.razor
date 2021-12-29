@@ -5,37 +5,34 @@
 @using Elpida.Backend.Services.Abstractions
 @using Elpida.Web.Frontend.Models
 
-<EditForm EditContext="@_editContext" OnSubmit="@HandleSubmit">
+<EditForm EditContext="@_editContext" OnSubmit="@HandleSubmit" class="query-form">
     @foreach (var filter in Model.Filters)
     {
-        @CreateView(filter)
-        <hr/>
+        <span class="query-filter">@CreateView(filter)</span>
     }
 
     @if (AllowSort)
     {
-        <label>
-            <span>Sort by</span>
-            <InputSelect TValue="string" @bind-Value="Model.SortBy">
-                <option value=""></option>
-                @foreach (var filter in Model.Filters)
-                {
-                    <option value="@filter.InternalName">@filter.Name</option>
-                }
-            </InputSelect>
-        </label>
+        <div class="query-filter">
+            <label>
+                <span>Sort by</span>
+                <InputSelect TValue="string" @bind-Value="Model.SortBy">
+                    <option value=""></option>
+                    @foreach (var filter in Model.Filters)
+                    {
+                        <option value="@filter.InternalName">@filter.Name</option>
+                    }
+                </InputSelect>
+            </label>
 
-        <hr/>
-
-        <label>
-            <span>Descending</span>
-            <InputCheckbox @bind-Value="Model.Descending"/>
-        </label>
-
-        <hr/>
+            <label>
+                <span>Descending</span>
+                <InputCheckbox @bind-Value="Model.Descending"/>
+            </label>
+        </div>
     }
 
-    <div>
+    <div class="query-controls">
         <button type="submit">Submit</button>
         <button type="reset" @onclick="Reset">Reset</button>
     </div>

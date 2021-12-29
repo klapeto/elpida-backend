@@ -10,7 +10,7 @@
 
 <div class="flex-center column">
     
-    <div class="flex-center row collection-controls">
+    <div class="collection-controls flex-center row">
         <button class="button non-a-button medium @QueryButtonActiveClass" @onclick="OnQueryClick">
             <IconWithText IconName="query">
                 @QueryButtonVerb query
@@ -31,8 +31,8 @@
     
     @if (_showQuery)
     {
-        <div class="flex-center row" style="margin: 1em">
-            <h3>Query</h3>
+        <div class="flex-center row" style="margin-top: 1em">
+            <b>Query</b>
             <button style="margin: 1em" class="button non-a-button medium @SimpleButtonActiveClass" @onclick="OnSimpleClick">
                 Simple
             </button>

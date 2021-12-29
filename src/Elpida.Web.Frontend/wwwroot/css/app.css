@@ -161,6 +161,21 @@ button.disabled:hover,
     align-items: center;
 }
 
+.query-filter {
+    margin: 0.5em;
+}
+
+.query-form {
+    display: flex;
+    flex-flow: column;
+    border-top: var(--solid-line);
+}
+
+.query-controls {
+    padding: 0.5em;
+    border-top: var(--dotted-line);
+}
+
 @media (min-width: 500px) {
     .raw-value-filter {
         flex-flow: row wrap;
@@ -210,7 +225,7 @@ input[type="range"] {
     width: 60%; 
     justify-content: space-around; 
     padding: 0.5em; 
-    border-bottom: 2px solid var(--hr-color);
+    border-bottom: var(--solid-line);
 }
 
 .collection-item {
