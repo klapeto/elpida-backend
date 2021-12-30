@@ -68,6 +68,8 @@ select,button,.button {
     border: none;
     border-radius: 2em;
     box-shadow: var(--shadow);
+    z-index: 1;
+    position: relative;
 }
 
 select:hover,button:hover,.button:hover  {
@@ -78,6 +80,8 @@ select:hover,button:hover,.button:hover  {
 button.active,.button.active  {
     background-color: var(--button-active-bg-color);
     color: var(--font-color);
+    /*text-decoration: solid underline var(--hr-color) 0.1em;*/
+    z-index: 0;
 }
 
 button.medium,.button.medium {
@@ -114,6 +118,7 @@ button.disabled:hover,
 .button.disabled:hover {
     background-color: rgb(212, 219, 224);
 }
+
 /* button */
 
 
@@ -132,7 +137,7 @@ button.disabled:hover,
 .groupBox {
     background-color: var(--group-box-header-color);
     border-radius: 0.5em;
-    margin: .2em;
+    margin: auto;
     box-shadow: var(--shadow);
 }
 
@@ -224,8 +229,7 @@ input[type="range"] {
 .collection-controls {
     width: 60%; 
     justify-content: space-around; 
-    padding: 0.5em; 
-    border-bottom: var(--solid-line);
+    padding: 0.5em;
 }
 
 .collection-item {
@@ -358,4 +362,50 @@ input[type="range"] {
     border-radius: 1em;
     margin-left: 0.5em;
 }
+
+.result-summary-container {
+    display: flex; 
+    justify-content: space-between;
+}
+
+.result-summary-details {
+    display: grid; 
+    grid-template-columns: auto 1fr; 
+    grid-gap: 0.5em;
+}
+
 /* Results */
+
+/* Tab Control */
+.tab-button {
+    border-radius: 0.6em 0.6em 0 0;
+}
+
+.tab-button.active {
+    border-top: var(--solid-line);
+    padding-bottom: 1.5em;
+}
+
+.tab-button-container {
+    display: flex;
+    flex-flow: row;
+    place-items: end;
+}
+
+.tab-container {
+    display: block;
+    position: relative;
+    z-index: 2;
+    background-color: var(--group-box-bg-color);
+    padding: 1em;
+    border-radius: 0 0 1em 1em;
+    box-shadow: var(--shadow);
+}
+
+@media (min-width: 67rem) {
+    .tab-container {
+        border-radius: 0 1em 1em 1em;
+    }
+}
+
+/* Tab Control */

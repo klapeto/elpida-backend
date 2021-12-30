@@ -27,9 +27,18 @@ namespace Elpida.Web.Frontend.Services
 
 		protected abstract string UrlRouteBase { get; }
 
-		public Task<TDto> GetSingleAsync(long id, CancellationToken cancellationToken = default)
+		public async Task<TDto> GetSingleAsync(long id, CancellationToken cancellationToken = default)
 		{
-			throw new NotImplementedException();
+			using var response = await HttpClient.GetAsync(
+				$"{UrlRouteBase}/{id}",
+				cancellationToken
+			);
+			
+			response.EnsureSuccessStatusCode();
+			
+			return await response.Content.ReadFromJsonAsync<TDto>(
+				       cancellationToken: cancellationToken)
+			       ?? throw new InvalidResponseException();
 		}
 
 		public async Task<PagedResult<TPreview>> GetPagedPreviewsAsync(
@@ -37,7 +46,7 @@ namespace Elpida.Web.Frontend.Services
 			CancellationToken cancellationToken = default
 		)
 		{
-			var response = await HttpClient.PostAsync(
+			using var response = await HttpClient.PostAsync(
 				$"{UrlRouteBase}/Search",
 				JsonContent.Create(queryRequest),
 				cancellationToken

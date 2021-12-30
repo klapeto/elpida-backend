@@ -9,7 +9,6 @@
     align-content: center;
     place-items: center;
 }
-
 .flex-center.row {
     flex-flow: row wrap;
 }
@@ -29,4 +28,8 @@
         max-width: 65%;
         min-width: 67rem;
     }
+}
+
+.text-center {
+    text-align: center;
 }

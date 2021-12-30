@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 
@@ -20,6 +21,32 @@ namespace Elpida.Web.Frontend.Services
 			"E",
 			"Z",
 			"Y",
+		};
+
+		private static readonly string[] PrefixesIEC =
+		{
+			string.Empty,
+			"Ki",
+			"Mi",
+			"Gi",
+			"Ti",
+			"Pi",
+			"Ei",
+			"Zi",
+			"Yi",
+		};
+
+		private static readonly double[] ScaleValuesIEC =
+		{
+			1.0,
+			1024.0,
+			1024.0 * 1024.0,
+			1024.0 * 1024.0 * 1024.0,
+			1024.0 * 1024.0 * 1024.0 * 1024.0,
+			1024.0 * 1024.0 * 1024.0 * 1024.0 * 1024.0,
+			1024.0 * 1024.0 * 1024.0 * 1024.0 * 1024.0 * 1024.0,
+			1024.0 * 1024.0 * 1024.0 * 1024.0 * 1024.0 * 1024.0 * 1024.0,
+			1024.0 * 1024.0 * 1024.0 * 1024.0 * 1024.0 * 1024.0 * 1024.0 * 1024.0,
 		};
 
 		private static readonly double[] ScaleValuesSI =
@@ -47,6 +74,17 @@ namespace Elpida.Web.Frontend.Services
 		public static (string Value, string Suffix) ConvertToSI(double value, int decimals = 2)
 		{
 			return GetValueScaleStringImpl(value, ScaleValuesSI, PrefixesSI, decimals);
+		}
+
+		public static (string Value, string Suffix) ConvertToIEC(double value, int decimals = 2)
+		{
+			return GetValueScaleStringImpl(value, ScaleValuesIEC, PrefixesIEC, decimals);
+		}
+
+		public static string ConvertToStringIEC(double value, int decimals = 2)
+		{
+			var (newValue, suffix) = ConvertToIEC(value, decimals);
+			return $"{newValue}{suffix}";
 		}
 
 		public static string ConvertToStringSI(double value, int decimals = 2)

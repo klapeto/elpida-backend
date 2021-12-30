@@ -9,7 +9,7 @@
 @typeparam TPreview        where TPreview : Elpida.Backend.Services.Abstractions.Dtos.FoundationDto
 
 <div class="flex-center column">
-    
+
     <div class="collection-controls flex-center row">
         <button class="button non-a-button medium @QueryButtonActiveClass" @onclick="OnQueryClick">
             <IconWithText IconName="query">
@@ -28,19 +28,20 @@
             </label>
         }
     </div>
-    
+
     @if (_showQuery)
     {
-        <div class="flex-center row" style="margin-top: 1em">
-            <b>Query</b>
-            <button style="margin: 1em" class="button non-a-button medium @SimpleButtonActiveClass" @onclick="OnSimpleClick">
-                Simple
-            </button>
-            <button class="button non-a-button medium @AdvancedButtonActiveClass" @onclick="OnAdvancedClick">
-                Advanced
-            </button>
-        </div>
-        <QueryEditor Model="_currentQueryModel" AllowSort="_showAdvanced" Submitted="OnQuerySubmitAsync"/>
+        <GroupBox Title="Query editor">
+            <div class="flex-center row">
+                <button style="margin: 1em" class="button non-a-button medium @SimpleButtonActiveClass" @onclick="OnSimpleClick">
+                    Simple
+                </button>
+                <button class="button non-a-button medium @AdvancedButtonActiveClass" @onclick="OnAdvancedClick">
+                    Advanced
+                </button>
+            </div>
+            <QueryEditor Model="_currentQueryModel" AllowSort="_showAdvanced" Submitted="OnQuerySubmitAsync"/>
+        </GroupBox>
     }
 
     <p>Records found: @GetRecordsFoundString(), Pages: @PageCount</p>
@@ -171,6 +172,7 @@ else
 
     private async Task RevertPageAsync()
     {
+        _currentResults = null; // hack to show the loading spinner until we get the results
         _simpleQueryModel = Service.CreateSimpleQueryModel();
         _advancedQueryModel = Service.CreateAdvancedQueryModel();
         _searchModel = Service.CreateSearchFilterModel();

@@ -1,0 +1,81 @@
+@page "/Database/Result/{id:long}"
+@using Elpida.Web.Frontend.Services
+@using Elpida.Backend.Services.Abstractions.Dtos.Result
+@using Elpida.Web.Frontend.Shared.Components
+
+@if (_result is not null)
+{
+    <h2>
+        @_result.Name for @_result.System.Cpu.ModelName
+    </h2>
+    <TabControl Tabs="GetTabs()"></TabControl>
+}
+else
+{
+    <div class="flex-center column" style="height: 10em">
+        <div class="spinner"></div>
+    </div>
+}
+
+@inject ResultsFrontEndService _service;
+
+@code {
+
+    [Parameter]
+    public long Id { get; set; }
+
+    private BenchmarkResultDto? _result;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _result = await _service.GetSingleAsync(Id);
+    }
+
+    private string GetScoreString()
+    {
+        var (value, suffix) = ValueConverterService.ConvertToSI(_result.Score);
+
+        return $"{value} {suffix}{_result.ScoreSpecification.Unit}";
+    }
+
+    private IEnumerable<(string Title, RenderFragment Content)> GetTabs()
+    {
+        return new (string title, RenderFragment content)[]
+        {
+            ("Summary", @<div class="result-summary-container">
+                            <div class="result-summary-details">
+                                <b>Timestamp:</b><span>@_result.TimeStamp.ToString("R")</span>
+                                <b>Benchmark name:</b><span>@_result.Name</span>
+                                <b>CPU model:</b><span>@_result.System.Cpu.ModelName</span>
+                                <b>CPU frequency:</b><span>@ValueConverterService.ConvertToStringSI(_result.System.Cpu.Frequency) Hz</span>
+                                <b>Total memory:</b><span>@ValueConverterService.ConvertToStringIEC(_result.System.Memory.TotalSize) B</span>
+                                <b>Os:</b><span>@_result.System.Os.Name @_result.System.Os.Version</span>
+                            </div>
+                            <GroupBox Title="@_result.Name">
+                                <div class="text-center">@GetScoreString()</div>
+                            </GroupBox>
+                        </div>),
+            ("CPU", @<div class="result-summary-details">
+                        <b>Architecture:</b><span>@_result.System.Cpu.Architecture</span>
+                        <b>Vendor:</b><span>@_result.System.Cpu.Vendor</span>
+                        <b>Model:</b><span>@_result.System.Cpu.ModelName</span>
+                        <b>Frequency:</b><span>@ValueConverterService.ConvertToStringSI(_result.System.Cpu.Frequency) Hz</span>
+                        <b>SMT:</b><span>@_result.System.Cpu.Smt</span>
+                        <b>Features:</b><span>@string.Join(",", _result.System.Cpu.Features ?? new string[0])</span>
+                    </div>),
+            ("Topology", @<div class="result-summary-details">
+                             LOL
+                         </div>),
+            ("Os", @<div class="result-summary-details">
+                             LOL
+                         </div>),
+            ("Elpida version", @<div class="result-summary-details">
+                             LOL
+                         </div>),
+            ("Task results", @<div class="result-summary-details">
+                             LOL
+                         </div>),
+        };
+    }
+
+}
