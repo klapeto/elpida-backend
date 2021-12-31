@@ -81,16 +81,16 @@ namespace Elpida.Web.Frontend.Services
 			return GetValueScaleStringImpl(value, ScaleValuesIEC, PrefixesIEC, decimals);
 		}
 
-		public static string ConvertToStringIEC(double value, int decimals = 2)
+		public static string ConvertToStringIEC(double value, int decimals = 2, bool spaceBetween = false)
 		{
 			var (newValue, suffix) = ConvertToIEC(value, decimals);
-			return $"{newValue}{suffix}";
+			return $"{newValue}{(spaceBetween ? " " : string.Empty)}{suffix}";
 		}
 
-		public static string ConvertToStringSI(double value, int decimals = 2)
+		public static string ConvertToStringSI(double value, int decimals = 2, bool spaceBetween = false)
 		{
 			var (newValue, suffix) = ConvertToSI(value, decimals);
-			return $"{newValue}{suffix}";
+			return $"{newValue}{(spaceBetween ? " " : string.Empty)}{suffix}";
 		}
 
 		private static (string Value, string Suffix) GetValueScaleStringImpl(

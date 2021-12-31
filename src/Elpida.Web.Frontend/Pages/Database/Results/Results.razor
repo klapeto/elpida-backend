@@ -9,8 +9,8 @@
 <PagedCollection Service="_service" TDto="BenchmarkResultDto" TPreview="BenchmarkResultPreviewDto">
 
     <LinkButton Class="collection-item-link" Href="@GetResultLink(context)">
-        <img alt="@GetVendorImageAltString(context)" src="@GetVendorImage(context)" class="collection-item-icon" loading="lazy">
-        <img alt="@GetBenchmarkImageAltString(context)" src="@GetBenchmarkImage(context)" class="collection-item-icon" loading="lazy">
+        <img alt="@context.CpuVendor logo" src="@ImageLinksService.GetCpuImageLink(context.CpuVendor)" class="collection-item-icon" loading="lazy">
+        <img alt="@context.BenchmarkName representative image" src="@ImageLinksService.GetBenchmarkImage(context.BenchmarkUuid)" class="collection-item-icon" loading="lazy">
         <div class="collection-item-name-container">
             <span>@context.TimeStamp</span>
             <span class="collection-item-name">@context.CpuModelName</span>
@@ -19,7 +19,7 @@
             <span class="collection-item-name">
                 @context.BenchmarkName
             </span>
-            <span class="result-value">@GetScoreString(context)</span>
+            <span class="result-value">@ValueConverterService.ConvertToStringSI(context.Score, spaceBetween: true)@context.BenchmarkScoreUnit</span>
         </div>
 
     </LinkButton>
@@ -31,35 +31,9 @@
 
 @code {
 
-    private static string GetVendorImage(BenchmarkResultPreviewDto dto)
-    {
-        return $"./assets/cpus/{dto.CpuVendor}.svg";
-    }
-
-    private static string GetBenchmarkImage(BenchmarkResultPreviewDto dto)
-    {
-        return $"./assets/benchmarks/{dto.BenchmarkUuid}.svg";
-    }
-
     private static string GetResultLink(FoundationDto dto)
     {
         return $"/Database/Result/{dto.Id}";
-    }
-
-    private static string GetVendorImageAltString(BenchmarkResultPreviewDto dto)
-    {
-        return $"{dto.CpuVendor} logo";
-    }
-
-    private static string GetBenchmarkImageAltString(BenchmarkResultPreviewDto dto)
-    {
-        return $"{dto.BenchmarkName} representative image";
-    }
-
-    private static string GetScoreString(BenchmarkResultPreviewDto dto)
-    {
-        var (value, suffix) = ValueConverterService.ConvertToSI(dto.Score);
-        return $"{value} {suffix}{dto.BenchmarkScoreUnit}";
     }
 
 }

@@ -38,43 +38,53 @@ else
         return $"{value} {suffix}{_result.ScoreSpecification.Unit}";
     }
 
-    private IEnumerable<(string Title, RenderFragment Content)> GetTabs()
+    private IEnumerable<(RenderFragment Title, RenderFragment Content)> GetTabs()
     {
-        return new (string title, RenderFragment content)[]
+        return new (RenderFragment title, RenderFragment content)[]
         {
-            ("Summary", @<div class="result-summary-container">
+            (@<IconWithText IconName="summary">Summary</IconWithText>, @<div class="result-summary-container">
+                            <div class="result-icon-container">
+                                <img class="result-summary-image" src="@ImageLinksService.GetCpuImageLink(_result.System.Cpu.Vendor)" alt="@_result.System.Cpu.Vendor logo">
+                                <img class="result-summary-image" src="@ImageLinksService.GetBenchmarkImage(_result.Uuid)" alt="@_result.Name representantive image">
+                            </div>
                             <div class="result-summary-details">
                                 <b>Timestamp:</b><span>@_result.TimeStamp.ToString("R")</span>
                                 <b>Benchmark name:</b><span>@_result.Name</span>
                                 <b>CPU model:</b><span>@_result.System.Cpu.ModelName</span>
-                                <b>CPU frequency:</b><span>@ValueConverterService.ConvertToStringSI(_result.System.Cpu.Frequency) Hz</span>
-                                <b>Total memory:</b><span>@ValueConverterService.ConvertToStringIEC(_result.System.Memory.TotalSize) B</span>
-                                <b>Os:</b><span>@_result.System.Os.Name @_result.System.Os.Version</span>
+                                <b>CPU frequency:</b><span>@ValueConverterService.ConvertToStringSI(_result.System.Cpu.Frequency, spaceBetween: true)Hz</span>
+                                <b>Total memory:</b><span>@ValueConverterService.ConvertToStringIEC(_result.System.Memory.TotalSize, spaceBetween: true)B</span>
+                                <b>Os:</b><span>@_result.System.Os.Name</span>
                             </div>
                             <GroupBox Title="@_result.Name">
                                 <div class="text-center">@GetScoreString()</div>
                             </GroupBox>
                         </div>),
-            ("CPU", @<div class="result-summary-details">
-                        <b>Architecture:</b><span>@_result.System.Cpu.Architecture</span>
-                        <b>Vendor:</b><span>@_result.System.Cpu.Vendor</span>
-                        <b>Model:</b><span>@_result.System.Cpu.ModelName</span>
-                        <b>Frequency:</b><span>@ValueConverterService.ConvertToStringSI(_result.System.Cpu.Frequency) Hz</span>
-                        <b>SMT:</b><span>@_result.System.Cpu.Smt</span>
-                        <b>Features:</b><span>@string.Join(",", _result.System.Cpu.Features ?? new string[0])</span>
+            (@<IconWithText IconName="cpu">CPU</IconWithText>, @<div class="flex-center" style="place-content: start; flex-flow: row wrap">
+                        <img class="result-summary-image" src="@ImageLinksService.GetCpuImageLink(_result.System.Cpu.Vendor)" alt="@_result.System.Cpu.Vendor logo">
+                        <div class="result-summary-details">
+                            <b>Architecture:</b><span>@_result.System.Cpu.Architecture</span>
+                            <b>Vendor:</b><span>@_result.System.Cpu.Vendor</span>
+                            <b>Model:</b><span>@_result.System.Cpu.ModelName</span>
+                            <b>Frequency:</b><span>@ValueConverterService.ConvertToStringSI(_result.System.Cpu.Frequency, spaceBetween: true)Hz</span>
+                            <b>SMT:</b><span>@_result.System.Cpu.Smt</span>
+                            <b>Features:</b><span>@string.Join(",", _result.System.Cpu.Features ?? new string[0])</span>
+                        </div>
                     </div>),
-            ("Topology", @<div class="result-summary-details">
-                             LOL
+            (@<IconWithText IconName="topology">Topology</IconWithText>, @<div class="flex-center row">
+                             <TopologyView Topology="_result.System.Topology"></TopologyView>
                          </div>),
-            ("Os", @<div class="result-summary-details">
-                             LOL
-                         </div>),
-            ("Elpida version", @<div class="result-summary-details">
-                             LOL
-                         </div>),
-            ("Task results", @<div class="result-summary-details">
-                             LOL
-                         </div>),
+            (@<IconWithText IconName="os">Os</IconWithText>, @<div class="result-summary-details">
+                       <b>Category:</b><span>@_result.System.Os.Category</span>
+                       <b>Name:</b><span>@_result.System.Os.Name</span>
+                       <b>Version:</b><span>@_result.System.Os.Version</span>
+                   </div>),
+            (@<IconWithText IconName="elpida">Elpida version</IconWithText>, @<div class="result-summary-details">
+                                   <b>Version:</b><span>@(_result.ElpidaVersion.Version.Major).@(_result.ElpidaVersion.Version.Minor).@(_result.ElpidaVersion.Version.Revision).@(_result.ElpidaVersion.Version.Build)</span>
+                                   <b>Compiler:</b><span>@_result.ElpidaVersion.Compiler.Name @_result.ElpidaVersion.Compiler.Version</span>
+                               </div>),
+            (@<IconWithText IconName="benchmark">Task results</IconWithText>, @<div class="result-summary-details">
+                                 LOL
+                             </div>),
         };
     }
 

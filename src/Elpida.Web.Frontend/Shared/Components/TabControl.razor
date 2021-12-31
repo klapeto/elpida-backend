@@ -18,12 +18,12 @@
 
     private class TabModel
     {
-        public string Title { get; init; }
+        public RenderFragment Title { get; init; }
         public RenderFragment Content { get; init; }
     }
     
     [Parameter]
-    public IEnumerable<(string Title, RenderFragment Content)> Tabs
+    public IEnumerable<(RenderFragment Title, RenderFragment Content)> Tabs
     {
         set => _tabs = value.Select(t => new TabModel{Title = t.Title, Content = t.Content}).ToArray();
     }

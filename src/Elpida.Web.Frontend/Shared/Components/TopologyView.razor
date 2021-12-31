@@ -1,0 +1,57 @@
+@using Elpida.Backend.Services.Abstractions.Dtos.Topology
+@using Elpida.Web.Frontend.Services
+
+@GetTopologyTree()
+
+@code {
+
+    [Parameter]
+    public TopologyDto Topology { get; set; }
+
+    private RenderFragment GetTopologyTree()
+    {
+        return GetChildFragment(Topology.Root);
+    }
+
+    private RenderFragment GetChildFragment(CpuNodeDto node)
+    {
+        return @<div class="flex-center column topology-node topology-node-@node.NodeType.ToString().ToLowerInvariant()">
+                   <div class="topology-node-name-container">
+                       <div class="topology-node-name">
+                           @node.Name
+                       </div>
+                       @if (node.OsIndex is not null)
+                       {
+                           <div class="topology-node-index">
+                              @node.OsIndex
+                           </div>
+                       }
+                       @if (node.Value is not null)
+                       {
+                           <div class="topology-node-value">
+                               @ValueConverterService.ConvertToStringIEC(node.Value.Value, spaceBetween: true)B
+                           </div>
+                       }
+                   </div>
+                   @if (node.MemoryChildren is not null)
+                   {
+                       <div class="topology-memoryChildren-container">
+                           @foreach (var memoryChild in node.MemoryChildren)
+                           {
+                               @GetChildFragment(memoryChild)
+                           }
+                       </div>
+                   }
+                   @if (node.Children is not null)
+                   {
+                       <div class="topology-children-container">
+                           @foreach (var child in node.Children)
+                           {
+                               @GetChildFragment(child)
+                           }
+                       </div>
+                   }
+               </div>;
+    }
+
+}

@@ -364,7 +364,8 @@ input[type="range"] {
 }
 
 .result-summary-container {
-    display: flex; 
+    display: flex;
+    flex-flow: row wrap;
     justify-content: space-between;
 }
 
@@ -374,11 +375,25 @@ input[type="range"] {
     grid-gap: 0.5em;
 }
 
+.result-icon-container {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+@media (min-width: 67rem) {
+    .result-icon-container {
+        flex-flow: column wrap;
+    } 
+}
+
+.result-summary-image {
+    margin: auto 1.5em auto 0.5em;
+}
 /* Results */
 
 /* Tab Control */
 .tab-button {
-    border-radius: 0.6em 0.6em 0 0;
+    border-radius: 0.8em 0.8em 0 0;
 }
 
 .tab-button.active {
@@ -388,7 +403,7 @@ input[type="range"] {
 
 .tab-button-container {
     display: flex;
-    flex-flow: row;
+    flex-flow: row wrap;
     place-items: end;
 }
 
@@ -407,5 +422,109 @@ input[type="range"] {
         border-radius: 0 1em 1em 1em;
     }
 }
-
 /* Tab Control */
+
+/* Topology */
+.topology-memoryChildren-container {
+    display: flex;
+    flex-flow: row wrap;
+    place-content: center;
+}
+
+.topology-children-container {
+    display: flex;
+    flex-flow: row wrap;
+    place-content: center;
+}
+
+.topology-node {
+    border-radius: 0.6em;
+    padding: 0.2em;
+    margin: 0.2em;
+    box-shadow: var(--shadow);
+}
+
+.topology-node-value {
+    margin-left: 0.4em;
+}
+
+.topology-node-index {
+    margin-left: 0.4em;
+}
+
+.topology-node-name-container {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    padding: 0.2em;
+}
+
+.topology-node-name {
+    font-weight: bold;
+}
+
+.topology-node-machine {
+    background-color: #aebfef;
+}
+
+.topology-node-package {
+    background-color: #99da9f;
+}
+
+.topology-node-numanode {
+    background-color:#d4d4a1;
+}
+
+.topology-node-group {
+    background-color:#db8ced;
+}
+
+.topology-node-die {
+    background-color:#a9a9a9;
+}
+
+.topology-node-core {
+    background-color:#9297e3;
+}
+
+.topology-node-l1icache {
+    background-color:#f5bfbf;
+}
+
+.topology-node-l1dcache {
+    background-color:#fa9e9e;
+}
+
+.topology-node-l2icache {
+    background-color:#e6abab;
+}
+
+.topology-node-l2dcache {
+    background-color:#e48b8b;
+}
+
+.topology-node-l3icache {
+    background-color:#c68989;
+}
+
+.topology-node-l3dcache {
+    background-color:#c67171;
+}
+
+.topology-node-l4cache {
+
+}
+
+.topology-node-l5cache {
+
+}
+
+.topology-node-executionunit {
+    background-color:#c8caea;
+}
+
+.topology-node-unknown {
+
+}
+
+/* Topology */
