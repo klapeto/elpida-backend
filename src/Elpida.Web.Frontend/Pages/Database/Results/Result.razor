@@ -71,7 +71,7 @@ else
                         </div>
                     </div>),
             (@<IconWithText IconName="topology">Topology</IconWithText>, @<div class="flex-center row">
-                             <TopologyView Topology="_result.System.Topology"></TopologyView>
+                             <TopologyView Topology="_result.System.Topology" Affinity="_result.Affinity.ToHashSet()"></TopologyView>
                          </div>),
             (@<IconWithText IconName="os">Os</IconWithText>, @<div class="result-summary-details">
                        <b>Category:</b><span>@_result.System.Os.Category</span>

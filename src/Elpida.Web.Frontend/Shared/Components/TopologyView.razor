@@ -3,10 +3,15 @@
 
 @GetTopologyTree()
 
+@inject ElpidaIconsService _iconService;
+
 @code {
 
     [Parameter]
     public TopologyDto Topology { get; set; }
+
+    [Parameter]
+    public IReadOnlySet<long>? Affinity { get; set; }
 
     private RenderFragment GetTopologyTree()
     {
@@ -23,13 +28,19 @@
                        @if (node.OsIndex is not null)
                        {
                            <div class="topology-node-index">
-                              @node.OsIndex
+                               @node.OsIndex
                            </div>
+                           if (node.NodeType == ProcessorNodeType.ExecutionUnit && (Affinity?.Contains(node.OsIndex.Value) ?? false))
+                           {
+                               <div class="topology-node-checkbox">
+                                   @_iconService.IconsMap["checkmark"]
+                               </div>
+                           }
                        }
                        @if (node.Value is not null)
                        {
                            <div class="topology-node-value">
-                               @ValueConverterService.ConvertToStringIEC(node.Value.Value, spaceBetween: true)B
+                               @ValueConverterService.ConvertToStringIEC(node.Value.Value, 0, true)B
                            </div>
                        }
                    </div>

@@ -439,9 +439,10 @@ input[type="range"] {
 
 .topology-node {
     border-radius: 0.6em;
-    padding: 0.2em;
-    margin: 0.2em;
+    padding: 0.35em;
+    margin: 0.1em;
     box-shadow: var(--shadow);
+    font-size: small;
 }
 
 .topology-node-value {
@@ -508,7 +509,7 @@ input[type="range"] {
 }
 
 .topology-node-l3dcache {
-    background-color:#c67171;
+    background-color:#ca7878;
 }
 
 .topology-node-l4cache {
@@ -525,6 +526,15 @@ input[type="range"] {
 
 .topology-node-unknown {
 
+}
+
+.topology-node-checkbox {
+    border-radius: 0.2em;
+    background-color: forestgreen;
+    color: white;
+    margin-left: 0.4em;
+    display: flex;
+    padding: 0.1em;
 }
 
 /* Topology */
