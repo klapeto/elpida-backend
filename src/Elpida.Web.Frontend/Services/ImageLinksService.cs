@@ -33,4 +33,14 @@ public static class ImageLinksService
 	{
 		return $"./assets/benchmarks/{benchmarkUuid}.svg";
 	}
+
+	public static string GetOsImageLink(string osCategory)
+	{
+		return $"./assets/oses/{osCategory}.svg";
+	}
+
+	public static string GetElpidaMonochromeAvatarLink()
+	{
+		return "./assets/categories/elpida-versions.svg";
+	}
 }

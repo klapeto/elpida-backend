@@ -1,0 +1,53 @@
+@using Elpida.Backend.Services.Abstractions.Dtos.Result
+@using System.Globalization
+@using Elpida.Web.Frontend.Services
+
+<div class="flex-start row">
+    @if (_results is not null)
+    {
+        <ul class="list" style="overflow-y: scroll; max-height: 20em;">
+            @foreach (var result in _results)
+            {
+                <li class="list-item @(result == _selectedResult ? "selected" : string.Empty)" @onclick="() => OnResultClick(result)">@result.Name</li>
+            }
+        </ul>
+    }
+
+    <div class="result-summary-details">
+        <b>Name:</b><span>@(_selectedResult?.Name ?? "(No result selected)")</span>
+        <b>Value:</b><span>@GetValueString(_selectedResult?.Value, _selectedResult?.Result.Unit)</span>
+        <b>Input size:</b><span>@GetValueString(_selectedResult?.InputSize, _selectedResult?.Input?.Unit)</span>
+    </div>
+</div>
+
+
+@code {
+
+    [Parameter]
+    public IEnumerable<TaskResultDto>? Results
+    {
+        get => _results;
+        set => _results = value?.ToArray();
+    }
+
+    private TaskResultDto[]? _results;
+    private TaskResultDto? _selectedResult;
+
+    protected override void OnParametersSet()
+    {
+        _selectedResult = _results?.First();
+    }
+
+    private void OnResultClick(TaskResultDto result)
+    {
+        _selectedResult = result;
+    }
+
+    private static string GetValueString(double? value, string? unit)
+    {
+        return value is not null ?
+            $"{ValueConverterService.ConvertToStringSI(value.Value, spaceBetween: true)}{unit}"
+            : "(No result selected)";
+    }
+
+}

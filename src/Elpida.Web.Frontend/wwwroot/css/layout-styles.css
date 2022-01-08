@@ -3,6 +3,12 @@
     max-width: 95%;
 }
 
+.flex-start {
+    display: flex;
+    place-content: start;
+    align-items: center;
+}
+
 .flex-center {
     display: flex;
     justify-content: center;
