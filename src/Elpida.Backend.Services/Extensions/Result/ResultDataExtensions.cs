@@ -35,26 +35,26 @@ namespace Elpida.Backend.Services.Extensions.Result
 {
 	public static class ResultDataExtensions
 	{
-		public static BenchmarkResultDto ToDto(this BenchmarkResultModel benchmarkResultModel)
+		public static ResultDto ToDto(this ResultModel resultModel)
 		{
 			var scoreSpec = new BenchmarkScoreSpecificationDto
 			{
-				Unit = benchmarkResultModel.Benchmark.ScoreUnit,
-				Comparison = benchmarkResultModel.Benchmark.ScoreComparison,
+				Unit = resultModel.Benchmark.ScoreUnit,
+				Comparison = resultModel.Benchmark.ScoreComparison,
 			};
 
-			return new BenchmarkResultDto
+			return new ResultDto
 			{
-				Id = benchmarkResultModel.Id,
-				TimeStamp = benchmarkResultModel.TimeStamp,
-				Uuid = benchmarkResultModel.Benchmark.Uuid,
-				Name = benchmarkResultModel.Benchmark.Name,
-				Affinity = JsonConvert.DeserializeObject<long[]>(benchmarkResultModel.Affinity)!,
-				ElpidaVersion = benchmarkResultModel.ElpidaVersion.ToDto(),
-				System = GetSystem(benchmarkResultModel),
-				Score = benchmarkResultModel.Score,
+				Id = resultModel.Id,
+				TimeStamp = resultModel.TimeStamp,
+				Uuid = resultModel.Benchmark.Uuid,
+				Name = resultModel.Benchmark.Name,
+				Affinity = JsonConvert.DeserializeObject<long[]>(resultModel.Affinity)!,
+				ElpidaVersion = resultModel.ElpidaVersion.ToDto(),
+				System = GetSystem(resultModel),
+				Score = resultModel.Score,
 				ScoreSpecification = scoreSpec,
-				TaskResults = GetTaskResults(benchmarkResultModel).ToArray(),
+				TaskResults = GetTaskResults(resultModel).ToArray(),
 			};
 		}
 
@@ -116,7 +116,7 @@ namespace Elpida.Backend.Services.Extensions.Result
 			};
 		}
 
-		private static IEnumerable<TaskResultDto> GetTaskResults(BenchmarkResultModel result)
+		private static IEnumerable<TaskResultDto> GetTaskResults(ResultModel result)
 		{
 			return result.TaskResults
 				.OrderBy(m => m.Order)
@@ -141,7 +141,7 @@ namespace Elpida.Backend.Services.Extensions.Result
 				);
 		}
 
-		private static SystemDto GetSystem(BenchmarkResultModel result)
+		private static SystemDto GetSystem(ResultModel result)
 		{
 			var memory = new MemoryDto
 			{

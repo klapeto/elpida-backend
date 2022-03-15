@@ -45,7 +45,7 @@ namespace Elpida.Backend.Data
 
 		public DbSet<TopologyModel> Topologies { get; set; } = default!;
 
-		public DbSet<BenchmarkResultModel> BenchmarkResults { get; set; } = default!;
+		public DbSet<ResultModel> Results { get; set; } = default!;
 
 		public DbSet<ElpidaVersionModel> ElpidaVersions { get; set; } = default!;
 

@@ -6,29 +6,26 @@ using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Services.Abstractions.Dtos.Result;
 using Elpida.Backend.Services.Abstractions.Dtos.Result.Batch;
-using Elpida.Backend.Services.Abstractions.Interfaces;
 using Elpida.Web.Frontend.Interfaces;
 using Elpida.Web.Frontend.Models;
 using Elpida.Web.Frontend.Models.Filters;
 
 namespace Elpida.Web.Frontend.Services;
 
-public class ResultsFrontEndService
-	: FrontEndServiceBase<BenchmarkResultDto, BenchmarkResultPreviewDto>,
-		IBenchmarkResultsService
+public class ResultFrontEndService : FrontEndServiceBase<ResultDto, ResultPreviewDto>, IResultFrontEndService
 {
-	private readonly IFrontEndCpuService _cpuService;
+	private readonly ICpuFrontEndService _service;
 
-	public ResultsFrontEndService(HttpClient httpClient, IFrontEndCpuService cpuService)
+	public ResultFrontEndService(HttpClient httpClient, ICpuFrontEndService service)
 		: base(httpClient)
 	{
-		_cpuService = cpuService;
+		_service = service;
 	}
 
 	protected override string UrlRouteBase => "Result";
 
 	public Task<IList<long>> AddBatchAsync(
-		BenchmarkResultsBatchDto batch,
+		ResultBatchDto batch,
 		CancellationToken cancellationToken = default
 	)
 	{
@@ -37,7 +34,7 @@ public class ResultsFrontEndService
 
 	public override QueryModel CreateSimpleQueryModel()
 	{
-		var filters = _cpuService.CreateSimpleQueryModel()
+		var filters = _service.CreateSimpleQueryModel()
 			.Filters.Concat(
 				new FilterModel[]
 				{
@@ -50,7 +47,7 @@ public class ResultsFrontEndService
 
 	public override QueryModel CreateAdvancedQueryModel()
 	{
-		var filters = _cpuService.CreateAdvancedQueryModel()
+		var filters = _service.CreateAdvancedQueryModel()
 			.Filters.Concat(
 				new FilterModel[]
 				{

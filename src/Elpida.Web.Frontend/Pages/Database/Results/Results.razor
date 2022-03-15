@@ -3,10 +3,11 @@
 @using Elpida.Web.Frontend.Services
 @using Elpida.Backend.Services.Abstractions.Dtos.Result;
 @using Elpida.Backend.Services.Abstractions.Dtos
+@using Elpida.Web.Frontend.Interfaces
 
 <h3>Results</h3>
 
-<PagedCollection Service="_service" TDto="BenchmarkResultDto" TPreview="BenchmarkResultPreviewDto">
+<PagedCollection Service="_service" TDto="ResultDto" TPreview="ResultPreviewDto">
 
     <LinkButton Class="collection-item-link" Href="@GetResultLink(context)">
         <img alt="@context.CpuVendor logo" src="@ImageLinksService.GetCpuImageLink(context.CpuVendor)" class="collection-item-icon" loading="lazy">
@@ -27,7 +28,7 @@
 </PagedCollection>
 
 
-@inject ResultsFrontEndService _service;
+@inject IResultFrontEndService _service;
 
 @code {
 

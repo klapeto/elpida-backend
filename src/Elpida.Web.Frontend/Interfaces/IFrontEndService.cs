@@ -3,15 +3,23 @@ using Elpida.Backend.Services.Abstractions.Interfaces;
 using Elpida.Web.Frontend.Models;
 using Elpida.Web.Frontend.Models.Filters;
 
-namespace Elpida.Web.Frontend.Interfaces;
-
-public interface IFrontEndService<TDto, TPreview> : IService<TDto, TPreview>
-	where TDto : FoundationDto
-	where TPreview : FoundationDto
+namespace Elpida.Web.Frontend.Interfaces
 {
-	QueryModel CreateSimpleQueryModel();
+	public interface IFrontEndService<TDto> : IService<TDto>
+		where TDto : FoundationDto
+	{
+	}
 
-	QueryModel CreateAdvancedQueryModel();
+	public interface IFrontEndService<TDto, TPreview>
+		: IFrontEndService<TDto>,
+			IService<TDto, TPreview>
+		where TDto : FoundationDto
+		where TPreview : FoundationDto
+	{
+		QueryModel CreateSimpleQueryModel();
 
-	StringFilterModel? CreateSearchFilterModel();
+		QueryModel CreateAdvancedQueryModel();
+
+		StringFilterModel? CreateSearchFilterModel();
+	}
 }

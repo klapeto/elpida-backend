@@ -130,7 +130,7 @@ namespace Elpida.Backend.DataUpdater
 			{
 				var context = serviceProvider.GetRequiredService<ElpidaContext>();
 
-				context.BenchmarkResults.RemoveRange(context.BenchmarkResults);
+				context.Results.RemoveRange(context.Results);
 				context.BenchmarkStatistics.RemoveRange(context.BenchmarkStatistics);
 				await context.SaveChangesAsync();
 

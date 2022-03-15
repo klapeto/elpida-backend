@@ -6,17 +6,18 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
+#nullable disable
+
 namespace Elpida.Backend.Data.Sqlite.Migrations
 {
     [DbContext(typeof(ElpidaContext))]
-    [Migration("20211017104330_InitialCreate")]
+    [Migration("20220305194726_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasAnnotation("ProductVersion", "5.0.11");
+            modelBuilder.HasAnnotation("ProductVersion", "6.0.0");
 
             modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Benchmark.BenchmarkModel", b =>
                 {
@@ -183,7 +184,7 @@ namespace Elpida.Backend.Data.Sqlite.Migrations
                     b.ToTable("Oses");
                 });
 
-            modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Result.BenchmarkResultModel", b =>
+            modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Result.ResultModel", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -251,7 +252,7 @@ namespace Elpida.Backend.Data.Sqlite.Migrations
 
                     b.HasIndex("TopologyId");
 
-                    b.ToTable("BenchmarkResults");
+                    b.ToTable("Results");
                 });
 
             modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Result.TaskResultModel", b =>
@@ -281,6 +282,9 @@ namespace Elpida.Backend.Data.Sqlite.Migrations
                     b.Property<int>("Order")
                         .HasColumnType("INTEGER");
 
+                    b.Property<long>("ResultId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<long>("SampleSize")
                         .HasColumnType("INTEGER");
 
@@ -301,7 +305,7 @@ namespace Elpida.Backend.Data.Sqlite.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BenchmarkResultId");
+                    b.HasIndex("ResultId");
 
                     b.HasIndex("TaskId");
 
@@ -478,7 +482,7 @@ namespace Elpida.Backend.Data.Sqlite.Migrations
                     b.Navigation("Task");
                 });
 
-            modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Result.BenchmarkResultModel", b =>
+            modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Result.ResultModel", b =>
                 {
                     b.HasOne("Elpida.Backend.Data.Abstractions.Models.Benchmark.BenchmarkModel", "Benchmark")
                         .WithMany()
@@ -515,9 +519,9 @@ namespace Elpida.Backend.Data.Sqlite.Migrations
 
             modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Result.TaskResultModel", b =>
                 {
-                    b.HasOne("Elpida.Backend.Data.Abstractions.Models.Result.BenchmarkResultModel", "BenchmarkResult")
+                    b.HasOne("Elpida.Backend.Data.Abstractions.Models.Result.ResultModel", "Result")
                         .WithMany("TaskResults")
-                        .HasForeignKey("BenchmarkResultId")
+                        .HasForeignKey("ResultId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -527,7 +531,7 @@ namespace Elpida.Backend.Data.Sqlite.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("BenchmarkResult");
+                    b.Navigation("Result");
 
                     b.Navigation("Task");
                 });
@@ -567,7 +571,7 @@ namespace Elpida.Backend.Data.Sqlite.Migrations
                     b.Navigation("Tasks");
                 });
 
-            modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Result.BenchmarkResultModel", b =>
+            modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Result.ResultModel", b =>
                 {
                     b.Navigation("TaskResults");
                 });

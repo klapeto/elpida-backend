@@ -1,6 +1,7 @@
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Elpida.Backend.Services.Abstractions.Interfaces;
 using Elpida.Web.Frontend.Interfaces;
 using Elpida.Web.Frontend.Services;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -46,8 +47,9 @@ namespace Elpida.Web.Frontend
 			builder.Services.AddSingleton<ElpidaIconsService>();
 			builder.Services.AddSingleton<DownloadService>();
 
-			builder.Services.AddScoped<ResultsFrontEndService>();
-			builder.Services.AddScoped<IFrontEndCpuService, CpuFrontEndService>();
+			builder.Services.AddScoped<IResultFrontEndService, ResultFrontEndService>();
+			builder.Services.AddScoped<IBenchmarkFrontEndService, BenchmarkFrontEndService>();
+			builder.Services.AddScoped<ICpuFrontEndService, CpuFrontEndService>();
 
 			await builder.Build().RunAsync();
 		}

@@ -3,6 +3,6 @@ using Elpida.Backend.Services.Abstractions.Interfaces;
 
 namespace Elpida.Web.Frontend.Interfaces;
 
-public interface IFrontEndCpuService : ICpuService, IFrontEndService<CpuDto, CpuPreviewDto>
+public interface ICpuFrontEndService : ICpuService, IFrontEndService<CpuDto, CpuPreviewDto>
 {
 }

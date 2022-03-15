@@ -1,0 +1,18 @@
+@page "/Database/Cpu/{id:long}"
+@using Elpida.Web.Frontend.Interfaces
+@using Elpida.Web.Frontend.Shared.Components.Views
+@using Elpida.Web.Frontend.Shared.Components
+@using Elpida.Backend.Services.Abstractions.Dtos.Cpu
+
+<ServiceResource Id="@Id" Service="@_service" TDto="CpuDto">
+    <CpuView Cpu="@context"></CpuView>
+</ServiceResource>
+
+@inject ICpuFrontEndService _service;
+
+@code {
+
+    [Parameter]
+    public long Id { get; set; }
+
+}

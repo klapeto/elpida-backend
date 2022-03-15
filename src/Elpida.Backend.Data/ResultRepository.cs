@@ -29,12 +29,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Elpida.Backend.Data
 {
-	public class BenchmarkResultsRepository
-		: EntityRepository<BenchmarkResultModel>,
-			IBenchmarkResultsRepository
+	public class ResultRepository
+		: EntityRepository<ResultModel>,
+			IResultRepository
 	{
-		public BenchmarkResultsRepository(ElpidaContext elpidaContext)
-			: base(elpidaContext, elpidaContext.BenchmarkResults)
+		public ResultRepository(ElpidaContext elpidaContext)
+			: base(elpidaContext, elpidaContext.Results)
 		{
 		}
 
@@ -95,14 +95,14 @@ namespace Elpida.Backend.Data
 			return result;
 		}
 
-		protected override IQueryable<BenchmarkResultModel> ProcessGetMultiplePaged(
-			IQueryable<BenchmarkResultModel> queryable
+		protected override IQueryable<ResultModel> ProcessGetMultiplePaged(
+			IQueryable<ResultModel> queryable
 		)
 		{
 			return ProcessGetSingle(queryable);
 		}
 
-		protected override IQueryable<BenchmarkResultModel> ProcessGetSingle(IQueryable<BenchmarkResultModel> queryable)
+		protected override IQueryable<ResultModel> ProcessGetSingle(IQueryable<ResultModel> queryable)
 		{
 			return queryable
 				.AsNoTracking()

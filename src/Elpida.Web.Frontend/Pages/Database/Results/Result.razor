@@ -1,7 +1,9 @@
 @page "/Database/Result/{id:long}"
 @using Elpida.Web.Frontend.Services
 @using Elpida.Backend.Services.Abstractions.Dtos.Result
+@using Elpida.Web.Frontend.Interfaces
 @using Elpida.Web.Frontend.Shared.Components
+@using Elpida.Web.Frontend.Shared.Components.Views
 
 @if (_result is not null)
 {
@@ -17,14 +19,14 @@ else
     </div>
 }
 
-@inject ResultsFrontEndService _service;
+@inject IResultFrontEndService _service;
 
 @code {
 
     [Parameter]
     public long Id { get; set; }
 
-    private BenchmarkResultDto? _result;
+    private ResultDto? _result;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -46,8 +48,8 @@ else
                                                                            <div class="flex-center row">
                                                                                <div class="flex-center column" style="margin: 0 1em 2em 1em">
                                                                                    <div>
-                                                                                       <img class="result-summary-image" src="@ImageLinksService.GetCpuImageLink(_result.System.Cpu.Vendor)" alt="@_result.System.Cpu.Vendor logo">
-                                                                                       <img class="result-summary-image" src="@ImageLinksService.GetBenchmarkImage(_result.Uuid)" alt="@_result.Name representantive image">
+                                                                                       <img class="details-image" src="@ImageLinksService.GetCpuImageLink(_result.System.Cpu.Vendor)" alt="@_result.System.Cpu.Vendor logo">
+                                                                                       <img class="details-image" src="@ImageLinksService.GetBenchmarkImage(_result.Uuid)" alt="@_result.Name representantive image">
                                                                                    </div>
                                                                                    <b style="font-size: larger">@_result.System.Cpu.ModelName</b>
                                                                                </div>
@@ -57,7 +59,7 @@ else
                                                                                    </GroupBox>
                                                                                </div>
                                                                            </div>
-                                                                           <div class="result-summary-details">
+                                                                           <div class="details-grid">
                                                                                <b>Timestamp:</b><span>@_result.TimeStamp.ToString("R")</span>
                                                                                <b>Benchmark name:</b><span>@_result.Name</span>
                                                                                <b>CPU model:</b><span>@_result.System.Cpu.ModelName</span>
@@ -66,45 +68,21 @@ else
                                                                                <b>Os:</b><span>@_result.System.Os.Name</span>
                                                                            </div>
                                                                        </div>),
-            (@<IconWithText IconName="cpu">CPU</IconWithText>, @<div class="flex-center" style="place-content: start; flex-flow: row wrap">
-                                                                   <img class="result-summary-image" src="@ImageLinksService.GetCpuImageLink(_result.System.Cpu.Vendor)" alt="@_result.System.Cpu.Vendor logo">
-                                                                   <div class="result-summary-details">
-                                                                       <b>Architecture:</b><span>@_result.System.Cpu.Architecture</span>
-                                                                       <b>Vendor:</b><span>@_result.System.Cpu.Vendor</span>
-                                                                       <b>Model:</b><span>@_result.System.Cpu.ModelName</span>
-                                                                       <b>Frequency:</b><span>@ValueConverterService.ConvertToStringSI(_result.System.Cpu.Frequency, spaceBetween: true)Hz</span>
-                                                                       <b>SMT:</b><span>@_result.System.Cpu.Smt</span>
-                                                                       <b>Features:</b><span>@string.Join(' ', _result.System.Cpu.Features ?? new string[0])</span>
-                                                                   </div>
-                                                                   <b>Caches:</b>
-                                                                   <div class="flex-center row">
-                                                                       @foreach (var cache in _result.System.Cpu.Caches)
-                                                                       {
-                                                                           <div class="cpu-cache">
-                                                                               <div class="cpu-cache-name">@cache.Name</div>
-                                                                               <div class="result-summary-details cpu-cache-details">
-                                                                                   <b>Size:</b><span>@ValueConverterService.ConvertToStringIEC(cache.Size, spaceBetween: true)B</span>
-                                                                                   <b>Associativity:</b><span>@cache.Associativity</span>
-                                                                                   <b>Line Size:</b><span>@cache.LineSize</span>
-                                                                               </div>
-                                                                           </div>
-                                                                       }
-                                                                   </div>
-                                                               </div>),
+            (@<IconWithText IconName="cpu">CPU</IconWithText>, @<CpuView Cpu="_result.System.Cpu"></CpuView>),
             (@<IconWithText IconName="topology">Topology</IconWithText>, @<div class="flex-center row">
                                                                              <TopologyView Topology="_result.System.Topology" Affinity="_result.Affinity.ToHashSet()"></TopologyView>
                                                                          </div>),
             (@<IconWithText IconName="os">Os</IconWithText>, @<div class="flex-center" style="place-content: start; flex-flow: row wrap">
-                                                                 <img class="result-summary-image" src="@ImageLinksService.GetOsImageLink(_result.System.Os.Category)" alt="@_result.System.Os.Category logo">
-                                                                 <div class="result-summary-details">
+                                                                 <img class="details-image" src="@ImageLinksService.GetOsImageLink(_result.System.Os.Category)" alt="@_result.System.Os.Category logo">
+                                                                 <div class="details-grid">
                                                                      <b>Category:</b><span>@_result.System.Os.Category</span>
                                                                      <b>Name:</b><span>@_result.System.Os.Name</span>
                                                                      <b>Version:</b><span>@_result.System.Os.Version</span>
                                                                  </div>
                                                              </div>),
             (@<IconWithText IconName="elpida">Elpida version</IconWithText>, @<div class="flex-center" style="place-content: start; flex-flow: row wrap">
-                                                                                 <img class="result-summary-image" src="@ImageLinksService.GetElpidaMonochromeAvatarLink()" alt="Elpida monochrome stylized mascot">
-                                                                                 <div class="result-summary-details">
+                                                                                 <img class="details-image" src="@ImageLinksService.GetElpidaMonochromeAvatarLink()" alt="Elpida monochrome stylized mascot">
+                                                                                 <div class="details-grid">
                                                                                      <b>Version:</b><span>@(_result.ElpidaVersion.Version.Major).@(_result.ElpidaVersion.Version.Minor).@(_result.ElpidaVersion.Version.Revision).@(_result.ElpidaVersion.Version.Build)</span>
                                                                                      <b>Compiler:</b><span>@_result.ElpidaVersion.Compiler.Name @_result.ElpidaVersion.Compiler.Version</span>
                                                                                  </div>

@@ -1,0 +1,49 @@
+@using Elpida.Backend.Services.Abstractions.Dtos.Cpu
+@using Elpida.Web.Frontend.Services
+
+<div class="flex-center" style="place-content: start; flex-flow: row wrap">
+    <img class="details-image" src="@ImageLinksService.GetCpuImageLink(Cpu.Vendor)" alt="@Cpu.Vendor logo">
+    <div class="details-grid">
+        <b>Architecture:</b><span>@Cpu.Architecture</span>
+        <b>Vendor:</b><span>@Cpu.Vendor</span>
+        <b>Model:</b><span>@Cpu.ModelName</span>
+        <b>Frequency:</b><span>@ValueConverterService.ConvertToStringSI(Cpu.Frequency, spaceBetween: true)Hz</span>
+        <b>SMT:</b><span>@Cpu.Smt</span>
+        <b>Features:</b><span>@string.Join(' ', Cpu.Features ?? Array.Empty<string>())</span>
+        
+        @if (Cpu.AdditionalInfo is not null)
+        {
+            @foreach (var (key, value) in Cpu.AdditionalInfo)
+            {
+                <b>@key:</b><span>@value</span>
+            }
+        }
+
+        @if (Cpu.Caches is not null)
+        {
+            <b>Caches:</b>
+            <div class="flex-center row">
+                @foreach (var cache in Cpu.Caches)
+                {
+                    <div class="cpu-cache">
+                        <div class="cpu-cache-name">@cache.Name</div>
+                        <div class="details-grid cpu-cache-details">
+                            <b>Size:</b><span>@ValueConverterService.ConvertToStringIEC(cache.Size, spaceBetween: true)B</span>
+                            <b>Associativity:</b><span>@cache.Associativity</span>
+                            <b>Line Size:</b><span>@cache.LineSize</span>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+</div>
+
+
+@code {
+
+    [Parameter]
+    public CpuDto Cpu { get; set; }
+
+}

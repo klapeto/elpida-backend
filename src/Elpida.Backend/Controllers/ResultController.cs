@@ -36,17 +36,17 @@ namespace Elpida.Backend.Controllers
 	[ApiController]
 	[Route("api/v1/[controller]")]
 	public class ResultController
-		: ServiceController<BenchmarkResultDto, BenchmarkResultPreviewDto, IBenchmarkResultsService>
+		: ServiceController<ResultDto, ResultPreviewDto, IResultService>
 	{
-		public ResultController(IBenchmarkResultsService benchmarkResultsService)
-			: base(benchmarkResultsService)
+		public ResultController(IResultService resultService)
+			: base(resultService)
 		{
 		}
 
 		/// <summary>
 		///     Creates a new Benchmark Result.
 		/// </summary>
-		/// <param name="benchmarkResultDto">The result data.</param>
+		/// <param name="resultDto">The result data.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <returns>The url to access the created result.</returns>
 		/// <response code="201">The result was successfully created.</response>
@@ -59,11 +59,11 @@ namespace Elpida.Backend.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		public async Task<IActionResult> PostNewResult(
-			[FromBody] BenchmarkResultsBatchDto benchmarkResultDto,
+			[FromBody] ResultBatchDto resultDto,
 			CancellationToken cancellationToken
 		)
 		{
-			var result = await Service.AddBatchAsync(benchmarkResultDto, cancellationToken);
+			var result = await Service.AddBatchAsync(resultDto, cancellationToken);
 			return CreatedAtAction(nameof(GetSingle), new { id = result.First() }, null);
 		}
 	}

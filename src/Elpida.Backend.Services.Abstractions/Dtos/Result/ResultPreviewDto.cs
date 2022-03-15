@@ -25,7 +25,7 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 	/// <summary>
 	///     A preview of a Benchmark result.
 	/// </summary>
-	public sealed class BenchmarkResultPreviewDto : FoundationDto
+	public sealed class ResultPreviewDto : FoundationDto
 	{
 		/// <summary>
 		///     The UUID of the benchmark.

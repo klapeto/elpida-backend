@@ -59,7 +59,7 @@ namespace Elpida.Backend
 		{
 			services.AddControllers();
 
-			services.AddScoped<IBenchmarkResultsService, BenchmarkResultService>();
+			services.AddScoped<IResultService, ResultService>();
 			services.AddScoped<IBenchmarkService, BenchmarkService>();
 			services.AddScoped<ICpuService, CpuService>();
 			services.AddScoped<IElpidaVersionService, ElpidaVersionService>();
@@ -68,7 +68,7 @@ namespace Elpida.Backend
 			services.AddScoped<ITaskService, TaskService>();
 			services.AddScoped<ITopologyService, TopologyService>();
 
-			services.AddTransient<IBenchmarkResultsRepository, BenchmarkResultsRepository>();
+			services.AddTransient<IResultRepository, ResultRepository>();
 			services.AddTransient<ICpuRepository, CpuRepository>();
 			services.AddTransient<ITopologyRepository, TopologyRepository>();
 			services.AddTransient<IBenchmarkRepository, BenchmarkRepository>();

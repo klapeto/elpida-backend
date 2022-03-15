@@ -18,61 +18,33 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using System;
-using Elpida.Backend.Services.Abstractions.Dtos.Benchmark;
+using System.ComponentModel.DataAnnotations;
 using Elpida.Backend.Services.Abstractions.Dtos.Elpida;
 
-namespace Elpida.Backend.Services.Abstractions.Dtos.Result
+namespace Elpida.Backend.Services.Abstractions.Dtos.Result.Batch
 {
 	/// <summary>
-	///     Details of a Benchmark Result.
+	///     Contains multiple benchmark results from a system.
 	/// </summary>
-	public sealed class BenchmarkResultDto : FoundationDto
+	public sealed class ResultBatchDto : FoundationDto
 	{
-		/// <summary>
-		///     The date and time this result was posted.
-		/// </summary>
-		public DateTime TimeStamp { get; init; }
-
-		/// <summary>
-		///     The Cpu Affinity used by this Benchmark Result.
-		/// </summary>
-		public long[] Affinity { get; init; }
-
 		/// <summary>
 		///     The Elpida Version that this result was produced from.
 		/// </summary>
+		[Required]
 		public ElpidaVersionDto ElpidaVersion { get; init; }
 
 		/// <summary>
 		///     The system details for this result.
 		/// </summary>
+		[Required]
 		public SystemDto System { get; init; }
 
 		/// <summary>
-		///     The score of the benchmark.
+		///     The benchmark results.
 		/// </summary>
-		public double Score { get; init; }
-
-		/// <summary>
-		///     The UUID of this Benchmark.
-		/// </summary>
-		public Guid Uuid { get; init; }
-
-		/// <summary>
-		///     The name of this Benchmark.
-		/// </summary>
-		/// <example>Test Benchmark.</example>
-		public string Name { get; init; }
-
-		/// <summary>
-		///     The score specification details of this Benchmark.
-		/// </summary>
-		public BenchmarkScoreSpecificationDto ScoreSpecification { get; init; }
-
-		/// <summary>
-		///     The specific Task results.
-		/// </summary>
-		public TaskResultDto[] TaskResults { get; init; }
+		[Required]
+		[MinLength(1)]
+		public BenchmarkResultSlimDto[] BenchmarkResults { get; init; }
 	}
 }

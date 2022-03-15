@@ -1,8 +1,8 @@
 @page "/Database/Cpus"
-@using Elpida.Web.Frontend.Services
 @using Elpida.Web.Frontend.Shared.Components
 @using Elpida.Backend.Services.Abstractions.Dtos.Cpu
 @using Elpida.Backend.Services.Abstractions.Dtos
+@using Elpida.Web.Frontend.Interfaces
 
 <h3>Cpus</h3>
 
@@ -21,7 +21,7 @@
 
 
 
-@inject CpuFrontEndService _service;
+@inject ICpuFrontEndService _service;
 
 @code {
 
@@ -34,6 +34,5 @@
     {
         return $"./assets/cpus/{dto.Vendor}.svg";
     }
-
-
+    
 }

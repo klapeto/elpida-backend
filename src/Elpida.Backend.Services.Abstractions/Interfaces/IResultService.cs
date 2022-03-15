@@ -18,28 +18,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Elpida.Backend.Data.Abstractions.Interfaces;
-using Elpida.Backend.Data.Abstractions.Models.Result;
-using Elpida.Backend.Data.Abstractions.Models.Statistics;
+using Elpida.Backend.Services.Abstractions.Dtos.Result;
+using Elpida.Backend.Services.Abstractions.Dtos.Result.Batch;
 
-namespace Elpida.Backend.Data.Abstractions.Repositories
+namespace Elpida.Backend.Services.Abstractions.Interfaces
 {
-	public interface IBenchmarkResultsRepository : IRepository<BenchmarkResultModel>
+	public interface IResultService : IService<ResultDto, ResultPreviewDto>
 	{
-		Task<long> GetCountWithScoreBetween(
-			long benchmarkId,
-			long cpuId,
-			double min,
-			double max,
-			CancellationToken cancellationToken = default
-		);
-
-		Task<BasicStatisticsModel> GetStatisticsAsync(
-			long benchmarkId,
-			long cpuId,
-			CancellationToken cancellationToken = default
-		);
+		Task<IList<long>> AddBatchAsync(ResultBatchDto batch, CancellationToken cancellationToken = default);
 	}
 }

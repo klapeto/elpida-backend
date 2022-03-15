@@ -45,7 +45,7 @@ namespace Elpida.Backend.Services
 				IBenchmarkStatisticsRepository>,
 			IBenchmarkStatisticsService
 	{
-		private readonly IBenchmarkResultsRepository _benchmarkResultsRepository;
+		private readonly IResultRepository _resultRepository;
 		private readonly IBenchmarkService _benchmarkService;
 		private readonly ICpuService _cpuService;
 
@@ -53,12 +53,12 @@ namespace Elpida.Backend.Services
 			IBenchmarkService benchmarkService,
 			IBenchmarkStatisticsRepository benchmarkStatisticsRepository,
 			ICpuService cpuService,
-			IBenchmarkResultsRepository benchmarkResultsRepository
+			IResultRepository resultRepository
 		)
 			: base(benchmarkStatisticsRepository)
 		{
 			_cpuService = cpuService;
-			_benchmarkResultsRepository = benchmarkResultsRepository;
+			_resultRepository = resultRepository;
 			_benchmarkService = benchmarkService;
 		}
 
@@ -75,7 +75,7 @@ namespace Elpida.Backend.Services
 			var stats = await GetStatisticsModelAsync(benchmarkId, cpuId, cancellationToken);
 
 			var basicStatistics =
-				await _benchmarkResultsRepository.GetStatisticsAsync(benchmarkId, cpuId, cancellationToken);
+				await _resultRepository.GetStatisticsAsync(benchmarkId, cpuId, cancellationToken);
 
 			stats.Max = basicStatistics.Max;
 			stats.Min = basicStatistics.Min;
@@ -91,7 +91,7 @@ namespace Elpida.Backend.Services
 			var newClasses = new List<FrequencyClassDto>(previousClasses.Length);
 			foreach (var frequencyClass in previousClasses)
 			{
-				var count = await _benchmarkResultsRepository.GetCountWithScoreBetween(
+				var count = await _resultRepository.GetCountWithScoreBetween(
 					stats.Benchmark.Id,
 					stats.Cpu.Id,
 					frequencyClass.Low,

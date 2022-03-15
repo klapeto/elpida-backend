@@ -119,6 +119,11 @@ button.disabled:hover,
     background-color: rgb(212, 219, 224);
 }
 
+.non-a-button {
+    cursor: pointer;
+    user-select: none;
+}
+
 /* button */
 
 
@@ -351,6 +356,21 @@ input[type="range"] {
 }
 /* Pager */
 
+/* Details */
+
+.details-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-gap: 0.5em;
+}
+
+.details-image {
+    margin: 1em;
+    height: 5em;
+}
+
+/* Details */
+
 /* Results */
 .result-name {
     display: block;
@@ -369,12 +389,6 @@ input[type="range"] {
     justify-content: center;
 }
 
-.result-summary-details {
-    display: grid; 
-    grid-template-columns: auto 1fr; 
-    grid-gap: 0.5em;
-}
-
 .result-icon-container {
     display: flex;
     flex-flow: row wrap;
@@ -386,10 +400,6 @@ input[type="range"] {
     } 
 }
 
-.result-summary-image {
-    margin: 1em;
-    height: 5em;
-}
 /* Results */
 
 /* Tab Control */
@@ -596,3 +606,18 @@ input[type="range"] {
     cursor: pointer;
 }
 /*list*/
+
+/*Benchmark*/
+.benchmark-task-name {
+    font-size: large;
+    text-align: center;
+    margin: 0.5em 0 0.5em 0;
+}
+.benchmark-task-input {
+    margin-bottom: 1em;
+}
+
+.benchmark-task-output {
+    margin-top: 1em;
+}
+/*Benchmark*/

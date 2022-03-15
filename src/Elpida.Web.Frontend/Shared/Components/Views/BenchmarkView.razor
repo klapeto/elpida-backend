@@ -1,0 +1,101 @@
+@using Elpida.Backend.Services.Abstractions.Dtos.Benchmark
+
+<div class="flex-center" style="margin: 1em">
+    <img src="@($"./assets/benchmarks/{Benchmark.Uuid}.svg")" alt="@Benchmark.Name icon"/>
+    <h3>
+        @Benchmark.Name
+        <div>
+            @Benchmark.ScoreSpecification.Unit
+        </div>
+    </h3>
+</div>
+<hr>
+
+@if (_buttons is not null)
+{
+    <em>*Click on a task to view its details.</em>
+    <div class="flex-center column">
+        @foreach (var button in _buttons)
+        {
+            <div class="button non-a-button @(button.Active ? "active" : null)" @onclick="() => button.Toggle()">
+                <div class="benchmark-task-name">@button.Task.Task.Name</div>
+                @if (button.Active)
+                {
+                    <div class="flex-center column">
+                        @if (button.Task.Task.Input is not null)
+                        {
+                            <div class="benchmark-task-input">
+                                <GroupBox Title="Input">
+                                    <div class="details-grid">
+                                        <b>Name:</b><span>@button.Task.Task.Input.Name</span>
+                                        <b>Description:</b><span>@button.Task.Task.Input.Description</span>
+                                        <b>Unit:</b><span>@button.Task.Task.Input.Unit</span>
+                                    </div>
+                                </GroupBox>
+                            </div>
+                        }
+
+                        <div class="details-grid">
+                            <b>Description:</b><span>@button.Task.Task.Description</span>
+                            <b>Multi threaded:</b><span>@button.Task.CanBeMultiThreaded</span>
+                            <b>Optional:</b><span>@button.Task.CanBeDisabled</span>
+                            <b>Counted on results:</b><span>@button.Task.IsCountedOnResults</span>
+                            <b>Iterations:</b><span>@button.Task.IterationsToRun</span>
+                        </div>
+
+                        @if (button.Task.Task.Output is not null)
+                        {
+                            <div class="benchmark-task-output">
+                                <GroupBox Title="Output">
+                                    <div class="details-grid">
+                                        <b>Name:</b><span>@button.Task.Task.Output.Name</span>
+                                        <b>Description:</b><span>@button.Task.Task.Output.Description</span>
+                                        <b>Unit:</b><span>@button.Task.Task.Output.Unit</span>
+                                    </div>
+                                </GroupBox>
+                            </div>
+                        }
+
+                    </div>
+                }
+            </div>
+            <img src="./assets/down-arrow-dark.svg" alt="arrow pointing down"/>
+        }
+    </div>
+}
+
+
+@code {
+
+    [Parameter]
+    public BenchmarkDto Benchmark { get; set; }
+
+    private TaskButton[]? _buttons;
+
+    protected override void OnParametersSet()
+    {
+        _buttons = Benchmark.Tasks
+            .Select(t => new TaskButton(t))
+            .ToArray();
+        base.OnParametersSet();
+    }
+
+    private class TaskButton
+    {
+        public TaskButton(BenchmarkTaskDto benchmarkTask)
+        {
+            Task = benchmarkTask;
+        }
+
+        public BenchmarkTaskDto Task { get; }
+
+        public bool Active { get; private set; }
+
+        public void Toggle()
+        {
+            Active = !Active;
+        }
+    }
+
+}
+

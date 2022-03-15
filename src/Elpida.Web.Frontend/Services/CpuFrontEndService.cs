@@ -7,7 +7,7 @@ using Elpida.Web.Frontend.Models.Filters;
 
 namespace Elpida.Web.Frontend.Services;
 
-public class CpuFrontEndService : FrontEndServiceBase<CpuDto, CpuPreviewDto>, IFrontEndCpuService
+public class CpuFrontEndService : FrontEndServiceBase<CpuDto, CpuPreviewDto>, ICpuFrontEndService
 {
 	public CpuFrontEndService(HttpClient httpClient)
 		: base(httpClient)

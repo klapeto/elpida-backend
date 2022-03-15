@@ -18,33 +18,28 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using System.ComponentModel.DataAnnotations;
-using Elpida.Backend.Services.Abstractions.Dtos.Elpida;
+using System.Threading;
+using System.Threading.Tasks;
+using Elpida.Backend.Data.Abstractions.Interfaces;
+using Elpida.Backend.Data.Abstractions.Models.Result;
+using Elpida.Backend.Data.Abstractions.Models.Statistics;
 
-namespace Elpida.Backend.Services.Abstractions.Dtos.Result.Batch
+namespace Elpida.Backend.Data.Abstractions.Repositories
 {
-	/// <summary>
-	///     Contains multiple benchmark results from a system.
-	/// </summary>
-	public sealed class BenchmarkResultsBatchDto : FoundationDto
+	public interface IResultRepository : IRepository<ResultModel>
 	{
-		/// <summary>
-		///     The Elpida Version that this result was produced from.
-		/// </summary>
-		[Required]
-		public ElpidaVersionDto ElpidaVersion { get; init; }
+		Task<long> GetCountWithScoreBetween(
+			long benchmarkId,
+			long cpuId,
+			double min,
+			double max,
+			CancellationToken cancellationToken = default
+		);
 
-		/// <summary>
-		///     The system details for this result.
-		/// </summary>
-		[Required]
-		public SystemDto System { get; init; }
-
-		/// <summary>
-		///     The benchmark results.
-		/// </summary>
-		[Required]
-		[MinLength(1)]
-		public BenchmarkResultSlimDto[] BenchmarkResults { get; init; }
+		Task<BasicStatisticsModel> GetStatisticsAsync(
+			long benchmarkId,
+			long cpuId,
+			CancellationToken cancellationToken = default
+		);
 	}
 }
