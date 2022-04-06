@@ -2,12 +2,14 @@
 
 <div class="flex-center" style="margin: 1em">
     <img src="@($"./assets/benchmarks/{Benchmark.Uuid}.svg")" alt="@Benchmark.Name icon"/>
-    <h3>
+
+    <h3 class="flex-center column" style="margin-left: 1em">
         @Benchmark.Name
-        <div>
+        <div class="badge" style="font-size: initial">
             @Benchmark.ScoreSpecification.Unit
         </div>
     </h3>
+
 </div>
 <hr>
 
@@ -17,7 +19,7 @@
     <div class="flex-center column">
         @foreach (var button in _buttons)
         {
-            <div class="button non-a-button @(button.Active ? "active" : null)" @onclick="() => button.Toggle()">
+            <div class="button non-a-button @(button.Active ? "active" : null) benchmark-task-container" @onclick="() => button.Toggle()">
                 <div class="benchmark-task-name">@button.Task.Task.Name</div>
                 @if (button.Active)
                 {
@@ -98,4 +100,3 @@
     }
 
 }
-
