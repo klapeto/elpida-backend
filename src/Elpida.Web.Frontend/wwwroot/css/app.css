@@ -620,4 +620,19 @@ input[type="range"] {
 .benchmark-task-output {
     margin-top: 1em;
 }
+
+.benchmark-task-container.active {
+    background-color: #f8f8ff;
+}
+
+.benchmark-task-container.active:hover {
+    background-color: var(--button-hover-bg-color);
+}
 /*Benchmark*/
+
+.badge {
+    padding: 0.8em;
+    background-color: var(--group-box-header-color);
+    border-radius: 0.8em
+}
+
