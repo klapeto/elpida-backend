@@ -39,7 +39,7 @@ namespace Elpida.Web.Frontend
 				builder.Services.AddScoped(
 					sp => new HttpClient
 					{
-						BaseAddress = new Uri("https://api.elpida.dev/api/v1/"),
+						BaseAddress = new Uri("http://localhost:5002/api/v1/"),
 					}
 				);
 			}

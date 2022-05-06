@@ -1,6 +1,7 @@
-﻿FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
+﻿FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["Elpida.Web.Frontend/Elpida.Web.Frontend.csproj", "."]
+COPY ["Directory.Build.props", "."]
 RUN dotnet restore
 COPY . .
 RUN dotnet build -c Release -o /app/build Elpida.Web.Frontend/Elpida.Web.Frontend.csproj

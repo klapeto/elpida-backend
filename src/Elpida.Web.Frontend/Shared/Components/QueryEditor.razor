@@ -72,20 +72,45 @@
         _editContext = new EditContext(Model);
     }
 
+    private RenderFragment CreateRangeFilterView(RangeFilterModel rangeFilter)
+    {
+        return @<RangeFilterView Model="rangeFilter"/>;
+    }
+
+    private RenderFragment CreateNumberFilterView(NumberFilterModel numberFilter)
+    {
+        return @<NumberFilterView Model="numberFilter"/>;
+    }
+    
+    private RenderFragment CreateDateFilterView(DateTimeFilterModel dateTimeFilter)
+    {
+        return @<DateFilterView Model="dateTimeFilter"/>;
+    }
+    
+    private RenderFragment CreateOptionFilterView(OptionFilterModel optionFilter)
+    {
+        return @<OptionFilterView Model="optionFilter"/>;
+    }
+    
+    private RenderFragment CreateStringFilterView(StringFilterModel stringFilter)
+    {
+        return @<StringFilterView Model="stringFilter"/>;
+    }
+    
     private RenderFragment CreateView(FilterModel filterModel)
     {
         switch (filterModel)
         {
             case RangeFilterModel rangeFilter:
-                return @<RangeFilterView Model="rangeFilter"/>;
+                return CreateRangeFilterView(rangeFilter);
             case NumberFilterModel numberFilter:
-                return @<NumberFilterView Model="numberFilter"/>;
+                return CreateNumberFilterView(numberFilter);
             case DateTimeFilterModel dateTimeFilter:
-                return @<DateFilterView Model="dateTimeFilter"/>;
+                return CreateDateFilterView(dateTimeFilter);
             case OptionFilterModel optionFilter:
-                return @<OptionFilterView Model="optionFilter"/>;
+                return CreateOptionFilterView(optionFilter);
             case StringFilterModel stringFilter:
-                return @<StringFilterView Model="stringFilter"/>;
+                return CreateStringFilterView(stringFilter);
             default:
                 throw new NotImplementedException(filterModel.GetType().FullName);
         }
