@@ -27,8 +27,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elpida.Backend.Common.Tests
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elpida.Backend.DataSeed", "Elpida.Backend.DataSeed\Elpida.Backend.DataSeed.csproj", "{72CACFD4-D819-4BC3-9981-8981B25CEB4E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elpida.Web.Frontend", "Elpida.Web.Frontend\Elpida.Web.Frontend.csproj", "{8E210C6C-C732-4902-A19A-464A35F447F9}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elpida.Backend.Data.Sqlite", "Elpida.Backend.Data.Sqlite\Elpida.Backend.Data.Sqlite.csproj", "{EE69DC73-52B0-468E-9336-9491CAD85F4D}"
 EndProject
 Global
@@ -81,10 +79,6 @@ Global
 		{72CACFD4-D819-4BC3-9981-8981B25CEB4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72CACFD4-D819-4BC3-9981-8981B25CEB4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72CACFD4-D819-4BC3-9981-8981B25CEB4E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8E210C6C-C732-4902-A19A-464A35F447F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8E210C6C-C732-4902-A19A-464A35F447F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8E210C6C-C732-4902-A19A-464A35F447F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8E210C6C-C732-4902-A19A-464A35F447F9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EE69DC73-52B0-468E-9336-9491CAD85F4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EE69DC73-52B0-468E-9336-9491CAD85F4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE69DC73-52B0-468E-9336-9491CAD85F4D}.Release|Any CPU.ActiveCfg = Release|Any CPU

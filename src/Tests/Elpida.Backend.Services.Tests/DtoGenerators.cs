@@ -69,13 +69,13 @@ namespace Elpida.Backend.Services.Tests
 			);
 		}
 
-		public static BenchmarkResultPreviewDto NewBenchmarkResultPreview(long? id = null)
+		public static ResultPreviewDto NewBenchmarkResultPreview(long? id = null)
 		{
 			return new (id ?? NewId(), Guid.NewGuid(), DateTime.UtcNow, "Test benchmark", "Gentoo", "ARM", "Cortex A7",
 				"b/s", 46);
 		}
 
-		public static BenchmarkResultDto NewBenchmarkResult(long? id = null)
+		public static ResultDto NewBenchmarkResult(long? id = null)
 		{
 			return new (
 				id ?? NewId(),
@@ -282,7 +282,7 @@ namespace Elpida.Backend.Services.Tests
 			);
 		}
 
-		public static BenchmarkResultsBatchDto NewBenchmarkResultsBatch(long? id = null)
+		public static ResultBatchDto NewBenchmarkResultsBatch(long? id = null)
 		{
 			return new (id ?? NewId(), NewElpida(), NewSystem(), new[] { NewBenchmarkResultSlim(), NewBenchmarkResultSlim() });
 		}

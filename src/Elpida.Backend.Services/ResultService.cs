@@ -153,18 +153,17 @@ namespace Elpida.Backend.Services
 		protected override Expression<Func<ResultModel, ResultPreviewDto>>
 			GetPreviewConstructionExpression()
 		{
-			return m => new ResultPreviewDto
-			{
-				Id = m.Id,
-				BenchmarkUuid = m.Benchmark.Uuid,
-				TimeStamp = m.TimeStamp,
-				BenchmarkName = m.Benchmark.Name,
-				OsName = m.Os.Name,
-				CpuVendor = m.Topology.Cpu.Vendor,
-				CpuModelName = m.Topology.Cpu.ModelName,
-				BenchmarkScoreUnit = m.Benchmark.ScoreUnit,
-				Score = m.Score,
-			};
+			return m => new ResultPreviewDto(
+			m.Id,
+				 m.Benchmark.Uuid,
+				m.TimeStamp,
+				 m.Benchmark.Name,
+				 m.Os.Name,
+				 m.Topology.Cpu.Vendor,
+				m.Topology.Cpu.ModelName,
+				 m.Benchmark.ScoreUnit,
+				 m.Score
+			);
 		}
 
 		protected override Task<ResultModel> ProcessDtoAndCreateModelAsync(

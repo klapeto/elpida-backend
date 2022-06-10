@@ -41,7 +41,7 @@ namespace Elpida.Backend.Services.Tests.Helpers
 			return GetFilterExpressions();
 		}
 
-		protected override IEnumerable<FilterExpression> GetFilterExpressions()
+		public override IEnumerable<FilterExpression> GetFilterExpressions()
 		{
 			yield return FiltersTransformer.CreateFilter<DummyModel, long>("id", m => m.Id);
 			yield return FiltersTransformer.CreateFilter<DummyModel, string>("data", m => m.Data);

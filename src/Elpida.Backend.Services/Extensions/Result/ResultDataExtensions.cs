@@ -37,37 +37,34 @@ namespace Elpida.Backend.Services.Extensions.Result
 	{
 		public static ResultDto ToDto(this ResultModel resultModel)
 		{
-			var scoreSpec = new BenchmarkScoreSpecificationDto
-			{
-				Unit = resultModel.Benchmark.ScoreUnit,
-				Comparison = resultModel.Benchmark.ScoreComparison,
-			};
+			var scoreSpec = new BenchmarkScoreSpecificationDto(
+				resultModel.Benchmark.ScoreUnit,
+				resultModel.Benchmark.ScoreComparison
+			);
 
-			return new ResultDto
-			{
-				Id = resultModel.Id,
-				TimeStamp = resultModel.TimeStamp,
-				Uuid = resultModel.Benchmark.Uuid,
-				Name = resultModel.Benchmark.Name,
-				Affinity = JsonConvert.DeserializeObject<long[]>(resultModel.Affinity)!,
-				ElpidaVersion = resultModel.ElpidaVersion.ToDto(),
-				System = GetSystem(resultModel),
-				Score = resultModel.Score,
-				ScoreSpecification = scoreSpec,
-				TaskResults = GetTaskResults(resultModel).ToArray(),
-			};
+			return new ResultDto(
+				resultModel.Id,
+				resultModel.TimeStamp,
+				resultModel.Benchmark.Uuid,
+				resultModel.Benchmark.Name,
+				JsonConvert.DeserializeObject<long[]>(resultModel.Affinity)!,
+				resultModel.ElpidaVersion.ToDto(),
+				GetSystem(resultModel),
+				resultModel.Score,
+				scoreSpec,
+				GetTaskResults(resultModel).ToArray()
+			);
 		}
 
 		public static ResultSpecificationDto GetResultSpecificationDto(this TaskModel model)
 		{
-			return new ()
-			{
-				Name = model.ResultName,
-				Description = model.ResultDescription,
-				Unit = model.ResultUnit,
-				Aggregation = model.ResultAggregation,
-				Type = model.ResultType,
-			};
+			return new ResultSpecificationDto(
+				model.ResultName,
+				model.ResultDescription,
+				model.ResultUnit,
+				model.ResultAggregation,
+				model.ResultType
+			);
 		}
 
 		public static DataSpecificationDto? CreateInputSpecDto(this TaskModel model)
@@ -77,13 +74,12 @@ namespace Elpida.Backend.Services.Extensions.Result
 				return null;
 			}
 
-			return new DataSpecificationDto
-			{
-				Name = model.InputName,
-				Description = model.InputDescription!,
-				Unit = model.InputUnit!,
-				RequiredProperties = JsonConvert.DeserializeObject<string[]>(model.InputProperties!)!,
-			};
+			return new DataSpecificationDto(
+				model.InputName,
+				model.InputDescription!,
+				model.InputUnit!,
+				JsonConvert.DeserializeObject<string[]>(model.InputProperties!)!
+			);
 		}
 
 		public static DataSpecificationDto? CreateOutputSpecDto(this TaskModel model)
@@ -93,27 +89,25 @@ namespace Elpida.Backend.Services.Extensions.Result
 				return null;
 			}
 
-			return new DataSpecificationDto
-			{
-				Name = model.OutputName,
-				Description = model.OutputDescription!,
-				Unit = model.OutputUnit!,
-				RequiredProperties = JsonConvert.DeserializeObject<string[]>(model.OutputProperties!)!,
-			};
+			return new DataSpecificationDto(
+				model.OutputName,
+				model.OutputDescription!,
+				model.OutputUnit!,
+				JsonConvert.DeserializeObject<string[]>(model.OutputProperties!)!
+			);
 		}
 
 		private static TaskRunStatisticsDto GetTaskRunStatisticsDto(TaskResultModel model)
 		{
-			return new ()
-			{
-				SampleSize = model.SampleSize,
-				Max = model.Max,
-				Min = model.Min,
-				Mean = model.Mean,
-				StandardDeviation = model.StandardDeviation,
-				Tau = model.Tau,
-				MarginOfError = model.MarginOfError,
-			};
+			return new TaskRunStatisticsDto(
+				model.SampleSize,
+				model.Max,
+				model.Min,
+				model.Mean,
+				model.StandardDeviation,
+				model.Tau,
+				model.MarginOfError
+			);
 		}
 
 		private static IEnumerable<TaskResultDto> GetTaskResults(ResultModel result)
@@ -121,54 +115,50 @@ namespace Elpida.Backend.Services.Extensions.Result
 			return result.TaskResults
 				.OrderBy(m => m.Order)
 				.Select(
-					r => new TaskResultDto
-					{
-						Id = r.Task.Id,
-						BenchmarkResultId = result.Id,
-						CpuId = result.Topology.Cpu.Id,
-						TopologyId = result.Topology.Id,
-						Uuid = r.Task.Uuid,
-						Name = r.Task.Name,
-						Description = r.Task.Description,
-						Result = GetResultSpecificationDto(r.Task),
-						Input = r.Task.CreateInputSpecDto(),
-						Output = r.Task.CreateOutputSpecDto(),
-						Value = r.Value,
-						Time = r.Time,
-						InputSize = r.InputSize,
-						Statistics = GetTaskRunStatisticsDto(r),
-					}
+					r => new TaskResultDto(
+						r.Task.Id,
+						result.Id,
+						result.Topology.Cpu.Id,
+						result.Topology.Id,
+						r.Task.Uuid,
+						r.Task.Name,
+						r.Task.Description,
+						GetResultSpecificationDto(r.Task),
+						r.Task.CreateInputSpecDto(),
+						r.Task.CreateOutputSpecDto(),
+						r.Value,
+						r.Time,
+						r.InputSize,
+						GetTaskRunStatisticsDto(r)
+					)
 				);
 		}
 
 		private static SystemDto GetSystem(ResultModel result)
 		{
-			var memory = new MemoryDto
-			{
-				TotalSize = result.MemorySize,
-				PageSize = result.PageSize,
-			};
+			var memory = new MemoryDto(
+				result.MemorySize,
+				result.PageSize
+			);
 
-			var timing = new TimingDto
-			{
-				NotifyOverhead = result.NotifyOverhead,
-				WakeupOverhead = result.WakeupOverhead,
-				SleepOverhead = result.SleepOverhead,
-				NowOverhead = result.NowOverhead,
-				LockOverhead = result.LockOverhead,
-				LoopOverhead = result.LoopOverhead,
-				JoinOverhead = result.JoinOverhead,
-				TargetTime = result.TargetTime,
-			};
+			var timing = new TimingDto(
+				result.NotifyOverhead,
+				result.WakeupOverhead,
+				result.SleepOverhead,
+				result.NowOverhead,
+				result.LockOverhead,
+				result.LoopOverhead,
+				result.JoinOverhead,
+				result.TargetTime
+			);
 
-			return new SystemDto
-			{
-				Cpu = result.Topology.Cpu.ToDto(),
-				Os = result.Os.ToDto(),
-				Topology = result.Topology.ToDto(),
-				Memory = memory,
-				Timing = timing,
-			};
+			return new SystemDto(
+				result.Topology.Cpu.ToDto(),
+				result.Os.ToDto(),
+				result.Topology.ToDto(),
+				memory,
+				timing
+			);
 		}
 	}
 }
