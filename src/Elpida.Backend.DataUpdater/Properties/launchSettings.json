@@ -5,35 +5,42 @@
       "commandName": "Project",
       "commandLineArgs": "create",
       "environmentVariables": {
-
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "Elpida.Backend.DataUpdater (Migrate)": {
+      "commandName": "Project",
+      "commandLineArgs": "migrate",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
     "Elpida.Backend.DataUpdater (Seed results)": {
       "commandName": "Project",
       "commandLineArgs": "seed",
       "environmentVariables": {
-
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
     "Elpida.Backend.DataUpdater (Drop results)": {
       "commandName": "Project",
       "commandLineArgs": "dropResults",
       "environmentVariables": {
-
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
     "Elpida.Backend.DataUpdater (Clean)": {
       "commandName": "Project",
       "commandLineArgs": "clean",
       "environmentVariables": {
-
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
     "Elpida.Backend.DataUpdater (Drop)": {
       "commandName": "Project",
       "commandLineArgs": "drop",
       "environmentVariables": {
-
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     }
   }

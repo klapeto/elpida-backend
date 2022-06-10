@@ -18,40 +18,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using Elpida.Backend.Data.Abstractions.Models.Task;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using Elpida.Backend.Services.Abstractions.Dtos.Result;
+using Elpida.Backend.Services.Abstractions.Dtos.Result.Batch;
 
-namespace Elpida.Backend.Data.Abstractions.Models.Result
+namespace Elpida.Backend.Services.Abstractions.Interfaces
 {
-	public class TaskResultModel : Entity
+	public interface IResultService : IService<ResultDto, ResultPreviewDto>
 	{
-		public long BenchmarkResultId { get; set; }
-
-		public ResultModel Result { get; set; } = default!;
-
-		public long TaskId { get; set; }
-
-		public TaskModel Task { get; set; } = default!;
-
-		public int Order { get; set; }
-
-		public double Value { get; set; }
-
-		public double Time { get; set; }
-
-		public long InputSize { get; set; }
-
-		public long SampleSize { get; set; }
-
-		public double Max { get; set; }
-
-		public double Min { get; set; }
-
-		public double Mean { get; set; }
-
-		public double StandardDeviation { get; set; }
-
-		public double Tau { get; set; }
-
-		public double MarginOfError { get; set; }
+		Task<IList<long>> AddBatchAsync(ResultBatchDto batch, CancellationToken cancellationToken = default);
 	}
 }

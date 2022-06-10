@@ -27,18 +27,22 @@ using Elpida.Backend.Services.Abstractions.Dtos;
 
 namespace Elpida.Backend.Services.Abstractions.Interfaces
 {
-	public interface IService<TDto, TPreview>
+	public interface IService<TDto>
 		where TDto : FoundationDto
-		where TPreview : FoundationDto
 	{
 		Task<TDto> GetSingleAsync(long id, CancellationToken cancellationToken = default);
 
+		Task<TDto> GetOrAddAsync(TDto dto, CancellationToken cancellationToken = default);
+	}
+
+	public interface IService<TDto, TPreview> : IService<TDto>
+		where TDto : FoundationDto
+		where TPreview : FoundationDto
+	{
 		Task<PagedResult<TPreview>> GetPagedPreviewsAsync(
 			QueryRequest queryRequest,
 			CancellationToken cancellationToken = default
 		);
-
-		Task<TDto> GetOrAddAsync(TDto dto, CancellationToken cancellationToken = default);
 
 		IEnumerable<FilterExpression> ConstructCustomFilters<T, TR>(Expression<Func<T, TR>> baseExpression);
 	}

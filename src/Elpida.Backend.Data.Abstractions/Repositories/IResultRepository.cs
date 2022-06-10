@@ -18,40 +18,28 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using Elpida.Backend.Data.Abstractions.Models.Task;
+using System.Threading;
+using System.Threading.Tasks;
+using Elpida.Backend.Data.Abstractions.Interfaces;
+using Elpida.Backend.Data.Abstractions.Models.Result;
+using Elpida.Backend.Data.Abstractions.Models.Statistics;
 
-namespace Elpida.Backend.Data.Abstractions.Models.Result
+namespace Elpida.Backend.Data.Abstractions.Repositories
 {
-	public class TaskResultModel : Entity
+	public interface IResultRepository : IRepository<ResultModel>
 	{
-		public long BenchmarkResultId { get; set; }
+		Task<long> GetCountWithScoreBetween(
+			long benchmarkId,
+			long cpuId,
+			double min,
+			double max,
+			CancellationToken cancellationToken = default
+		);
 
-		public ResultModel Result { get; set; } = default!;
-
-		public long TaskId { get; set; }
-
-		public TaskModel Task { get; set; } = default!;
-
-		public int Order { get; set; }
-
-		public double Value { get; set; }
-
-		public double Time { get; set; }
-
-		public long InputSize { get; set; }
-
-		public long SampleSize { get; set; }
-
-		public double Max { get; set; }
-
-		public double Min { get; set; }
-
-		public double Mean { get; set; }
-
-		public double StandardDeviation { get; set; }
-
-		public double Tau { get; set; }
-
-		public double MarginOfError { get; set; }
+		Task<BasicStatisticsModel> GetStatisticsAsync(
+			long benchmarkId,
+			long cpuId,
+			CancellationToken cancellationToken = default
+		);
 	}
 }

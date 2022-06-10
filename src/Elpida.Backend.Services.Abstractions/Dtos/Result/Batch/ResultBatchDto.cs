@@ -18,40 +18,33 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using Elpida.Backend.Data.Abstractions.Models.Task;
+using System.ComponentModel.DataAnnotations;
+using Elpida.Backend.Services.Abstractions.Dtos.Elpida;
 
-namespace Elpida.Backend.Data.Abstractions.Models.Result
+namespace Elpida.Backend.Services.Abstractions.Dtos.Result.Batch
 {
-	public class TaskResultModel : Entity
+	/// <summary>
+	///     Contains multiple benchmark results from a system.
+	/// </summary>
+	public sealed class ResultBatchDto : FoundationDto
 	{
-		public long BenchmarkResultId { get; set; }
+		/// <summary>
+		///     The Elpida Version that this result was produced from.
+		/// </summary>
+		[Required]
+		public ElpidaVersionDto ElpidaVersion { get; init; }
 
-		public ResultModel Result { get; set; } = default!;
+		/// <summary>
+		///     The system details for this result.
+		/// </summary>
+		[Required]
+		public SystemDto System { get; init; }
 
-		public long TaskId { get; set; }
-
-		public TaskModel Task { get; set; } = default!;
-
-		public int Order { get; set; }
-
-		public double Value { get; set; }
-
-		public double Time { get; set; }
-
-		public long InputSize { get; set; }
-
-		public long SampleSize { get; set; }
-
-		public double Max { get; set; }
-
-		public double Min { get; set; }
-
-		public double Mean { get; set; }
-
-		public double StandardDeviation { get; set; }
-
-		public double Tau { get; set; }
-
-		public double MarginOfError { get; set; }
+		/// <summary>
+		///     The benchmark results.
+		/// </summary>
+		[Required]
+		[MinLength(1)]
+		public BenchmarkResultSlimDto[] BenchmarkResults { get; init; }
 	}
 }

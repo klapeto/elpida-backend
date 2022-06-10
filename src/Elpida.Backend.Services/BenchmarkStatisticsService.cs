@@ -45,7 +45,7 @@ namespace Elpida.Backend.Services
 				IBenchmarkStatisticsRepository>,
 			IBenchmarkStatisticsService
 	{
-		private readonly IBenchmarkResultsRepository _benchmarkResultsRepository;
+		private readonly IResultRepository _resultRepository;
 		private readonly IBenchmarkService _benchmarkService;
 		private readonly ICpuService _cpuService;
 
@@ -53,12 +53,12 @@ namespace Elpida.Backend.Services
 			IBenchmarkService benchmarkService,
 			IBenchmarkStatisticsRepository benchmarkStatisticsRepository,
 			ICpuService cpuService,
-			IBenchmarkResultsRepository benchmarkResultsRepository
+			IResultRepository resultRepository
 		)
 			: base(benchmarkStatisticsRepository)
 		{
 			_cpuService = cpuService;
-			_benchmarkResultsRepository = benchmarkResultsRepository;
+			_resultRepository = resultRepository;
 			_benchmarkService = benchmarkService;
 		}
 
@@ -75,7 +75,7 @@ namespace Elpida.Backend.Services
 			var stats = await GetStatisticsModelAsync(benchmarkId, cpuId, cancellationToken);
 
 			var basicStatistics =
-				await _benchmarkResultsRepository.GetStatisticsAsync(benchmarkId, cpuId, cancellationToken);
+				await _resultRepository.GetStatisticsAsync(benchmarkId, cpuId, cancellationToken);
 
 			stats.Max = basicStatistics.Max;
 			stats.Min = basicStatistics.Min;
@@ -91,7 +91,7 @@ namespace Elpida.Backend.Services
 			var newClasses = new List<FrequencyClassDto>(previousClasses.Length);
 			foreach (var frequencyClass in previousClasses)
 			{
-				var count = await _benchmarkResultsRepository.GetCountWithScoreBetween(
+				var count = await _resultRepository.GetCountWithScoreBetween(
 					stats.Benchmark.Id,
 					stats.Cpu.Id,
 					frequencyClass.Low,
@@ -99,7 +99,14 @@ namespace Elpida.Backend.Services
 					cancellationToken
 				);
 
-				newClasses.Add(new FrequencyClassDto(frequencyClass.Low, frequencyClass.High, count));
+				newClasses.Add(
+					new FrequencyClassDto
+					{
+						Low = frequencyClass.Low,
+						High = frequencyClass.High,
+						Count = count,
+					}
+				);
 			}
 
 			stats.FrequencyClasses = JsonConvert.SerializeObject(newClasses);
@@ -109,30 +116,7 @@ namespace Elpida.Backend.Services
 			await transaction.CommitAsync(cancellationToken);
 		}
 
-		protected override Task<BenchmarkStatisticsModel> ProcessDtoAndCreateModelAsync(
-			BenchmarkStatisticsDto dto,
-			CancellationToken cancellationToken
-		)
-		{
-			return Task.FromResult(
-				new BenchmarkStatisticsModel
-				{
-					Id = dto.Id,
-					CpuId = dto.Cpu.Id,
-					BenchmarkId = dto.Benchmark.Id,
-					Max = dto.Max,
-					Mean = dto.Mean,
-					Min = dto.Min,
-					Tau = dto.Tau,
-					SampleSize = dto.SampleSize,
-					StandardDeviation = dto.StandardDeviation,
-					MarginOfError = dto.MarginOfError,
-					FrequencyClasses = JsonConvert.SerializeObject(dto.Classes),
-				}
-			);
-		}
-
-		protected override IEnumerable<FilterExpression> GetFilterExpressions()
+		public override IEnumerable<FilterExpression> GetFilterExpressions()
 		{
 			if (StatisticsExpressions != null)
 			{
@@ -160,37 +144,62 @@ namespace Elpida.Backend.Services
 			return StatisticsExpressions;
 		}
 
+		protected override Task<BenchmarkStatisticsModel> ProcessDtoAndCreateModelAsync(
+			BenchmarkStatisticsDto dto,
+			CancellationToken cancellationToken
+		)
+		{
+			return Task.FromResult(
+				new BenchmarkStatisticsModel
+				{
+					Id = dto.Id,
+					CpuId = dto.Cpu.Id,
+					BenchmarkId = dto.Benchmark.Id,
+					Max = dto.Max,
+					Mean = dto.Mean,
+					Min = dto.Min,
+					Tau = dto.Tau,
+					SampleSize = dto.SampleSize,
+					StandardDeviation = dto.StandardDeviation,
+					MarginOfError = dto.MarginOfError,
+					FrequencyClasses = JsonConvert.SerializeObject(dto.Classes),
+				}
+			);
+		}
+
 		protected override BenchmarkStatisticsDto ToDto(BenchmarkStatisticsModel model)
 		{
-			return new (
-				model.Id,
-				model.Cpu.ToDto(),
-				model.Benchmark.ToDto(),
-				model.SampleSize,
-				model.Max,
-				model.Min,
-				model.Mean,
-				model.StandardDeviation,
-				model.Tau,
-				model.MarginOfError,
-				JsonConvert.DeserializeObject<FrequencyClassDto[]>(model.FrequencyClasses)!
-			);
+			return new()
+			{
+				Id = model.Id,
+				Cpu = model.Cpu.ToDto(),
+				Benchmark = model.Benchmark.ToDto(),
+				SampleSize = model.SampleSize,
+				Max = model.Max,
+				Min = model.Min,
+				Mean = model.Mean,
+				StandardDeviation = model.StandardDeviation,
+				Tau = model.Tau,
+				MarginOfError = model.MarginOfError,
+				Classes = JsonConvert.DeserializeObject<FrequencyClassDto[]>(model.FrequencyClasses)!,
+			};
 		}
 
 		protected override Expression<Func<BenchmarkStatisticsModel, BenchmarkStatisticsPreviewDto>>
 			GetPreviewConstructionExpression()
 		{
-			return m => new BenchmarkStatisticsPreviewDto(
-				m.Id,
-				m.Cpu.Vendor,
-				m.Cpu.ModelName,
-				m.Benchmark.Uuid,
-				m.Benchmark.Name,
-				m.Benchmark.ScoreUnit,
-				m.Mean,
-				m.SampleSize,
-				m.Benchmark.ScoreComparison
-			);
+			return m => new BenchmarkStatisticsPreviewDto
+			{
+				Id = m.Id,
+				CpuVendor = m.Cpu.Vendor,
+				CpuModelName = m.Cpu.ModelName,
+				BenchmarkUuid = m.Benchmark.Uuid,
+				BenchmarkName = m.Benchmark.Name,
+				BenchmarkScoreUnit = m.Benchmark.ScoreUnit,
+				Mean = m.Mean,
+				SampleSize = m.SampleSize,
+				Comparison = m.Benchmark.ScoreComparison,
+			};
 		}
 
 		private static IEnumerable<FrequencyClassDto> GetDefaultClasses(long count, double min, double max)
@@ -210,11 +219,12 @@ namespace Elpida.Backend.Services
 			var cls = Enumerable
 				.Range(0, classes)
 				.Select(
-					i => new FrequencyClassDto(
-						min + (i * classWidth),
-						min + (i * classWidth) + classWidth,
-						0
-					)
+					i => new FrequencyClassDto
+					{
+						Low = min + (i * classWidth),
+						High = min + (i * classWidth) + classWidth,
+						Count = 0,
+					}
 				)
 				.ToArray();
 

@@ -100,7 +100,7 @@ namespace Elpida.Backend.Services
 
 		protected abstract Task<TModel> ProcessDtoAndCreateModelAsync(TDto dto, CancellationToken cancellationToken);
 
-		protected virtual IEnumerable<FilterExpression> GetFilterExpressions()
+		public virtual IEnumerable<FilterExpression> GetFilterExpressions()
 		{
 			yield break;
 		}

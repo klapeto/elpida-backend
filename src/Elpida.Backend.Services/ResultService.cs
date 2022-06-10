@@ -41,11 +41,11 @@ using Newtonsoft.Json;
 
 namespace Elpida.Backend.Services
 {
-	public class BenchmarkResultService
-		: Service<BenchmarkResultDto, BenchmarkResultPreviewDto, BenchmarkResultModel, IBenchmarkResultsRepository>,
-			IBenchmarkResultsService
+	public class ResultService
+		: Service<ResultDto, ResultPreviewDto, ResultModel, IResultRepository>,
+			IResultService
 	{
-		private readonly IBenchmarkResultsRepository _benchmarkResultsRepository;
+		private readonly IResultRepository _resultRepository;
 		private readonly IBenchmarkService _benchmarkService;
 		private readonly IBenchmarkStatisticsService _benchmarkStatisticsService;
 		private readonly ICpuService _cpuService;
@@ -53,8 +53,8 @@ namespace Elpida.Backend.Services
 		private readonly IOsService _osService;
 		private readonly ITopologyService _topologyService;
 
-		public BenchmarkResultService(
-			IBenchmarkResultsRepository benchmarkResultsRepository,
+		public ResultService(
+			IResultRepository resultRepository,
 			ICpuService cpuService,
 			ITopologyService topologyService,
 			IElpidaVersionService elpidaVersionService,
@@ -62,7 +62,7 @@ namespace Elpida.Backend.Services
 			IBenchmarkService benchmarkService,
 			IBenchmarkStatisticsService benchmarkStatisticsService
 		)
-			: base(benchmarkResultsRepository)
+			: base(resultRepository)
 		{
 			_benchmarkStatisticsService = benchmarkStatisticsService;
 			_cpuService = cpuService;
@@ -70,13 +70,13 @@ namespace Elpida.Backend.Services
 			_elpidaVersionService = elpidaVersionService;
 			_osService = osService;
 			_benchmarkService = benchmarkService;
-			_benchmarkResultsRepository = benchmarkResultsRepository;
+			_resultRepository = resultRepository;
 		}
 
 		private static FilterExpression[]? ResultFilters { get; set; }
 
 		public async Task<IList<long>> AddBatchAsync(
-			BenchmarkResultsBatchDto batch,
+			ResultBatchDto batch,
 			CancellationToken cancellationToken = default
 		)
 		{
@@ -120,24 +120,24 @@ namespace Elpida.Backend.Services
 
 			ResultFilters = new[]
 				{
-					FiltersTransformer.CreateFilter<BenchmarkResultModel, long>(
+					FiltersTransformer.CreateFilter<ResultModel, long>(
 						"memorySize",
 						model => model.MemorySize
 					),
-					FiltersTransformer.CreateFilter<BenchmarkResultModel, DateTime>(
+					FiltersTransformer.CreateFilter<ResultModel, DateTime>(
 						"timeStamp",
 						model => model.TimeStamp
 					),
 				}
-				.Concat(_topologyService.ConstructCustomFilters<BenchmarkResultModel, TopologyModel>(m => m.Topology))
+				.Concat(_topologyService.ConstructCustomFilters<ResultModel, TopologyModel>(m => m.Topology))
 				.Concat(
-					_elpidaVersionService.ConstructCustomFilters<BenchmarkResultModel, ElpidaVersionModel>(
+					_elpidaVersionService.ConstructCustomFilters<ResultModel, ElpidaVersionModel>(
 						m => m.ElpidaVersion
 					)
 				)
-				.Concat(_osService.ConstructCustomFilters<BenchmarkResultModel, OsModel>(m => m.Os))
+				.Concat(_osService.ConstructCustomFilters<ResultModel, OsModel>(m => m.Os))
 				.Concat(
-					_benchmarkService.ConstructCustomFilters<BenchmarkResultModel, BenchmarkModel>(m => m.Benchmark)
+					_benchmarkService.ConstructCustomFilters<ResultModel, BenchmarkModel>(m => m.Benchmark)
 				)
 				.Distinct()
 				.ToArray();
@@ -145,29 +145,30 @@ namespace Elpida.Backend.Services
 			return ResultFilters;
 		}
 
-		protected override BenchmarkResultDto ToDto(BenchmarkResultModel model)
+		protected override ResultDto ToDto(ResultModel model)
 		{
 			return model.ToDto();
 		}
 
-		protected override Expression<Func<BenchmarkResultModel, BenchmarkResultPreviewDto>>
+		protected override Expression<Func<ResultModel, ResultPreviewDto>>
 			GetPreviewConstructionExpression()
 		{
-			return m => new BenchmarkResultPreviewDto(
-				m.Id,
-				m.Benchmark.Uuid,
-				m.TimeStamp,
-				m.Benchmark.Name,
-				m.Os.Name,
-				m.Topology.Cpu.Vendor,
-				m.Topology.Cpu.ModelName,
-				m.Benchmark.ScoreUnit,
-				m.Score
-			);
+			return m => new ResultPreviewDto
+			{
+				Id = m.Id,
+				BenchmarkUuid = m.Benchmark.Uuid,
+				TimeStamp = m.TimeStamp,
+				BenchmarkName = m.Benchmark.Name,
+				OsName = m.Os.Name,
+				CpuVendor = m.Topology.Cpu.Vendor,
+				CpuModelName = m.Topology.Cpu.ModelName,
+				BenchmarkScoreUnit = m.Benchmark.ScoreUnit,
+				Score = m.Score,
+			};
 		}
 
-		protected override Task<BenchmarkResultModel> ProcessDtoAndCreateModelAsync(
-			BenchmarkResultDto dto,
+		protected override Task<ResultModel> ProcessDtoAndCreateModelAsync(
+			ResultDto dto,
 			CancellationToken cancellationToken
 		)
 		{
@@ -190,7 +191,7 @@ namespace Elpida.Backend.Services
 			var benchmark = await _benchmarkService
 				.GetSingleAsync(benchmarkResult.Uuid, cancellationToken);
 
-			var model = new BenchmarkResultModel
+			var model = new ResultModel
 			{
 				BenchmarkId = benchmark.Id,
 				ElpidaVersionId = elpidaId,
@@ -243,9 +244,9 @@ namespace Elpida.Backend.Services
 			}
 
 			model.Id = 0;
-			model = await _benchmarkResultsRepository.CreateAsync(model, cancellationToken);
+			model = await _resultRepository.CreateAsync(model, cancellationToken);
 
-			await _benchmarkResultsRepository.SaveChangesAsync(cancellationToken);
+			await _resultRepository.SaveChangesAsync(cancellationToken);
 
 			await _benchmarkStatisticsService.UpdateTaskStatisticsAsync(benchmark.Id, cpuId, cancellationToken);
 

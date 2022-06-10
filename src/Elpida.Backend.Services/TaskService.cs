@@ -59,7 +59,7 @@ namespace Elpida.Backend.Services
 			return ToDto(task);
 		}
 
-		protected override IEnumerable<FilterExpression> GetFilterExpressions()
+		public override IEnumerable<FilterExpression> GetFilterExpressions()
 		{
 			return ResultFilters;
 		}
