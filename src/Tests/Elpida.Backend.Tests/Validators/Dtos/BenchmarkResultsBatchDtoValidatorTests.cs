@@ -25,41 +25,41 @@ using Elpida.Backend.Services.Tests;
 
 namespace Elpida.Backend.Tests.Validators.Dtos
 {
-	internal class BenchmarkResultsBatchDtoValidatorTests : ValidatorTest<BenchmarkResultsBatchDto>
+	internal class BenchmarkResultsBatchDtoValidatorTests : ValidatorTest<ResultBatchDto>
 	{
-		protected override IEnumerable<(BenchmarkResultsBatchDto, string)> GetInvalidData()
+		protected override IEnumerable<(ResultBatchDto, string)> GetInvalidData()
 		{
 			yield return (
-				new BenchmarkResultsBatchDto(
+				new ResultBatchDto(
 					0,
 					null!,
 					DtoGenerators.NewSystem(),
 					new BenchmarkResultSlimDto[] { null! }
-				), $"null {nameof(BenchmarkResultsBatchDto.ElpidaVersion)}");
+				), $"null {nameof(ResultBatchDto.ElpidaVersion)}");
 
 			yield return (
-				new BenchmarkResultsBatchDto(
+				new ResultBatchDto(
 					0,
 					DtoGenerators.NewElpida(),
 					null!,
 					new BenchmarkResultSlimDto[] { null! }
-				), $"null {nameof(BenchmarkResultsBatchDto.System)}");
+				), $"null {nameof(ResultBatchDto.System)}");
 
 			yield return (
-				new BenchmarkResultsBatchDto(
+				new ResultBatchDto(
 					0,
 					DtoGenerators.NewElpida(),
 					DtoGenerators.NewSystem(),
 					null!
-				), $"null {nameof(BenchmarkResultsBatchDto.BenchmarkResults)}");
+				), $"null {nameof(ResultBatchDto.BenchmarkResults)}");
 
 			yield return (
-				new BenchmarkResultsBatchDto(
+				new ResultBatchDto(
 					0,
 					DtoGenerators.NewElpida(),
 					DtoGenerators.NewSystem(),
 					Array.Empty<BenchmarkResultSlimDto>()
-				), $"empty {nameof(BenchmarkResultsBatchDto.BenchmarkResults)}");
+				), $"empty {nameof(ResultBatchDto.BenchmarkResults)}");
 		}
 	}
 }

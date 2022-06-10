@@ -26,7 +26,7 @@ using Elpida.Backend.Data.Abstractions.Models.Statistics;
 
 namespace Elpida.Backend.Data.Abstractions.Repositories
 {
-	public interface IBenchmarkResultsRepository : IRepository<BenchmarkResultModel>
+	public interface IResultRepository : IRepository<ResultModel>
 	{
 		Task<long> GetCountWithScoreBetween(
 			long benchmarkId,

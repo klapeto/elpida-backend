@@ -85,7 +85,7 @@ namespace Elpida.Backend.DataSeed
 
 			try
 			{
-				await ParallelExecutor.ProcessFilesInDirectoryAsync<BenchmarkResultsBatchDto>(
+				await ParallelExecutor.ProcessFilesInDirectoryAsync<ResultBatchDto>(
 						Path.Combine(_contentRoot, ResultDataDirectory),
 						serviceProvider,
 						ProcessResultAsync
@@ -206,7 +206,7 @@ namespace Elpida.Backend.DataSeed
 
 		private async Task ProcessResultAsync(
 			IServiceProvider serviceProvider,
-			BenchmarkResultsBatchDto benchmarkResultBatchDto,
+			ResultBatchDto resultBatchDto,
 			CancellationToken cancellationToken
 		)
 		{
@@ -214,17 +214,17 @@ namespace Elpida.Backend.DataSeed
 
 			try
 			{
-				var resultService = serviceProvider.GetRequiredService<IBenchmarkResultsService>();
+				var resultService = serviceProvider.GetRequiredService<IResultService>();
 
-				Interlocked.Add(ref _resultsExpected, benchmarkResultBatchDto.BenchmarkResults.Length);
+				Interlocked.Add(ref _resultsExpected, resultBatchDto.BenchmarkResults.Length);
 
-				await resultService.AddBatchAsync(benchmarkResultBatchDto, cancellationToken);
+				await resultService.AddBatchAsync(resultBatchDto, cancellationToken);
 
-				Interlocked.Add(ref _resultsProcessed, benchmarkResultBatchDto.BenchmarkResults.Length);
+				Interlocked.Add(ref _resultsProcessed, resultBatchDto.BenchmarkResults.Length);
 
 				logger.LogInformation(
 					"Successfully added batch with {ResultCount} benchmarks",
-					benchmarkResultBatchDto.BenchmarkResults.Length
+					resultBatchDto.BenchmarkResults.Length
 				);
 
 				var processedBatches = Interlocked.Increment(ref _batchesProcessedCount);

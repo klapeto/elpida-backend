@@ -26,16 +26,16 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result.Batch
 	/// <summary>
 	///     Contains multiple benchmark results from a system.
 	/// </summary>
-	public sealed class BenchmarkResultsBatchDto : FoundationDto
+	public sealed class ResultBatchDto : FoundationDto
 	{
 		/// <summary>
-		///     Initializes a new instance of the <see cref="BenchmarkResultsBatchDto" /> class.
+		///     Initializes a new instance of the <see cref="ResultBatchDto" /> class.
 		/// </summary>
 		/// <param name="id">The id of the Batch. (Not used)</param>
 		/// <param name="elpidaVersion">The Elpida Version that this result was produced from.</param>
 		/// <param name="system">The system details for this result.</param>
 		/// <param name="benchmarkResults">The benchmark results.</param>
-		public BenchmarkResultsBatchDto(
+		public ResultBatchDto(
 			long id,
 			ElpidaVersionDto elpidaVersion,
 			SystemDto system,

@@ -26,8 +26,8 @@ using Elpida.Backend.Services.Abstractions.Dtos.Result.Batch;
 
 namespace Elpida.Backend.Services.Abstractions.Interfaces
 {
-	public interface IBenchmarkResultsService : IService<BenchmarkResultDto, BenchmarkResultPreviewDto>
+	public interface IResultService : IService<ResultDto, ResultPreviewDto>
 	{
-		Task<IList<long>> AddBatchAsync(BenchmarkResultsBatchDto batch, CancellationToken cancellationToken = default);
+		Task<IList<long>> AddBatchAsync(ResultBatchDto batch, CancellationToken cancellationToken = default);
 	}
 }

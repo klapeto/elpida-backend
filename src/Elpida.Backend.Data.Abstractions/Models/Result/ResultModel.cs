@@ -27,7 +27,7 @@ using Elpida.Backend.Data.Abstractions.Models.Topology;
 
 namespace Elpida.Backend.Data.Abstractions.Models.Result
 {
-	public class BenchmarkResultModel : Entity
+	public class ResultModel : Entity
 	{
 		public long ElpidaVersionId { get; set; }
 

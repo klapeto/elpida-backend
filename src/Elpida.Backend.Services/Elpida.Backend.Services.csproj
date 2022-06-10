@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
-        <ProjectReference Include="..\Elpida.Backend.Common\Elpida.Backend.Common.csproj"/>
-        <ProjectReference Include="..\Elpida.Backend.Data.Abstractions\Elpida.Backend.Data.Abstractions.csproj"/>
-        <ProjectReference Include="..\Elpida.Backend.Services.Abstractions\Elpida.Backend.Services.Abstractions.csproj"/>
+        <ProjectReference Include="..\Elpida.Backend.Common\Elpida.Backend.Common.csproj" />
+        <ProjectReference Include="..\Elpida.Backend.Data.Abstractions\Elpida.Backend.Data.Abstractions.csproj" />
+        <ProjectReference Include="..\Elpida.Backend.Services.Abstractions\Elpida.Backend.Services.Abstractions.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     </ItemGroup>
 
 </Project>

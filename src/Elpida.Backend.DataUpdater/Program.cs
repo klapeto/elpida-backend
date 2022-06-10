@@ -23,9 +23,10 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Elpida.Backend.Data;
 using Elpida.Backend.DataSeed;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.CommandLineUtils;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace Elpida.Backend.DataUpdater
@@ -34,8 +35,15 @@ namespace Elpida.Backend.DataUpdater
 	{
 		private static readonly DbUpdater Updater = new (Environment.CurrentDirectory);
 
+		private static IHost _host;
+
 		private static int Main(string[] args)
 		{
+			_host = Host.CreateDefaultBuilder(args)
+				.ConfigureLogging(builder => builder.AddSimpleConsole(b => b.IncludeScopes = true))
+				.ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>())
+				.Build();
+
 			var app = new CommandLineApplication
 			{
 				Name = Assembly.GetExecutingAssembly().GetName().Name,
@@ -85,7 +93,7 @@ namespace Elpida.Backend.DataUpdater
 			{
 				try
 				{
-					await ScopedExecution(GetServiceProvider(), action);
+					await ScopedExecution(_host.Services, action);
 					return 0;
 				}
 				catch (Exception e)
@@ -94,28 +102,6 @@ namespace Elpida.Backend.DataUpdater
 					return 1;
 				}
 			};
-		}
-
-		private static IServiceProvider GetServiceProvider()
-		{
-			var services = new ServiceCollection();
-
-			var configuration = new ConfigurationBuilder()
-				.AddJsonFile("appsettings.json", false, true)
-				.AddJsonFile("appsettings.Development.json", true, true)
-				.Build();
-
-			services.AddLogging(
-				builder =>
-				{
-					builder.AddSimpleConsole(b => b.IncludeScopes = true);
-					builder.AddConfiguration(configuration.GetSection("Logging"));
-				}
-			);
-
-			new Startup(configuration).ConfigureServices(services);
-
-			return services.BuildServiceProvider();
 		}
 
 		private static async Task Drop(IServiceProvider serviceProvider)
@@ -144,7 +130,7 @@ namespace Elpida.Backend.DataUpdater
 			{
 				var context = serviceProvider.GetRequiredService<ElpidaContext>();
 
-				context.BenchmarkResults.RemoveRange(context.BenchmarkResults);
+				context.Results.RemoveRange(context.Results);
 				context.BenchmarkStatistics.RemoveRange(context.BenchmarkStatistics);
 				await context.SaveChangesAsync();
 
