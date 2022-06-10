@@ -48,8 +48,8 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Topology
 		{
 			NodeType = nodeType;
 			Name = name;
+			Value = value;
 			OsIndex = osIndex;
-			Value = GetSanitizedValue(value);
 			Children = children;
 			MemoryChildren = memoryChildren;
 		}
@@ -78,7 +78,7 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Topology
 		///     A value representing the size of the node.
 		/// </summary>
 		[Range(0, long.MaxValue)]
-		public long? Value { get; }
+		public long? Value { get; private set; }
 
 		/// <summary>
 		///     The child nodes of this node.
@@ -90,7 +90,7 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Topology
 		/// </summary>
 		public CpuNodeDto[]? MemoryChildren { get; }
 
-		private long? GetSanitizedValue(long? value)
+		public void SanitizeValues()
 		{
 			switch (NodeType)
 			{
@@ -101,9 +101,30 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Topology
 				case ProcessorNodeType.L3DCache:
 				case ProcessorNodeType.L4Cache:
 				case ProcessorNodeType.L5Cache:
-					return value;
+					break;
 				default:
-					return null;
+					Value = null;
+					break;
+			}
+
+			if (Children != null)
+			{
+				foreach (var child in Children)
+				{
+					child.SanitizeValues();
+				}
+			}
+
+			if (MemoryChildren == null)
+			{
+				return;
+			}
+
+			{
+				foreach (var child in MemoryChildren)
+				{
+					child.SanitizeValues();
+				}
 			}
 		}
 	}

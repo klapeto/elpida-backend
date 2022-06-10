@@ -34,12 +34,12 @@ namespace Elpida.Backend.Tests.Controllers
 {
 	[TestFixture]
 	internal class ResultControllerTests
-		: ServiceControllerTests<BenchmarkResultDto, BenchmarkResultPreviewDto, IBenchmarkResultsService>
+		: ServiceControllerTests<ResultDto, ResultPreviewDto, IResultService>
 	{
 		[Test]
 		public async Task PostNewResult_Success()
 		{
-			var service = new Mock<IBenchmarkResultsService>(MockBehavior.Strict);
+			var service = new Mock<IResultService>(MockBehavior.Strict);
 			var controller = new ResultController(service.Object);
 
 			var batch = DtoGenerators.NewBenchmarkResultsBatch();
@@ -63,7 +63,7 @@ namespace Elpida.Backend.Tests.Controllers
 		[Test]
 		public void PostNewResult_ThrowsException_NoCatch()
 		{
-			var service = new Mock<IBenchmarkResultsService>(MockBehavior.Strict);
+			var service = new Mock<IResultService>(MockBehavior.Strict);
 			var controller = new ResultController(service.Object);
 
 			var batch = DtoGenerators.NewBenchmarkResultsBatch();
@@ -79,18 +79,18 @@ namespace Elpida.Backend.Tests.Controllers
 			service.Verify(s => s.AddBatchAsync(batch, default), Times.Once);
 		}
 
-		protected override ServiceController<BenchmarkResultDto, BenchmarkResultPreviewDto, IBenchmarkResultsService>
-			GetController(IBenchmarkResultsService service)
+		protected override ServiceController<ResultDto, ResultPreviewDto, IResultService>
+			GetController(IResultService service)
 		{
 			return new ResultController(service);
 		}
 
-		protected override BenchmarkResultDto NewDummyDto()
+		protected override ResultDto NewDummyDto()
 		{
 			return DtoGenerators.NewBenchmarkResult();
 		}
 
-		protected override BenchmarkResultPreviewDto NewDummyPreviewDto()
+		protected override ResultPreviewDto NewDummyPreviewDto()
 		{
 			return DtoGenerators.NewBenchmarkResultPreview();
 		}

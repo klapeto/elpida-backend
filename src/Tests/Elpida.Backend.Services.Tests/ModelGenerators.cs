@@ -196,7 +196,7 @@ namespace Elpida.Backend.Services.Tests
 			};
 		}
 
-		public static BenchmarkResultModel NewBenchmarkResult()
+		public static ResultModel NewBenchmarkResult()
 		{
 			return new ()
 			{

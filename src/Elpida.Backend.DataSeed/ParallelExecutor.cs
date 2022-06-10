@@ -51,6 +51,11 @@ namespace Elpida.Backend.DataSeed
 			CancellationToken cancellationToken = default
 		)
 		{
+			if (!Directory.Exists(directory))
+			{
+				return Task.CompletedTask;
+			}
+
 			return ParallelExecAsync(
 				Directory.EnumerateFiles(directory),
 				async (file, ct) =>

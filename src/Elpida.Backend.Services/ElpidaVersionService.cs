@@ -33,7 +33,9 @@ using Elpida.Backend.Services.Utilities;
 
 namespace Elpida.Backend.Services
 {
-	public class ElpidaVersionService : Service<ElpidaVersionDto, ElpidaVersionDto, ElpidaVersionModel, IElpidaVersionRepository>, IElpidaVersionService
+	public class ElpidaVersionService
+		: Service<ElpidaVersionDto, ElpidaVersionDto, ElpidaVersionModel, IElpidaVersionRepository>,
+			IElpidaVersionService
 	{
 		public ElpidaVersionService(IElpidaVersionRepository elpidaRepository)
 			: base(elpidaRepository)
@@ -43,14 +45,17 @@ namespace Elpida.Backend.Services
 		private static IEnumerable<FilterExpression> ElpidaExpressions { get; } = new List<FilterExpression>
 		{
 			FiltersTransformer.CreateFilter<ElpidaVersionModel, string>("compilerName", model => model.CompilerName),
-			FiltersTransformer.CreateFilter<ElpidaVersionModel, string>("compilerVersion", model => model.CompilerVersion),
+			FiltersTransformer.CreateFilter<ElpidaVersionModel, string>(
+				"compilerVersion",
+				model => model.CompilerVersion
+			),
 			FiltersTransformer.CreateFilter<ElpidaVersionModel, int>("buildVersion", model => model.VersionBuild),
 			FiltersTransformer.CreateFilter<ElpidaVersionModel, int>("revisionVersion", model => model.VersionRevision),
 			FiltersTransformer.CreateFilter<ElpidaVersionModel, int>("minorVersion", model => model.VersionMinor),
 			FiltersTransformer.CreateFilter<ElpidaVersionModel, int>("majorVersion", model => model.VersionMajor),
 		};
 
-		protected override IEnumerable<FilterExpression> GetFilterExpressions()
+		public override IEnumerable<FilterExpression> GetFilterExpressions()
 		{
 			return ElpidaExpressions;
 		}
@@ -88,7 +93,9 @@ namespace Elpida.Backend.Services
 			);
 		}
 
-		protected override Expression<Func<ElpidaVersionModel, bool>> GetCreationBypassCheckExpression(ElpidaVersionDto versionDto)
+		protected override Expression<Func<ElpidaVersionModel, bool>> GetCreationBypassCheckExpression(
+			ElpidaVersionDto versionDto
+		)
 		{
 			return e =>
 				e.VersionMajor == versionDto.Version.Major

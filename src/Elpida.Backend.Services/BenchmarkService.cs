@@ -25,7 +25,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Elpida.Backend.Common.Exceptions;
 using Elpida.Backend.Data.Abstractions.Models.Benchmark;
-using Elpida.Backend.Data.Abstractions.Models.Task;
 using Elpida.Backend.Data.Abstractions.Repositories;
 using Elpida.Backend.Services.Abstractions;
 using Elpida.Backend.Services.Abstractions.Dtos.Benchmark;
@@ -64,6 +63,11 @@ namespace Elpida.Backend.Services
 			}
 
 			return ToDto(benchmark);
+		}
+
+		public override IEnumerable<FilterExpression> GetFilterExpressions()
+		{
+			return BenchmarkExpressions;
 		}
 
 		protected override Expression<Func<BenchmarkModel, BenchmarkPreviewDto>> GetPreviewConstructionExpression()
@@ -108,11 +112,6 @@ namespace Elpida.Backend.Services
 			}
 
 			return returnModel;
-		}
-
-		protected override IEnumerable<FilterExpression> GetFilterExpressions()
-		{
-			return BenchmarkExpressions;
 		}
 
 		protected override BenchmarkDto ToDto(BenchmarkModel model)

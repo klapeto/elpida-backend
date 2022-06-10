@@ -20,7 +20,6 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using Elpida.Backend.Common;
 using Elpida.Backend.Data.Abstractions.Models.Result;
 using Elpida.Backend.Data.Abstractions.Models.Task;
 using Elpida.Backend.Services.Abstractions.Dtos.Benchmark;
@@ -36,30 +35,30 @@ namespace Elpida.Backend.Services.Extensions.Result
 {
 	public static class ResultDataExtensions
 	{
-		public static BenchmarkResultDto ToDto(this BenchmarkResultModel benchmarkResultModel)
+		public static ResultDto ToDto(this ResultModel resultModel)
 		{
 			var scoreSpec = new BenchmarkScoreSpecificationDto(
-				benchmarkResultModel.Benchmark.ScoreUnit,
-				benchmarkResultModel.Benchmark.ScoreComparison
+				resultModel.Benchmark.ScoreUnit,
+				resultModel.Benchmark.ScoreComparison
 			);
 
-			return new BenchmarkResultDto(
-				benchmarkResultModel.Id,
-				benchmarkResultModel.TimeStamp,
-				benchmarkResultModel.Benchmark.Uuid,
-				benchmarkResultModel.Benchmark.Name,
-				JsonConvert.DeserializeObject<long[]>(benchmarkResultModel.Affinity)!,
-				benchmarkResultModel.ElpidaVersion.ToDto(),
-				GetSystem(benchmarkResultModel),
-				benchmarkResultModel.Score,
+			return new ResultDto(
+				resultModel.Id,
+				resultModel.TimeStamp,
+				resultModel.Benchmark.Uuid,
+				resultModel.Benchmark.Name,
+				JsonConvert.DeserializeObject<long[]>(resultModel.Affinity)!,
+				resultModel.ElpidaVersion.ToDto(),
+				GetSystem(resultModel),
+				resultModel.Score,
 				scoreSpec,
-				GetTaskResults(benchmarkResultModel).ToArray()
+				GetTaskResults(resultModel).ToArray()
 			);
 		}
 
 		public static ResultSpecificationDto GetResultSpecificationDto(this TaskModel model)
 		{
-			return new (
+			return new ResultSpecificationDto(
 				model.ResultName,
 				model.ResultDescription,
 				model.ResultUnit,
@@ -100,7 +99,7 @@ namespace Elpida.Backend.Services.Extensions.Result
 
 		private static TaskRunStatisticsDto GetTaskRunStatisticsDto(TaskResultModel model)
 		{
-			return new (
+			return new TaskRunStatisticsDto(
 				model.SampleSize,
 				model.Max,
 				model.Min,
@@ -111,7 +110,7 @@ namespace Elpida.Backend.Services.Extensions.Result
 			);
 		}
 
-		private static IEnumerable<TaskResultDto> GetTaskResults(BenchmarkResultModel result)
+		private static IEnumerable<TaskResultDto> GetTaskResults(ResultModel result)
 		{
 			return result.TaskResults
 				.OrderBy(m => m.Order)
@@ -135,9 +134,13 @@ namespace Elpida.Backend.Services.Extensions.Result
 				);
 		}
 
-		private static SystemDto GetSystem(BenchmarkResultModel result)
+		private static SystemDto GetSystem(ResultModel result)
 		{
-			var memory = new MemoryDto(result.MemorySize, result.PageSize);
+			var memory = new MemoryDto(
+				result.MemorySize,
+				result.PageSize
+			);
+
 			var timing = new TimingDto(
 				result.NotifyOverhead,
 				result.WakeupOverhead,
@@ -149,7 +152,13 @@ namespace Elpida.Backend.Services.Extensions.Result
 				result.TargetTime
 			);
 
-			return new SystemDto(result.Topology.Cpu.ToDto(), result.Os.ToDto(), result.Topology.ToDto(), memory, timing);
+			return new SystemDto(
+				result.Topology.Cpu.ToDto(),
+				result.Os.ToDto(),
+				result.Topology.ToDto(),
+				memory,
+				timing
+			);
 		}
 	}
 }

@@ -39,7 +39,7 @@ namespace Elpida.Backend.Services.Tests
 	[TestFixture]
 	internal class BenchmarkResultServiceTests
 	{
-		private Mock<IBenchmarkResultsRepository> _benchmarkResultRepo = default!;
+		private Mock<IResultRepository> _benchmarkResultRepo = default!;
 
 		private Mock<IBenchmarkStatisticsService> _benchmarkStatisticsService = default!;
 
@@ -53,12 +53,12 @@ namespace Elpida.Backend.Services.Tests
 
 		private Mock<IBenchmarkService> _benchmarkService = default!;
 
-		private BenchmarkResultService _service = default!;
+		private ResultService _service = default!;
 
 		[SetUp]
 		public void Setup()
 		{
-			_benchmarkResultRepo = new Mock<IBenchmarkResultsRepository>(MockBehavior.Strict);
+			_benchmarkResultRepo = new Mock<IResultRepository>(MockBehavior.Strict);
 			_cpuService = new Mock<ICpuService>(MockBehavior.Strict);
 			_topologyService = new Mock<ITopologyService>(MockBehavior.Strict);
 			_elpidaService = new Mock<IElpidaVersionService>(MockBehavior.Strict);
@@ -66,7 +66,7 @@ namespace Elpida.Backend.Services.Tests
 			_benchmarkService = new Mock<IBenchmarkService>(MockBehavior.Strict);
 			_benchmarkStatisticsService = new Mock<IBenchmarkStatisticsService>(MockBehavior.Strict);
 
-			_service = new BenchmarkResultService(
+			_service = new ResultService(
 				_benchmarkResultRepo.Object,
 				_cpuService.Object,
 				_topologyService.Object,
@@ -103,8 +103,8 @@ namespace Elpida.Backend.Services.Tests
 			_elpidaService.Setup(s => s.GetOrAddAsync(batch.ElpidaVersion, default))
 				.ReturnsAsync(returnElpida);
 
-			_benchmarkResultRepo.Setup(r => r.CreateAsync(It.Is<BenchmarkResultModel>(x => x.Id == 0), default))
-				.Returns<BenchmarkResultModel, CancellationToken>(
+			_benchmarkResultRepo.Setup(r => r.CreateAsync(It.Is<ResultModel>(x => x.Id == 0), default))
+				.Returns<ResultModel, CancellationToken>(
 					(x, _) =>
 					{
 						var id = new Random().Next(20, 50);
@@ -224,7 +224,7 @@ namespace Elpida.Backend.Services.Tests
 			AssertTasksEqual(model, dto);
 		}
 
-		private static void AssertTasksEqual(BenchmarkResultModel model, BenchmarkResultDto dto)
+		private static void AssertTasksEqual(ResultModel model, ResultDto dto)
 		{
 			var modelsArray = model.TaskResults
 				.OrderBy(m => m.Order)

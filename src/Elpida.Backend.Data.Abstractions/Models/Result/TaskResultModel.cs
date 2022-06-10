@@ -26,7 +26,7 @@ namespace Elpida.Backend.Data.Abstractions.Models.Result
 	{
 		public long BenchmarkResultId { get; set; }
 
-		public BenchmarkResultModel BenchmarkResult { get; set; } = default!;
+		public ResultModel Result { get; set; } = default!;
 
 		public long TaskId { get; set; }
 

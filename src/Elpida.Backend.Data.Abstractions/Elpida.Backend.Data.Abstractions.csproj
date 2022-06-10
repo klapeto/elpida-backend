@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
-        <ProjectReference Include="..\Elpida.Backend.Common\Elpida.Backend.Common.csproj"/>
+        <ProjectReference Include="..\Elpida.Backend.Common\Elpida.Backend.Common.csproj" />
     </ItemGroup>
 
 </Project>
