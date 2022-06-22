@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
+#nullable disable
+
 namespace Elpida.Backend.Migrations
 {
     [DbContext(typeof(ElpidaContext))]
@@ -15,16 +17,18 @@ namespace Elpida.Backend.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.4")
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("ProductVersion", "6.0.0")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
             modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Benchmark.BenchmarkModel", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -52,8 +56,9 @@ namespace Elpida.Backend.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
                     b.Property<long>("BenchmarkId")
                         .HasColumnType("bigint");
@@ -86,8 +91,9 @@ namespace Elpida.Backend.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
                     b.Property<string>("AdditionalInfo")
                         .IsRequired()
@@ -131,8 +137,9 @@ namespace Elpida.Backend.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
                     b.Property<string>("CompilerName")
                         .IsRequired()
@@ -166,8 +173,9 @@ namespace Elpida.Backend.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
                     b.Property<string>("Category")
                         .IsRequired()
@@ -189,12 +197,13 @@ namespace Elpida.Backend.Migrations
                     b.ToTable("Oses");
                 });
 
-            modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Result.BenchmarkResultModel", b =>
+            modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Result.ResultModel", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
                     b.Property<string>("Affinity")
                         .IsRequired()
@@ -258,15 +267,16 @@ namespace Elpida.Backend.Migrations
 
                     b.HasIndex("TopologyId");
 
-                    b.ToTable("BenchmarkResults");
+                    b.ToTable("Results");
                 });
 
             modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Result.TaskResultModel", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
                     b.Property<long>("BenchmarkResultId")
                         .HasColumnType("bigint");
@@ -289,6 +299,9 @@ namespace Elpida.Backend.Migrations
                     b.Property<int>("Order")
                         .HasColumnType("int");
 
+                    b.Property<long>("ResultId")
+                        .HasColumnType("bigint");
+
                     b.Property<long>("SampleSize")
                         .HasColumnType("bigint");
 
@@ -309,7 +322,7 @@ namespace Elpida.Backend.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BenchmarkResultId");
+                    b.HasIndex("ResultId");
 
                     b.HasIndex("TaskId");
 
@@ -320,8 +333,9 @@ namespace Elpida.Backend.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
                     b.Property<long>("BenchmarkId")
                         .HasColumnType("bigint");
@@ -368,8 +382,9 @@ namespace Elpida.Backend.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -436,8 +451,9 @@ namespace Elpida.Backend.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
                     b.Property<long>("CpuId")
                         .HasColumnType("bigint");
@@ -489,7 +505,7 @@ namespace Elpida.Backend.Migrations
                     b.Navigation("Task");
                 });
 
-            modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Result.BenchmarkResultModel", b =>
+            modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Result.ResultModel", b =>
                 {
                     b.HasOne("Elpida.Backend.Data.Abstractions.Models.Benchmark.BenchmarkModel", "Benchmark")
                         .WithMany()
@@ -526,9 +542,9 @@ namespace Elpida.Backend.Migrations
 
             modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Result.TaskResultModel", b =>
                 {
-                    b.HasOne("Elpida.Backend.Data.Abstractions.Models.Result.BenchmarkResultModel", "BenchmarkResult")
+                    b.HasOne("Elpida.Backend.Data.Abstractions.Models.Result.ResultModel", "Result")
                         .WithMany("TaskResults")
-                        .HasForeignKey("BenchmarkResultId")
+                        .HasForeignKey("ResultId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -538,7 +554,7 @@ namespace Elpida.Backend.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("BenchmarkResult");
+                    b.Navigation("Result");
 
                     b.Navigation("Task");
                 });
@@ -578,7 +594,7 @@ namespace Elpida.Backend.Migrations
                     b.Navigation("Tasks");
                 });
 
-            modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Result.BenchmarkResultModel", b =>
+            modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Result.ResultModel", b =>
                 {
                     b.Navigation("TaskResults");
                 });

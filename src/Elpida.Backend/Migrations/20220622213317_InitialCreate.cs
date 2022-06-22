@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
+#nullable disable
+
 namespace Elpida.Backend.Migrations
 {
     public partial class InitialCreate : Migration
@@ -194,7 +196,7 @@ namespace Elpida.Backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "BenchmarkResults",
+                name: "Results",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
@@ -219,27 +221,27 @@ namespace Elpida.Backend.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BenchmarkResults", x => x.Id);
+                    table.PrimaryKey("PK_Results", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_BenchmarkResults_Benchmarks_BenchmarkId",
+                        name: "FK_Results_Benchmarks_BenchmarkId",
                         column: x => x.BenchmarkId,
                         principalTable: "Benchmarks",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_BenchmarkResults_ElpidaVersions_ElpidaVersionId",
+                        name: "FK_Results_ElpidaVersions_ElpidaVersionId",
                         column: x => x.ElpidaVersionId,
                         principalTable: "ElpidaVersions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_BenchmarkResults_Oses_OsId",
+                        name: "FK_Results_Oses_OsId",
                         column: x => x.OsId,
                         principalTable: "Oses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_BenchmarkResults_Topologies_TopologyId",
+                        name: "FK_Results_Topologies_TopologyId",
                         column: x => x.TopologyId,
                         principalTable: "Topologies",
                         principalColumn: "Id",
@@ -253,6 +255,7 @@ namespace Elpida.Backend.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     BenchmarkResultId = table.Column<long>(type: "bigint", nullable: false),
+                    ResultId = table.Column<long>(type: "bigint", nullable: false),
                     TaskId = table.Column<long>(type: "bigint", nullable: false),
                     Order = table.Column<int>(type: "int", nullable: false),
                     Value = table.Column<double>(type: "float", nullable: false),
@@ -270,9 +273,9 @@ namespace Elpida.Backend.Migrations
                 {
                     table.PrimaryKey("PK_TaskResultModel", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TaskResultModel_BenchmarkResults_BenchmarkResultId",
-                        column: x => x.BenchmarkResultId,
-                        principalTable: "BenchmarkResults",
+                        name: "FK_TaskResultModel_Results_ResultId",
+                        column: x => x.ResultId,
+                        principalTable: "Results",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -282,26 +285,6 @@ namespace Elpida.Backend.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_BenchmarkResults_BenchmarkId",
-                table: "BenchmarkResults",
-                column: "BenchmarkId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_BenchmarkResults_ElpidaVersionId",
-                table: "BenchmarkResults",
-                column: "ElpidaVersionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_BenchmarkResults_OsId",
-                table: "BenchmarkResults",
-                column: "OsId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_BenchmarkResults_TopologyId",
-                table: "BenchmarkResults",
-                column: "TopologyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Benchmarks_Uuid",
@@ -349,9 +332,29 @@ namespace Elpida.Backend.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_TaskResultModel_BenchmarkResultId",
+                name: "IX_Results_BenchmarkId",
+                table: "Results",
+                column: "BenchmarkId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Results_ElpidaVersionId",
+                table: "Results",
+                column: "ElpidaVersionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Results_OsId",
+                table: "Results",
+                column: "OsId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Results_TopologyId",
+                table: "Results",
+                column: "TopologyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TaskResultModel_ResultId",
                 table: "TaskResultModel",
-                column: "BenchmarkResultId");
+                column: "ResultId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TaskResultModel_TaskId",
@@ -383,7 +386,7 @@ namespace Elpida.Backend.Migrations
                 name: "TaskResultModel");
 
             migrationBuilder.DropTable(
-                name: "BenchmarkResults");
+                name: "Results");
 
             migrationBuilder.DropTable(
                 name: "Tasks");
