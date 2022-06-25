@@ -38,7 +38,7 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 		/// <param name="topology">The topology of this system.</param>
 		/// <param name="memory">The memory details of this system.</param>
 		/// <param name="timing">Timing details of this system.</param>
-		public SystemDto(CpuDto cpu, OsDto os, TopologyDto topology, MemoryDto memory, TimingDto timing)
+		public SystemDto(CpuDto cpu, OperatingSystemDto os, TopologyDto topology, MemoryDto memory, TimingDto timing)
 		{
 			Cpu = cpu;
 			Os = os;
@@ -57,7 +57,7 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 		///     The operating system of this system.
 		/// </summary>
 		[Required]
-		public OsDto Os { get; }
+		public OperatingSystemDto Os { get; }
 
 		/// <summary>
 		///     The topology of this system.

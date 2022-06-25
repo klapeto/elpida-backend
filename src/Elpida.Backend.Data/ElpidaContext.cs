@@ -45,11 +45,11 @@ namespace Elpida.Backend.Data
 
 		public DbSet<TopologyModel> Topologies { get; set; } = default!;
 
-		public DbSet<ResultModel> Results { get; set; } = default!;
+		public DbSet<BenchmarkResultModel> BenchmarkResults { get; set; } = default!;
 
 		public DbSet<ElpidaVersionModel> ElpidaVersions { get; set; } = default!;
 
-		public DbSet<OsModel> Oses { get; set; } = default!;
+		public DbSet<OperatingSystemModel> OperatingSystems { get; set; } = default!;
 
 		public DbSet<BenchmarkStatisticsModel> BenchmarkStatistics { get; set; } = default!;
 
@@ -73,7 +73,7 @@ namespace Elpida.Backend.Data
 				)
 				.IsUnique();
 
-			modelBuilder.Entity<OsModel>()
+			modelBuilder.Entity<OperatingSystemModel>()
 				.HasIndex(m => new { m.Category, m.Name, m.Version })
 				.IsUnique();
 

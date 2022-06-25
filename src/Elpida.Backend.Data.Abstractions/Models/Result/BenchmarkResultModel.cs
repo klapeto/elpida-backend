@@ -27,15 +27,15 @@ using Elpida.Backend.Data.Abstractions.Models.Topology;
 
 namespace Elpida.Backend.Data.Abstractions.Models.Result
 {
-	public class ResultModel : Entity
+	public class BenchmarkResultModel : Entity
 	{
 		public long ElpidaVersionId { get; set; }
 
 		public ElpidaVersionModel ElpidaVersion { get; set; } = default!;
 
-		public long OsId { get; set; }
+		public long OperatingSystemId { get; set; }
 
-		public OsModel Os { get; set; } = default!;
+		public OperatingSystemModel OperatingSystem { get; set; } = default!;
 
 		public long TopologyId { get; set; }
 

@@ -18,14 +18,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-namespace Elpida.Backend.Data.Abstractions.Models.Os
+using Elpida.Backend.Services.Abstractions.Dtos.Os;
+using Elpida.Backend.Services.Abstractions.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Elpida.Backend.Controllers
 {
-	public class OsModel : Entity
+	/// <summary>
+	///     Controller for accessing Operating Systems.
+	/// </summary>
+	[ApiController]
+	[Route("api/v1/[controller]")]
+	public class OperatingSystemController : ServiceController<OperatingSystemDto, OperatingSystemDto, IOperatingSystemService>
 	{
-		public string Category { get; set; } = string.Empty;
-
-		public string Name { get; set; } = string.Empty;
-
-		public string Version { get; set; } = string.Empty;
+		public OperatingSystemController(IOperatingSystemService operatingSystemService)
+			: base(operatingSystemService)
+		{
+		}
 	}
 }

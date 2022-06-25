@@ -94,16 +94,16 @@ namespace Elpida.Backend.Services
 			return FiltersTransformer.ConstructCustomFilters(baseExpression, GetFilterExpressions());
 		}
 
+		public virtual IEnumerable<FilterExpression> GetFilterExpressions()
+		{
+			yield break;
+		}
+
 		protected abstract TDto ToDto(TModel model);
 
 		protected abstract Expression<Func<TModel, TPreview>> GetPreviewConstructionExpression();
 
 		protected abstract Task<TModel> ProcessDtoAndCreateModelAsync(TDto dto, CancellationToken cancellationToken);
-
-		public virtual IEnumerable<FilterExpression> GetFilterExpressions()
-		{
-			yield break;
-		}
 
 		protected virtual Expression<Func<TModel, bool>>? GetCreationBypassCheckExpression(TDto dto)
 		{

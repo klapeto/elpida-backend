@@ -25,16 +25,16 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Os
 	/// <summary>
 	///     Details of an Operating System.
 	/// </summary>
-	public sealed class OsDto : FoundationDto
+	public sealed class OperatingSystemDto : FoundationDto
 	{
 		/// <summary>
-		///     Initializes a new instance of the <see cref="OsDto" /> class.
+		///     Initializes a new instance of the <see cref="OperatingSystemDto" /> class.
 		/// </summary>
 		/// <param name="id">The id of the Operating System.</param>
 		/// <param name="category">The category of the Operating System.</param>
 		/// <param name="name">The name of the Operating System.</param>
 		/// <param name="version">The version of the Operating System.</param>
-		public OsDto(long id, string category, string name, string version)
+		public OperatingSystemDto(long id, string category, string name, string version)
 			: base(id)
 		{
 			Category = category;

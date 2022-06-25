@@ -18,12 +18,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using Elpida.Backend.Data.Abstractions.Interfaces;
-using Elpida.Backend.Data.Abstractions.Models.Os;
+using Elpida.Backend.Services.Abstractions.Dtos.Os;
 
-namespace Elpida.Backend.Data.Abstractions.Repositories
+namespace Elpida.Backend.Services.Abstractions.Interfaces
 {
-	public interface IOsRepository : IRepository<OsModel>
+	public interface IOperatingSystemService : IService<OperatingSystemDto, OperatingSystemDto>
 	{
 	}
 }

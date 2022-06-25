@@ -33,17 +33,17 @@ using Elpida.Backend.Services.Utilities;
 
 namespace Elpida.Backend.Services
 {
-	public class OsService : Service<OsDto, OsDto, OsModel, IOsRepository>, IOsService
+	public class OperatingSystemService : Service<OperatingSystemDto, OperatingSystemDto, OperatingSystemModel, IOperatingSystemRepository>, IOperatingSystemService
 	{
 		private static readonly IEnumerable<FilterExpression> OsFilters = new List<FilterExpression>
 		{
-			FiltersTransformer.CreateFilter<OsModel, string>("osCategory", model => model.Category),
-			FiltersTransformer.CreateFilter<OsModel, string>("osName", model => model.Name),
-			FiltersTransformer.CreateFilter<OsModel, string>("osVersion", model => model.Version),
+			FiltersTransformer.CreateFilter<OperatingSystemModel, string>("osCategory", model => model.Category),
+			FiltersTransformer.CreateFilter<OperatingSystemModel, string>("osName", model => model.Name),
+			FiltersTransformer.CreateFilter<OperatingSystemModel, string>("osVersion", model => model.Version),
 		};
 
-		public OsService(IOsRepository osRepository)
-			: base(osRepository)
+		public OperatingSystemService(IOperatingSystemRepository operatingSystemRepository)
+			: base(operatingSystemRepository)
 		{
 		}
 
@@ -52,15 +52,15 @@ namespace Elpida.Backend.Services
 			return OsFilters;
 		}
 
-		protected override Expression<Func<OsModel, OsDto>> GetPreviewConstructionExpression()
+		protected override Expression<Func<OperatingSystemModel, OperatingSystemDto>> GetPreviewConstructionExpression()
 		{
-			return m => new OsDto(m.Id, m.Category, m.Name, m.Version);
+			return m => new OperatingSystemDto(m.Id, m.Category, m.Name, m.Version);
 		}
 
-		protected override Task<OsModel> ProcessDtoAndCreateModelAsync(OsDto dto, CancellationToken cancellationToken)
+		protected override Task<OperatingSystemModel> ProcessDtoAndCreateModelAsync(OperatingSystemDto dto, CancellationToken cancellationToken)
 		{
 			return Task.FromResult(
-				new OsModel
+				new OperatingSystemModel
 				{
 					Id = dto.Id,
 					Category = dto.Category,
@@ -70,12 +70,12 @@ namespace Elpida.Backend.Services
 			);
 		}
 
-		protected override OsDto ToDto(OsModel model)
+		protected override OperatingSystemDto ToDto(OperatingSystemModel model)
 		{
 			return model.ToDto();
 		}
 
-		protected override Expression<Func<OsModel, bool>> GetCreationBypassCheckExpression(OsDto dto)
+		protected override Expression<Func<OperatingSystemModel, bool>> GetCreationBypassCheckExpression(OperatingSystemDto dto)
 		{
 			return o =>
 				o.Category == dto.Category

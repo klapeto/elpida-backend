@@ -214,7 +214,7 @@ namespace Elpida.Backend.DataSeed
 
 			try
 			{
-				var resultService = serviceProvider.GetRequiredService<IResultService>();
+				var resultService = serviceProvider.GetRequiredService<IBenchmarkResultService>();
 
 				Interlocked.Add(ref _resultsExpected, resultBatchDto.BenchmarkResults.Length);
 

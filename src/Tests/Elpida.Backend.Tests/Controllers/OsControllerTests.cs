@@ -27,19 +27,19 @@ using NUnit.Framework;
 namespace Elpida.Backend.Tests.Controllers
 {
 	[TestFixture]
-	internal class OsControllerTests : ServiceControllerTests<OsDto, OsDto, IOsService>
+	internal class OsControllerTests : ServiceControllerTests<OperatingSystemDto, OperatingSystemDto, IOperatingSystemService>
 	{
-		protected override ServiceController<OsDto, OsDto, IOsService> GetController(IOsService service)
+		protected override ServiceController<OperatingSystemDto, OperatingSystemDto, IOperatingSystemService> GetController(IOperatingSystemService service)
 		{
-			return new OsController(service);
+			return new OperatingSystemController(service);
 		}
 
-		protected override OsDto NewDummyDto()
+		protected override OperatingSystemDto NewDummyDto()
 		{
 			return DtoGenerators.NewOs();
 		}
 
-		protected override OsDto NewDummyPreviewDto()
+		protected override OperatingSystemDto NewDummyPreviewDto()
 		{
 			return DtoGenerators.NewOs();
 		}
