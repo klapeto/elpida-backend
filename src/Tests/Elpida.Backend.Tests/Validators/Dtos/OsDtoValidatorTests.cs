@@ -23,24 +23,24 @@ using Elpida.Backend.Services.Abstractions.Dtos.Os;
 
 namespace Elpida.Backend.Tests.Validators.Dtos
 {
-	internal class OsDtoValidatorTests : ValidatorTest<OsDto>
+	internal class OsDtoValidatorTests : ValidatorTest<OperatingSystemDto>
 	{
-		protected override IEnumerable<(OsDto, string)> GetInvalidData()
+		protected override IEnumerable<(OperatingSystemDto, string)> GetInvalidData()
 		{
-			yield return (new OsDto(0, null!, "Test", "Test"), $"null {nameof(OsDto.Category)}");
-			yield return (new OsDto(0, string.Empty, "Test", "Test"), $"empty {nameof(OsDto.Category)}");
-			yield return (new OsDto(0, " ", "Test", "Test"), $"empty {nameof(OsDto.Category)}");
-			yield return (new OsDto(0, new string('A', 100), "Test", "Test"), $"very large {nameof(OsDto.Category)}");
+			yield return (new OperatingSystemDto(0, null!, "Test", "Test"), $"null {nameof(OperatingSystemDto.Category)}");
+			yield return (new OperatingSystemDto(0, string.Empty, "Test", "Test"), $"empty {nameof(OperatingSystemDto.Category)}");
+			yield return (new OperatingSystemDto(0, " ", "Test", "Test"), $"empty {nameof(OperatingSystemDto.Category)}");
+			yield return (new OperatingSystemDto(0, new string('A', 100), "Test", "Test"), $"very large {nameof(OperatingSystemDto.Category)}");
 
-			yield return (new OsDto(0, "Test", null!, "Test"), $"null {nameof(OsDto.Name)}");
-			yield return (new OsDto(0, "Test", string.Empty, "Test"), $"empty {nameof(OsDto.Name)}");
-			yield return (new OsDto(0, "Test", " ", "Test"), $"empty {nameof(OsDto.Name)}");
-			yield return (new OsDto(0, "Test", new string('A', 150), "Test"), $"very large {nameof(OsDto.Name)}");
+			yield return (new OperatingSystemDto(0, "Test", null!, "Test"), $"null {nameof(OperatingSystemDto.Name)}");
+			yield return (new OperatingSystemDto(0, "Test", string.Empty, "Test"), $"empty {nameof(OperatingSystemDto.Name)}");
+			yield return (new OperatingSystemDto(0, "Test", " ", "Test"), $"empty {nameof(OperatingSystemDto.Name)}");
+			yield return (new OperatingSystemDto(0, "Test", new string('A', 150), "Test"), $"very large {nameof(OperatingSystemDto.Name)}");
 
-			yield return (new OsDto(0, "Test", "Test", null!), $"null {nameof(OsDto.Version)}");
-			yield return (new OsDto(0, "Test", "Test", string.Empty), $"empty {nameof(OsDto.Version)}");
-			yield return (new OsDto(0, "Test", "Test", " "), $"empty {nameof(OsDto.Version)}");
-			yield return (new OsDto(0, "Test", "Test", new string('A', 100)), $"very large {nameof(OsDto.Version)}");
+			yield return (new OperatingSystemDto(0, "Test", "Test", null!), $"null {nameof(OperatingSystemDto.Version)}");
+			yield return (new OperatingSystemDto(0, "Test", "Test", string.Empty), $"empty {nameof(OperatingSystemDto.Version)}");
+			yield return (new OperatingSystemDto(0, "Test", "Test", " "), $"empty {nameof(OperatingSystemDto.Version)}");
+			yield return (new OperatingSystemDto(0, "Test", "Test", new string('A', 100)), $"very large {nameof(OperatingSystemDto.Version)}");
 		}
 	}
 }

@@ -135,7 +135,7 @@ namespace Elpida.Backend.Services.Tests
 			Assert.AreEqual(versionModel.VersionBuild, versionDto.Version.Build);
 		}
 
-		public static void AssertEqual(this OsModel model, OsDto dto)
+		public static void AssertEqual(this OperatingSystemModel model, OperatingSystemDto dto)
 		{
 			Assert.AreEqual(model.Id, dto.Id);
 			Assert.AreEqual(model.Category, dto.Category);

@@ -18,16 +18,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using Elpida.Backend.Data.Abstractions.Models.Os;
-using Elpida.Backend.Data.Abstractions.Repositories;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using Elpida.Backend.Services.Abstractions.Dtos.Result;
+using Elpida.Backend.Services.Abstractions.Dtos.Result.Batch;
 
-namespace Elpida.Backend.Data
+namespace Elpida.Backend.Services.Abstractions.Interfaces
 {
-	public class OsRepository : EntityRepository<OsModel>, IOsRepository
+	public interface IBenchmarkResultService : IService<BenchmarkResultDto, BenchmarkResultPreviewDto>
 	{
-		public OsRepository(ElpidaContext context)
-			: base(context, context.Oses)
-		{
-		}
+		Task<IList<long>> AddBatchAsync(ResultBatchDto batch, CancellationToken cancellationToken = default);
 	}
 }

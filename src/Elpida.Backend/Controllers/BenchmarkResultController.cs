@@ -35,11 +35,11 @@ namespace Elpida.Backend.Controllers
 	/// </summary>
 	[ApiController]
 	[Route("api/v1/[controller]")]
-	public class ResultController
-		: ServiceController<ResultDto, ResultPreviewDto, IResultService>
+	public class BenchmarkResultController
+		: ServiceController<BenchmarkResultDto, BenchmarkResultPreviewDto, IBenchmarkResultService>
 	{
-		public ResultController(IResultService resultService)
-			: base(resultService)
+		public BenchmarkResultController(IBenchmarkResultService benchmarkResultService)
+			: base(benchmarkResultService)
 		{
 		}
 

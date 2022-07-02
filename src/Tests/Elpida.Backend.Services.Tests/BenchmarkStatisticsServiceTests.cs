@@ -37,7 +37,7 @@ namespace Elpida.Backend.Services.Tests
 		private Mock<IBenchmarkService> _benchmarkService = default!;
 		private Mock<IBenchmarkStatisticsRepository> _benchmarkStatisticsRepository = default!;
 		private Mock<ICpuService> _cpuService = default!;
-		private Mock<IResultRepository> _benchmarkResultsRepository = default!;
+		private Mock<IBenchmarkResultRepository> _benchmarkResultsRepository = default!;
 		private Mock<ITransaction> _transaction = default!;
 
 		[SetUp]
@@ -46,7 +46,7 @@ namespace Elpida.Backend.Services.Tests
 			_benchmarkService = new Mock<IBenchmarkService>(MockBehavior.Strict);
 			_benchmarkStatisticsRepository = new Mock<IBenchmarkStatisticsRepository>(MockBehavior.Strict);
 			_cpuService = new Mock<ICpuService>(MockBehavior.Strict);
-			_benchmarkResultsRepository = new Mock<IResultRepository>(MockBehavior.Strict);
+			_benchmarkResultsRepository = new Mock<IBenchmarkResultRepository>(MockBehavior.Strict);
 			_transaction = new Mock<ITransaction>(MockBehavior.Strict);
 
 			_service = new BenchmarkStatisticsService(

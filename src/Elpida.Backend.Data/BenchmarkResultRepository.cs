@@ -29,12 +29,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Elpida.Backend.Data
 {
-	public class ResultRepository
-		: EntityRepository<ResultModel>,
-			IResultRepository
+	public class BenchmarkResultRepository
+		: EntityRepository<BenchmarkResultModel>,
+			IBenchmarkResultRepository
 	{
-		public ResultRepository(ElpidaContext elpidaContext)
-			: base(elpidaContext, elpidaContext.Results)
+		public BenchmarkResultRepository(ElpidaContext elpidaContext)
+			: base(elpidaContext, elpidaContext.BenchmarkResults)
 		{
 		}
 
@@ -95,19 +95,19 @@ namespace Elpida.Backend.Data
 			return result;
 		}
 
-		protected override IQueryable<ResultModel> ProcessGetMultiplePaged(
-			IQueryable<ResultModel> queryable
+		protected override IQueryable<BenchmarkResultModel> ProcessGetMultiplePaged(
+			IQueryable<BenchmarkResultModel> queryable
 		)
 		{
 			return ProcessGetSingle(queryable);
 		}
 
-		protected override IQueryable<ResultModel> ProcessGetSingle(IQueryable<ResultModel> queryable)
+		protected override IQueryable<BenchmarkResultModel> ProcessGetSingle(IQueryable<BenchmarkResultModel> queryable)
 		{
 			return queryable
 				.AsNoTracking()
 				.Include(model => model.Benchmark)
-				.Include(model => model.Os)
+				.Include(model => model.OperatingSystem)
 				.Include(model => model.ElpidaVersion)
 				.Include(model => model.TaskResults)
 				.ThenInclude(model => model.Task)

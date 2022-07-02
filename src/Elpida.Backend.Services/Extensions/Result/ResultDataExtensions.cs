@@ -35,24 +35,24 @@ namespace Elpida.Backend.Services.Extensions.Result
 {
 	public static class ResultDataExtensions
 	{
-		public static ResultDto ToDto(this ResultModel resultModel)
+		public static BenchmarkResultDto ToDto(this BenchmarkResultModel benchmarkResultModel)
 		{
 			var scoreSpec = new BenchmarkScoreSpecificationDto(
-				resultModel.Benchmark.ScoreUnit,
-				resultModel.Benchmark.ScoreComparison
+				benchmarkResultModel.Benchmark.ScoreUnit,
+				benchmarkResultModel.Benchmark.ScoreComparison
 			);
 
-			return new ResultDto(
-				resultModel.Id,
-				resultModel.TimeStamp,
-				resultModel.Benchmark.Uuid,
-				resultModel.Benchmark.Name,
-				JsonConvert.DeserializeObject<long[]>(resultModel.Affinity)!,
-				resultModel.ElpidaVersion.ToDto(),
-				GetSystem(resultModel),
-				resultModel.Score,
+			return new BenchmarkResultDto(
+				benchmarkResultModel.Id,
+				benchmarkResultModel.TimeStamp,
+				benchmarkResultModel.Benchmark.Uuid,
+				benchmarkResultModel.Benchmark.Name,
+				JsonConvert.DeserializeObject<long[]>(benchmarkResultModel.Affinity)!,
+				benchmarkResultModel.ElpidaVersion.ToDto(),
+				GetSystem(benchmarkResultModel),
+				benchmarkResultModel.Score,
 				scoreSpec,
-				GetTaskResults(resultModel).ToArray()
+				GetTaskResults(benchmarkResultModel).ToArray()
 			);
 		}
 
@@ -110,16 +110,16 @@ namespace Elpida.Backend.Services.Extensions.Result
 			);
 		}
 
-		private static IEnumerable<TaskResultDto> GetTaskResults(ResultModel result)
+		private static IEnumerable<TaskResultDto> GetTaskResults(BenchmarkResultModel benchmarkResult)
 		{
-			return result.TaskResults
+			return benchmarkResult.TaskResults
 				.OrderBy(m => m.Order)
 				.Select(
 					r => new TaskResultDto(
 						r.Task.Id,
-						result.Id,
-						result.Topology.Cpu.Id,
-						result.Topology.Id,
+						benchmarkResult.Id,
+						benchmarkResult.Topology.Cpu.Id,
+						benchmarkResult.Topology.Id,
 						r.Task.Uuid,
 						r.Task.Name,
 						r.Task.Description,
@@ -134,28 +134,28 @@ namespace Elpida.Backend.Services.Extensions.Result
 				);
 		}
 
-		private static SystemDto GetSystem(ResultModel result)
+		private static SystemDto GetSystem(BenchmarkResultModel benchmarkResult)
 		{
 			var memory = new MemoryDto(
-				result.MemorySize,
-				result.PageSize
+				benchmarkResult.MemorySize,
+				benchmarkResult.PageSize
 			);
 
 			var timing = new TimingDto(
-				result.NotifyOverhead,
-				result.WakeupOverhead,
-				result.SleepOverhead,
-				result.NowOverhead,
-				result.LockOverhead,
-				result.LoopOverhead,
-				result.JoinOverhead,
-				result.TargetTime
+				benchmarkResult.NotifyOverhead,
+				benchmarkResult.WakeupOverhead,
+				benchmarkResult.SleepOverhead,
+				benchmarkResult.NowOverhead,
+				benchmarkResult.LockOverhead,
+				benchmarkResult.LoopOverhead,
+				benchmarkResult.JoinOverhead,
+				benchmarkResult.TargetTime
 			);
 
 			return new SystemDto(
-				result.Topology.Cpu.ToDto(),
-				result.Os.ToDto(),
-				result.Topology.ToDto(),
+				benchmarkResult.Topology.Cpu.ToDto(),
+				benchmarkResult.OperatingSystem.ToDto(),
+				benchmarkResult.Topology.ToDto(),
 				memory,
 				timing
 			);

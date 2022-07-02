@@ -25,10 +25,10 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 	/// <summary>
 	///     A preview of a Benchmark result.
 	/// </summary>
-	public sealed class ResultPreviewDto : FoundationDto
+	public sealed class BenchmarkResultPreviewDto : FoundationDto
 	{
 		/// <summary>
-		///     Initializes a new instance of the <see cref="ResultPreviewDto" /> class.
+		///     Initializes a new instance of the <see cref="BenchmarkResultPreviewDto" /> class.
 		/// </summary>
 		/// <param name="id">The id of the Benchmark Result.</param>
 		/// <param name="benchmarkUuid">The UUID of the benchmark.</param>
@@ -39,7 +39,7 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 		/// <param name="cpuModelName">The cpu model name of the system that run the benchmark.</param>
 		/// <param name="benchmarkScoreUnit">The benchmark score unit.</param>
 		/// <param name="score">The benchmark score.</param>
-		public ResultPreviewDto(
+		public BenchmarkResultPreviewDto(
 			long id,
 			Guid benchmarkUuid,
 			DateTime timeStamp,
