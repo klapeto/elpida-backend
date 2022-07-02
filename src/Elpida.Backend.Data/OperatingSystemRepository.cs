@@ -18,28 +18,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =========================================================================
 
-using System.Threading;
-using System.Threading.Tasks;
-using Elpida.Backend.Data.Abstractions.Interfaces;
-using Elpida.Backend.Data.Abstractions.Models.Result;
-using Elpida.Backend.Data.Abstractions.Models.Statistics;
+using Elpida.Backend.Data.Abstractions.Models.Os;
+using Elpida.Backend.Data.Abstractions.Repositories;
 
-namespace Elpida.Backend.Data.Abstractions.Repositories
+namespace Elpida.Backend.Data
 {
-	public interface IResultRepository : IRepository<ResultModel>
+	public class OperatingSystemRepository : EntityRepository<OperatingSystemModel>, IOperatingSystemRepository
 	{
-		Task<long> GetCountWithScoreBetween(
-			long benchmarkId,
-			long cpuId,
-			double min,
-			double max,
-			CancellationToken cancellationToken = default
-		);
-
-		Task<BasicStatisticsModel> GetStatisticsAsync(
-			long benchmarkId,
-			long cpuId,
-			CancellationToken cancellationToken = default
-		);
+		public OperatingSystemRepository(ElpidaContext context)
+			: base(context, context.OperatingSystems)
+		{
+		}
 	}
 }

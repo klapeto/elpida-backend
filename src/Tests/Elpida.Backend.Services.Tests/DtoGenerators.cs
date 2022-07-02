@@ -69,13 +69,13 @@ namespace Elpida.Backend.Services.Tests
 			);
 		}
 
-		public static ResultPreviewDto NewBenchmarkResultPreview(long? id = null)
+		public static BenchmarkResultPreviewDto NewBenchmarkResultPreview(long? id = null)
 		{
 			return new (id ?? NewId(), Guid.NewGuid(), DateTime.UtcNow, "Test benchmark", "Gentoo", "ARM", "Cortex A7",
 				"b/s", 46);
 		}
 
-		public static ResultDto NewBenchmarkResult(long? id = null)
+		public static BenchmarkResultDto NewBenchmarkResult(long? id = null)
 		{
 			return new (
 				id ?? NewId(),
@@ -199,7 +199,7 @@ namespace Elpida.Backend.Services.Tests
 			return new (id ?? NewId(), 2, "ARM", "Exynos", 16, 8, 2, 2, "sdfdsf");
 		}
 
-		public static OsDto NewOs(long? id = null)
+		public static OperatingSystemDto NewOs(long? id = null)
 		{
 			return new (id ?? NewId(), "Linux", "KDE Neon", "21.1");
 		}

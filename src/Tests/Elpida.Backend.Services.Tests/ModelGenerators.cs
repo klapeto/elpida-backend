@@ -150,7 +150,7 @@ namespace Elpida.Backend.Services.Tests
 			};
 		}
 
-		public static OsModel NewOs()
+		public static OperatingSystemModel NewOs()
 		{
 			return new ()
 			{
@@ -196,7 +196,7 @@ namespace Elpida.Backend.Services.Tests
 			};
 		}
 
-		public static ResultModel NewBenchmarkResult()
+		public static BenchmarkResultModel NewBenchmarkResult()
 		{
 			return new ()
 			{
@@ -204,7 +204,7 @@ namespace Elpida.Backend.Services.Tests
 				Affinity = JsonConvert.SerializeObject(new long[] { 1, 2, 3 }),
 				Benchmark = NewBenchmark(),
 				ElpidaVersion = NewElpida(),
-				Os = NewOs(),
+				OperatingSystem = NewOs(),
 				Score = 4984,
 				Topology = NewTopology(),
 				JoinOverhead = 987,

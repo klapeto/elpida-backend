@@ -64,7 +64,7 @@ namespace Elpida.Backend.Data.Sqlite.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Oses",
+                name: "OperatingSystems",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "INTEGER", nullable: false)
@@ -75,7 +75,7 @@ namespace Elpida.Backend.Data.Sqlite.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Oses", x => x.Id);
+                    table.PrimaryKey("PK_OperatingSystems", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -196,13 +196,13 @@ namespace Elpida.Backend.Data.Sqlite.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Results",
+                name: "BenchmarkResults",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     ElpidaVersionId = table.Column<long>(type: "INTEGER", nullable: false),
-                    OsId = table.Column<long>(type: "INTEGER", nullable: false),
+                    OperatingSystemId = table.Column<long>(type: "INTEGER", nullable: false),
                     TopologyId = table.Column<long>(type: "INTEGER", nullable: false),
                     BenchmarkId = table.Column<long>(type: "INTEGER", nullable: false),
                     TimeStamp = table.Column<DateTime>(type: "TEXT", nullable: false),
@@ -221,27 +221,27 @@ namespace Elpida.Backend.Data.Sqlite.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Results", x => x.Id);
+                    table.PrimaryKey("PK_BenchmarkResults", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Results_Benchmarks_BenchmarkId",
+                        name: "FK_BenchmarkResults_Benchmarks_BenchmarkId",
                         column: x => x.BenchmarkId,
                         principalTable: "Benchmarks",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Results_ElpidaVersions_ElpidaVersionId",
+                        name: "FK_BenchmarkResults_ElpidaVersions_ElpidaVersionId",
                         column: x => x.ElpidaVersionId,
                         principalTable: "ElpidaVersions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Results_Oses_OsId",
-                        column: x => x.OsId,
-                        principalTable: "Oses",
+                        name: "FK_BenchmarkResults_OperatingSystems_OperatingSystemId",
+                        column: x => x.OperatingSystemId,
+                        principalTable: "OperatingSystems",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Results_Topologies_TopologyId",
+                        name: "FK_BenchmarkResults_Topologies_TopologyId",
                         column: x => x.TopologyId,
                         principalTable: "Topologies",
                         principalColumn: "Id",
@@ -255,7 +255,6 @@ namespace Elpida.Backend.Data.Sqlite.Migrations
                     Id = table.Column<long>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     BenchmarkResultId = table.Column<long>(type: "INTEGER", nullable: false),
-                    ResultId = table.Column<long>(type: "INTEGER", nullable: false),
                     TaskId = table.Column<long>(type: "INTEGER", nullable: false),
                     Order = table.Column<int>(type: "INTEGER", nullable: false),
                     Value = table.Column<double>(type: "REAL", nullable: false),
@@ -273,9 +272,9 @@ namespace Elpida.Backend.Data.Sqlite.Migrations
                 {
                     table.PrimaryKey("PK_TaskResultModel", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TaskResultModel_Results_ResultId",
-                        column: x => x.ResultId,
-                        principalTable: "Results",
+                        name: "FK_TaskResultModel_BenchmarkResults_BenchmarkResultId",
+                        column: x => x.BenchmarkResultId,
+                        principalTable: "BenchmarkResults",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -285,6 +284,26 @@ namespace Elpida.Backend.Data.Sqlite.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BenchmarkResults_BenchmarkId",
+                table: "BenchmarkResults",
+                column: "BenchmarkId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BenchmarkResults_ElpidaVersionId",
+                table: "BenchmarkResults",
+                column: "ElpidaVersionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BenchmarkResults_OperatingSystemId",
+                table: "BenchmarkResults",
+                column: "OperatingSystemId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BenchmarkResults_TopologyId",
+                table: "BenchmarkResults",
+                column: "TopologyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Benchmarks_Uuid",
@@ -326,35 +345,15 @@ namespace Elpida.Backend.Data.Sqlite.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Oses_Category_Name_Version",
-                table: "Oses",
+                name: "IX_OperatingSystems_Category_Name_Version",
+                table: "OperatingSystems",
                 columns: new[] { "Category", "Name", "Version" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Results_BenchmarkId",
-                table: "Results",
-                column: "BenchmarkId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Results_ElpidaVersionId",
-                table: "Results",
-                column: "ElpidaVersionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Results_OsId",
-                table: "Results",
-                column: "OsId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Results_TopologyId",
-                table: "Results",
-                column: "TopologyId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TaskResultModel_ResultId",
+                name: "IX_TaskResultModel_BenchmarkResultId",
                 table: "TaskResultModel",
-                column: "ResultId");
+                column: "BenchmarkResultId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TaskResultModel_TaskId",
@@ -386,7 +385,7 @@ namespace Elpida.Backend.Data.Sqlite.Migrations
                 name: "TaskResultModel");
 
             migrationBuilder.DropTable(
-                name: "Results");
+                name: "BenchmarkResults");
 
             migrationBuilder.DropTable(
                 name: "Tasks");
@@ -398,7 +397,7 @@ namespace Elpida.Backend.Data.Sqlite.Migrations
                 name: "ElpidaVersions");
 
             migrationBuilder.DropTable(
-                name: "Oses");
+                name: "OperatingSystems");
 
             migrationBuilder.DropTable(
                 name: "Topologies");

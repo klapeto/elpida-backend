@@ -22,37 +22,37 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="ResultData\AMD Ryzen 9 5900X 12-Core Processor-1633685037 old ram.json">
+      <None Update="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1656085423.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="ResultData\AMD Ryzen 9 5900X 12-Core Processor-1633686755 new ram.json">
+      <None Update="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1656084013.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1630849371.json">
+      <None Update="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1656082635.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1630849534.json">
+      <None Update="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1656080896.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1630849656.json">
+      <None Update="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1656079540.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1630849776.json">
+      <None Update="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1656076978.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1631520650.json">
+      <None Update="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1656075603.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="ResultData\AMD Ryzen Threadripper 1920X 12-Core Processor-1631521063.json">
+      <None Update="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1656074248.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="ResultData\Cortex-A72-1631292731.json">
+      <None Update="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1656072890.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1631290371.json">
+      <None Update="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1656071270.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="ResultData\Intel(R) Core(TM) i9-10900K CPU @ 3.70GHz-1631227256.json">
+      <None Update="ResultData\Intel(R) Core(TM) i7-1065G7 CPU @ 1.30GHz-1656069514.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>

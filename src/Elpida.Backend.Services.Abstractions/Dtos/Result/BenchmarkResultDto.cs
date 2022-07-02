@@ -27,10 +27,10 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 	/// <summary>
 	///     Details of a Benchmark Result.
 	/// </summary>
-	public sealed class ResultDto : FoundationDto
+	public sealed class BenchmarkResultDto : FoundationDto
 	{
 		/// <summary>
-		///     Initializes a new instance of the <see cref="ResultDto" /> class.
+		///     Initializes a new instance of the <see cref="BenchmarkResultDto" /> class.
 		/// </summary>
 		/// <param name="id">The id of the Benchmark Result.</param>
 		/// <param name="timeStamp">The date and time this result was posted.</param>
@@ -42,7 +42,7 @@ namespace Elpida.Backend.Services.Abstractions.Dtos.Result
 		/// <param name="score">The score of the benchmark.</param>
 		/// <param name="scoreSpecification">The score specification details of this Benchmark.</param>
 		/// <param name="taskResults">The specific Task results.</param>
-		public ResultDto(
+		public BenchmarkResultDto(
 			long id,
 			DateTime timeStamp,
 			Guid uuid,

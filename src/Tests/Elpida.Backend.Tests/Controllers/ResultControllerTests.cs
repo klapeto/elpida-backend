@@ -34,13 +34,13 @@ namespace Elpida.Backend.Tests.Controllers
 {
 	[TestFixture]
 	internal class ResultControllerTests
-		: ServiceControllerTests<ResultDto, ResultPreviewDto, IResultService>
+		: ServiceControllerTests<BenchmarkResultDto, BenchmarkResultPreviewDto, IBenchmarkResultService>
 	{
 		[Test]
 		public async Task PostNewResult_Success()
 		{
-			var service = new Mock<IResultService>(MockBehavior.Strict);
-			var controller = new ResultController(service.Object);
+			var service = new Mock<IBenchmarkResultService>(MockBehavior.Strict);
+			var controller = new BenchmarkResultController(service.Object);
 
 			var batch = DtoGenerators.NewBenchmarkResultsBatch();
 
@@ -54,7 +54,7 @@ namespace Elpida.Backend.Tests.Controllers
 			Assert.True(result.GetType() == typeof(CreatedAtActionResult));
 
 			var createdResult = (CreatedAtActionResult)result;
-			Assert.AreEqual(nameof(ResultController.GetSingle), createdResult.ActionName);
+			Assert.AreEqual(nameof(BenchmarkResultController.GetSingle), createdResult.ActionName);
 			Assert.AreEqual(expectedResult.First(), createdResult.RouteValues.Values.First());
 
 			service.Verify(s => s.AddBatchAsync(batch, default), Times.Once);
@@ -63,8 +63,8 @@ namespace Elpida.Backend.Tests.Controllers
 		[Test]
 		public void PostNewResult_ThrowsException_NoCatch()
 		{
-			var service = new Mock<IResultService>(MockBehavior.Strict);
-			var controller = new ResultController(service.Object);
+			var service = new Mock<IBenchmarkResultService>(MockBehavior.Strict);
+			var controller = new BenchmarkResultController(service.Object);
 
 			var batch = DtoGenerators.NewBenchmarkResultsBatch();
 			var expectedException = new NotFoundException("It was not found", 5);
@@ -79,18 +79,18 @@ namespace Elpida.Backend.Tests.Controllers
 			service.Verify(s => s.AddBatchAsync(batch, default), Times.Once);
 		}
 
-		protected override ServiceController<ResultDto, ResultPreviewDto, IResultService>
-			GetController(IResultService service)
+		protected override ServiceController<BenchmarkResultDto, BenchmarkResultPreviewDto, IBenchmarkResultService>
+			GetController(IBenchmarkResultService service)
 		{
-			return new ResultController(service);
+			return new BenchmarkResultController(service);
 		}
 
-		protected override ResultDto NewDummyDto()
+		protected override BenchmarkResultDto NewDummyDto()
 		{
 			return DtoGenerators.NewBenchmarkResult();
 		}
 
-		protected override ResultPreviewDto NewDummyPreviewDto()
+		protected override BenchmarkResultPreviewDto NewDummyPreviewDto()
 		{
 			return DtoGenerators.NewBenchmarkResultPreview();
 		}

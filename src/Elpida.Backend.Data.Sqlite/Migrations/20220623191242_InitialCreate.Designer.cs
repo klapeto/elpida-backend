@@ -3,48 +3,41 @@ using System;
 using Elpida.Backend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Elpida.Backend.Migrations
+namespace Elpida.Backend.Data.Sqlite.Migrations
 {
     [DbContext(typeof(ElpidaContext))]
-    [Migration("20220622213317_InitialCreate")]
+    [Migration("20220623191242_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.0")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
-
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+            modelBuilder.HasAnnotation("ProductVersion", "6.0.0");
 
             modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Benchmark.BenchmarkModel", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("ScoreComparison")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("ScoreUnit")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("Uuid")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -58,27 +51,25 @@ namespace Elpida.Backend.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+                        .HasColumnType("INTEGER");
 
                     b.Property<long>("BenchmarkId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("CanBeDisabled")
-                        .HasColumnType("bit");
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("CanBeMultiThreaded")
-                        .HasColumnType("bit");
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsCountedOnResults")
-                        .HasColumnType("bit");
+                        .HasColumnType("INTEGER");
 
                     b.Property<long>("IterationsToRun")
-                        .HasColumnType("bigint");
+                        .HasColumnType("INTEGER");
 
                     b.Property<long>("TaskId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -93,39 +84,37 @@ namespace Elpida.Backend.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("AdditionalInfo")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Architecture")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Caches")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Features")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<long>("Frequency")
-                        .HasColumnType("bigint");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("ModelName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("Smt")
-                        .HasColumnType("bit");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Vendor")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -139,29 +128,27 @@ namespace Elpida.Backend.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("CompilerName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("CompilerVersion")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("VersionBuild")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("VersionMajor")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("VersionMinor")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("VersionRevision")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -171,93 +158,89 @@ namespace Elpida.Backend.Migrations
                     b.ToTable("ElpidaVersions");
                 });
 
-            modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Os.OsModel", b =>
+            modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Os.OperatingSystemModel", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Category")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Version")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Category", "Name", "Version")
                         .IsUnique();
 
-                    b.ToTable("Oses");
+                    b.ToTable("OperatingSystems");
                 });
 
-            modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Result.ResultModel", b =>
+            modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Result.BenchmarkResultModel", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Affinity")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<long>("BenchmarkId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("INTEGER");
 
                     b.Property<long>("ElpidaVersionId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("INTEGER");
 
                     b.Property<double>("JoinOverhead")
-                        .HasColumnType("float");
+                        .HasColumnType("REAL");
 
                     b.Property<double>("LockOverhead")
-                        .HasColumnType("float");
+                        .HasColumnType("REAL");
 
                     b.Property<double>("LoopOverhead")
-                        .HasColumnType("float");
+                        .HasColumnType("REAL");
 
                     b.Property<long>("MemorySize")
-                        .HasColumnType("bigint");
+                        .HasColumnType("INTEGER");
 
                     b.Property<double>("NotifyOverhead")
-                        .HasColumnType("float");
+                        .HasColumnType("REAL");
 
                     b.Property<double>("NowOverhead")
-                        .HasColumnType("float");
+                        .HasColumnType("REAL");
 
-                    b.Property<long>("OsId")
-                        .HasColumnType("bigint");
+                    b.Property<long>("OperatingSystemId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<long>("PageSize")
-                        .HasColumnType("bigint");
+                        .HasColumnType("INTEGER");
 
                     b.Property<double>("Score")
-                        .HasColumnType("float");
+                        .HasColumnType("REAL");
 
                     b.Property<double>("SleepOverhead")
-                        .HasColumnType("float");
+                        .HasColumnType("REAL");
 
                     b.Property<double>("TargetTime")
-                        .HasColumnType("float");
+                        .HasColumnType("REAL");
 
                     b.Property<DateTime>("TimeStamp")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("TEXT");
 
                     b.Property<long>("TopologyId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("INTEGER");
 
                     b.Property<double>("WakeupOverhead")
-                        .HasColumnType("float");
+                        .HasColumnType("REAL");
 
                     b.HasKey("Id");
 
@@ -265,66 +248,61 @@ namespace Elpida.Backend.Migrations
 
                     b.HasIndex("ElpidaVersionId");
 
-                    b.HasIndex("OsId");
+                    b.HasIndex("OperatingSystemId");
 
                     b.HasIndex("TopologyId");
 
-                    b.ToTable("Results");
+                    b.ToTable("BenchmarkResults");
                 });
 
             modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Result.TaskResultModel", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+                        .HasColumnType("INTEGER");
 
                     b.Property<long>("BenchmarkResultId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("INTEGER");
 
                     b.Property<long>("InputSize")
-                        .HasColumnType("bigint");
+                        .HasColumnType("INTEGER");
 
                     b.Property<double>("MarginOfError")
-                        .HasColumnType("float");
+                        .HasColumnType("REAL");
 
                     b.Property<double>("Max")
-                        .HasColumnType("float");
+                        .HasColumnType("REAL");
 
                     b.Property<double>("Mean")
-                        .HasColumnType("float");
+                        .HasColumnType("REAL");
 
                     b.Property<double>("Min")
-                        .HasColumnType("float");
+                        .HasColumnType("REAL");
 
                     b.Property<int>("Order")
-                        .HasColumnType("int");
-
-                    b.Property<long>("ResultId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("INTEGER");
 
                     b.Property<long>("SampleSize")
-                        .HasColumnType("bigint");
+                        .HasColumnType("INTEGER");
 
                     b.Property<double>("StandardDeviation")
-                        .HasColumnType("float");
+                        .HasColumnType("REAL");
 
                     b.Property<long>("TaskId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("INTEGER");
 
                     b.Property<double>("Tau")
-                        .HasColumnType("float");
+                        .HasColumnType("REAL");
 
                     b.Property<double>("Time")
-                        .HasColumnType("float");
+                        .HasColumnType("REAL");
 
                     b.Property<double>("Value")
-                        .HasColumnType("float");
+                        .HasColumnType("REAL");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ResultId");
+                    b.HasIndex("BenchmarkResultId");
 
                     b.HasIndex("TaskId");
 
@@ -335,40 +313,38 @@ namespace Elpida.Backend.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+                        .HasColumnType("INTEGER");
 
                     b.Property<long>("BenchmarkId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("INTEGER");
 
                     b.Property<long>("CpuId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("FrequencyClasses")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<double>("MarginOfError")
-                        .HasColumnType("float");
+                        .HasColumnType("REAL");
 
                     b.Property<double>("Max")
-                        .HasColumnType("float");
+                        .HasColumnType("REAL");
 
                     b.Property<double>("Mean")
-                        .HasColumnType("float");
+                        .HasColumnType("REAL");
 
                     b.Property<double>("Min")
-                        .HasColumnType("float");
+                        .HasColumnType("REAL");
 
                     b.Property<long>("SampleSize")
-                        .HasColumnType("bigint");
+                        .HasColumnType("INTEGER");
 
                     b.Property<double>("StandardDeviation")
-                        .HasColumnType("float");
+                        .HasColumnType("REAL");
 
                     b.Property<double>("Tau")
-                        .HasColumnType("float");
+                        .HasColumnType("REAL");
 
                     b.HasKey("Id");
 
@@ -384,62 +360,60 @@ namespace Elpida.Backend.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("InputDescription")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("InputName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("InputProperties")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("InputUnit")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("OutputDescription")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("OutputName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("OutputProperties")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("OutputUnit")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("ResultAggregation")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("ResultDescription")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ResultName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("ResultType")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("ResultUnit")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("Uuid")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -453,32 +427,30 @@ namespace Elpida.Backend.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+                        .HasColumnType("INTEGER");
 
                     b.Property<long>("CpuId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Root")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("TopologyHash")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("TotalLogicalCores")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("TotalNumaNodes")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("TotalPackages")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("TotalPhysicalCores")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -507,7 +479,7 @@ namespace Elpida.Backend.Migrations
                     b.Navigation("Task");
                 });
 
-            modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Result.ResultModel", b =>
+            modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Result.BenchmarkResultModel", b =>
                 {
                     b.HasOne("Elpida.Backend.Data.Abstractions.Models.Benchmark.BenchmarkModel", "Benchmark")
                         .WithMany()
@@ -521,9 +493,9 @@ namespace Elpida.Backend.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Elpida.Backend.Data.Abstractions.Models.Os.OsModel", "Os")
+                    b.HasOne("Elpida.Backend.Data.Abstractions.Models.Os.OperatingSystemModel", "OperatingSystem")
                         .WithMany()
-                        .HasForeignKey("OsId")
+                        .HasForeignKey("OperatingSystemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -537,16 +509,16 @@ namespace Elpida.Backend.Migrations
 
                     b.Navigation("ElpidaVersion");
 
-                    b.Navigation("Os");
+                    b.Navigation("OperatingSystem");
 
                     b.Navigation("Topology");
                 });
 
             modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Result.TaskResultModel", b =>
                 {
-                    b.HasOne("Elpida.Backend.Data.Abstractions.Models.Result.ResultModel", "Result")
+                    b.HasOne("Elpida.Backend.Data.Abstractions.Models.Result.BenchmarkResultModel", "BenchmarkResult")
                         .WithMany("TaskResults")
-                        .HasForeignKey("ResultId")
+                        .HasForeignKey("BenchmarkResultId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -556,7 +528,7 @@ namespace Elpida.Backend.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Result");
+                    b.Navigation("BenchmarkResult");
 
                     b.Navigation("Task");
                 });
@@ -596,7 +568,7 @@ namespace Elpida.Backend.Migrations
                     b.Navigation("Tasks");
                 });
 
-            modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Result.ResultModel", b =>
+            modelBuilder.Entity("Elpida.Backend.Data.Abstractions.Models.Result.BenchmarkResultModel", b =>
                 {
                     b.Navigation("TaskResults");
                 });

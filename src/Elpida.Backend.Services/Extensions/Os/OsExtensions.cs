@@ -25,13 +25,13 @@ namespace Elpida.Backend.Services.Extensions.Os
 {
 	public static class OsExtensions
 	{
-		public static OsDto ToDto(this OsModel osModel)
+		public static OperatingSystemDto ToDto(this OperatingSystemModel operatingSystemModel)
 		{
 			return new (
-				osModel.Id,
-				osModel.Category,
-				osModel.Name,
-				osModel.Version
+				operatingSystemModel.Id,
+				operatingSystemModel.Category,
+				operatingSystemModel.Name,
+				operatingSystemModel.Version
 			);
 		}
 	}

@@ -47,18 +47,18 @@ namespace Elpida.Backend.Services
 	{
 		private readonly IBenchmarkService _benchmarkService;
 		private readonly ICpuService _cpuService;
-		private readonly IResultRepository _resultRepository;
+		private readonly IBenchmarkResultRepository _benchmarkResultRepository;
 
 		public BenchmarkStatisticsService(
 			IBenchmarkService benchmarkService,
 			IBenchmarkStatisticsRepository benchmarkStatisticsRepository,
 			ICpuService cpuService,
-			IResultRepository resultRepository
+			IBenchmarkResultRepository benchmarkResultRepository
 		)
 			: base(benchmarkStatisticsRepository)
 		{
 			_cpuService = cpuService;
-			_resultRepository = resultRepository;
+			_benchmarkResultRepository = benchmarkResultRepository;
 			_benchmarkService = benchmarkService;
 		}
 
@@ -75,7 +75,7 @@ namespace Elpida.Backend.Services
 			var stats = await GetStatisticsModelAsync(benchmarkId, cpuId, cancellationToken);
 
 			var basicStatistics =
-				await _resultRepository.GetStatisticsAsync(benchmarkId, cpuId, cancellationToken);
+				await _benchmarkResultRepository.GetStatisticsAsync(benchmarkId, cpuId, cancellationToken);
 
 			stats.Max = basicStatistics.Max;
 			stats.Min = basicStatistics.Min;
@@ -91,7 +91,7 @@ namespace Elpida.Backend.Services
 			var newClasses = new List<FrequencyClassDto>(previousClasses.Length);
 			foreach (var frequencyClass in previousClasses)
 			{
-				var count = await _resultRepository.GetCountWithScoreBetween(
+				var count = await _benchmarkResultRepository.GetCountWithScoreBetween(
 					stats.Benchmark.Id,
 					stats.Cpu.Id,
 					frequencyClass.Low,
